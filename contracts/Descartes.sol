@@ -403,24 +403,54 @@ contract Descartes is Decorated, DescartesInterface {
             i.timeOfLastMove = now;
         }
     }
+
+    /// @notice In case one of the parties wins the verification game,
+    ///         then he or she can call this function to claim victory in
+    ///         this contract as well.
+    /// @param _index index of Descartes instance to win
+    function winByVG(uint256 _index) public
+        onlyInstantiated(_index)
+        increasesNonce(_index)
+    {
+        DescartesCtx memory i = instance[_index];
+        require(i.currentState == state.WaitingChallenge, "State is not WaitingChallenge, cannot winByVG");
+        uint256 vgIndex = i.vgInstance;
+
+        if (i.vg.stateIsFinishedChallengerWon(vgIndex)) {
+            challengerWins(_index);
+            return;
+        }
+
+        if (i.vg.stateIsFinishedClaimerWon(vgIndex)) {
+            claimerWins(_index);
+            return;
+        }
+        require(false, "State of VG is not final");
+    }
     
     /// @notice Abort the instance by missing deadline.
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
+        bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
+                i.currentState,
+                i.roundDuration,
+                40, // time to start machine
+                1, // vg is not instantiated, so it doesnt matter
+                i.finalTime,
+                500) // pico seconds to run instruction
+            );
+
+        require(afterDeadline, "Deadline is not over for this specific state");
+
         if (i.state == state.WaitingProviders) {
-            if (now > (i.timeOfLastMove + i.roundDuration)) {
-                i = state.ProviderMissedDeadline;
-                return true;
-            }
+            i = state.ProviderMissedDeadline;
+            return;
         }
         if (i.state == state.WaitingClaim) {
-            if (now > (i.timeOfLastMove + i.roundDuration)) {
-                i.currentState = state.ClaimerMisseddeadline;
-                return true;
-            }
+            i.currentState = state.ClaimerMisseddeadline;
+            return;
         }
-        return false;
     }
 
     /// @notice Convert a uint256 to bytes8 array
@@ -454,9 +484,10 @@ contract Descartes is Decorated, DescartesInterface {
     {
         if (_state == state.WaitingProviders) {
             // time to upload to logger + assemble pristine machine with drive
-            return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
+            uint256 maxLoggerUploadTime = 40 * 60;
+            return _timeToStartMachine + maxLoggerUploadTime + _roundDuration;
         }
-        
+
         if (_state == state.WaitingClaim) {
             // time to run entire machine + time to react
             return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
