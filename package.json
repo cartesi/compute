@@ -1,0 +1,41 @@
+{
+  "name": "@cartesi/descartes-sdk",
+  "version": "0.1.0",
+  "description": "Cartesi Descartes SDK",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cartesi/descartes.git"
+  },
+  "keywords": [
+    "cartesi"
+  ],
+  "author": "Danilo Tuler <danilo@cartesi.io>",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/cartesi/descartes/issues"
+  },
+  "homepage": "https://github.com/cartesi/descartes#readme",
+  "dependencies": {
+    "@cartesi/arbitration": "^0.2.0",
+    "@cartesi/logger": "^0.2.0",
+    "@cartesi/machine-solidity-step": "^0.3.0",
+    "@cartesi/tournament": "^0.2.0",
+    "@cartesi/util": "^0.2.0"
+  },
+  "devDependencies": {
+    "@truffle/contract": "^4.1.13",
+    "@truffle/hdwallet-provider": "^1.0.33",
+    "commander": "^4.1.0",
+    "solidity-coverage": "^0.6.7",
+    "truffle": "^5.1.17"
+  },
+  "files": [
+    "contracts",
+    "migrations",
+    "build",
+    "truffle-config.js"
+  ]
+}
