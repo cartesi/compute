@@ -56,13 +56,12 @@ contract DecartesInterface is Instantiator {
         uint256 uintValue256;
         bytes32 bytesValue32;
         address provider;
-        bytes32[] siblings;
     }
 
     function instantiate(
         uint256 _finalTime,
         bytes32 _pristineHash,
-        uint256 _outputPosition,
+        uint64 _outputPosition,
         uint256 _roundDuration;
         address _claimer,
         address _challenger,
