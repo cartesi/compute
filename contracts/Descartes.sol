@@ -216,14 +216,26 @@ contract Descartes is Decorated, DescartesInterface {
     /// @dev Example: consider 3 drives, the first drive's siblings should be a pristine machine.
     ///      The second drive's siblings should be the machine with drive 1 mounted.
     ///      The third drive's siblings should be the machine with drive 2 mounted.
-    function submitClaim(uint256 _index, bytes32 _claimedFinalHash, Drive[] _drives) public
+    function submitClaim(
+        uint256 _index,
+        bytes32 _claimedFinalHash,
+        Drive[] _drives,
+        bytes32[][] _drivesSiblings,
+        bytes32 output,
+        bytes32[] outputSiblings) public
         onlyInstantiated(_index)
         onlyBy(instance[_index].claimer)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == state.WaitingClaim, "State should be WaitingClaim");
-        require(_drives.length == i.drives.length);
+        require(_drives.length == i.drives.length, "Claimed drive number should match stored drive number");
+        require(_drives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
+
+        bytes8[] memory data = convertBytes32ToBytes8Array(_value);
+        bytes32 outputDriveHash = li.calculateMerkleRootFromData(5, data);
+
+        require(Merkle.getRootWithDrive(i.outputPosition, 5, outputDriveHash, outputSiblings) == _claimedFinalHash, "Output is not contained in the final hash");
 
         bytes32 initialHash = i.initialHash;
         uint256 drivesLength = _drives.length;
@@ -231,8 +243,8 @@ contract Descartes is Decorated, DescartesInterface {
             require(_drives[j].position == i.drives[j].position);
             require(_drives[j].log2Size == i.drives[j].log2Size);
             require(_drives[j].driveHash == i.drives[j].driveHash);
-            require(Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, Merkle.getPristineHash(uint8(_drives[j].log2Size)), _drives[j].siblings) == initialHash, "Drive siblings must be compatible with previous initial hash for an empty drive");
-            initialHash = Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, _drives[j].driveHash, _drives[j].siblings);
+            require(Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, Merkle.getPristineHash(uint8(_drives[j].log2Size)), _drivesSiblings[j]) == initialHash, "Drive siblings must be compatible with previous initial hash for an empty drive");
+            initialHash = Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, _drives[j].driveHash, _drivesSiblings[j]);
         }
 
         i.initialHash = initialHash;
@@ -370,7 +382,6 @@ contract Descartes is Decorated, DescartesInterface {
             "Drive is not logger type");
 
         if (drive.type == driveType.LoggerWithProvider) {
-            require(drive.provider == msg.sender, "The sender is not provider");
             drive.bytesValue32 = _value;
             drive.type = driveType.LoggerWithHash;
         }
@@ -437,6 +448,19 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = state.ClaimerMisseddeadline;
             return;
         }
+    }
+
+    /// @notice Convert a bytes32 to bytes8 array
+    function convertBytes32ToBytes8Array(bytes32 _value) private returns(bytes8[]) {
+        bytes8 memory[] data;
+        for (uint256 i = 0; i < 4; i++) {
+            bytes8 dataBytes8;
+            for (uint256 j = 0; j < 8; j++) {
+                dataBytes8[j] = _value[i * 8 + j];
+            }
+            data.push(dataBytes8);
+        }
+        return data;
     }
 
     /// @notice Convert a uint256 to bytes8 array
