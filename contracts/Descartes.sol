@@ -246,15 +246,30 @@ contract Descartes is Decorated, DescartesInterface {
 
         bytes32[] memory data = getWordHashesFromBytes32(_output);
 
-        require(Merkle.getRootWithDrive(i.outputPosition, 5, Merkle.calculateRootFromPowerOfTwo(data), _outputSiblings) == _claimedFinalHash, "Output is not contained in the final hash");
+        require(
+            Merkle.getRootWithDrive(
+                i.outputPosition,
+                5,
+                Merkle.calculateRootFromPowerOfTwo(data),
+                _outputSiblings) == _claimedFinalHash,
+            "Output is not contained in the final hash");
 
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
-            require(_drives[j].position == i.drives[j].position);
-            require(_drives[j].log2Size == i.drives[j].log2Size);
-            require(_drives[j].driveHash == i.drives[j].driveHash);
-            require(Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, Merkle.getPristineHash(uint8(_drives[j].log2Size)), _drivesSiblings[j]) == i.initialHash, "Drive siblings must be compatible with previous initial hash for an empty drive");
-            i.initialHash = Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, _drives[j].driveHash, _drivesSiblings[j]);
+            require(_drives[j].position == i.drives[j].position, "Drive position doesn't match");
+            require(_drives[j].log2Size == i.drives[j].log2Size, "Drive log2 size doesn't match");
+            require(_drives[j].driveHash == i.drives[j].driveHash, "Drive hash doesn't match");
+            require(
+                Merkle.getRootWithDrive(_drives[j].position,
+                    _drives[j].log2Size,
+                    Merkle.getPristineHash(uint8(_drives[j].log2Size)),
+                    _drivesSiblings[j]) == i.initialHash,
+                "Drive siblings must be compatible with previous initial hash for empty drive");
+            i.initialHash = Merkle.getRootWithDrive(
+                _drives[j].position,
+                _drives[j].log2Size,
+                _drives[j].driveHash,
+                _drivesSiblings[j]);
         }
 
         i.claimedFinalHash = _claimedFinalHash;
@@ -370,6 +385,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32[] memory data = getWordHashesFromBytes32(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
+        drive.log2Size = 5;
         drive.driveHash = driveHash;
         drive.ready = true;
         i.pendingDrivesPointer++;
@@ -392,7 +408,8 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require((drive.driveType == DriveType.LoggerWithProvider || drive.driveType == DriveType.LoggerWithHash),
+        require(
+            (drive.driveType == DriveType.LoggerWithProvider || drive.driveType == DriveType.LoggerWithHash),
             "Drive is not logger type");
 
         if (drive.driveType == DriveType.LoggerWithProvider) {
@@ -444,14 +461,14 @@ contract Descartes is Decorated, DescartesInterface {
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
-                i.currentState,
-                i.vg,
-                i.roundDuration,
-                40, // time to start machine
-                1, // vg is not instantiated, so it doesnt matter
-                i.finalTime,
-                500) // pico seconds to run instruction
-            );
+            i.currentState,
+            i.vg,
+            i.roundDuration,
+            40, // time to start machine
+            1, // vg is not instantiated, so it doesnt matter
+            i.finalTime,
+            500) // pico seconds to run instruction
+        );
 
         require(afterDeadline, "Deadline is not over for this specific state");
 
@@ -512,10 +529,17 @@ contract Descartes is Decorated, DescartesInterface {
 
         if (_state == State.WaitingChallenge) {
             // time to run a verification game + time to react
-            return vg.getMaxInstanceDuration(_roundDuration, _timeToStartMachine, _partitionSize, _maxCycle, _picoSecondsToRunInsn) + _roundDuration;
+            return vg.getMaxInstanceDuration(_roundDuration,
+                _timeToStartMachine,
+                _partitionSize,
+                _maxCycle,
+                _picoSecondsToRunInsn) + _roundDuration;
         }
 
-        if (_state == State.ClaimerWon || _state == State.ChallengerWon || _state == State.ClaimerMissedDeadline || _state == State.ConsensusResult) {
+        if (_state == State.ClaimerWon ||
+            _state == State.ChallengerWon ||
+            _state == State.ClaimerMissedDeadline ||
+            _state == State.ConsensusResult) {
             return 0; // final state
         }
     }
