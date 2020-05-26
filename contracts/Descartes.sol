@@ -260,7 +260,8 @@ contract Descartes is Decorated, DescartesInterface {
             require(_drives[j].log2Size == i.drives[j].log2Size, "Drive log2 size doesn't match");
             require(_drives[j].driveHash == i.drives[j].driveHash, "Drive hash doesn't match");
             require(
-                Merkle.getRootWithDrive(_drives[j].position,
+                Merkle.getRootWithDrive(
+                    _drives[j].position,
                     _drives[j].log2Size,
                     Merkle.getPristineHash(uint8(_drives[j].log2Size)),
                     _drivesSiblings[j]) == i.initialHash,
