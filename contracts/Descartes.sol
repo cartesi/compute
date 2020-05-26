@@ -70,7 +70,7 @@ contract Descartes is Decorated, DescartesInterface {
     //   |
     //   | claimLoggerDrive
     //   | or
-    //   | claimIntegerDrive
+    //   | claimDirectDrive
     //   v
     // +--------------+   abortByDeadline    +-----------------------+
     // | WaitingClaim |--------------------->| ClaimerMissedDeadline |
@@ -137,7 +137,7 @@ contract Descartes is Decorated, DescartesInterface {
             Drive memory drive = _drives[j];
             DriveType driveType = drive.driveType;
 
-            if (driveType == DriveType.IntegerWithValue) {
+            if (driveType == DriveType.DirectWithValue) {
                 drive.ready = true;
                 drive.log2Size = 5;
                 bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
@@ -151,7 +151,7 @@ contract Descartes is Decorated, DescartesInterface {
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
-            } else if (drive.driveType == DriveType.IntegerWithProvider || drive.driveType == DriveType.LoggerWithProvider) {
+            } else if (drive.driveType == DriveType.DirectWithProvider || drive.driveType == DriveType.LoggerWithProvider) {
                 drive.ready = false;
                 currentState = State.WaitingProviders;
                 i.pendingDrives.push(j);
@@ -369,10 +369,10 @@ contract Descartes is Decorated, DescartesInterface {
         return (a, i);
     }
 
-    /// @notice Claim the content of a integer drive (only drive provider can call it).
+    /// @notice Claim the content of a direct drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to.
-    /// @param _value bytes32 value of the integer drive
-    function claimIntegerDrive(uint256 _index, bytes32 _value) public
+    /// @param _value bytes32 value of the direct drive
+    function claimDirectDrive(uint256 _index, bytes32 _value) public
         onlyInstantiated(_index)
         requirementsForClaimDrive(_index)
     {
@@ -380,7 +380,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require(drive.driveType == DriveType.IntegerWithProvider, "The drive driveType is not IntegerWithProvider");
+        require(drive.driveType == DriveType.DirectWithProvider, "The drive driveType is not DirectWithProvider");
 
         bytes32[] memory data = getWordHashesFromBytes32(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);

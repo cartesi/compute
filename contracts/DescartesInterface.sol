@@ -42,8 +42,8 @@ contract DescartesInterface is Instantiator {
     }
 
     enum DriveType {
-        IntegerWithValue,
-        IntegerWithProvider,
+        DirectWithValue,
+        DirectWithProvider,
         LoggerWithHash,
         LoggerWithProvider
     }
