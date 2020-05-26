@@ -19,16 +19,17 @@
 // be used independently under the Apache v2 license. After this component is
 // rewritten, the entire component will be released under the Apache v2 license.
 
-/// @title DecartesInterface
+/// @title DescartesInterface
 /// @author Stephen Chen
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
 import "@cartesi/util/contracts/Instantiator.sol";
 
 
-contract DecartesInterface is Instantiator {
+contract DescartesInterface is Instantiator {
 
-    enum state {
+    enum State {
         WaitingProviders,
         ProviderMissedDeadline,
         ClaimerMissedDeadline,
@@ -40,7 +41,7 @@ contract DecartesInterface is Instantiator {
         ConsensusResult
     }
 
-    enum driveType {
+    enum DriveType {
         IntegerWithValue,
         IntegerWithProvider,
         LoggerWithHash,
@@ -49,25 +50,24 @@ contract DecartesInterface is Instantiator {
 
     struct Drive {
         bool ready;
-        driveType type;
         bytes32 driveHash;
         uint64 position;
         uint64 log2Size;
-        uint256 uintValue256;
         bytes32 bytesValue32;
         address provider;
+        DriveType driveType;
     }
 
     function instantiate(
         uint256 _finalTime,
         bytes32 _pristineHash,
         uint64 _outputPosition,
-        uint256 _roundDuration;
+        uint256 _roundDuration,
         address _claimer,
         address _challenger,
         address _liAddress,
         address _vgAddress,
         address _machineAddress,
-        Drive[] _drives ) public returns (uint256);
+        Drive[] memory _drives ) public returns (uint256);
 }
 

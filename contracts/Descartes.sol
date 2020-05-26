@@ -22,7 +22,9 @@
 /// @title Descartes
 /// @author Stephen Chen
 pragma solidity ^0.5.0;
+pragma experimental ABIEncoderV2;
 
+import "@cartesi/util/contracts/Merkle.sol";
 import "@cartesi/util/contracts/Decorated.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
@@ -32,14 +34,14 @@ import "./DescartesInterface.sol";
 contract Descartes is Decorated, DescartesInterface {
     address public owner;
 
-    struct DecartesCtx {
+    struct DescartesCtx {
         uint256 pendingDrivesPointer; // the pointer to the current pending drive
         uint256 finalTime; // max number of machine cycle to run
-        uint256 outputPosition; // memory position of machine output
+        uint64 outputPosition; // memory position of machine output
         uint256 roundDuration; // time interval to interact with this contract
         uint256 timeOfLastMove; // last time someone made a move with deadline
         uint256 vgInstance;
-        bytes32 pristineHash; // pristine hash of machine
+        bytes32 templateHash; // pristine hash of machine
         bytes32 initialHash; // initial hash with all drives mounted
         bytes32 claimedFinalHash; // claimed final hash of the machine
         address claimer; // responsible for claiming the machine output
@@ -47,12 +49,12 @@ contract Descartes is Decorated, DescartesInterface {
         address machine; // machine which will run the challenge
         LoggerInterface li;
         VGInterface vg;
-        state currentState;
+        State currentState;
         uint256[] pendingDrives; // indices of the pending drives
         Drive[] drives;
     }
 
-    mapping(uint256 => DecartesCtx) internal instance;
+    mapping(uint256 => DescartesCtx) internal instance;
 
     // These are the possible states and transitions of the contract.
 
@@ -71,7 +73,7 @@ contract Descartes is Decorated, DescartesInterface {
     //   | claimIntegerDrive
     //   v
     // +--------------+   abortByDeadline    +-----------------------+
-    // | WaitingClaim |--------------------->| ClaimerMisseddeadline |
+    // | WaitingClaim |--------------------->| ClaimerMissedDeadline |
     // +--------------+                      +-----------------------+
     //   |
     //   |
@@ -106,68 +108,78 @@ contract Descartes is Decorated, DescartesInterface {
 
     /// @notice Instantiate a Descartes SDK instance.
     /// @param _finalTime max cycle of the machine for that computation
-    /// @param _pristineHash hash of the machine with all drives empty
+    /// @param _templateHash hash of the machine with all drives empty
     /// @param _outputPosition position of the output drive
     /// @param _roundDuration duration of the round (security param)
     /// @param _drives an array of drive which assemble the machine
     /// @return Descartes index
     function instantiate(
         uint256 _finalTime,
-        bytes32 _pristineHash,
-        uint256 _outputPosition,
-        uint256 _roundDuration;
+        bytes32 _templateHash,
+        uint64 _outputPosition,
+        uint256 _roundDuration,
         address _claimer,
         address _challenger,
         address _liAddress,
         address _vgAddress,
         address _machineAddress,
-        Drive[] _drives ) public returns (uint256)
-        onlyBy(owner)
+        Drive[] memory _drives ) public
+        onlyBy(owner) returns (uint256)
     {
         DescartesCtx storage i = instance[currentIndex];
 
         require(_challenger != _claimer, "Claimer cannot be a challenger");
 
-        state memory currentState = state.WaitingClaim;
+        LoggerInterface li = LoggerInterface(_liAddress);
+        State currentState = State.WaitingClaim;
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
-            Drive memory drive = _drive[j];
+            Drive memory drive = _drives[j];
+            DriveType driveType = drive.driveType;
 
-            if (type == driveType.IntegerWithValue) {
+            if (driveType == DriveType.IntegerWithValue) {
                 drive.ready = true;
                 drive.log2Size = 5;
-                bytes8 memory[] data = convertUint256ToBytes8Array(drive.uintValue256);
-                drive.driveHash = li.calculateMerkleRootFromData(drive.log2Size, data);
-            } else if (type == driveType.LoggerWithHash) {
+                bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
+                drive.driveHash = Merkle.calculateRootFromPowerOfTwo(data);
+            } else if (driveType == DriveType.LoggerWithHash) {
                 if (li.isLogAvailable(drive.bytesValue32, drive.log2Size)) {
                     drive.ready = true;
                     drive.driveHash = drive.bytesValue32;
                 } else {
                     drive.ready = false;
-                    currentState = state.WaitingProviders;
+                    currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
-            } else if (drive.type == driveType.IntegerWithProvider || drive.type == driveType.LoggerWithProvider) {
+            } else if (drive.driveType == DriveType.IntegerWithProvider || drive.driveType == DriveType.LoggerWithProvider) {
                 drive.ready = false;
-                currentState = state.WaitingProviders;
+                currentState = State.WaitingProviders;
                 i.pendingDrives.push(j);
             } else {
                 revert("Unknown Drive Type");
             }
+            i.drives.push(Drive(
+                drive.ready,
+                drive.driveHash,
+                drive.position,
+                drive.log2Size,
+                drive.bytesValue32,
+                drive.provider,
+                drive.driveType
+            ));
         }
 
         i.challenger = _challenger;
         i.claimer = _claimer;
         i.machine = _machineAddress;
         i.vg = VGInterface(_vgAddress);
-        i.li = LoggerInterface(_liAddress);
+        i.li = li;
         i.finalTime = _finalTime;
-        i.pristineHash = _pristineHash;
-        i.initialHash = _pristineHash;
+        i.templateHash = _templateHash;
+        i.initialHash = _templateHash;
         i.outputPosition = _outputPosition;
         i.roundDuration = _roundDuration;
         i.timeOfLastMove = now;
-        i.drives = _drives;
         i.currentState = currentState;
 
         active[currentIndex] = true;
@@ -182,9 +194,9 @@ contract Descartes is Decorated, DescartesInterface {
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == state.WaitingConfirmation, "State should be WaitingConfirmation");
+        require(i.currentState == State.WaitingConfirmation, "State should be WaitingConfirmation");
 
-        i.currentState = state.ConsensusResult;
+        i.currentState = State.ConsensusResult;
         emit ResultConfirmed(_index);
     }
 
@@ -196,7 +208,7 @@ contract Descartes is Decorated, DescartesInterface {
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == state.WaitingConfirmation, "State should be WaitingConfirmation");
+        require(i.currentState == State.WaitingConfirmation, "State should be WaitingConfirmation");
 
         i.vgInstance = i.vg.instantiate(
             i.challenger,
@@ -206,7 +218,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.initialHash,
             i.claimedFinalHash,
             i.finalTime);
-        i.currentState = state.WaitingChallenge;
+        i.currentState = State.WaitingChallenge;
 
         emit ChallengeStarted(_index);
     }
@@ -219,37 +231,34 @@ contract Descartes is Decorated, DescartesInterface {
     function submitClaim(
         uint256 _index,
         bytes32 _claimedFinalHash,
-        Drive[] _drives,
-        bytes32[][] _drivesSiblings,
-        bytes32 output,
-        bytes32[] outputSiblings) public
+        Drive[] memory _drives,
+        bytes32[][] memory _drivesSiblings,
+        bytes32 _output,
+        bytes32[] memory _outputSiblings) public
         onlyInstantiated(_index)
         onlyBy(instance[_index].claimer)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == state.WaitingClaim, "State should be WaitingClaim");
+        require(i.currentState == State.WaitingClaim, "State should be WaitingClaim");
         require(_drives.length == i.drives.length, "Claimed drive number should match stored drive number");
         require(_drives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
 
-        bytes8[] memory data = convertBytes32ToBytes8Array(_value);
-        bytes32 outputDriveHash = li.calculateMerkleRootFromData(5, data);
+        bytes32[] memory data = getWordHashesFromBytes32(_output);
 
-        require(Merkle.getRootWithDrive(i.outputPosition, 5, outputDriveHash, outputSiblings) == _claimedFinalHash, "Output is not contained in the final hash");
+        require(Merkle.getRootWithDrive(i.outputPosition, 5, Merkle.calculateRootFromPowerOfTwo(data), _outputSiblings) == _claimedFinalHash, "Output is not contained in the final hash");
 
-        bytes32 initialHash = i.initialHash;
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
             require(_drives[j].position == i.drives[j].position);
             require(_drives[j].log2Size == i.drives[j].log2Size);
             require(_drives[j].driveHash == i.drives[j].driveHash);
-            require(Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, Merkle.getPristineHash(uint8(_drives[j].log2Size)), _drivesSiblings[j]) == initialHash, "Drive siblings must be compatible with previous initial hash for an empty drive");
-            initialHash = Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, _drives[j].driveHash, _drivesSiblings[j]);
+            require(Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, Merkle.getPristineHash(uint8(_drives[j].log2Size)), _drivesSiblings[j]) == i.initialHash, "Drive siblings must be compatible with previous initial hash for an empty drive");
+            i.initialHash = Merkle.getRootWithDrive(_drives[j].position, _drives[j].log2Size, _drives[j].driveHash, _drivesSiblings[j]);
         }
 
-        i.initialHash = initialHash;
         i.claimedFinalHash = _claimedFinalHash;
-        i.currentState = state.WaitingConfirmation;
+        i.currentState = State.WaitingConfirmation;
 
         emit ClaimSubmitted(_index, _claimedFinalHash);
     }
@@ -267,52 +276,58 @@ contract Descartes is Decorated, DescartesInterface {
     function getState(uint256 _index, address _user) public view
         onlyInstantiated(_index)
         returns (
-            bytes32,
-            bytes32,
-            uint256,
+            bytes32[2] memory,
             uint256,
             uint256,
             bytes32,
-            Drive[]
+            Drive[] memory
         )
     {
-        DescartesCtx memory i = instance[_index];
-        uint256 pendingDriveIndex = 0;
-        if (i.state == state.WaitingProviders ||
-            i.state == state.ProviderMissedDeadline) {
-            pendingDriveIndex = i.pendingDrives[i.pendingDrivesPointer];
+        bytes32[2] memory machineHashes;
+        machineHashes[0] = instance[_index].initialHash;
+        machineHashes[1] = instance[_index].claimedFinalHash;
+
+        if (instance[_index].currentState == State.WaitingProviders ||
+            instance[_index].currentState == State.ProviderMissedDeadline) {
+            Drive[] memory drives = new Drive[](1);
+            drives[0] = instance[_index].drives[instance[_index].pendingDrivesPointer];
+            return (
+                machineHashes,
+                instance[_index].finalTime,
+                instance[_index].timeOfLastMove,
+                getCurrentState(_index, _user),
+                drives);
+        } else {
+            return (
+                machineHashes,
+                instance[_index].finalTime,
+                instance[_index].timeOfLastMove,
+                getCurrentState(_index, _user),
+                instance[_index].drives);
         }
-        return (
-            i.initialHash,
-            i.claimedFinalHash,
-            pendingDriveIndex,
-            i.finalTime,
-            i.timeOfLastMove,
-            getCurrentState(_index, _user),
-            i.drives);
     }
 
     function getCurrentState(uint256 _index, address) public view
         onlyInstantiated(_index)
         returns (bytes32)
     {
-        state memory currentState = instance[_index].currentState;
-        if (currentState == state.WaitingProviders) {
+        State currentState = instance[_index].currentState;
+        if (currentState == State.WaitingProviders) {
             return "WaitingProviders";
         }
-        if (currentState == state.ProviderMissedDeadline) {
+        if (currentState == State.ProviderMissedDeadline) {
             return "ProviderMissedDeadline";
         }
-        if (currentState == state.WaitingClaim) {
+        if (currentState == State.WaitingClaim) {
             return "WaitingClaim";
         }
-        if (currentState == state.WaitingClaim) {
+        if (currentState == State.WaitingClaim) {
             return "WaitingConfirmation";
         }
-        if (currentState == state.WaitingChallenge) {
+        if (currentState == State.WaitingChallenge) {
             return "WaitingChallenge";
         }
-        if (currentState == state.ConsensusResult) {
+        if (currentState == State.ConsensusResult) {
             return "ConsensusResult";
         }
 
@@ -327,7 +342,7 @@ contract Descartes is Decorated, DescartesInterface {
         address[] memory a;
         uint256[] memory i;
 
-        if (instance[_index].currentState == state.WaitingChallenge) {
+        if (instance[_index].currentState == State.WaitingChallenge) {
             a = new address[](1);
             i = new uint256[](1);
             a[0] = address(instance[_index].vg);
@@ -341,20 +356,19 @@ contract Descartes is Decorated, DescartesInterface {
 
     /// @notice Claim the content of a integer drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to.
-    /// @param _value integer value of the integer drive
-    function claimIntegerDrive(uint256 _index, uint256 _value) public
+    /// @param _value bytes32 value of the integer drive
+    function claimIntegerDrive(uint256 _index, bytes32 _value) public
         onlyInstantiated(_index)
         requirementsForClaimDrive(_index)
     {
-        DecartesCtx storage i = instance[_index];
+        DescartesCtx storage i = instance[_index];
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require(drive.type == driveType.IntegerWithProvider, "The drive type is not IntegerWithProvider");
+        require(drive.driveType == DriveType.IntegerWithProvider, "The drive driveType is not IntegerWithProvider");
 
-        drive.log2Size = 5;
-        bytes8 memory[] data = convertUint256ToBytes8Array(_value);
-        bytes32 driveHash = li.calculateMerkleRootFromData(drive.log2Size, data);
+        bytes32[] memory data = getWordHashesFromBytes32(_value);
+        bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
         drive.driveHash = driveHash;
         drive.ready = true;
@@ -362,7 +376,7 @@ contract Descartes is Decorated, DescartesInterface {
         i.timeOfLastMove = now;
 
         if (i.pendingDrivesPointer == i.pendingDrives.length) {
-            i.currentState = state.WaitingClaim;
+            i.currentState = State.WaitingClaim;
         }
     }
 
@@ -374,21 +388,21 @@ contract Descartes is Decorated, DescartesInterface {
         onlyInstantiated(_index)
         requirementsForClaimDrive(_index)
      {
-        DecartesCtx storage i = instance[_index];
+        DescartesCtx storage i = instance[_index];
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require((drive.type == driveType.LoggerWithProvider || drive.type == driveType.LoggerWithHash),
+        require((drive.driveType == DriveType.LoggerWithProvider || drive.driveType == DriveType.LoggerWithHash),
             "Drive is not logger type");
 
-        if (drive.type == driveType.LoggerWithProvider) {
+        if (drive.driveType == DriveType.LoggerWithProvider) {
             drive.bytesValue32 = _value;
-            drive.type = driveType.LoggerWithHash;
+            drive.driveType = DriveType.LoggerWithHash;
         }
 
-        if (drive.type == driveType.LoggerWithHash) {
+        if (drive.driveType == DriveType.LoggerWithHash) {
             require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
-            require(li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
+            require(i.li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
 
             drive.driveHash = drive.bytesValue32;
             drive.ready = true;
@@ -396,7 +410,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.timeOfLastMove = now;
 
             if (i.pendingDrivesPointer == i.pendingDrives.length) {
-                i.currentState = state.WaitingClaim;
+                i.currentState = State.WaitingClaim;
             }
         }
     }
@@ -409,17 +423,17 @@ contract Descartes is Decorated, DescartesInterface {
         onlyInstantiated(_index)
         increasesNonce(_index)
     {
-        DescartesCtx memory i = instance[_index];
-        require(i.currentState == state.WaitingChallenge, "State is not WaitingChallenge, cannot winByVG");
+        DescartesCtx storage i = instance[_index];
+        require(i.currentState == State.WaitingChallenge, "State is not WaitingChallenge, cannot winByVG");
         uint256 vgIndex = i.vgInstance;
 
         if (i.vg.stateIsFinishedChallengerWon(vgIndex)) {
-            challengerWins(_index);
+            i.currentState = State.ChallengerWon;
             return;
         }
 
         if (i.vg.stateIsFinishedClaimerWon(vgIndex)) {
-            claimerWins(_index);
+            i.currentState = State.ClaimerWon;
             return;
         }
         require(false, "State of VG is not final");
@@ -431,6 +445,7 @@ contract Descartes is Decorated, DescartesInterface {
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
                 i.currentState,
+                i.vg,
                 i.roundDuration,
                 40, // time to start machine
                 1, // vg is not instantiated, so it doesnt matter
@@ -440,35 +455,22 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(afterDeadline, "Deadline is not over for this specific state");
 
-        if (i.state == state.WaitingProviders) {
-            i = state.ProviderMissedDeadline;
+        if (i.currentState == State.WaitingProviders) {
+            i.currentState = State.ProviderMissedDeadline;
             return;
         }
-        if (i.state == state.WaitingClaim) {
-            i.currentState = state.ClaimerMisseddeadline;
+        if (i.currentState == State.WaitingClaim) {
+            i.currentState = State.ClaimerMissedDeadline;
             return;
         }
     }
 
     /// @notice Convert a bytes32 to bytes8 array
-    function convertBytes32ToBytes8Array(bytes32 _value) private returns(bytes8[]) {
-        bytes8 memory[] data;
+    function getWordHashesFromBytes32(bytes32 _value) private pure returns(bytes32[] memory) {
+        bytes32[] memory data = new bytes32[](4);
         for (uint256 i = 0; i < 4; i++) {
-            bytes8 dataBytes8;
-            for (uint256 j = 0; j < 8; j++) {
-                dataBytes8[j] = _value[i * 8 + j];
-            }
-            data.push(dataBytes8);
-        }
-        return data;
-    }
-
-    /// @notice Convert a uint256 to bytes8 array
-    function convertUint256ToBytes8Array(uint256 _value) private returns(bytes8[]) {
-        bytes8 memory[] data;
-        for (uint256 i = 0; i < 4; i++) {
-            bytes8 dataBytes8 = bytes8(_value << (j * 64) & 0xffffffffffffffff000000000000000000000000000000000000000000000000);
-            data.push(dataBytes8);
+            bytes8 dataBytes8 = bytes8(_value << (i * 64) & 0xffffffffffffffff000000000000000000000000000000000000000000000000);
+            data[i] = keccak256(abi.encodePacked(dataBytes8));
         }
         return data;
     }
@@ -483,7 +485,7 @@ contract Descartes is Decorated, DescartesInterface {
     //          before being forced into becoming halted
     /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction
     function getMaxStateDuration(
-        state _state,
+        State _state,
         VGInterface vg,
         uint256 _roundDuration,
         uint256 _timeToStartMachine,
@@ -492,28 +494,28 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _picoSecondsToRunInsn
     ) private view returns (uint256)
     {
-        if (_state == state.WaitingProviders) {
+        if (_state == State.WaitingProviders) {
             // time to upload to logger + assemble pristine machine with drive
             uint256 maxLoggerUploadTime = 40 * 60;
             return _timeToStartMachine + maxLoggerUploadTime + _roundDuration;
         }
 
-        if (_state == state.WaitingClaim) {
+        if (_state == State.WaitingClaim) {
             // time to run entire machine + time to react
             return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
         }
 
-        if (_state == state.WaitingConfirmation) {
+        if (_state == State.WaitingConfirmation) {
             // time to run entire machine + time to react
             return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
         }
 
-        if (_state == state.WaitingChallenge) {
+        if (_state == State.WaitingChallenge) {
             // time to run a verification game + time to react
             return vg.getMaxInstanceDuration(_roundDuration, _timeToStartMachine, _partitionSize, _maxCycle, _picoSecondsToRunInsn) + _roundDuration;
         }
 
-        if (_state == state.ClaimerWon || _state == state.ChallengerWon || _state == state.ClaimerMissedDeadline || _state == state.ConsensusResult) {
+        if (_state == State.ClaimerWon || _state == State.ChallengerWon || _state == State.ClaimerMissedDeadline || _state == State.ConsensusResult) {
             return 0; // final state
         }
     }
@@ -521,13 +523,13 @@ contract Descartes is Decorated, DescartesInterface {
     /// @notice several require statements for a drive
     modifier requirementsForClaimDrive(uint256 _index) {
         DescartesCtx memory i = instance[_index];
-        require(i.currentState == state.WaitingProviders, "The state is not WaitingProviders");
+        require(i.currentState == State.WaitingProviders, "The state is not WaitingProviders");
         require(i.pendingDrivesPointer < i.pendingDrives.length, "No available pending drives");
 
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         require(driveIndex < i.drives.length, "Invalid drive index");
 
-        Drive storage drive = i.drives[driveIndex];
+        Drive memory drive = i.drives[driveIndex];
         require(drive.ready == false, "The drive shouldn't be ready");
         require(drive.provider == msg.sender, "The sender is not provider");
 
