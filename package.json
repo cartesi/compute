@@ -19,11 +19,10 @@
   },
   "homepage": "https://github.com/cartesi/descartes#readme",
   "dependencies": {
-    "@cartesi/arbitration": "^0.2.0",
+    "@cartesi/arbitration": "^0.2.1",
     "@cartesi/logger": "^0.2.0",
     "@cartesi/machine-solidity-step": "^0.3.0",
-    "@cartesi/tournament": "^0.2.0",
-    "@cartesi/util": "^0.2.0"
+    "@cartesi/util": "^0.2.1"
   },
   "devDependencies": {
     "@truffle/contract": "^4.1.13",

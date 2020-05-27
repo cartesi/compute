@@ -4,9 +4,6 @@ const PartitionInstantiator = contract(require("@cartesi/arbitration/build/contr
 const MMInstantiator = contract(require("@cartesi/arbitration/build/contracts/MMInstantiator.json"));
 const VGInstantiator = contract(require("@cartesi/arbitration/build/contracts/VGInstantiator.json"));
 const ComputeInstantiator = contract(require("@cartesi/arbitration/build/contracts/ComputeInstantiator.json"));
-const MatchInstantiator = contract(require("@cartesi/tournament/build/contracts/MatchInstantiator.json"));
-const MatchManagerInstantiator = contract(require("@cartesi/tournament/build/contracts/MatchManagerInstantiator.json"));
-const RevealInstantiator = contract(require("@cartesi/tournament/build/contracts/RevealInstantiator.json"));
 
 const Descartes = artifacts.require("Descartes");
 
@@ -18,9 +15,6 @@ module.exports = function (deployer, network, accounts) {
             MMInstantiator,
             VGInstantiator,
             ComputeInstantiator,
-            MatchInstantiator,
-            MatchManagerInstantiator,
-            RevealInstantiator
         ];
         
         // set network_id explicitily so address can be resolved

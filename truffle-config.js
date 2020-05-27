@@ -38,5 +38,15 @@ module.exports = {
       provider: () => new HDWalletProvider(mnemonic, 'https://testnetv3.matic.network'),
       network_id: 15001
     }
+  },
+  compilers: {
+    solc: {
+      settings: {          // See the solidity docs for advice about optimization and evmVersion
+       optimizer: {
+         enabled: true,
+         runs: 200
+       }
+      }
+    }
   }
 };
