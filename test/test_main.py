@@ -54,7 +54,7 @@ class Drive:
 
 class BaseTest:
 
-    def __init__(self, port):
+    def __init__(self):
 
         if (w3.isConnected()):
             print("Connected to node\n")
