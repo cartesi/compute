@@ -4,7 +4,7 @@ run yarn install
 install python 3.7 and pip  
 run pip install -r requirements.txt
 run ganache-cli in a separate terminal
-run prepare_python_tests.sh  
+run deploy_development.sh  
 run run_python_tests.sh  
 
 ## Note ##

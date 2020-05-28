@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# this script will compile and migrate the contracts using truffle
+# this script will compile and migrate not only this project contracts, but also all dependent contracts, in the correct order
 
 # remove build directory to do a clean build
 rm ./build/ -rf

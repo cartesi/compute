@@ -1,7 +1,3 @@
-# Arbitration DLib is the combination of the on-chain protocol and off-chain
-# protocol that work together to resolve any disputes that might occur during the
-# execution of a Cartesi DApp.
-
 # Copyright (C) 2019 Cartesi Pte. Ltd.
 
 # This program is free software: you can redistribute it and/or modify it under
