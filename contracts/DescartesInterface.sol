@@ -57,6 +57,15 @@ contract DescartesInterface is Instantiator {
         address provider;
         DriveType driveType;
     }
+    
+    struct TestDrive {
+        bool ready;
+        bytes32 driveHash;
+        uint64 position;
+        uint64 log2Size;
+        bytes32 bytesValue32;
+        address provider;
+    }
 
     function instantiate(
         uint256 _finalTime,
@@ -68,6 +77,6 @@ contract DescartesInterface is Instantiator {
         address _liAddress,
         address _vgAddress,
         address _machineAddress,
-        Drive[] memory _drives ) public returns (uint256);
+	Drive[] memory _drive) public returns (uint256);
 }
 
