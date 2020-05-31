@@ -337,6 +337,9 @@ contract Descartes is Decorated, DescartesInterface {
         if (currentState == State.WaitingProviders) {
             return "WaitingProviders";
         }
+        if (currentState == State.ClaimerMissedDeadline) {
+            return "ClaimerMissedDeadline";
+        }
         if (currentState == State.ProviderMissedDeadline) {
             return "ProviderMissedDeadline";
         }
@@ -487,6 +490,8 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = State.ClaimerMissedDeadline;
             return;
         }
+	
+	revert("Cannot abort current state");
     }
 
     /// @notice Convert bytes32 into bytes8[] and calculate the hashes of them 

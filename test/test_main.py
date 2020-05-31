@@ -67,7 +67,4 @@ class BaseTest:
         with open('../build/contracts/Descartes.json') as json_file:
             descartes_data = json.load(json_file)
             self.descartes = w3.eth.contract(address=descartes_data['networks'][networkId]['address'], abi=descartes_data['abi'])
-        #with open('../build/contracts/VGInstantiator.json') as json_file:
-            #vg_data = json.load(json_file)
-            #self.vg = w3.eth.contract(address=vg_data['networks'][networkId]['address'], abi=vg_data['abi'])
 

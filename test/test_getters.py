@@ -86,3 +86,18 @@ def test_getters():
 
     error_msg = "drive should be ready"
     assert ret[4][0][0] == True, error_msg
+
+    timeout = 341
+    
+    headers = {'content-type': 'application/json'}
+    payload = {"method": "evm_increaseTime", "params": [timeout], "jsonrpc": "2.0", "id": 0}
+    response = requests.post(base_test.endpoint, data=json.dumps(payload), headers=headers).json()
+
+    base_test.descartes.functions.abortByDeadline(index).transact({'from': claimer})
+    
+    # (ret_hashes, ret_final_time, ret_time_of_last_move, ret_state, ret_drives)
+    ret = base_test.descartes.functions.getState(index, claimer).call({'from': claimer})
+    
+    error_msg = "state should be ClaimerMissedDeadline"
+    expected_state = "ClaimerMissedDeadline"
+    assert ret[3][:len(expected_state)] == bytes(expected_state, 'utf-8'), error_msg
