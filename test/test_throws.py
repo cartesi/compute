@@ -113,3 +113,20 @@ def test_throws():
         assert error_dict['message'][50:] == "State should be WaitingConfirmation", error_msg
     else:
         raise Exception(error_msg)
+
+    timeout = 341
+    
+    headers = {'content-type': 'application/json'}
+    payload = {"method": "evm_increaseTime", "params": [timeout], "jsonrpc": "2.0", "id": 0}
+    response = requests.post(base_test.endpoint, data=json.dumps(payload), headers=headers).json()
+
+    base_test.descartes.functions.abortByDeadline(index).transact({'from': claimer})
+    
+    error_msg = "abortByDeadline Transaction should fail, currentState is not allowed"
+    try:
+        base_test.descartes.functions.abortByDeadline(index).transact({'from': claimer})
+    except ValueError as e:
+        error_dict = ast.literal_eval(str(e))
+        assert error_dict['message'][50:] == "Cannot abort current state", error_msg
+    else:
+        raise Exception(error_msg)

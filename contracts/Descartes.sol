@@ -185,7 +185,7 @@ contract Descartes is Decorated, DescartesInterface {
         i.timeOfLastMove = now;
         i.currentState = currentState;
 
-    	emit DescartesCreated(
+        emit DescartesCreated(
             currentIndex
         );
         active[currentIndex] = true;
@@ -490,11 +490,11 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = State.ClaimerMissedDeadline;
             return;
         }
-	
-	revert("Cannot abort current state");
+
+        revert("Cannot abort current state");
     }
 
-    /// @notice Convert bytes32 into bytes8[] and calculate the hashes of them 
+    /// @notice Convert bytes32 into bytes8[] and calculate the hashes of them
     function getWordHashesFromBytes32(bytes32 _value) private pure returns(bytes32[] memory) {
         bytes32[] memory data = new bytes32[](4);
         for (uint256 i = 0; i < 4; i++) {
