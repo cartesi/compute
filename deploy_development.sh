@@ -6,5 +6,6 @@
 rm ./build/ -rf
 cd node_modules/@cartesi/util && truffle migrate --network development && cd ../../../
 cd node_modules/@cartesi/arbitration && truffle migrate --network development && cd ../../../
+cd node_modules/@cartesi/machine-solidity-step && truffle migrate --network development && cd ../../../
 cd node_modules/@cartesi/logger && truffle migrate --network development && cd ../../../
 truffle migrate --network development
