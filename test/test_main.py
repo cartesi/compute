@@ -44,9 +44,8 @@ class DriveType(Enum):
 
 class Drive:
     def create_drive_tuple(position, drive_log2_size, value, provider, drive_type):
-        ready = False
         drive_hash = bytes(32)
-        return (ready, drive_hash, position, drive_log2_size, value, provider, drive_type)
+        return (drive_hash, position, drive_log2_size, value, provider, drive_type)
 
 class BaseTest:
 

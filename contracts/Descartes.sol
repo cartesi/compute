@@ -51,6 +51,7 @@ contract Descartes is Decorated, DescartesInterface {
         VGInterface vg;
         State currentState;
         uint256[] pendingDrives; // indices of the pending drives
+        mapping(uint256 => bool) driveReady; // ready flag of the drives
         Drive[] drives;
     }
 
@@ -126,7 +127,7 @@ contract Descartes is Decorated, DescartesInterface {
         address _liAddress,
         address _vgAddress,
         address _machineAddress,
-        Drive[] memory _drives ) public
+        Drive[] memory _drives) public
         onlyBy(owner) returns (uint256)
     {
         DescartesCtx storage i = instance[currentIndex];
@@ -141,28 +142,27 @@ contract Descartes is Decorated, DescartesInterface {
             DriveType driveType = drive.driveType;
 
             if (driveType == DriveType.DirectWithValue) {
-                drive.ready = true;
+                i.driveReady[j] = true;
                 drive.log2Size = 5;
                 bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
                 drive.driveHash = Merkle.calculateRootFromPowerOfTwo(data);
             } else if (driveType == DriveType.LoggerWithHash) {
                 if (li.isLogAvailable(drive.bytesValue32, drive.log2Size)) {
-                    drive.ready = true;
+                    i.driveReady[j] = true;
                     drive.driveHash = drive.bytesValue32;
                 } else {
-                    drive.ready = false;
+                    i.driveReady[j] = false;
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
             } else if (drive.driveType == DriveType.DirectWithProvider || drive.driveType == DriveType.LoggerWithProvider) {
-                drive.ready = false;
+                i.driveReady[j] = false;
                 currentState = State.WaitingProviders;
                 i.pendingDrives.push(j);
             } else {
                 revert("Unknown Drive Type");
             }
             i.drives.push(Drive(
-                drive.ready,
                 drive.driveHash,
                 drive.position,
                 drive.log2Size,
@@ -298,33 +298,45 @@ contract Descartes is Decorated, DescartesInterface {
     function getState(uint256 _index, address _user) public view
         onlyInstantiated(_index)
         returns (
-            bytes32[2] memory,
-            uint256,
-            uint256,
-            bytes32,
+            uint256[2] memory,
+            address[2] memory,
+            bytes32[3] memory,
             Drive[] memory
         )
     {
-        bytes32[2] memory machineHashes;
-        machineHashes[0] = instance[_index].initialHash;
-        machineHashes[1] = instance[_index].claimedFinalHash;
+        uint256[2] memory uintValues = [
+            instance[_index].finalTime,
+            instance[_index].timeOfLastMove + getMaxStateDuration(
+                _index,
+                40, // time to start machine
+                1, // vg is not instantiated, so it doesnt matter
+                500) // pico seconds to run instruction
+        ];
+
+        address[2] memory addressValues = [
+            instance[_index].challenger,
+            instance[_index].claimer
+        ];
+        bytes32[3] memory bytesValues = [
+            instance[_index].initialHash,
+            instance[_index].claimedFinalHash,
+            getCurrentState(_index, _user)
+        ];
 
         if (instance[_index].currentState == State.WaitingProviders ||
             instance[_index].currentState == State.ProviderMissedDeadline) {
             Drive[] memory drives = new Drive[](1);
             drives[0] = instance[_index].drives[instance[_index].pendingDrivesPointer];
             return (
-                machineHashes,
-                instance[_index].finalTime,
-                instance[_index].timeOfLastMove,
-                getCurrentState(_index, _user),
+                uintValues,
+                addressValues,
+                bytesValues,
                 drives);
         } else {
             return (
-                machineHashes,
-                instance[_index].finalTime,
-                instance[_index].timeOfLastMove,
-                getCurrentState(_index, _user),
+                uintValues,
+                addressValues,
+                bytesValues,
                 instance[_index].drives);
         }
     }
@@ -397,7 +409,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         drive.log2Size = 5;
         drive.driveHash = driveHash;
-        drive.ready = true;
+        i.driveReady[driveIndex] = true;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
 
@@ -432,7 +444,7 @@ contract Descartes is Decorated, DescartesInterface {
             require(i.li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
 
             drive.driveHash = drive.bytesValue32;
-            drive.ready = true;
+            i.driveReady[driveIndex] = true;
             i.pendingDrivesPointer++;
             i.timeOfLastMove = now;
 
@@ -471,12 +483,9 @@ contract Descartes is Decorated, DescartesInterface {
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
-            i.currentState,
-            i.vg,
-            i.roundDuration,
+            _index,
             40, // time to start machine
             1, // vg is not instantiated, so it doesnt matter
-            i.finalTime,
             500) // pico seconds to run instruction
         );
 
@@ -505,60 +514,60 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Get the worst case scenario duration for a specific state
-    /// @param _roundDuration security parameter, the max time an agent
-    //          has to react and submit one simple transaction
     /// @param _timeToStartMachine time to build the machine for the first time
     /// @param _partitionSize size of partition, how many instructions the
     //          will run to reach the necessary hash
-    /// @param _maxCycle is the maximum amount of steps a machine can perform
-    //          before being forced into becoming halted
     /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction
     function getMaxStateDuration(
-        State _state,
-        VGInterface vg,
-        uint256 _roundDuration,
+        uint256 _index,
         uint256 _timeToStartMachine,
         uint256 _partitionSize,
-        uint256 _maxCycle,
         uint256 _picoSecondsToRunInsn
     ) private view returns (uint256)
     {
-        if (_state == State.WaitingProviders) {
+        if (instance[_index].currentState == State.WaitingProviders) {
             // time to upload to logger + assemble pristine machine with drive
             uint256 maxLoggerUploadTime = 40 * 60;
-            return _timeToStartMachine + maxLoggerUploadTime + _roundDuration;
+            return _timeToStartMachine +
+                maxLoggerUploadTime +
+                instance[_index].roundDuration;
         }
 
-        if (_state == State.WaitingClaim) {
+        if (instance[_index].currentState == State.WaitingClaim) {
             // time to run entire machine + time to react
-            return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
+            return _timeToStartMachine +
+                ((instance[_index].finalTime * _picoSecondsToRunInsn) / 1e12) +
+                instance[_index].roundDuration;
         }
 
-        if (_state == State.WaitingConfirmation) {
+        if (instance[_index].currentState == State.WaitingConfirmation) {
             // time to run entire machine + time to react
-            return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;
+            return _timeToStartMachine +
+                ((instance[_index].finalTime * _picoSecondsToRunInsn) / 1e12) +
+                instance[_index].roundDuration;
         }
 
-        if (_state == State.WaitingChallenge) {
+        if (instance[_index].currentState == State.WaitingChallenge) {
             // time to run a verification game + time to react
-            return vg.getMaxInstanceDuration(_roundDuration,
+            return instance[_index].vg.getMaxInstanceDuration(
+                instance[_index].roundDuration,
                 _timeToStartMachine,
                 _partitionSize,
-                _maxCycle,
-                _picoSecondsToRunInsn) + _roundDuration;
+                instance[_index].finalTime,
+                _picoSecondsToRunInsn) + instance[_index].roundDuration;
         }
 
-        if (_state == State.ClaimerWon ||
-            _state == State.ChallengerWon ||
-            _state == State.ClaimerMissedDeadline ||
-            _state == State.ConsensusResult) {
+        if (instance[_index].currentState == State.ClaimerWon ||
+            instance[_index].currentState == State.ChallengerWon ||
+            instance[_index].currentState == State.ClaimerMissedDeadline ||
+            instance[_index].currentState == State.ConsensusResult) {
             return 0; // final state
         }
     }
 
     /// @notice several require statements for a drive
     modifier requirementsForClaimDrive(uint256 _index) {
-        DescartesCtx memory i = instance[_index];
+        DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingProviders, "The state is not WaitingProviders");
         require(i.pendingDrivesPointer < i.pendingDrives.length, "No available pending drives");
 
@@ -566,7 +575,7 @@ contract Descartes is Decorated, DescartesInterface {
         require(driveIndex < i.drives.length, "Invalid drive index");
 
         Drive memory drive = i.drives[driveIndex];
-        require(drive.ready == false, "The drive shouldn't be ready");
+        require(i.driveReady[driveIndex] == false, "The drive shouldn't be ready");
         require(drive.provider == msg.sender, "The sender is not provider");
 
         _;
