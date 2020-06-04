@@ -1,0 +1,27 @@
+concerns:
+  - abi: "../node_modules/@cartesi/arbitration/build/contracts/PartitionInstantiator.json"
+    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+  - abi: "../node_modules/@cartesi/arbitration/build/contracts/MMInstantiator.json"
+    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+  - abi: "../node_modules/@cartesi/arbitration/build/contracts/VGInstantiator.json"
+    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+main_concern:
+  abi: "../build/contracts/Descartes.json"
+  user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+confirmations: 12
+max_delay: 500
+query_port: 123
+services:
+  - name: emulator
+    transport:
+      address: 123
+      port: 123
+  - name: logger
+    transport:
+      address: 123
+      port: 123
+testing: true
+url: http://localhost:8545
+warn_delay: 30
+polling_interval: 15
+web3_timeout: 10

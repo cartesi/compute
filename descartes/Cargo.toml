@@ -1,0 +1,25 @@
+[package]
+description = "Cartesi Descartes SDK"
+homepage = "https://cartesi.io"
+name = "descartes"
+version = "0.2.0"
+authors = ["Cartesi Team"]
+
+[dependencies]
+log = "0.4"
+env_logger = "0.6.0"
+error = { path = "../arbitration-dlib/dispatcher/error" }
+transaction = { path = "../arbitration-dlib/dispatcher/transaction" }
+configuration = { path = "../arbitration-dlib/dispatcher/configuration" }
+utils = { path = "../arbitration-dlib/dispatcher/utils" }
+ethereum-types = "0.4"
+ethabi = "6.1.0"
+serde_json = "1.0"
+serde = "1.0.0"
+serde_derive = "1.0.0"
+state = { path = "../arbitration-dlib/dispatcher/state" }
+dispatcher = { path = "../arbitration-dlib/dispatcher/dispatcher" }
+compute = { path = "../arbitration-dlib/compute" }
+grpc = { git = "https://github.com/cartesi/grpc-rust", branch = "make_marshall_public" }
+protobuf = "=2.8.1"
+bytes = "0.4.12"
