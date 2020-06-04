@@ -295,7 +295,7 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Get state of the instance concerning given user.
-    function getState(uint256 _index, address _user) public view
+    function getState(uint256 _index, address) public view
         onlyInstantiated(_index)
         returns (
             uint256[2] memory,
@@ -307,10 +307,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256[2] memory uintValues = [
             instance[_index].finalTime,
             instance[_index].timeOfLastMove + getMaxStateDuration(
-                _index,
-                40, // time to start machine
-                1, // vg is not instantiated, so it doesnt matter
-                500) // pico seconds to run instruction
+                _index)
         ];
 
         address[2] memory addressValues = [
@@ -320,7 +317,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32[3] memory bytesValues = [
             instance[_index].initialHash,
             instance[_index].claimedFinalHash,
-            getCurrentState(_index, _user)
+            getCurrentState(_index)
         ];
 
         if (instance[_index].currentState == State.WaitingProviders ||
@@ -341,7 +338,7 @@ contract Descartes is Decorated, DescartesInterface {
         }
     }
 
-    function getCurrentState(uint256 _index, address) public view
+    function getCurrentState(uint256 _index) public view
         onlyInstantiated(_index)
         returns (bytes32)
     {
@@ -483,10 +480,7 @@ contract Descartes is Decorated, DescartesInterface {
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
-            _index,
-            40, // time to start machine
-            1, // vg is not instantiated, so it doesnt matter
-            500) // pico seconds to run instruction
+            _index)
         );
 
         require(afterDeadline, "Deadline is not over for this specific state");
@@ -514,36 +508,32 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Get the worst case scenario duration for a specific state
-    /// @param _timeToStartMachine time to build the machine for the first time
-    /// @param _partitionSize size of partition, how many instructions the
-    //          will run to reach the necessary hash
-    /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction
     function getMaxStateDuration(
-        uint256 _index,
-        uint256 _timeToStartMachine,
-        uint256 _partitionSize,
-        uint256 _picoSecondsToRunInsn
+        uint256 _index
     ) private view returns (uint256)
     {
+        uint256 partitionSize = 1;
+        uint256 picoSecondsToRunInsn = 500; // 500 pico seconds to run a instruction
+        uint256 timeToStartMachine = 40; // 40 seconds to start the machine for the first time
         if (instance[_index].currentState == State.WaitingProviders) {
             // time to upload to logger + assemble pristine machine with drive
             uint256 maxLoggerUploadTime = 40 * 60;
-            return _timeToStartMachine +
+            return timeToStartMachine +
                 maxLoggerUploadTime +
                 instance[_index].roundDuration;
         }
 
         if (instance[_index].currentState == State.WaitingClaim) {
             // time to run entire machine + time to react
-            return _timeToStartMachine +
-                ((instance[_index].finalTime * _picoSecondsToRunInsn) / 1e12) +
+            return timeToStartMachine +
+                ((instance[_index].finalTime * picoSecondsToRunInsn) / 1e12) +
                 instance[_index].roundDuration;
         }
 
         if (instance[_index].currentState == State.WaitingConfirmation) {
             // time to run entire machine + time to react
-            return _timeToStartMachine +
-                ((instance[_index].finalTime * _picoSecondsToRunInsn) / 1e12) +
+            return timeToStartMachine +
+                ((instance[_index].finalTime * picoSecondsToRunInsn) / 1e12) +
                 instance[_index].roundDuration;
         }
 
@@ -551,10 +541,10 @@ contract Descartes is Decorated, DescartesInterface {
             // time to run a verification game + time to react
             return instance[_index].vg.getMaxInstanceDuration(
                 instance[_index].roundDuration,
-                _timeToStartMachine,
-                _partitionSize,
+                timeToStartMachine,
+                partitionSize,
                 instance[_index].finalTime,
-                _picoSecondsToRunInsn) + instance[_index].roundDuration;
+                picoSecondsToRunInsn) + instance[_index].roundDuration;
         }
 
         if (instance[_index].currentState == State.ClaimerWon ||
