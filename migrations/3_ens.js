@@ -3,7 +3,6 @@ const contract = require("@truffle/contract");
 const PartitionInstantiator = contract(require("@cartesi/arbitration/build/contracts/PartitionInstantiator.json"));
 const MMInstantiator = contract(require("@cartesi/arbitration/build/contracts/MMInstantiator.json"));
 const VGInstantiator = contract(require("@cartesi/arbitration/build/contracts/VGInstantiator.json"));
-const ComputeInstantiator = contract(require("@cartesi/arbitration/build/contracts/ComputeInstantiator.json"));
 
 const Descartes = artifacts.require("Descartes");
 
@@ -14,7 +13,6 @@ module.exports = function (deployer, network, accounts) {
             PartitionInstantiator,
             MMInstantiator,
             VGInstantiator,
-            ComputeInstantiator,
         ];
         
         // set network_id explicitily so address can be resolved
@@ -22,7 +20,7 @@ module.exports = function (deployer, network, accounts) {
 
         if (deployer.ens) {
             if (network == 'rinkeby') {
-                const domain = 'creepts.cartesi.test';
+                const domain = 'descartes.cartesi.test';
                 
                 for (const contract of contracts) {
                     const fqdn = `${contract.contractName}.${domain}`;
