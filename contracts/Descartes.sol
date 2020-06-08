@@ -299,7 +299,7 @@ contract Descartes is Decorated, DescartesInterface {
         onlyInstantiated(_index)
         returns (
             uint256[2] memory,
-            address[2] memory,
+            address[] memory,
             bytes32[3] memory,
             Drive[] memory
         )
@@ -310,10 +310,10 @@ contract Descartes is Decorated, DescartesInterface {
                 _index)
         ];
 
-        address[2] memory addressValues = [
-            instance[_index].challenger,
-            instance[_index].claimer
-        ];
+        address[] memory addressValues = new address[](2);
+        addressValues[0] = instance[_index].challenger;
+        addressValues[1] = instance[_index].claimer;
+
         bytes32[3] memory bytesValues = [
             instance[_index].initialHash,
             instance[_index].claimedFinalHash,

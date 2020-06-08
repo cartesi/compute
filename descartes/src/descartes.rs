@@ -23,7 +23,7 @@ extern crate protobuf;
 
 use super::dispatcher::{Archive, Reaction};
 use super::dispatcher::DApp;
-use super::dispatcher::{AddressField, U256Array2, Bytes32Array3, AddressArray};
+use super::dispatcher::{U256Array2, Bytes32Array3, AddressArray};
 use super::error::*;
 use super::ethabi::Token;
 use super::ethereum_types::{H256, U256, Address};
@@ -35,25 +35,51 @@ use super::Role;
 pub struct Descartes();
 
 #[derive(Serialize, Deserialize)]
-pub struct DriveParsed(
+pub enum TupleType {
+    #[serde(rename = "(bytes32,uint64,uint64,bytes32,address,uint8)[]")]
+    DriveArrayType,
+}
 
+#[derive(Serialize, Deserialize)]
+pub struct DriveParsed(
+    H256,   // driveHash
+    U256,   // position
+    U256,   // log2Size
+    H256,   // bytes32Value
+    Address,// provider
+    U256,   // driveType
 );
 
-#[derive(Serialize, Debug)]
-struct Drive {
-    backing: String,
-    shared: bool,
-    label: String,
-    start: u64,
-    length: u64,
-}
 
 #[derive(Serialize, Deserialize)]
 pub struct DriveArray {
     pub name: String,
     #[serde(rename = "type")]
-    pub ty: AddressField,
-    pub value: Vec<Address>,
+    pub ty: TupleType,
+    pub value: Vec<DriveParsed>,
+}
+
+#[derive(Serialize, Debug)]
+pub struct Drive {
+    drive_hash: H256,
+    position: U256,
+    log2_size: U256,
+    value: H256,
+    provider: Address,
+    drive_type: U256,
+}
+
+impl From<&DriveParsed> for Drive {
+    fn from(parsed: &DriveParsed) -> Drive {
+        Drive {
+            drive_hash: parsed.0,
+            position: parsed.1,
+            log2_size: parsed.2,
+            value: parsed.3,
+            provider: parsed.4,
+            drive_type: parsed.5,
+        }
+    }
 }
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // these two structs and the From trait below shuld be
@@ -64,6 +90,7 @@ pub struct DescartesCtxParsed(
     U256Array2, // finalTime, deadline
     AddressArray, // challenger, claimer
     Bytes32Array3, // initialHash, claimedFinalHash, currentState
+    DriveArray,
 );
 
 #[derive(Serialize, Debug)]
@@ -75,6 +102,7 @@ pub struct DescartesCtx {
     pub deadline: U256,
     pub final_time: U256,
     pub current_state: String,
+    pub drives: Vec<Drive>,
 }
 
 impl From<DescartesCtxParsed> for DescartesCtx {
@@ -87,6 +115,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
             initial_hash: parsed.2.value[0],
             claimed_final_hash: parsed.2.value[1],
             current_state: parsed.2.value[2].to_string(),
+            drives: parsed.3.value.iter().map(|d| d.into()).collect(),
         }
     }
 }
