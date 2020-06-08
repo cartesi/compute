@@ -1,16 +1,16 @@
 concerns:
   - abi: "../node_modules/@cartesi/arbitration/build/contracts/PartitionInstantiator.json"
-    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+    user_address: <USER_ADDRESS>
   - abi: "../node_modules/@cartesi/arbitration/build/contracts/MMInstantiator.json"
-    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+    user_address: <USER_ADDRESS>
   - abi: "../node_modules/@cartesi/arbitration/build/contracts/VGInstantiator.json"
-    user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+    user_address: <USER_ADDRESS>
 main_concern:
   abi: "../build/contracts/Descartes.json"
-  user_address: 0xA2f18C71d48D0504D2a0DF71d758a342149bC54D
+  user_address: <USER_ADDRESS>
 confirmations: 12
 max_delay: 500
-query_port: 123
+query_port: 12345
 services:
   - name: emulator
     transport:

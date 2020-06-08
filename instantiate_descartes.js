@@ -70,7 +70,6 @@ module.exports = async (callback) => {
         const driveHash = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const directDriveValue = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const drive = [
-            false,
             driveHash,
             0,
             5,
