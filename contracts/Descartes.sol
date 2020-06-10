@@ -298,27 +298,25 @@ contract Descartes is Decorated, DescartesInterface {
     function getState(uint256 _index, address) public view
         onlyInstantiated(_index)
         returns (
-            uint256[2] memory,
+            uint256[] memory,
             address[] memory,
-            bytes32[3] memory,
+            bytes32[] memory,
             Drive[] memory
         )
     {
-        uint256[2] memory uintValues = [
-            instance[_index].finalTime,
-            instance[_index].timeOfLastMove + getMaxStateDuration(
-                _index)
-        ];
+        uint256[] memory uintValues = new uint256[](2);
+        uintValues[0] = instance[_index].finalTime;
+        uintValues[1] = instance[_index].timeOfLastMove + getMaxStateDuration(
+            _index);
 
         address[] memory addressValues = new address[](2);
         addressValues[0] = instance[_index].challenger;
         addressValues[1] = instance[_index].claimer;
 
-        bytes32[3] memory bytesValues = [
-            instance[_index].initialHash,
-            instance[_index].claimedFinalHash,
-            getCurrentState(_index)
-        ];
+        bytes32[] memory bytesValues = new bytes32[](3);
+        bytesValues[0] = instance[_index].initialHash;
+        bytesValues[1] = instance[_index].claimedFinalHash;
+        bytesValues[2] = getCurrentState(_index);
 
         if (instance[_index].currentState == State.WaitingProviders ||
             instance[_index].currentState == State.ProviderMissedDeadline) {
