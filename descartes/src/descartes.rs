@@ -123,7 +123,7 @@ impl From<&DriveParsed> for Drive {
 pub struct DescartesCtxParsed(
     U256Array, // finalTime, deadline
     AddressArray, // challenger, claimer
-    Bytes32Array, // initialHash, claimedFinalHash, currentState
+    Bytes32Array, // initialHash, claimedFinalHash, claimedOutput, currentState
     DriveArray,
 );
 
@@ -131,6 +131,7 @@ pub struct DescartesCtxParsed(
 pub struct DescartesCtx {
     pub initial_hash: H256,
     pub claimed_final_hash: H256,
+    pub claimed_output: H256,
     pub claimer: Address,
     pub challenger: Address,
     pub deadline: U256,
@@ -148,8 +149,9 @@ impl From<DescartesCtxParsed> for DescartesCtx {
             claimer: parsed.1.value[1],
             initial_hash: parsed.2.value[0],
             claimed_final_hash: parsed.2.value[1],
+            claimed_output: parsed.2.value[2],
             current_state: String::from_utf8(
-                    parsed.2.value[2]
+                    parsed.2.value[3]
                         .to_fixed_bytes()
                         .to_vec()
                         .iter()
@@ -249,6 +251,16 @@ impl DApp<()> for Descartes {
                 "WaitingClaim" => {
                     // TODO: collect drives and assemble machine
                     // TODO: submit result
+                    // let request = TransactionRequest {
+                    //     contract_name: None, // Name not needed, is concern
+                    //     concern: instance.concern.clone(),
+                    //     value: U256::from(0),
+                    //     function: "submitClaim".into(),
+                    //     data: vec![Token::Uint(instance.index)],
+                    //     gas: None,
+                    //     strategy: transaction::Strategy::Simplest,
+                    // };
+                    // return Ok(Reaction::Transaction(request));
                     return Ok(Reaction::Idle);
                 },
                 "WaitingChallenge" => {
@@ -309,11 +321,13 @@ impl DApp<()> for Descartes {
                 }
                 "WaitingConfirmation" => {
                     let machine_id = build_machine_id(instance.index, &instance.concern.user_address);
+                    // TODO: replay machine result
+                    let function = "confirm".to_string();
                     let request = TransactionRequest {
                         contract_name: None, // Name not needed, is concern
                         concern: instance.concern.clone(),
                         value: U256::from(0),
-                        function: "confirm".into(),
+                        function: function,
                         data: vec![Token::Uint(instance.index)],
                         gas: None,
                         strategy: transaction::Strategy::Simplest,

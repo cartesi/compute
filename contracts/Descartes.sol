@@ -44,6 +44,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32 templateHash; // pristine hash of machine
         bytes32 initialHash; // initial hash with all drives mounted
         bytes32 claimedFinalHash; // claimed final hash of the machine
+        bytes32 claimedOutput; // claimed final machine output
         address claimer; // responsible for claiming the machine output
         address challenger; // user can challenge claimer's output
         address machine; // machine which will run the challenge
@@ -281,6 +282,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         i.claimedFinalHash = _claimedFinalHash;
         i.currentState = State.WaitingConfirmation;
+        i.claimedOutput = _output;
 
         emit ClaimSubmitted(_index, _claimedFinalHash);
     }
@@ -313,10 +315,11 @@ contract Descartes is Decorated, DescartesInterface {
         addressValues[0] = instance[_index].challenger;
         addressValues[1] = instance[_index].claimer;
 
-        bytes32[] memory bytesValues = new bytes32[](3);
+        bytes32[] memory bytesValues = new bytes32[](4);
         bytesValues[0] = instance[_index].initialHash;
         bytesValues[1] = instance[_index].claimedFinalHash;
-        bytesValues[2] = getCurrentState(_index);
+        bytesValues[2] = instance[_index].claimedOutput;
+        bytesValues[3] = getCurrentState(_index);
 
         if (instance[_index].currentState == State.WaitingProviders ||
             instance[_index].currentState == State.ProviderMissedDeadline) {
