@@ -33,11 +33,18 @@ extern crate ethabi;
 extern crate ethereum_types;
 extern crate transaction;
 extern crate compute;
+extern crate configuration;
 
 pub use descartes::Descartes;
+
+use ethereum_types::{Address, U256};
 
 #[derive(Debug)]
 enum Role {
     Claimer,
     Challenger,
+}
+
+pub fn build_machine_id(descartes_index: U256, player_address: &Address) -> String {
+    return format!("{:x}:{}", player_address, descartes_index);
 }
