@@ -22,8 +22,8 @@ if [ -n "${DEPLOYMENT_SEMAPHORE}" ]; then
 fi
 
 echo "Waiting for services..."
-dockerize \
     # -wait tcp://${MACHINE_MANAGER_HOST}:${MACHINE_MANAGER_PORT} \
+dockerize \
     -wait tcp://${LOGGER_HOST}:${LOGGER_PORT} \
     -timeout ${ETHEREUM_TIMEOUT}
 
