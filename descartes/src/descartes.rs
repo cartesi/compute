@@ -44,26 +44,29 @@ pub enum DriveType {
     DirectWithProvider = 1,
     LoggerWithHash = 2,
     LoggerWithProvider = 3,
+    Unknown = 99,
 }
 
-impl DriveType {
-    fn from_u256(value: U256) -> DriveType {
+impl From<U256> for DriveType {
+    fn from(value: U256) -> DriveType {
         match value.as_u64() {
             0 => DriveType::DirectWithValue,
             1 => DriveType::DirectWithProvider,
             2 => DriveType::LoggerWithHash,
             3 => DriveType::LoggerWithProvider,
-            _ => panic!("Unknown value: {}", value),
+            _ => DriveType::Unknown,
         }
     }
-    
-    fn from_string(value: String) -> DriveType {
+}
+
+impl From<String> for DriveType {
+    fn from(value: String) -> DriveType {
         match value.as_ref() {
             "DirectWithValue" => DriveType::DirectWithValue,
             "DirectWithProvider" => DriveType::DirectWithProvider,
             "LoggerWithHash" => DriveType::LoggerWithHash,
             "LoggerWithProvider" => DriveType::LoggerWithProvider,
-            _ => panic!("Unknown value: {}", value),
+            _ => DriveType::Unknown,
         }
     }
 }
@@ -111,7 +114,7 @@ impl From<&DriveParsed> for Drive {
             log2_size: parsed.2,
             value: parsed.3,
             provider: parsed.4,
-            drive_type: DriveType::from_u256(parsed.5),
+            drive_type: parsed.5.into(),
         }
     }
 }
