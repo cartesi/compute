@@ -40,6 +40,10 @@ You can follow the output of a docker instance with:
 ```
 % docker logs -f [name of the instance]
 ```
+The instance could be retrieved by the command:
+```
+% docker ps --format {{.Names}}
+```
 
 This will run an environment connected to a private net (ganache or geth), with no descartes deployed.
 To deploy a new descartes you need to run the `instantiate_descartes.js` truffle script. To do this you need to have `truffle` installed, and run:
