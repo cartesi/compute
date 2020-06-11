@@ -34,6 +34,7 @@ To run execute:
 To shutdown:
 ```
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - down -v
+% rm deploy_done
 ```
 
 You can follow the output of a docker instance with:
@@ -41,8 +42,8 @@ You can follow the output of a docker instance with:
 % docker logs -f [name of the instance]
 ```
 
-This will run an environment connected to a private net (ganache or geth), with no tournaments deployed.
-To deploy a new tournament you need to run the `instantiate_descartes.js` truffle script. To do this you need to have `truffle` installed, and run:
+This will run an environment connected to a private net (ganache or geth), with no descartes deployed.
+To deploy a new descartes you need to run the `instantiate_descartes.js` truffle script. To do this you need to have `truffle` installed, and run:
 
 ```
 % truffle exec instantiate_descartes.js --network development

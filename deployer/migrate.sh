@@ -18,8 +18,5 @@ cd node_modules/@cartesi/logger && truffle migrate --network ${ETHEREUM_NETWORK}
 echo "Deploying descartes"
 truffle migrate --network ${ETHEREUM_NETWORK}
 
-echo "Instantiating descartes"
-truffle exec instantiate_descartes.js --network ${ETHEREUM_NETWORK}
-
 echo "Creating deploy_done file"
 touch deploy_done
