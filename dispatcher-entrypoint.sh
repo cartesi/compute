@@ -21,11 +21,11 @@ if [ -n "${DEPLOYMENT_SEMAPHORE}" ]; then
     dockerize -wait ${DEPLOYMENT_SEMAPHORE} -timeout ${ETHEREUM_TIMEOUT}
 fi
 
-echo "Waiting for services..."
-dockerize \
+# echo "Waiting for services..."
+# dockerize \
     # -wait tcp://${MACHINE_MANAGER_HOST}:${MACHINE_MANAGER_PORT} \
     # -wait tcp://${LOGGER_HOST}:${LOGGER_PORT} \
-    -timeout ${ETHEREUM_TIMEOUT}
+    # -timeout ${ETHEREUM_TIMEOUT}
 
 echo "Creating configuration file at /opt/cartesi/etc/descartes/config.yaml with account ${ACCOUNT_ADDRESS}"
 envsubst < /opt/cartesi/etc/descartes/config-template.yaml > /opt/cartesi/etc/descartes/config.yaml
