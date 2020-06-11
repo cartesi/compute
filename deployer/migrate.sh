@@ -19,7 +19,7 @@ echo "Deploying descartes"
 truffle migrate --network ${ETHEREUM_NETWORK}
 
 echo "Instantiating descartes"
-truffle exec /opt/cartesi/deployer/instantiate_descartes.js --network ${ETHEREUM_NETWORK}
+truffle exec instantiate_descartes.js --network ${ETHEREUM_NETWORK}
 
 echo "Creating deploy_done file"
 touch deploy_done

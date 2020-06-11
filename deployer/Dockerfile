@@ -23,7 +23,6 @@ RUN yarn add @truffle/contract@4.1.3
 WORKDIR $BASE/deployer
 COPY deployer/migrate.sh .
 COPY deployer/unlockAccount.js .
-COPY deployer/instantiate_descartes.js .
 
 ENV ETHEREUM_HOST "ganache"
 ENV ETHEREUM_PORT "8545"
