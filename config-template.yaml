@@ -1,0 +1,27 @@
+concerns:
+  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/PartitionInstantiator.json"
+    user_address: "${ACCOUNT_ADDRESS}"
+  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/MMInstantiator.json"
+    user_address: "${ACCOUNT_ADDRESS}"
+  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/VGInstantiator.json"
+    user_address: "${ACCOUNT_ADDRESS}"
+main_concern:
+  abi: "/opt/cartesi/share/blockchain/build/contracts/Descartes.json"
+  user_address: "${ACCOUNT_ADDRESS}"
+confirmations: 12
+max_delay: 500
+query_port: ${QUERY_PORT}
+services:
+  - name: emulator
+    transport:
+      address: ${MACHINE_MANAGER_HOST}
+      port: ${MACHINE_MANAGER_PORT}
+  - name: logger
+    transport:
+      address: ${LOGGER_HOST}
+      port: ${LOGGER_PORT}
+testing: true
+url: ${WEB3_PROVIDER_URI}
+warn_delay: 30
+polling_interval: 15
+web3_timeout: 10

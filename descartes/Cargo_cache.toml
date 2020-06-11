@@ -2,7 +2,7 @@
 description = "Cartesi Descartes SDK (Cache)"
 homepage = "https://cartesi.io"
 name = "descartes"
-version = "0.2.0"
+version = "0.1.0"
 authors = ["Cartesi Team"]
 
 [dependencies]
@@ -10,12 +10,12 @@ bytes = "0.4.12"
 protobuf = "=2.8.1"
 log = "0.4"
 env_logger = "0.6.0"
-ethereum-types = "0.4"
-ethabi = "6.1.0"
+ethereum-types = "0.9.0"
+ethabi = "12.0.0"
 serde_json = "1.0"
 serde = "1.0.0"
 serde_derive = "1.0.0"
 rust-crypto = "0.2.36"
 hex = "0.4.0"
-web3 = { git = "https://github.com/cartesi/rust-web3", branch = "v0.6.0-implement-chain-id" }
-ethcore = { git = "https://github.com/cartesi/parity-ethereum", branch = "stable-fixed" }
+web3 = "0.11.0"
+ethcore = { git = "https://github.com/openethereum/openethereum", tag = "v3.0.0" }
