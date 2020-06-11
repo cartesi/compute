@@ -1,4 +1,4 @@
-# Creepts
+# Descartes
 
 ## Getting Started
 
@@ -34,7 +34,6 @@ To run execute:
 To shutdown:
 ```
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - down -v
-% rm deploy_done
 ```
 
 You can follow the output of a docker instance with:
