@@ -12,10 +12,6 @@ confirmations: 12
 max_delay: 500
 query_port: ${QUERY_PORT}
 services:
-  - name: emulator
-    transport:
-      address: ${MACHINE_MANAGER_HOST}
-      port: ${MACHINE_MANAGER_PORT}
   - name: logger
     transport:
       address: ${LOGGER_HOST}
