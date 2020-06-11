@@ -60,6 +60,22 @@ services:
           - dispatcher
     ports:
       - "{{ 3001 + i }}:3001"
+
+  logger_{{ i }}:
+    image: cartesi/logger-server:0.2.2
+    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json" ]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - key_data_{{ i }}:/opt/cartesi/etc/keys
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/logger-server
+    environment:
+      WEB3_PROVIDER_URI: http://ganache:8545
+      DEPLOYMENT_SEMAPHORE: file:///opt/cartesi/share/blockchain/deploy_done
+    networks:
+      ethereum: {}
+      node_{{ i }}:
+        aliases:
+          - logger
 {% endfor %}
 
 volumes:
