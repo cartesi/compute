@@ -57,7 +57,7 @@ module.exports = async (callback) => {
         });
 
         const roundDuration = program.roundDuration;
-        const outputPosition = 10000;
+        const outputPosition = 0x2700;
         const finalTime = 1e13;
 
         const driveType = {
