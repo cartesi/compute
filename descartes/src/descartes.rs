@@ -528,7 +528,7 @@ fn react_by_machine_output(
                     Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
                     Token::Array(output_siblings),
                 ],
-                gas: Some(U256::from(628318)),
+                gas: None,
                 strategy: transaction::Strategy::Simplest,
             };
             return Ok(Reaction::Transaction(request));
