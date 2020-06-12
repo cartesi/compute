@@ -38,13 +38,25 @@ use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Descartes();
 
-#[derive(Serialize, Debug)]
+#[derive(Serialize, Debug, Clone)]
 pub enum DriveType {
     DirectWithValue = 0,
     DirectWithProvider = 1,
     LoggerWithHash = 2,
     LoggerWithProvider = 3,
     Unknown = 99,
+}
+
+impl From<DriveType> for U256 {
+    fn from(value: DriveType) -> U256 {
+        match value {
+            DriveType::DirectWithValue => U256::from(0),
+            DriveType::DirectWithProvider => U256::from(1),
+            DriveType::LoggerWithHash => U256::from(2),
+            DriveType::LoggerWithProvider => U256::from(3),
+            DriveType::Unknown => U256::from(99),
+        }
+    }
 }
 
 impl From<U256> for DriveType {
@@ -87,7 +99,6 @@ pub struct DriveParsed(
     U256,   // driveType
 );
 
-
 #[derive(Serialize, Deserialize)]
 pub struct DriveArray {
     pub name: String,
@@ -116,6 +127,19 @@ impl From<&DriveParsed> for Drive {
             provider: parsed.4,
             drive_type: parsed.5.into(),
         }
+    }
+}
+
+impl From<&Drive> for Token {
+    fn from(drive: &Drive) -> Token {
+        Token::Tuple(vec![
+            Token::FixedBytes(drive.drive_hash.to_fixed_bytes().to_vec()),
+            Token::Uint(drive.position),
+            Token::Uint(drive.log2_size),
+            Token::FixedBytes(drive.value.to_fixed_bytes().to_vec()),
+            Token::Address(drive.provider),
+            Token::Uint(drive.drive_type.clone().into()),
+        ])
     }
 }
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -245,26 +269,20 @@ impl DApp<()> for Descartes {
                         ctx.deadline.as_u64(),
                     );
                 }
-            }
+            },
             _ => {}
         };
 
         match role {
             Role::Claimer => match ctx.current_state.as_ref() {
                 "WaitingClaim" => {
-                    // TODO: collect drives and assemble machine
-                    // TODO: submit result
-                    // let request = TransactionRequest {
-                    //     contract_name: None, // Name not needed, is concern
-                    //     concern: instance.concern.clone(),
-                    //     value: U256::from(0),
-                    //     function: "submitClaim".into(),
-                    //     data: vec![Token::Uint(instance.index)],
-                    //     gas: None,
-                    //     strategy: transaction::Strategy::Simplest,
-                    // };
-                    // return Ok(Reaction::Transaction(request));
-                    return Ok(Reaction::Idle);
+                    return react_by_machine_output(
+                        &instance.concern,
+                        instance.index,
+                        &role,
+                        ctx.drives,
+                        ctx.claimed_final_hash
+                    );
                 },
                 "WaitingChallenge" => {
                     // we inspect the verification contract
@@ -323,19 +341,12 @@ impl DApp<()> for Descartes {
                     );
                 }
                 "WaitingConfirmation" => {
-                    let machine_id = build_machine_id(instance.index, &instance.concern.user_address);
-                    // TODO: replay machine result
-                    let function = "confirm".to_string();
-                    let request = TransactionRequest {
-                        contract_name: None, // Name not needed, is concern
-                        concern: instance.concern.clone(),
-                        value: U256::from(0),
-                        function: function,
-                        data: vec![Token::Uint(instance.index)],
-                        gas: None,
-                        strategy: transaction::Strategy::Simplest,
-                    };
-                    return Ok(Reaction::Transaction(request));
+                    return react_by_machine_output(
+                        &instance.concern,
+                        instance.index,
+                        &role,
+                        ctx.drives,
+                        ctx.claimed_final_hash);
                 },
                 "WaitingChallenge" => {
                     // we inspect the verification contract
@@ -386,6 +397,7 @@ impl DApp<()> for Descartes {
                 }
             },
             _ => {
+                error!("Unknown role {:?}", role);
                 return Ok(Reaction::Idle);
             }
         };
@@ -431,7 +443,7 @@ impl DApp<()> for Descartes {
     }
 }
 
-pub fn abort_by_deadline_or_idle(
+fn abort_by_deadline_or_idle(
     concern: &Concern,
     index: U256,
     deadline: u64,
@@ -457,5 +469,90 @@ pub fn abort_by_deadline_or_idle(
     } else {
         // if not, then wait
         return Ok(Reaction::Idle);
+    }
+}
+
+fn react_by_machine_output(
+    concern: &Concern,
+    index: U256,
+    role: &Role,
+    drives: Vec<Drive>,
+    claimed_final_hash: H256,
+) -> Result<Reaction> {
+    let machine_id = build_machine_id(index, &concern.user_address);
+    // TODO: create machine with grpc load
+    let mut drives_siblings = vec![];
+    let mut output_siblings = vec![];
+    let mut calculated_final_hash = H256::zero();
+    let mut calculated_output = H256::zero();
+    let token_zero_bytes = Token::FixedBytes(H256::zero().to_fixed_bytes().to_vec());
+    
+    for drive in &drives {
+        match drive.drive_type {
+            DriveType::DirectWithValue | DriveType::DirectWithValue => {
+                // TODO: write machine with bytes32 value
+            },
+            DriveType::LoggerWithHash | DriveType::LoggerWithProvider => {
+                // TODO: download drive from logger and mount to machine
+            },
+            _ => {
+                error!("Unknown DriveType {:?}", drive.drive_type);
+                return Ok(Reaction::Idle);
+            }
+        }
+        if let Role::Claimer = role {
+            // TODO: get drive siblings
+            drives_siblings.push(Token::Array(vec![token_zero_bytes.clone(), token_zero_bytes.clone()]));
+        }
+    }
+
+    // TODO: run the machine to get output
+    if let Role::Claimer = role {
+        // TODO: update output siblings and calculated_output
+        output_siblings = vec![token_zero_bytes.clone(), token_zero_bytes.clone()];
+    }
+
+    match role {
+        Role::Claimer => {
+            info!("Claiming output (index: {})", index);
+            let request = TransactionRequest {
+                contract_name: None, // Name not needed, is concern
+                concern: concern.clone(),
+                value: U256::from(0),
+                function: "submitClaim".into(),
+                data: vec![
+                    Token::Uint(index),
+                    Token::FixedBytes(calculated_final_hash.to_fixed_bytes().to_vec()),
+                    Token::Array(drives.iter().map(|d:&Drive| -> Token {d.into()}).collect()),
+                    Token::Array(drives_siblings),
+                    Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
+                    Token::Array(output_siblings),
+                ],
+                gas: Some(U256::from(628318)),
+                strategy: transaction::Strategy::Simplest,
+            };
+            return Ok(Reaction::Transaction(request));
+        },
+        Role::Challenger => {
+            let mut function = String::from("challenge");
+            if calculated_final_hash == claimed_final_hash {
+                function = "confirm".to_string();
+            }
+
+            let request = TransactionRequest {
+                contract_name: None, // Name not needed, is concern
+                concern: concern.clone(),
+                value: U256::from(0),
+                function: function,
+                data: vec![Token::Uint(index)],
+                gas: None,
+                strategy: transaction::Strategy::Simplest,
+            };
+            return Ok(Reaction::Transaction(request));
+        },
+        _ => {
+            error!("Unknown role {:?}", role);
+            return Ok(Reaction::Idle);
+        }
     }
 }
