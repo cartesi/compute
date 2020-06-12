@@ -481,11 +481,11 @@ fn react_by_machine_output(
 ) -> Result<Reaction> {
     let machine_id = build_machine_id(index, &concern.user_address);
     // TODO: create machine with grpc load
+    let token_zero_bytes = Token::FixedBytes(H256::zero().to_fixed_bytes().to_vec());
     let mut drives_siblings = vec![];
-    let mut output_siblings = vec![];
+    let mut output_siblings = vec![token_zero_bytes.clone(); 59];
     let mut calculated_final_hash = H256::zero();
     let mut calculated_output = H256::zero();
-    let token_zero_bytes = Token::FixedBytes(H256::zero().to_fixed_bytes().to_vec());
     
     for drive in &drives {
         match drive.drive_type {
@@ -509,7 +509,6 @@ fn react_by_machine_output(
     // TODO: run the machine to get output
     if let Role::Claimer = role {
         // TODO: update output siblings and calculated_output
-        output_siblings = vec![token_zero_bytes.clone(), token_zero_bytes.clone()];
     }
 
     match role {
@@ -528,7 +527,7 @@ fn react_by_machine_output(
                     Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
                     Token::Array(output_siblings),
                 ],
-                gas: None,
+                gas: Some(U256::from(628318)),
                 strategy: transaction::Strategy::Simplest,
             };
             return Ok(Reaction::Transaction(request));
