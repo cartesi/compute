@@ -356,7 +356,7 @@ contract Descartes is Decorated, DescartesInterface {
         if (currentState == State.WaitingClaim) {
             return "WaitingClaim";
         }
-        if (currentState == State.WaitingClaim) {
+        if (currentState == State.WaitingConfirmation) {
             return "WaitingConfirmation";
         }
         if (currentState == State.WaitingChallenge) {
