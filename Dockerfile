@@ -19,7 +19,7 @@ RUN cargo build -j $(nproc) --release
 WORKDIR $BASE
 
 COPY ./arbitration-dlib/ $BASE/arbitration-dlib
-# COPY ./logger-dlib/ $BASE/logger-dlib
+COPY ./logger-dlib/ $BASE/logger-dlib
 
 WORKDIR $BASE/descartes
 
