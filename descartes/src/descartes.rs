@@ -51,6 +51,8 @@ struct Payload {
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Params {
+    // value is the hash of a drive if is a LoggerDrive
+    // or is the exact value of a DirectDrive
     pub value: H256,
 }
 
@@ -258,6 +260,7 @@ impl DApp<()> for Descartes {
         match ctx.current_state.as_ref() {
             "WaitingProviders" => {
                 if let Some(s) = post_payload {
+                    // got request from user to claim a pending drive
                     let payload: Payload = serde_json::from_str(&s)
                     .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
 
@@ -269,6 +272,7 @@ impl DApp<()> for Descartes {
                         DriveType::LoggerWithProvider => {
                             function = String::from("claimLoggerDrive");
                             
+                            // the file name should be default to the root hash
                             let request = SubmitFileRequest {
                                 path: format!("{:x}", payload.params.value.clone()),
                                 page_log2_size: 3,
@@ -288,6 +292,7 @@ impl DApp<()> for Descartes {
                                 error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
                                     processed_response.root,
                                     payload.params.value);
+                                return Ok(Reaction::Idle);
                             }
                         },
                         _ => {
@@ -314,7 +319,7 @@ impl DApp<()> for Descartes {
                 };
                 if instance.concern.user_address != ctx.drives[0].provider {
                     // wait others to provide drives
-                    // or abort if pass the deadline
+                    // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
                         &instance.concern,
                         instance.index,
@@ -328,6 +333,7 @@ impl DApp<()> for Descartes {
         match role {
             Role::Claimer => match ctx.current_state.as_ref() {
                 "WaitingClaim" => {
+                    // calculate machine output
                     return react_by_machine_output(
                         archive,
                         &instance.concern,
@@ -387,6 +393,8 @@ impl DApp<()> for Descartes {
             },
             Role::Challenger => match ctx.current_state.as_ref() {
                 "WaitingClaim" => {
+                    // wait for the claimer to claim output
+                    // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
                         &instance.concern,
                         instance.index,
@@ -394,6 +402,7 @@ impl DApp<()> for Descartes {
                     );
                 }
                 "WaitingConfirmation" => {
+                    // determine the reaction based on the calculated machine output
                     return react_by_machine_output(
                         archive,
                         &instance.concern,
@@ -534,6 +543,7 @@ fn react_by_machine_output(
     drives: Vec<Drive>,
     claimed_final_hash: H256,
 ) -> Result<Reaction> {
+    // create machine and fill in all the drives
     let machine_id = build_machine_id(index, &concern.user_address);
     // TODO: create machine with grpc load
     let token_zero_bytes = Token::FixedBytes(H256::zero().to_fixed_bytes().to_vec());
@@ -605,9 +615,11 @@ fn react_by_machine_output(
             return Ok(Reaction::Transaction(request));
         },
         Role::Challenger => {
-            let mut function = String::from("challenge");
+            let mut function = String::default();
             if calculated_final_hash == claimed_final_hash {
-                function = "confirm".to_string();
+                function = String::from("confirm");
+            } else {
+                function = String::from("challenge");
             }
 
             let request = TransactionRequest {
