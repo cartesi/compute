@@ -20,6 +20,7 @@ serde_derive = "1.0.0"
 state = { path = "../arbitration-dlib/dispatcher/state" }
 dispatcher = { path = "../arbitration-dlib/dispatcher/dispatcher" }
 compute = { path = "../arbitration-dlib/compute" }
+logger_service = { path = "../logger-dlib/logger_service" }
 grpc = { git = "https://github.com/cartesi/grpc-rust", branch = "make_marshall_public" }
 protobuf = "=2.8.1"
 bytes = "0.4.12"

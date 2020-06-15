@@ -34,8 +34,16 @@ extern crate ethereum_types;
 extern crate transaction;
 extern crate compute;
 extern crate configuration;
+extern crate logger_service;
 
 pub use descartes::Descartes;
+
+pub use logger_service::{
+    DownloadFileRequest, DownloadFileResponse,
+    SubmitFileRequest, SubmitFileResponse,
+    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
+    LOGGER_SERVICE_NAME,
+};
 
 use ethereum_types::{Address, U256};
 
@@ -43,6 +51,65 @@ use ethereum_types::{Address, U256};
 enum Role {
     Claimer,
     Challenger,
+}
+
+pub fn get_logger_response(
+    archive: &dispatcher::Archive,
+    contract: String,
+    service: String,
+    key: String,
+    method: String,
+    request: Vec<u8>
+) -> error::Result<Vec<u8>> {
+    let raw_response = archive
+        .get_response(
+            service.clone(),
+            key.clone(),
+            method.clone(),
+            request.clone()
+        )?
+        .map_err(|_| {
+            error::Error::from(error::ErrorKind::ResponseInvalidError(
+                service.clone(),
+                key.clone(),
+                method.clone()
+            ))
+        })?;
+
+    match method.as_ref() {
+        LOGGER_METHOD_SUBMIT => {
+            let response: SubmitFileResponse = raw_response.clone().into();
+            if response.status == 0 {
+                Ok(raw_response)
+            }
+            else {
+                error!("Fail to get logger response, status: {}, description: {}", response.status, response.description);
+                Err(error::Error::from(error::ErrorKind::ServiceNeedsRetry(
+                    service, key, method, request, contract, response.status, response.progress, response.description
+                )))
+            }
+        },
+        LOGGER_METHOD_DOWNLOAD => {
+            let response: DownloadFileResponse = raw_response.clone().into();
+            if response.status == 0 {
+                Ok(raw_response)
+            }
+            else {
+                error!("Fail to get logger response, status: {}, description: {}", response.status, response.description);
+                Err(error::Error::from(error::ErrorKind::ServiceNeedsRetry(
+                    service, key, method, request, contract, response.status, response.progress, response.description
+                )))
+            }
+        },
+        _ => {
+            error!("Unknown logger method {} received, shouldn't happen!", method);
+            Err(error::Error::from(error::ErrorKind::ResponseInvalidError(
+                service,
+                key,
+                method
+            )))
+        }
+    }
 }
 
 pub fn build_machine_id(descartes_index: U256, player_address: &Address) -> String {
