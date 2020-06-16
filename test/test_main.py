@@ -35,17 +35,11 @@ class DescartesState(Enum):
     ChallengerWon = 6
     ClaimerWon = 7
     ConsensusResult = 8
-    
-class DriveType(Enum):
-    DirectWithValue = 0
-    DirectWithProvider = 1
-    LoggerWithValue = 2
-    LoggerWithProvider = 3
 
 class Drive:
-    def create_drive_tuple(position, drive_log2_size, value, provider, drive_type):
+    def create_drive_tuple(position, drive_log2_size, value, provider, needs_provider, needs_logger):
         drive_hash = bytes(32)
-        return (drive_hash, position, drive_log2_size, value, provider, drive_type)
+        return (drive_hash, position, drive_log2_size, value, provider, needs_provider, needs_logger)
 
 class BaseTest:
 

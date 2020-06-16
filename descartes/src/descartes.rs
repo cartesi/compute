@@ -56,54 +56,9 @@ struct Params {
     pub value: H256,
 }
 
-#[derive(Serialize, Debug, Clone)]
-pub enum DriveType {
-    DirectWithValue = 0,
-    DirectWithProvider = 1,
-    LoggerWithHash = 2,
-    LoggerWithProvider = 3,
-    Unknown = 99,
-}
-
-impl From<DriveType> for U256 {
-    fn from(value: DriveType) -> U256 {
-        match value {
-            DriveType::DirectWithValue => U256::from(0),
-            DriveType::DirectWithProvider => U256::from(1),
-            DriveType::LoggerWithHash => U256::from(2),
-            DriveType::LoggerWithProvider => U256::from(3),
-            DriveType::Unknown => U256::from(99),
-        }
-    }
-}
-
-impl From<U256> for DriveType {
-    fn from(value: U256) -> DriveType {
-        match value.as_u64() {
-            0 => DriveType::DirectWithValue,
-            1 => DriveType::DirectWithProvider,
-            2 => DriveType::LoggerWithHash,
-            3 => DriveType::LoggerWithProvider,
-            _ => DriveType::Unknown,
-        }
-    }
-}
-
-impl From<String> for DriveType {
-    fn from(value: String) -> DriveType {
-        match value.as_ref() {
-            "DirectWithValue" => DriveType::DirectWithValue,
-            "DirectWithProvider" => DriveType::DirectWithProvider,
-            "LoggerWithHash" => DriveType::LoggerWithHash,
-            "LoggerWithProvider" => DriveType::LoggerWithProvider,
-            _ => DriveType::Unknown,
-        }
-    }
-}
-
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(bytes32,uint64,uint64,bytes32,address,uint8)[]")]
+    #[serde(rename = "(bytes32,uint64,uint64,bytes32,address,bool,bool)[]")]
     DriveArrayType,
 }
 
@@ -114,7 +69,8 @@ pub struct DriveParsed(
     U256,   // log2Size
     H256,   // bytes32Value
     Address,// provider
-    U256,   // driveType
+    bool,   // needsProvider
+    bool,   // needsLogger
 );
 
 #[derive(Serialize, Deserialize)]
@@ -132,7 +88,8 @@ pub struct Drive {
     log2_size: U256,
     value: H256,
     provider: Address,
-    drive_type: DriveType,
+    needs_provider: bool,
+    needs_logger: bool,
 }
 
 impl From<&DriveParsed> for Drive {
@@ -143,7 +100,8 @@ impl From<&DriveParsed> for Drive {
             log2_size: parsed.2,
             value: parsed.3,
             provider: parsed.4,
-            drive_type: parsed.5.into(),
+            needs_provider: parsed.5,
+            needs_logger: parsed.6,
         }
     }
 }
@@ -156,7 +114,8 @@ impl From<&Drive> for Token {
             Token::Uint(drive.log2_size),
             Token::FixedBytes(drive.value.to_fixed_bytes().to_vec()),
             Token::Address(drive.provider),
-            Token::Uint(drive.drive_type.clone().into()),
+            Token::Bool(drive.needs_provider),
+            Token::Bool(drive.needs_logger),
         ])
     }
 }
@@ -265,38 +224,31 @@ impl DApp<()> for Descartes {
                     .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
 
                     let mut function = String::default();
-                    match ctx.drives[0].drive_type {
-                        DriveType::DirectWithProvider => {
-                            function = String::from("claimDirectDrive");
-                        },
-                        DriveType::LoggerWithProvider => {
-                            function = String::from("claimLoggerDrive");
-                            
-                            // the file name should be default to the root hash
-                            let request = SubmitFileRequest {
-                                path: format!("{:x}", payload.params.value.clone()),
-                                page_log2_size: 3,
-                                tree_log2_size: ctx.drives[0].log2_size.as_u64(),
-                            };
+                    if !ctx.drives[0].needs_logger {
+                        function = String::from("claimDirectDrive");
+                    } else {
+                        function = String::from("claimLoggerDrive");
+                        
+                        // the file name should be default to the root hash
+                        let request = SubmitFileRequest {
+                            path: format!("{:x}", payload.params.value.clone()),
+                            page_log2_size: 3,
+                            tree_log2_size: ctx.drives[0].log2_size.as_u64(),
+                        };
 
-                            let processed_response: SubmitFileResponse = get_logger_response(
-                                archive,
-                                "Descartes".into(),
-                                LOGGER_SERVICE_NAME.to_string(),
-                                format!("{:x}", payload.params.value.clone()),
-                                LOGGER_METHOD_SUBMIT.to_string(),
-                                request.into(),
-                            )?
-                            .into();
-                            if processed_response.root != payload.params.value {
-                                error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
-                                    processed_response.root,
-                                    payload.params.value);
-                                return Ok(Reaction::Idle);
-                            }
-                        },
-                        _ => {
-                            error!("Invalid state for claiming drive {:?}!", ctx.current_state);
+                        let processed_response: SubmitFileResponse = get_logger_response(
+                            archive,
+                            "Descartes".into(),
+                            LOGGER_SERVICE_NAME.to_string(),
+                            format!("{:x}", payload.params.value.clone()),
+                            LOGGER_METHOD_SUBMIT.to_string(),
+                            request.into(),
+                        )?
+                        .into();
+                        if processed_response.root != payload.params.value {
+                            error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
+                                processed_response.root,
+                                payload.params.value);
                             return Ok(Reaction::Idle);
                         }
                     }
@@ -553,33 +505,26 @@ fn react_by_machine_output(
     let mut calculated_output = H256::zero();
     
     for drive in &drives {
-        match drive.drive_type {
-            DriveType::DirectWithValue | DriveType::DirectWithProvider => {
-                // TODO: write machine with drive.value value
-            },
-            DriveType::LoggerWithHash | DriveType::LoggerWithProvider => {
-                let request = DownloadFileRequest {
-                    root: drive.drive_hash.clone(),
-                    path: format!("{:x}", drive.drive_hash.clone()),
-                    page_log2_size: 3,
-                    tree_log2_size: drive.log2_size.as_u64(),
-                };
+        if !drive.needs_logger {
+            // TODO: write machine with drive.value value
+        } else {
+            let request = DownloadFileRequest {
+                root: drive.drive_hash.clone(),
+                path: format!("{:x}", drive.drive_hash.clone()),
+                page_log2_size: 3,
+                tree_log2_size: drive.log2_size.as_u64(),
+            };
 
-                let processed_response: DownloadFileResponse = get_logger_response(
-                    archive,
-                    "Descartes".into(),
-                    LOGGER_SERVICE_NAME.to_string(),
-                    format!("{:x}", drive.drive_hash.clone()),
-                    LOGGER_METHOD_DOWNLOAD.to_string(),
-                    request.into(),
-                )?
-                .into();
-                trace!("Downloaded! File stored at: {}...", processed_response.path);
-            },
-            _ => {
-                error!("Unknown DriveType {:?}", drive.drive_type);
-                return Ok(Reaction::Idle);
-            }
+            let processed_response: DownloadFileResponse = get_logger_response(
+                archive,
+                "Descartes".into(),
+                LOGGER_SERVICE_NAME.to_string(),
+                format!("{:x}", drive.drive_hash.clone()),
+                LOGGER_METHOD_DOWNLOAD.to_string(),
+                request.into(),
+            )?
+            .into();
+            trace!("Downloaded! File stored at: {}...", processed_response.path);
         }
         if let Role::Claimer = role {
             // TODO: get drive siblings from machine-manager

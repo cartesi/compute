@@ -140,14 +140,13 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
             Drive memory drive = _drives[j];
-            DriveType driveType = drive.driveType;
 
-            if (driveType == DriveType.DirectWithValue) {
+            if (!drive.needsLogger && !drive.needsProvider) {
                 i.driveReady[j] = true;
                 drive.log2Size = 5;
                 bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
                 drive.driveHash = Merkle.calculateRootFromPowerOfTwo(data);
-            } else if (driveType == DriveType.LoggerWithHash) {
+            } else if (drive.needsLogger) {
                 if (li.isLogAvailable(drive.bytesValue32, drive.log2Size)) {
                     i.driveReady[j] = true;
                     drive.driveHash = drive.bytesValue32;
@@ -156,7 +155,7 @@ contract Descartes is Decorated, DescartesInterface {
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
-            } else if (drive.driveType == DriveType.DirectWithProvider || drive.driveType == DriveType.LoggerWithProvider) {
+            } else if (drive.needsProvider) {
                 i.driveReady[j] = false;
                 currentState = State.WaitingProviders;
                 i.pendingDrives.push(j);
@@ -169,7 +168,8 @@ contract Descartes is Decorated, DescartesInterface {
                 drive.log2Size,
                 drive.bytesValue32,
                 drive.provider,
-                drive.driveType
+                drive.needsProvider,
+                drive.needsLogger
             ));
         }
 
@@ -400,7 +400,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require(drive.driveType == DriveType.DirectWithProvider, "The drive driveType is not DirectWithProvider");
+        require(drive.needsProvider && !drive.needsLogger, "Invalid drive to claim for direct value");
 
         bytes32[] memory data = getWordHashesFromBytes32(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
@@ -428,27 +428,23 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.drives[driveIndex];
 
-        require(
-            (drive.driveType == DriveType.LoggerWithProvider || drive.driveType == DriveType.LoggerWithHash),
-            "Drive is not logger type");
+        require(drive.needsLogger, "Invalid drive to claim for logger");
 
-        if (drive.driveType == DriveType.LoggerWithProvider) {
+        if (drive.needsProvider) {
             drive.bytesValue32 = _value;
-            drive.driveType = DriveType.LoggerWithHash;
+            drive.needsProvider = false;
         }
 
-        if (drive.driveType == DriveType.LoggerWithHash) {
-            require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
-            require(i.li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
+        require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
+        require(i.li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
 
-            drive.driveHash = drive.bytesValue32;
-            i.driveReady[driveIndex] = true;
-            i.pendingDrivesPointer++;
-            i.timeOfLastMove = now;
+        drive.driveHash = drive.bytesValue32;
+        i.driveReady[driveIndex] = true;
+        i.pendingDrivesPointer++;
+        i.timeOfLastMove = now;
 
-            if (i.pendingDrivesPointer == i.pendingDrives.length) {
-                i.currentState = State.WaitingClaim;
-            }
+        if (i.pendingDrivesPointer == i.pendingDrives.length) {
+            i.currentState = State.WaitingClaim;
         }
     }
 

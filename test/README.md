@@ -26,7 +26,7 @@ def test_getters():
     final_time = 3000
     round_duration = 300
     output_position = 50000
-    drives = [Drive.create_drive_tuple(0, 5, bytes(32), claimer, DriveType.DirectWithValue.value)]
+    drives = [Drive.create_drive_tuple(0, 5, bytes(32), claimer, False, False)]
 
     # call instantiate function via transaction
     tx_hash = base_test.descartes.functions.instantiate(

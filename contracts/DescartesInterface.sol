@@ -41,20 +41,14 @@ contract DescartesInterface is Instantiator {
         ConsensusResult
     }
 
-    enum DriveType {
-        DirectWithValue,
-        DirectWithProvider,
-        LoggerWithHash,
-        LoggerWithProvider
-    }
-
     struct Drive {
         bytes32 driveHash;
         uint64 position;
         uint64 log2Size;
         bytes32 bytesValue32;
         address provider;
-        DriveType driveType;
+        bool needsProvider;
+        bool needsLogger;
     }
 
     function instantiate(

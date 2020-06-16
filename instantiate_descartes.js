@@ -60,13 +60,6 @@ module.exports = async (callback) => {
         const outputPosition = 0x2700;
         const finalTime = 1e13;
 
-        const driveType = {
-            DirectWithValue: 0,
-            DirectWithProvider: 1,
-            LoggerWithValue: 2,
-            LoggerWithProvider: 3
-        }
-
         const driveHash = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const directDriveValue = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const drive = [
@@ -75,7 +68,8 @@ module.exports = async (callback) => {
             5,
             directDriveValue,
             claimer,
-            driveType.DirectWithValue
+            false,
+            false
         ];
 
         const drives = [drive];
