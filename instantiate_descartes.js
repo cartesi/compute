@@ -85,9 +85,6 @@ module.exports = async (callback) => {
             roundDuration,
             claimer,
             challenger,
-            Logger.address,
-            VGInstantiator.address,
-            Step.address,
             drives,
             { from: fromAddress }
         );

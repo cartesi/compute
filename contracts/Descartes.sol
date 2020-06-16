@@ -33,6 +33,9 @@ import "./DescartesInterface.sol";
 
 contract Descartes is Decorated, DescartesInterface {
     address public owner;
+    address machine; // machine which will run the challenge
+    LoggerInterface li;
+    VGInterface vg;
 
     struct DescartesCtx {
         uint256 pendingDrivesPointer; // the pointer to the current pending drive
@@ -47,9 +50,6 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32 claimedOutput; // claimed final machine output
         address claimer; // responsible for claiming the machine output
         address challenger; // user can challenge claimer's output
-        address machine; // machine which will run the challenge
-        LoggerInterface li;
-        VGInterface vg;
         State currentState;
         uint256[] pendingDrives; // indices of the pending drives
         mapping(uint256 => bool) driveReady; // ready flag of the drives
@@ -107,8 +107,15 @@ contract Descartes is Decorated, DescartesInterface {
     event ChallengeStarted(uint256 _index);
     event DescartesFinished(uint256 _index, uint8 _state);
 
-    constructor() public {
+    constructor(
+        address _liAddress,
+        address _vgAddress,
+        address _machineAddress) public
+    {
         owner = msg.sender;
+        machine = _machineAddress;
+        vg = VGInterface(_vgAddress);
+        li = LoggerInterface(_liAddress);
     }
 
     /// @notice Instantiate a Descartes SDK instance.
@@ -125,9 +132,6 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _roundDuration,
         address _claimer,
         address _challenger,
-        address _liAddress,
-        address _vgAddress,
-        address _machineAddress,
         Drive[] memory _drives) public
         onlyBy(owner) returns (uint256)
     {
@@ -135,7 +139,6 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(_challenger != _claimer, "Claimer cannot be a challenger");
 
-        LoggerInterface li = LoggerInterface(_liAddress);
         State currentState = State.WaitingClaim;
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
@@ -175,9 +178,6 @@ contract Descartes is Decorated, DescartesInterface {
 
         i.challenger = _challenger;
         i.claimer = _claimer;
-        i.machine = _machineAddress;
-        i.vg = VGInterface(_vgAddress);
-        i.li = li;
         i.finalTime = _finalTime;
         i.templateHash = _templateHash;
         i.initialHash = _templateHash;
@@ -217,11 +217,11 @@ contract Descartes is Decorated, DescartesInterface {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingConfirmation, "State should be WaitingConfirmation");
 
-        i.vgInstance = i.vg.instantiate(
+        i.vgInstance = vg.instantiate(
             i.challenger,
             i.claimer,
             i.roundDuration,
-            i.machine,
+            machine,
             i.initialHash,
             i.claimedFinalHash,
             i.finalTime);
@@ -380,7 +380,7 @@ contract Descartes is Decorated, DescartesInterface {
         if (instance[_index].currentState == State.WaitingChallenge) {
             a = new address[](1);
             i = new uint256[](1);
-            a[0] = address(instance[_index].vg);
+            a[0] = address(vg);
             i[0] = instance[_index].vgInstance;
         } else {
             a = new address[](0);
@@ -436,7 +436,7 @@ contract Descartes is Decorated, DescartesInterface {
         }
 
         require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
-        require(i.li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
+        require(li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
 
         drive.driveHash = drive.bytesValue32;
         i.driveReady[driveIndex] = true;
@@ -460,12 +460,12 @@ contract Descartes is Decorated, DescartesInterface {
         require(i.currentState == State.WaitingChallenge, "State is not WaitingChallenge, cannot winByVG");
         uint256 vgIndex = i.vgInstance;
 
-        if (i.vg.stateIsFinishedChallengerWon(vgIndex)) {
+        if (vg.stateIsFinishedChallengerWon(vgIndex)) {
             i.currentState = State.ChallengerWon;
             return;
         }
 
-        if (i.vg.stateIsFinishedClaimerWon(vgIndex)) {
+        if (vg.stateIsFinishedClaimerWon(vgIndex)) {
             i.currentState = State.ClaimerWon;
             return;
         }
@@ -570,7 +570,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         if (instance[_index].currentState == State.WaitingChallenge) {
             // time to run a verification game + time to react
-            return instance[_index].vg.getMaxInstanceDuration(
+            return vg.getMaxInstanceDuration(
                 instance[_index].roundDuration,
                 timeToStartMachine,
                 partitionSize,

@@ -44,9 +44,6 @@ def test_getters():
     base_test = BaseTest()
     claimer = Web3.toChecksumAddress(base_test.w3.eth.accounts[0])
     challenger = Web3.toChecksumAddress(base_test.w3.eth.accounts[1])
-    fake_li = Web3.toChecksumAddress("0000000000000000000000000000000000000001")
-    fake_vg = Web3.toChecksumAddress("0000000000000000000000000000000000000002")
-    fake_machine = Web3.toChecksumAddress("0000000000000000000000000000000000000003")
     template_hash = bytes("templateHash", 'utf-8')
     final_time = 3000
     round_duration = 300
@@ -60,9 +57,6 @@ def test_getters():
             round_duration,
             claimer,
             challenger,
-            fake_li,
-            fake_vg,
-            fake_machine,
             drives).transact({'from': claimer})
     tx_receipt = base_test.w3.eth.waitForTransactionReceipt(tx_hash)
     descartes_logs = base_test.descartes.events.DescartesCreated().processReceipt(tx_receipt)
