@@ -117,7 +117,7 @@ contract Descartes is Decorated, DescartesInterface {
     /// @param _outputPosition position of the output drive
     /// @param _roundDuration duration of the round (security param)
     /// @param _drives an array of drive which assemble the machine
-    /// @return Descartes index
+    /// @return uint256, Descartes index
     function instantiate(
         uint256 _finalTime,
         bytes32 _templateHash,
@@ -366,10 +366,10 @@ contract Descartes is Decorated, DescartesInterface {
             return "ConsensusResult";
         }
 
-        require(false, "Unrecognized state");
+        revert("Unrecognized state");
     }
 
-    /// @notice Get sub-instances of the instance
+    /// @notice Get sub-instances of the instance.
     function getSubInstances(uint256 _index, address) public view
         onlyInstantiated(_index)
         returns (address[] memory _addresses, uint256[] memory _indices)
@@ -496,6 +496,40 @@ contract Descartes is Decorated, DescartesInterface {
         }
 
         revert("Cannot abort current state");
+    }
+
+    /// @notice Get result of a finished instance.
+    /// @param _index index of Descartes instance to get result
+    /// @return bool, indicates the result is ready
+    /// @return bool, indicates the sdk is still running
+    /// @return address, the user to blame for the abnormal stop of the sdk
+    /// @return bytes32, the result of the sdk if available
+    function getResult(uint256 _index) public view
+        onlyInstantiated(_index)
+        returns (bool, bool, address, bytes32)
+    {
+        DescartesCtx memory i = instance[_index];
+        if (i.currentState == State.ConsensusResult) {
+            return (true, false, address(0), i.claimedOutput);
+        }
+        if (i.currentState == State.WaitingProviders ||
+            i.currentState == State.WaitingClaim ||
+            i.currentState == State.WaitingConfirmation ||
+            i.currentState == State.WaitingChallenge) {
+            return (false, true, address(0), bytes32(0));
+        }
+        if (i.currentState == State.ProviderMissedDeadline) {
+            return (false, false, i.drives[i.pendingDrivesPointer].provider, bytes32(0));
+        }
+        if (i.currentState == State.ClaimerMissedDeadline ||
+            i.currentState == State.ChallengerWon) {
+            return (false, false, i.claimer, bytes32(0));
+        }
+        if (i.currentState == State.ClaimerWon) {
+            return (false, false, i.challenger, bytes32(0));
+        }
+
+        revert("Unrecognized state");
     }
 
     /// @notice Convert bytes32 into bytes8[] and calculate the hashes of them
