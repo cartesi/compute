@@ -38,8 +38,7 @@ class DescartesState(Enum):
 
 class Drive:
     def create_drive_tuple(position, drive_log2_size, value, provider, needs_provider, needs_logger):
-        drive_hash = bytes(32)
-        return (drive_hash, position, drive_log2_size, value, provider, needs_provider, needs_logger)
+        return (position, drive_log2_size, value, provider, needs_provider, needs_logger)
 
 class BaseTest:
 

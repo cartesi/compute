@@ -58,13 +58,12 @@ struct Params {
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(bytes32,uint64,uint64,bytes32,address,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint64,bytes32,address,bool,bool)[]")]
     DriveArrayType,
 }
 
 #[derive(Serialize, Deserialize)]
 pub struct DriveParsed(
-    H256,   // driveHash
     U256,   // position
     U256,   // log2Size
     H256,   // bytes32Value
@@ -83,7 +82,6 @@ pub struct DriveArray {
 
 #[derive(Serialize, Debug)]
 pub struct Drive {
-    drive_hash: H256,
     position: U256,
     log2_size: U256,
     value: H256,
@@ -95,13 +93,12 @@ pub struct Drive {
 impl From<&DriveParsed> for Drive {
     fn from(parsed: &DriveParsed) -> Drive {
         Drive {
-            drive_hash: parsed.0,
-            position: parsed.1,
-            log2_size: parsed.2,
-            value: parsed.3,
-            provider: parsed.4,
-            needs_provider: parsed.5,
-            needs_logger: parsed.6,
+            position: parsed.0,
+            log2_size: parsed.1,
+            value: parsed.2,
+            provider: parsed.3,
+            needs_provider: parsed.4,
+            needs_logger: parsed.5,
         }
     }
 }
@@ -109,7 +106,6 @@ impl From<&DriveParsed> for Drive {
 impl From<&Drive> for Token {
     fn from(drive: &Drive) -> Token {
         Token::Tuple(vec![
-            Token::FixedBytes(drive.drive_hash.to_fixed_bytes().to_vec()),
             Token::Uint(drive.position),
             Token::Uint(drive.log2_size),
             Token::FixedBytes(drive.value.to_fixed_bytes().to_vec()),
@@ -509,8 +505,8 @@ fn react_by_machine_output(
             // TODO: write machine with drive.value value
         } else {
             let request = DownloadFileRequest {
-                root: drive.drive_hash.clone(),
-                path: format!("{:x}", drive.drive_hash.clone()),
+                root: drive.value.clone(),
+                path: format!("{:x}", drive.value.clone()),
                 page_log2_size: 3,
                 tree_log2_size: drive.log2_size.as_u64(),
             };
@@ -519,7 +515,7 @@ fn react_by_machine_output(
                 archive,
                 "Descartes".into(),
                 LOGGER_SERVICE_NAME.to_string(),
-                format!("{:x}", drive.drive_hash.clone()),
+                format!("{:x}", drive.value.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?

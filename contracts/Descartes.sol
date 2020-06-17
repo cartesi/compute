@@ -52,7 +52,7 @@ contract Descartes is Decorated, DescartesInterface {
         address challenger; // user can challenge claimer's output
         State currentState;
         uint256[] pendingDrives; // indices of the pending drives
-        mapping(uint256 => bool) driveReady; // ready flag of the drives
+        bytes32[] driveHash; // root hash of the drives
         Drive[] drives;
     }
 
@@ -141,32 +141,28 @@ contract Descartes is Decorated, DescartesInterface {
 
         State currentState = State.WaitingClaim;
         uint256 drivesLength = _drives.length;
+        i.driveHash = new bytes32[](drivesLength);
         for (uint256 j = 0; j < drivesLength; j++) {
             Drive memory drive = _drives[j];
 
             if (!drive.needsLogger && !drive.needsProvider) {
-                i.driveReady[j] = true;
                 drive.log2Size = 5;
                 bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
-                drive.driveHash = Merkle.calculateRootFromPowerOfTwo(data);
+                i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
             } else if (drive.needsLogger) {
                 if (li.isLogAvailable(drive.bytesValue32, drive.log2Size)) {
-                    i.driveReady[j] = true;
-                    drive.driveHash = drive.bytesValue32;
+                    i.driveHash[j] = drive.bytesValue32;
                 } else {
-                    i.driveReady[j] = false;
+                    i.driveHash[j] = bytes32(0);
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
             } else if (drive.needsProvider) {
-                i.driveReady[j] = false;
+                i.driveHash[j] = bytes32(0);
                 currentState = State.WaitingProviders;
                 i.pendingDrives.push(j);
-            } else {
-                revert("Unknown Drive Type");
             }
             i.drives.push(Drive(
-                drive.driveHash,
                 drive.position,
                 drive.log2Size,
                 drive.bytesValue32,
@@ -265,7 +261,6 @@ contract Descartes is Decorated, DescartesInterface {
         for (uint256 j = 0; j < drivesLength; j++) {
             require(_drives[j].position == i.drives[j].position, "Drive position doesn't match");
             require(_drives[j].log2Size == i.drives[j].log2Size, "Drive log2 size doesn't match");
-            require(_drives[j].driveHash == i.drives[j].driveHash, "Drive hash doesn't match");
             require(
                 Merkle.getRootWithDrive(
                     _drives[j].position,
@@ -276,7 +271,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.initialHash = Merkle.getRootWithDrive(
                 _drives[j].position,
                 _drives[j].log2Size,
-                _drives[j].driveHash,
+                i.driveHash[j],
                 _drivesSiblings[j]);
         }
 
@@ -406,8 +401,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
         drive.log2Size = 5;
-        drive.driveHash = driveHash;
-        i.driveReady[driveIndex] = true;
+        i.driveHash[driveIndex] = driveHash;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
 
@@ -438,8 +432,7 @@ contract Descartes is Decorated, DescartesInterface {
         require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
         require(li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
 
-        drive.driveHash = drive.bytesValue32;
-        i.driveReady[driveIndex] = true;
+        i.driveHash[driveIndex] = drive.bytesValue32;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
 
@@ -596,7 +589,7 @@ contract Descartes is Decorated, DescartesInterface {
         require(driveIndex < i.drives.length, "Invalid drive index");
 
         Drive memory drive = i.drives[driveIndex];
-        require(i.driveReady[driveIndex] == false, "The drive shouldn't be ready");
+        require(i.driveHash[driveIndex] == bytes32(0), "The drive hash shouldn't be filled");
         require(drive.provider == msg.sender, "The sender is not provider");
 
         _;
