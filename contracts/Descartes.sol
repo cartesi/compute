@@ -146,12 +146,12 @@ contract Descartes is Decorated, DescartesInterface {
             Drive memory drive = _drives[j];
 
             if (!drive.needsLogger && !drive.needsProvider) {
-                drive.log2Size = 5;
-                bytes32[] memory data = getWordHashesFromBytes32(drive.bytesValue32);
+                drive.loggerLog2Size = 5;
+                bytes32[] memory data = getWordHashesFromBytes32(drive.directValueOrLoggerRoot);
                 i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
             } else if (drive.needsLogger) {
-                if (li.isLogAvailable(drive.bytesValue32, drive.log2Size)) {
-                    i.driveHash[j] = drive.bytesValue32;
+                if (li.isLogAvailable(drive.directValueOrLoggerRoot, drive.loggerLog2Size)) {
+                    i.driveHash[j] = drive.directValueOrLoggerRoot;
                 } else {
                     i.driveHash[j] = bytes32(0);
                     currentState = State.WaitingProviders;
@@ -164,8 +164,8 @@ contract Descartes is Decorated, DescartesInterface {
             }
             i.drives.push(Drive(
                 drive.position,
-                drive.log2Size,
-                drive.bytesValue32,
+                drive.loggerLog2Size,
+                drive.directValueOrLoggerRoot,
                 drive.provider,
                 drive.needsProvider,
                 drive.needsLogger
@@ -260,17 +260,17 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 drivesLength = _drives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
             require(_drives[j].position == i.drives[j].position, "Drive position doesn't match");
-            require(_drives[j].log2Size == i.drives[j].log2Size, "Drive log2 size doesn't match");
+            require(_drives[j].loggerLog2Size == i.drives[j].loggerLog2Size, "Drive log2 size doesn't match");
             require(
                 Merkle.getRootWithDrive(
                     _drives[j].position,
-                    _drives[j].log2Size,
-                    Merkle.getPristineHash(uint8(_drives[j].log2Size)),
+                    _drives[j].loggerLog2Size,
+                    Merkle.getPristineHash(uint8(_drives[j].loggerLog2Size)),
                     _drivesSiblings[j]) == i.initialHash,
                 "Drive siblings must be compatible with previous initial hash for empty drive");
             i.initialHash = Merkle.getRootWithDrive(
                 _drives[j].position,
-                _drives[j].log2Size,
+                _drives[j].loggerLog2Size,
                 i.driveHash[j],
                 _drivesSiblings[j]);
         }
@@ -400,7 +400,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32[] memory data = getWordHashesFromBytes32(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
-        drive.log2Size = 5;
+        drive.loggerLog2Size = 5;
         i.driveHash[driveIndex] = driveHash;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
@@ -413,8 +413,8 @@ contract Descartes is Decorated, DescartesInterface {
     /// @notice Claim the hash of a logger drive (only drive provider can call it);
     ///         Or claim that the content is available on logger with given hash.
     /// @param _index index of Descartes instance the drive belongs to
-    /// @param _value drive hash of the logger drive
-    function claimLoggerDrive(uint256 _index, bytes32 _value) public
+    /// @param _root root hash of the logger drive
+    function claimLoggerDrive(uint256 _index, bytes32 _root) public
         onlyInstantiated(_index)
         requirementsForClaimDrive(_index)
      {
@@ -425,14 +425,14 @@ contract Descartes is Decorated, DescartesInterface {
         require(drive.needsLogger, "Invalid drive to claim for logger");
 
         if (drive.needsProvider) {
-            drive.bytesValue32 = _value;
+            drive.directValueOrLoggerRoot = _root;
             drive.needsProvider = false;
         }
 
-        require(drive.bytesValue32 == _value, "Hash value doesn't match drive hash");
-        require(li.isLogAvailable(drive.bytesValue32, drive.log2Size), "Hash is not available on logger yet");
+        require(drive.directValueOrLoggerRoot == _root, "Hash value doesn't match drive hash");
+        require(li.isLogAvailable(drive.directValueOrLoggerRoot, drive.loggerLog2Size), "Hash is not available on logger yet");
 
-        i.driveHash[driveIndex] = drive.bytesValue32;
+        i.driveHash[driveIndex] = drive.directValueOrLoggerRoot;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
 

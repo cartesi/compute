@@ -43,8 +43,8 @@ contract DescartesInterface is Instantiator {
 
     struct Drive {
         uint64 position;
-        uint64 log2Size;
-        bytes32 bytesValue32;
+        uint64 loggerLog2Size;
+        bytes32 directValueOrLoggerRoot;
         address provider;
         bool needsProvider;
         bool needsLogger;
