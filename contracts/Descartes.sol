@@ -32,7 +32,6 @@ import "./DescartesInterface.sol";
 
 
 contract Descartes is Decorated, DescartesInterface {
-    address public owner;
     address machine; // machine which will run the challenge
     LoggerInterface li;
     VGInterface vg;
@@ -112,7 +111,6 @@ contract Descartes is Decorated, DescartesInterface {
         address _vgAddress,
         address _machineAddress) public
     {
-        owner = msg.sender;
         machine = _machineAddress;
         vg = VGInterface(_vgAddress);
         li = LoggerInterface(_liAddress);
@@ -132,9 +130,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _roundDuration,
         address _claimer,
         address _challenger,
-        Drive[] memory _drives) public
-        onlyBy(owner) returns (uint256)
-    {
+        Drive[] memory _drives) public returns (uint256) {
         DescartesCtx storage i = instance[currentIndex];
 
         require(_challenger != _claimer, "Claimer cannot be a challenger");
