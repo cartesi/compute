@@ -300,6 +300,7 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.drives,
+                        ctx.initial_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,
@@ -371,6 +372,7 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.drives,
+                        ctx.initial_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,
@@ -506,6 +508,7 @@ fn react_by_machine_output(
     index: U256,
     role: &Role,
     drives: Vec<Drive>,
+    template_hash: H256,
     claimed_final_hash: H256,
     final_time: U256,
     output_position: U256,
@@ -514,7 +517,7 @@ fn react_by_machine_output(
     let id = build_machine_id(index, &concern.user_address);
 
     let mut machine = cartesi_machine::MachineRequest::new();
-    machine.set_directory("MACHINE_DIRECTORY_PLACE_HOLDER".into());
+    machine.set_directory(format!("{:x}", template_hash));
     
     let request = NewSessionRequest {
         session_id: id.clone(),
