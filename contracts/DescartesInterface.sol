@@ -57,7 +57,7 @@ contract DescartesInterface is Instantiator {
         uint256 _roundDuration,
         address _claimer,
         address _challenger,
-        Drive[] memory _drives) public returns (uint256);
+        Drive[] memory _inputDrives) public returns (uint256);
 
     function getResult(uint256 _index) public view returns (
         bool,

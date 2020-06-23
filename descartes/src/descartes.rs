@@ -149,7 +149,7 @@ pub struct DescartesCtx {
     pub output_position: U256,
     pub final_time: U256,
     pub current_state: String,
-    pub drives: Vec<Drive>,
+    pub input_drives: Vec<Drive>,
 }
 
 impl From<DescartesCtxParsed> for DescartesCtx {
@@ -174,7 +174,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                     )
                 .unwrap()
                 .to_string(),
-            drives: parsed.3.value.iter().map(|d| d.into()).collect(),
+            input_drives: parsed.3.value.iter().map(|d| d.into()).collect(),
         }
     }
 }
@@ -233,7 +233,7 @@ impl DApp<()> for Descartes {
                     .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
 
                     let mut function = String::default();
-                    if !ctx.drives[0].needs_logger {
+                    if !ctx.input_drives[0].needs_logger {
                         function = String::from("claimDirectDrive");
                     } else {
                         function = String::from("claimLoggerDrive");
@@ -242,7 +242,7 @@ impl DApp<()> for Descartes {
                         let request = SubmitFileRequest {
                             path: format!("{:x}", payload.params.value.clone()),
                             page_log2_size: 3,
-                            tree_log2_size: ctx.drives[0].log2_size.as_u64(),
+                            tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
                         };
 
                         let processed_response: SubmitFileResponse = get_logger_response(
@@ -277,7 +277,7 @@ impl DApp<()> for Descartes {
                     };
                     return Ok(Reaction::Transaction(request));
                 };
-                if instance.concern.user_address != ctx.drives[0].provider {
+                if instance.concern.user_address != ctx.input_drives[0].provider {
                     // wait others to provide drives
                     // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
@@ -299,7 +299,7 @@ impl DApp<()> for Descartes {
                         &instance.concern,
                         instance.index,
                         &role,
-                        ctx.drives,
+                        ctx.input_drives,
                         ctx.initial_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
@@ -371,7 +371,7 @@ impl DApp<()> for Descartes {
                         &instance.concern,
                         instance.index,
                         &role,
-                        ctx.drives,
+                        ctx.input_drives,
                         ctx.initial_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
@@ -507,7 +507,7 @@ fn react_by_machine_output(
     concern: &Concern,
     index: U256,
     role: &Role,
-    drives: Vec<Drive>,
+    input_drives: Vec<Drive>,
     template_hash: H256,
     claimed_final_hash: H256,
     final_time: U256,
@@ -540,7 +540,7 @@ fn react_by_machine_output(
     let mut calculated_output = H256::zero();
     
     let time = 0;
-    for drive in &drives {
+    for drive in &input_drives {
         let address = drive.position.as_u64();
         let log2_size = drive.log2_size.as_u64();
         if !drive.needs_logger {
@@ -726,7 +726,7 @@ fn react_by_machine_output(
                 data: vec![
                     Token::Uint(index),
                     Token::FixedBytes(calculated_final_hash.to_fixed_bytes().to_vec()),
-                    Token::Array(drives.iter().map(|d:&Drive| -> Token {d.into()}).collect()),
+                    Token::Array(input_drives.iter().map(|d:&Drive| -> Token {d.into()}).collect()),
                     Token::Array(drives_siblings),
                     Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
                     Token::Array(output_siblings),
