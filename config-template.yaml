@@ -16,6 +16,10 @@ services:
     transport:
       address: ${LOGGER_HOST}
       port: ${LOGGER_PORT}
+  - name: emulator
+    transport:
+      address: ${MACHINE_MANAGER_HOST}
+      port: ${MACHINE_MANAGER_PORT}
 testing: true
 url: ${WEB3_PROVIDER_URI}
 warn_delay: 30

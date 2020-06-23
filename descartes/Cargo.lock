@@ -752,7 +752,7 @@ name = "emulator"
 version = "0.1.0"
 dependencies = [
  "env_logger 0.6.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "ethereum-types 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ethereum-types 0.9.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.29 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",

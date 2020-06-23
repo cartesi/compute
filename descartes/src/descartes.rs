@@ -31,12 +31,23 @@ use super::ethereum_types::{H256, U256, Address};
 use super::transaction;
 use super::transaction::TransactionRequest;
 use super::compute::vg::{VG, VGCtx, VGCtxParsed};
-use super::{
-    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest, SubmitFileResponse,
-    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT, LOGGER_SERVICE_NAME,
-    get_logger_response
+
+pub use compute::{
+    get_run_result, cartesi_machine, build_session_write_key,
+    build_session_proof_key, build_session_read_key, build_session_run_key,
+    SessionRunRequest, SessionReadMemoryRequest, SessionReadMemoryResponse,
+    SessionWriteMemoryRequest, NewSessionRequest, NewSessionResponse,
+    SessionGetProofRequest, SessionGetProofResponse, SessionRunResult,
+    EMULATOR_SERVICE_NAME, EMULATOR_METHOD_WRITE, EMULATOR_METHOD_READ,
+    EMULATOR_METHOD_PROOF, EMULATOR_METHOD_NEW
 };
-use super::{Role, build_machine_id};
+
+pub use logger_service::{
+    DownloadFileRequest, DownloadFileResponse,
+    SubmitFileRequest, SubmitFileResponse,
+    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
+};
+use super::{Role, build_machine_id, get_logger_response};
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -135,6 +146,7 @@ pub struct DescartesCtx {
     pub claimer: Address,
     pub challenger: Address,
     pub deadline: U256,
+    pub output_position: U256,
     pub final_time: U256,
     pub current_state: String,
     pub drives: Vec<Drive>,
@@ -145,6 +157,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
         DescartesCtx {
             final_time: parsed.0.value[0],
             deadline: parsed.0.value[1],
+            output_position: parsed.0.value[2],
             challenger: parsed.1.value[0],
             claimer: parsed.1.value[1],
             initial_hash: parsed.2.value[0],
@@ -235,7 +248,6 @@ impl DApp<()> for Descartes {
                         let processed_response: SubmitFileResponse = get_logger_response(
                             archive,
                             "Descartes".into(),
-                            LOGGER_SERVICE_NAME.to_string(),
                             format!("{:x}", payload.params.value.clone()),
                             LOGGER_METHOD_SUBMIT.to_string(),
                             request.into(),
@@ -288,7 +300,9 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.drives,
-                        ctx.claimed_final_hash
+                        ctx.claimed_final_hash,
+                        ctx.final_time,
+                        ctx.output_position,
                     );
                 },
                 "WaitingChallenge" => {
@@ -357,7 +371,10 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.drives,
-                        ctx.claimed_final_hash);
+                        ctx.claimed_final_hash,
+                        ctx.final_time,
+                        ctx.output_position,
+                    );
                 },
                 "WaitingChallenge" => {
                     // we inspect the verification contract
@@ -490,19 +507,61 @@ fn react_by_machine_output(
     role: &Role,
     drives: Vec<Drive>,
     claimed_final_hash: H256,
+    final_time: U256,
+    output_position: U256,
 ) -> Result<Reaction> {
     // create machine and fill in all the drives
-    let machine_id = build_machine_id(index, &concern.user_address);
-    // TODO: create machine with grpc load
-    let token_zero_bytes = Token::FixedBytes(H256::zero().to_fixed_bytes().to_vec());
+    let id = build_machine_id(index, &concern.user_address);
+
+    let mut machine = cartesi_machine::MachineRequest::new();
+    machine.set_directory("MACHINE_DIRECTORY_PLACE_HOLDER".into());
+    
+    let request = NewSessionRequest {
+        session_id: id.clone(),
+        machine: machine,
+    };
+
+    // send newSession request to the emulator service
+    let _processed_response: NewSessionResponse = archive
+        .get_response(
+            EMULATOR_SERVICE_NAME.to_string(),
+            id.clone(),
+            EMULATOR_METHOD_NEW.to_string(),
+            request.into(),
+        )?
+        .into();
+
     let mut drives_siblings = vec![];
-    let mut output_siblings = vec![token_zero_bytes.clone(); 59];
+    let mut output_siblings = vec![];
     let mut calculated_final_hash = H256::zero();
     let mut calculated_output = H256::zero();
     
+    let time = 0;
     for drive in &drives {
+        let address = drive.position.as_u64();
+        let log2_size = drive.log2_size.as_u64();
         if !drive.needs_logger {
-            // TODO: write machine with drive.value value
+            // write direct values to drive
+            let data = drive.value.to_fixed_bytes();
+            let archive_key = build_session_write_key(id.clone(), time, address, data.to_vec());
+
+            let mut position = cartesi_machine::WriteMemoryRequest::new();
+            position.set_address(address);
+            position.set_data(data.to_vec());
+
+            let request = SessionWriteMemoryRequest {
+                session_id: id.clone(),
+                time: time,
+                position: position,
+            };
+
+            let _processed_response = archive
+                .get_response(
+                    EMULATOR_SERVICE_NAME.to_string(),
+                    archive_key.clone(),
+                    EMULATOR_METHOD_WRITE.to_string(),
+                    request.into(),
+                )?;
         } else {
             let request = DownloadFileRequest {
                 root: drive.value.clone(),
@@ -514,23 +573,143 @@ fn react_by_machine_output(
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                LOGGER_SERVICE_NAME.to_string(),
                 format!("{:x}", drive.value.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?
             .into();
             trace!("Downloaded! File stored at: {}...", processed_response.path);
+
+            // TODO: mount drive with logger files
         }
         if let Role::Claimer = role {
-            // TODO: get drive siblings from machine-manager
-            drives_siblings.push(Token::Array(vec![token_zero_bytes.clone(), token_zero_bytes.clone()]));
+            // get input drive siblings
+            let archive_key = build_session_proof_key(id.clone(), time, address, log2_size);
+            let mut target = cartesi_machine::GetProofRequest::new();
+            target.set_address(address);
+            target.set_log2_size(log2_size);
+    
+            let request = SessionGetProofRequest {
+                session_id: id.clone(),
+                time: time,
+                target: target,
+            };
+    
+            let processed_response: SessionGetProofResponse = archive
+                .get_response(
+                    EMULATOR_SERVICE_NAME.to_string(),
+                    archive_key.clone(),
+                    EMULATOR_METHOD_PROOF.to_string(),
+                    request.into(),
+                )?
+                .into();
+    
+            trace!("Get proof result: {:?}...", processed_response.proof);
+    
+            let drive_siblings = processed_response.proof;
+    
+            // get actual siblings
+            let mut drive_siblings: Vec<_> = drive_siblings
+                .sibling_hashes
+                .into_iter()
+                .map(|hash| Token::FixedBytes(hash.0.to_vec()))
+                .collect();
+            trace!("Size of siblings: {}", drive_siblings.len());
+            // !!!!! This should not be necessary, !!!!!!!
+            // !!!!! the emulator should do it     !!!!!!!
+            drive_siblings.reverse();
+
+            drives_siblings.push(Token::Array(drive_siblings));
         }
     }
 
-    // TODO: run the machine to get output
+    let time = final_time.as_u64();
+    let sample_points: Vec<u64> = vec![0, time];
+
+    let request = SessionRunRequest {
+        session_id: id.clone(),
+        times: sample_points.clone(),
+    };
+    let archive_key = build_session_run_key(id.clone(), sample_points.clone());
+
+    let processed_result: SessionRunResult = get_run_result(
+        archive,
+        "Descartes".to_string(),
+        archive_key,
+        request.into(),
+    )?;
+
+    calculated_final_hash = processed_result.hashes[1];
+
     if let Role::Claimer = role {
-        // TODO: update output siblings and calculated_output
+        // get output value
+        let length = 32;
+        let address = output_position.as_u64();
+    
+        let archive_key = build_session_read_key(id.clone(), time, address, length);
+        let mut position = cartesi_machine::ReadMemoryRequest::new();
+        position.set_address(address);
+        position.set_length(length);
+    
+        let request = SessionReadMemoryRequest {
+            session_id: id.clone(),
+            time: time,
+            position: position,
+        };
+    
+        let processed_response: SessionReadMemoryResponse = archive
+            .get_response(
+                EMULATOR_SERVICE_NAME.to_string(),
+                archive_key.clone(),
+                EMULATOR_METHOD_READ.to_string(),
+                request.into(),
+            )?
+            .into();
+    
+        trace!(
+            "Read memory result: {:?}...",
+            processed_response.read_content.data
+        );
+    
+        let calculated_output = processed_response.read_content.data;
+
+        // get output drive siblings
+        let output_logsize_2 = 5;
+
+        let archive_key = build_session_proof_key(id.clone(), time, address, output_logsize_2);
+        let mut target = cartesi_machine::GetProofRequest::new();
+        target.set_address(address);
+        target.set_log2_size(output_logsize_2);
+
+        let request = SessionGetProofRequest {
+            session_id: id.clone(),
+            time: time,
+            target: target,
+        };
+
+        let processed_response: SessionGetProofResponse = archive
+            .get_response(
+                EMULATOR_SERVICE_NAME.to_string(),
+                archive_key.clone(),
+                EMULATOR_METHOD_PROOF.to_string(),
+                request.into(),
+            )?
+            .into();
+
+        trace!("Get proof result: {:?}...", processed_response.proof);
+
+        let output_siblings = processed_response.proof;
+
+        // get actual siblings
+        let mut output_siblings: Vec<_> = output_siblings
+            .sibling_hashes
+            .into_iter()
+            .map(|hash| Token::FixedBytes(hash.0.to_vec()))
+            .collect();
+        trace!("Size of siblings: {}", output_siblings.len());
+        // !!!!! This should not be necessary, !!!!!!!
+        // !!!!! the emulator should do it     !!!!!!!
+        output_siblings.reverse();
     }
 
     match role {

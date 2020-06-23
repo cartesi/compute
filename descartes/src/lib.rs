@@ -56,25 +56,18 @@ enum Role {
 pub fn get_logger_response(
     archive: &dispatcher::Archive,
     contract: String,
-    service: String,
     key: String,
     method: String,
     request: Vec<u8>
 ) -> error::Result<Vec<u8>> {
+    let service = LOGGER_SERVICE_NAME.to_string();
     let raw_response = archive
         .get_response(
             service.clone(),
             key.clone(),
             method.clone(),
             request.clone()
-        )?
-        .map_err(|_| {
-            error::Error::from(error::ErrorKind::ResponseInvalidError(
-                service.clone(),
-                key.clone(),
-                method.clone()
-            ))
-        })?;
+        )?;
 
     match method.as_ref() {
         LOGGER_METHOD_SUBMIT => {

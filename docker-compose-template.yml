@@ -76,6 +76,17 @@ services:
       node_{{ i }}:
         aliases:
           - logger
+
+  machine_manager_{{ i }}:
+    image: cartesi/machine-manager:0.3.0
+    volumes:
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/creepts
+      - emulator_data:/opt/cartesi/srv/emulator-files
+    networks:
+      ethereum: {}
+      node_{{ i }}:
+        aliases:
+          - machine-manager
 {% endfor %}
 
 volumes:

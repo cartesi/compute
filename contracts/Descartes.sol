@@ -297,10 +297,11 @@ contract Descartes is Decorated, DescartesInterface {
             Drive[] memory
         )
     {
-        uint256[] memory uintValues = new uint256[](2);
+        uint256[] memory uintValues = new uint256[](3);
         uintValues[0] = instance[_index].finalTime;
         uintValues[1] = instance[_index].timeOfLastMove + getMaxStateDuration(
             _index);
+        uintValues[2] = instance[_index].outputPosition;
 
         address[] memory addressValues = new address[](2);
         addressValues[0] = instance[_index].challenger;
