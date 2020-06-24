@@ -19,8 +19,6 @@
 // be used independently under the Apache v2 license. After this component is
 // rewritten, the entire component will be released under the Apache v2 license.
 
-extern crate protobuf;
-
 use super::configuration::Concern;
 use super::dispatcher::{Archive, Reaction};
 use super::dispatcher::DApp;
@@ -181,7 +179,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
 
 impl DApp<()> for Descartes {
     /// React to the descartes contract, submitting drives, 
-    /// submitting solutions, confirming or challenging them
+    /// submitting result, confirming or challenging result
     /// when appropriate
     fn react(
         instance: &state::Instance,
@@ -232,12 +230,10 @@ impl DApp<()> for Descartes {
                     let payload: Payload = serde_json::from_str(&s)
                     .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
 
-                    let mut function = String::default();
+                    let mut function = String::from("claimLoggerDrive");
                     if !ctx.input_drives[0].needs_logger {
                         function = String::from("claimDirectDrive");
                     } else {
-                        function = String::from("claimLoggerDrive");
-                        
                         // the file name should be default to the root hash
                         let request = SubmitFileRequest {
                             path: format!("{:x}", payload.params.value.clone()),
@@ -426,10 +422,6 @@ impl DApp<()> for Descartes {
                     return Ok(Reaction::Idle);
                 }
             },
-            _ => {
-                error!("Unknown role {:?}", role);
-                return Ok(Reaction::Idle);
-            }
         };
     }
 
@@ -517,7 +509,7 @@ fn react_by_machine_output(
     let id = build_machine_id(index, &concern.user_address);
 
     let mut machine = cartesi_machine::MachineRequest::new();
-    machine.set_directory(format!("{:x}", template_hash));
+    machine.set_directory(format!("/opt/cartesi/srv/descartes/{:x}", template_hash));
     
     let request = NewSessionRequest {
         session_id: id.clone(),
@@ -536,7 +528,6 @@ fn react_by_machine_output(
 
     let mut drives_siblings = vec![];
     let mut output_siblings = vec![];
-    let mut calculated_final_hash = H256::zero();
     let mut calculated_output = H256::zero();
     
     let time = 0;
@@ -609,10 +600,9 @@ fn react_by_machine_output(
     
             trace!("Get proof result: {:?}...", processed_response.proof);
     
-            let drive_siblings = processed_response.proof;
-    
             // get actual siblings
-            let mut drive_siblings: Vec<_> = drive_siblings
+            let mut drive_siblings: Vec<_> = processed_response
+                .proof
                 .sibling_hashes
                 .into_iter()
                 .map(|hash| Token::FixedBytes(hash.0.to_vec()))
@@ -642,7 +632,7 @@ fn react_by_machine_output(
         request.into(),
     )?;
 
-    calculated_final_hash = processed_result.hashes[1];
+    let calculated_final_hash = processed_result.hashes[1];
 
     if let Role::Claimer = role {
         // get output value
@@ -674,7 +664,7 @@ fn react_by_machine_output(
             processed_response.read_content.data
         );
     
-        let calculated_output = processed_response.read_content.data;
+        calculated_output = H256::from_slice(&processed_response.read_content.data);
 
         // get output drive siblings
         let output_logsize_2 = 5;
@@ -701,10 +691,9 @@ fn react_by_machine_output(
 
         trace!("Get proof result: {:?}...", processed_response.proof);
 
-        let output_siblings = processed_response.proof;
-
         // get actual siblings
-        let mut output_siblings: Vec<_> = output_siblings
+        output_siblings = processed_response
+            .proof
             .sibling_hashes
             .into_iter()
             .map(|hash| Token::FixedBytes(hash.0.to_vec()))
@@ -738,11 +727,9 @@ fn react_by_machine_output(
             return Ok(Reaction::Transaction(request));
         },
         Role::Challenger => {
-            let mut function = String::default();
+            let mut function = String::from("challenge");
             if calculated_final_hash == claimed_final_hash {
                 function = String::from("confirm");
-            } else {
-                function = String::from("challenge");
             }
 
             let request = TransactionRequest {
@@ -756,9 +743,5 @@ fn react_by_machine_output(
             };
             return Ok(Reaction::Transaction(request));
         },
-        _ => {
-            error!("Unknown role {:?}", role);
-            return Ok(Reaction::Idle);
-        }
     }
 }
