@@ -564,17 +564,41 @@ fn react_by_machine_output(
                 tree_log2_size: drive.log2_size.as_u64(),
             };
 
+            // mounted volume in dispatcher and logger is different path
+            // logger is at /opt/cartesi/srv/logger-server/
+            // dispatcher is at /opt/cartesi/srv/descartes/
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                format!("{:x}", drive.value.clone()),
+                format!("/opt/cartesi/srv/logger-server/{:x}", drive.value.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?
             .into();
             trace!("Downloaded! File stored at: {}...", processed_response.path);
 
-            // TODO: mount drive with logger files
+            // TODO: rewrite with flash replacement call later
+            let downloaded_drive = format!("/opt/cartesi/srv/descartes/{:x}", drive.value.clone());
+            let data = std::fs::read(downloaded_drive)?;
+            let archive_key = build_session_write_key(id.clone(), time, address, data.to_vec());
+
+            let mut position = cartesi_machine::WriteMemoryRequest::new();
+            position.set_address(address);
+            position.set_data(data.to_vec());
+
+            let request = SessionWriteMemoryRequest {
+                session_id: id.clone(),
+                time: time,
+                position: position,
+            };
+
+            let _processed_response = archive
+                .get_response(
+                    EMULATOR_SERVICE_NAME.to_string(),
+                    archive_key.clone(),
+                    EMULATOR_METHOD_WRITE.to_string(),
+                    request.into(),
+                )?;
         }
         if let Role::Claimer = role {
             // get input drive siblings
