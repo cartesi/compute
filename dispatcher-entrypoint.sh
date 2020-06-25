@@ -25,6 +25,7 @@ echo "Waiting for services..."
     # -wait tcp://${MACHINE_MANAGER_HOST}:${MACHINE_MANAGER_PORT} \
 dockerize \
     -wait tcp://${LOGGER_HOST}:${LOGGER_PORT} \
+    -wait tcp://${ETHEREUM_HOST}:${ETHEREUM_PORT} \
     -timeout ${ETHEREUM_TIMEOUT}
 
 echo "Creating configuration file at /opt/cartesi/etc/descartes/config.yaml with account ${ACCOUNT_ADDRESS}"
