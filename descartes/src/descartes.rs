@@ -509,7 +509,7 @@ fn react_by_machine_output(
     let id = build_machine_id(index, &concern.user_address);
 
     let mut machine = cartesi_machine::MachineRequest::new();
-    machine.set_directory(format!("/opt/cartesi/srv/descartes/{:x}", template_hash));
+    machine.set_directory(format!("/opt/cartesi/srv/descartes/cartesi-machine/{:x}", template_hash));
     
     let request = NewSessionRequest {
         session_id: id.clone(),
@@ -557,9 +557,10 @@ fn react_by_machine_output(
                     request.into(),
                 )?;
         } else {
+            let downloaded_drive = format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.value.clone());
             let request = DownloadFileRequest {
                 root: drive.value.clone(),
-                path: format!("{:x}", drive.value.clone()),
+                path: downloaded_drive.clone(),
                 page_log2_size: 3,
                 tree_log2_size: drive.log2_size.as_u64(),
             };
@@ -570,7 +571,7 @@ fn react_by_machine_output(
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                format!("/opt/cartesi/srv/logger-server/{:x}", drive.value.clone()),
+                format!("{:x}", drive.value.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?
@@ -578,13 +579,13 @@ fn react_by_machine_output(
             trace!("Downloaded! File stored at: {}...", processed_response.path);
 
             // TODO: rewrite with flash replacement call later
-            let downloaded_drive = format!("/opt/cartesi/srv/descartes/{:x}", drive.value.clone());
+            
             let data = std::fs::read(downloaded_drive)?;
-            let archive_key = build_session_write_key(id.clone(), time, address, data.to_vec());
+            let archive_key = build_session_write_key(id.clone(), time, address, data.clone());
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();
             position.set_address(address);
-            position.set_data(data.to_vec());
+            position.set_data(data);
 
             let request = SessionWriteMemoryRequest {
                 session_id: id.clone(),
