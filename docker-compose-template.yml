@@ -62,7 +62,7 @@ services:
       - "{{ 3001 + i }}:3001"
 
   logger_{{ i }}:
-    image: cartesi/logger-server:0.2.2
+    image: cartesi/logger-server:0.3.0
     command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json" ]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
