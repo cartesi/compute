@@ -19,17 +19,17 @@
   },
   "homepage": "https://github.com/cartesi/descartes#readme",
   "dependencies": {
-    "@cartesi/arbitration": "^0.2.1",
-    "@cartesi/logger": "^0.2.0",
-    "@cartesi/machine-solidity-step": "^0.3.0",
+    "@cartesi/arbitration": "^0.3.0",
+    "@cartesi/logger": "^0.3.0",
+    "@cartesi/machine-solidity-step": "^0.4.0",
     "@cartesi/util": "^0.2.1"
   },
   "devDependencies": {
-    "@truffle/contract": "^4.1.13",
-    "@truffle/hdwallet-provider": "^1.0.33",
+    "@truffle/contract": "^4.2.10",
+    "@truffle/hdwallet-provider": "^1.0.36",
     "commander": "^4.1.0",
     "solidity-coverage": "^0.6.7",
-    "truffle": "^5.1.17"
+    "truffle": "^5.1.32"
   },
   "files": [
     "contracts",

@@ -78,7 +78,7 @@ services:
           - logger
 
   machine_manager_{{ i }}:
-    image: cartesicorp/machine-manager:next 
+    image: cartesi/machine-manager:0.4.0
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
       - emulator_data:/opt/cartesi/srv/emulator-files
