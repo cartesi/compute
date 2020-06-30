@@ -142,29 +142,46 @@ contract Descartes is Decorated, DescartesInterface {
         for (uint256 j = 0; j < drivesLength; j++) {
             Drive memory drive = _inputDrives[j];
 
-            if (!drive.needsLogger && !drive.needsProvider) {
-                drive.loggerLog2Size = 5;
-                bytes32[] memory data = getWordHashesFromBytes32(drive.directValueOrLoggerRoot);
-                i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
-            } else if (drive.needsLogger) {
-                if (li.isLogAvailable(drive.directValueOrLoggerRoot, drive.loggerLog2Size)) {
-                    i.driveHash[j] = drive.directValueOrLoggerRoot;
+            if (!drive.needsLogger) {
+                if (!drive.waitsProvider) {
+                    require(
+                        Merkle.isPowerOf2(drive.directValue.length),
+                        "directValue has to be power of 2"
+                    );
+
+                    drive.driveLog2Size = Merkle.getLog2Floor(drive.directValue.length);
+
+                    require(drive.driveLog2Size >= 3, "directValue has to be at least one word");
+                    require(drive.driveLog2Size <= 10, "directValue cannot be bigger than 1kB");
+
+                    bytes32[] memory data = getWordHashesFromBytes(drive.directValue);
+                    i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
+                } else {
+                    require(drive.driveLog2Size >= 3, "directValue has to be at least one word");
+                    require(drive.driveLog2Size <= 10, "directValue cannot be bigger than 1kB");
+
+                    i.driveHash[j] = bytes32(0);
+                    currentState = State.WaitingProviders;
+                    i.pendingDrives.push(j);
+                }
+            } else {
+                if (!drive.waitsProvider &&
+                    li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size)
+                ) {
+                    i.driveHash[j] = drive.loggerRootHash;
                 } else {
                     i.driveHash[j] = bytes32(0);
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
                 }
-            } else if (drive.needsProvider) {
-                i.driveHash[j] = bytes32(0);
-                currentState = State.WaitingProviders;
-                i.pendingDrives.push(j);
             }
             i.inputDrives.push(Drive(
                 drive.position,
-                drive.loggerLog2Size,
-                drive.directValueOrLoggerRoot,
+                drive.driveLog2Size,
+                drive.directValue,
+                drive.loggerRootHash,
                 drive.provider,
-                drive.needsProvider,
+                drive.waitsProvider,
                 drive.needsLogger
             ));
         }
@@ -224,14 +241,16 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Claimer claims the machine final hash and also validate the drives and initial hash of the machine.
-    /// @param _inputDrives are an array of ready drives, containing siblings of the drive which contains the prior drives in the order
+    /// @param _claimedFinalHash is the final hash of the machine
+    /// @param _drivesSiblings is an array of siblings of each drive (see below example)
+    /// @param _output is the bytes32 value of the output position
+    /// @param _outputSiblings is the siblings of the output drive
     /// @dev Example: consider 3 drives, the first drive's siblings should be a pristine machine.
     ///      The second drive's siblings should be the machine with drive 1 mounted.
     ///      The third drive's siblings should be the machine with drive 2 mounted.
     function submitClaim(
         uint256 _index,
         bytes32 _claimedFinalHash,
-        Drive[] memory _inputDrives,
         bytes32[][] memory _drivesSiblings,
         bytes32 _output,
         bytes32[] memory _outputSiblings) public
@@ -241,8 +260,7 @@ contract Descartes is Decorated, DescartesInterface {
     {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingClaim, "State should be WaitingClaim");
-        require(_inputDrives.length == i.inputDrives.length, "Claimed drive number should match stored drive number");
-        require(_inputDrives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
+        require(i.inputDrives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
 
         bytes32[] memory data = getWordHashesFromBytes32(_output);
 
@@ -252,24 +270,25 @@ contract Descartes is Decorated, DescartesInterface {
                 5,
                 Merkle.calculateRootFromPowerOfTwo(data),
                 _outputSiblings) == _claimedFinalHash,
-            "Output is not contained in the final hash");
+            "Output is not contained in the final hash"
+        );
 
-        uint256 drivesLength = _inputDrives.length;
+        uint256 drivesLength = i.inputDrives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
-            require(_inputDrives[j].position == i.inputDrives[j].position, "Drive position doesn't match");
-            require(_inputDrives[j].loggerLog2Size == i.inputDrives[j].loggerLog2Size, "Drive log2 size doesn't match");
             require(
                 Merkle.getRootWithDrive(
-                    _inputDrives[j].position,
-                    _inputDrives[j].loggerLog2Size,
-                    Merkle.getPristineHash(uint8(_inputDrives[j].loggerLog2Size)),
+                    i.inputDrives[j].position,
+                    i.inputDrives[j].driveLog2Size,
+                    Merkle.getPristineHash(uint8(i.inputDrives[j].driveLog2Size)),
                     _drivesSiblings[j]) == i.initialHash,
-                "Drive siblings must be compatible with previous initial hash for empty drive");
+                "Drive siblings must be compatible with previous initial hash for empty drive"
+            );
             i.initialHash = Merkle.getRootWithDrive(
-                _inputDrives[j].position,
-                _inputDrives[j].loggerLog2Size,
+                i.inputDrives[j].position,
+                i.inputDrives[j].driveLog2Size,
                 i.driveHash[j],
-                _drivesSiblings[j]);
+                _drivesSiblings[j]
+            );
         }
 
         i.claimedFinalHash = _claimedFinalHash;
@@ -323,13 +342,15 @@ contract Descartes is Decorated, DescartesInterface {
                 uintValues,
                 addressValues,
                 bytesValues,
-                drives);
+                drives
+            );
         } else {
             return (
                 uintValues,
                 addressValues,
                 bytesValues,
-                instance[_index].inputDrives);
+                instance[_index].inputDrives
+            );
         }
     }
 
@@ -385,8 +406,8 @@ contract Descartes is Decorated, DescartesInterface {
 
     /// @notice Claim the content of a direct drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to.
-    /// @param _value bytes32 value of the direct drive
-    function claimDirectDrive(uint256 _index, bytes32 _value) public
+    /// @param _value bytes value of the direct drive
+    function claimDirectDrive(uint256 _index, bytes memory _value) public
         onlyInstantiated(_index)
         requirementsForClaimDrive(_index)
     {
@@ -394,12 +415,12 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
         Drive storage drive = i.inputDrives[driveIndex];
 
-        require(drive.needsProvider && !drive.needsLogger, "Invalid drive to claim for direct value");
+        require(drive.waitsProvider && !drive.needsLogger, "Invalid drive to claim for direct value");
+        require(2 ** drive.driveLog2Size == _value.length, "driveValue doesn't match driveLog2Size");
 
-        bytes32[] memory data = getWordHashesFromBytes32(_value);
+        bytes32[] memory data = getWordHashesFromBytes(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
-        drive.loggerLog2Size = 5;
         i.driveHash[driveIndex] = driveHash;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
@@ -423,15 +444,15 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(drive.needsLogger, "Invalid drive to claim for logger");
 
-        if (drive.needsProvider) {
-            drive.directValueOrLoggerRoot = _root;
-            drive.needsProvider = false;
+        if (drive.waitsProvider) {
+            drive.loggerRootHash = _root;
+            drive.waitsProvider = false;
         }
 
-        require(drive.directValueOrLoggerRoot == _root, "Hash value doesn't match drive hash");
-        require(li.isLogAvailable(drive.directValueOrLoggerRoot, drive.loggerLog2Size), "Hash is not available on logger yet");
+        require(drive.loggerRootHash == _root, "Hash value doesn't match drive hash");
+        require(li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size), "Hash is not available on logger yet");
 
-        i.driveHash[driveIndex] = drive.directValueOrLoggerRoot;
+        i.driveHash[driveIndex] = drive.loggerRootHash;
         i.pendingDrivesPointer++;
         i.timeOfLastMove = now;
 
@@ -449,7 +470,10 @@ contract Descartes is Decorated, DescartesInterface {
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == State.WaitingChallenge, "State is not WaitingChallenge, cannot winByVG");
+        require(
+            i.currentState == State.WaitingChallenge,
+            "State is not WaitingChallenge, cannot winByVG"
+        );
         uint256 vgIndex = i.vgInstance;
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
@@ -468,8 +492,10 @@ contract Descartes is Decorated, DescartesInterface {
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
-        bool afterDeadline = (now > i.timeOfLastMove + getMaxStateDuration(
-            _index)
+        bool afterDeadline = now > (
+            i.timeOfLastMove + getMaxStateDuration(
+                _index
+            )
         );
 
         require(afterDeadline, "Deadline is not over for this specific state");
@@ -525,6 +551,22 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32[] memory data = new bytes32[](4);
         for (uint256 i = 0; i < 4; i++) {
             bytes8 dataBytes8 = bytes8(_value << (i * 64) & 0xffffffffffffffff000000000000000000000000000000000000000000000000);
+            data[i] = keccak256(abi.encodePacked(dataBytes8));
+        }
+        return data;
+    }
+
+    /// @notice Convert bytes into bytes8[] and calculate the hashes of them
+    function getWordHashesFromBytes(bytes memory _value) private pure returns(bytes32[] memory) {
+        uint256 hashesLength = _value.length/8;
+        bytes32[] memory data = new bytes32[](hashesLength);
+        for (uint256 i = 0; i < hashesLength; i++) {
+            bytes8 dataBytes8;
+            for (uint256 j = 0; j < 8; j++) {
+                bytes8 tempBytes8 = _value[i * 8 + j];
+                tempBytes8 = tempBytes8 >> (i * 8);
+                dataBytes8 = dataBytes8 | tempBytes8;
+            }
             data[i] = keccak256(abi.encodePacked(dataBytes8));
         }
         return data;

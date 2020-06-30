@@ -41,15 +41,42 @@ contract DescartesInterface is Instantiator {
         ConsensusResult
     }
 
+    /*
+    There are two types of drive, one is directDrive, and the other is loggerDrive.
+    directDrive has content inserted to the directValue field with up to 1MB;
+    loggerDrive has content submitted to the logger contract,
+    which can be retrieved with driveLog2Size and loggerRootHash.
+    The needsLogger field is set to true for loggerDrive, false for directDrive.
+
+    The waitsProvider field is set to true meaning the drive is not ready,
+    and needs to be filled during the WaitingProviders phase.
+    The provider field is the user who is responsible for filling out the drive.
+    I.e the directValue of directDrive, or the loggerRootHash of loggerDrive
+    */
     struct Drive {
+        // start position of the drive
         uint64 position;
-        uint64 loggerLog2Size;
-        bytes32 directValueOrLoggerRoot;
+        // log2 size of the drive in the unit of bytes
+        uint64 driveLog2Size;
+        // direct value inserted to the drive
+        bytes directValue;
+        // root hash of the drive submitted to the logger
+        bytes32 loggerRootHash;
+        // the user who's responsible for filling out the drive
         address provider;
-        bool needsProvider;
+        // indicates the drive needs to wait for the provider to provide content
+        bool waitsProvider;
+        // indicates the content of the drive must be retrieved from logger
         bool needsLogger;
     }
 
+    /// @notice Instantiate a Descartes SDK instance.
+    /// @param _finalTime max cycle of the machine for that computation
+    /// @param _templateHash hash of the machine with all drives empty
+    /// @param _outputPosition position of the output drive
+    /// @param _roundDuration duration of the round (security param)
+    /// @param _inputDrives an array of drive which assemble the machine
+    /// @return uint256, Descartes index
     function instantiate(
         uint256 _finalTime,
         bytes32 _templateHash,
@@ -59,6 +86,12 @@ contract DescartesInterface is Instantiator {
         address _challenger,
         Drive[] memory _inputDrives) public returns (uint256);
 
+    /// @notice Get result of a finished instance.
+    /// @param _index index of Descartes instance to get result
+    /// @return bool, indicates the result is ready
+    /// @return bool, indicates the sdk is still running
+    /// @return address, the user to blame for the abnormal stop of the sdk
+    /// @return bytes32, the result of the sdk if available
     function getResult(uint256 _index) public view returns (
         bool,
         bool,

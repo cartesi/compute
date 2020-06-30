@@ -59,15 +59,14 @@ struct Payload {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
-struct Params {
-    // value is the hash of a drive if is a LoggerDrive
-    // or is the exact value of a DirectDrive
-    pub value: H256,
+enum Params {
+    RootHash(H256),
+    DirectValue(Vec<u8>),
 }
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(uint64,uint64,bytes32,address,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint64,bytes,bytes32,address,bool,bool)[]")]
     DriveArrayType,
 }
 
@@ -75,7 +74,8 @@ pub enum TupleType {
 pub struct DriveParsed(
     U256,   // position
     U256,   // log2Size
-    H256,   // bytes32Value
+    Vec<u8>,// directValue
+    H256,   // loggerRootHash
     Address,// provider
     bool,   // needsProvider
     bool,   // needsLogger
@@ -93,9 +93,10 @@ pub struct DriveArray {
 pub struct Drive {
     position: U256,
     log2_size: U256,
-    value: H256,
+    direct_value: Vec<u8>,
+    root_hash: H256,
     provider: Address,
-    needs_provider: bool,
+    waits_provider: bool,
     needs_logger: bool,
 }
 
@@ -104,24 +105,12 @@ impl From<&DriveParsed> for Drive {
         Drive {
             position: parsed.0,
             log2_size: parsed.1,
-            value: parsed.2,
-            provider: parsed.3,
-            needs_provider: parsed.4,
-            needs_logger: parsed.5,
+            direct_value: parsed.2.clone(),
+            root_hash: parsed.3,
+            provider: parsed.4,
+            waits_provider: parsed.5,
+            needs_logger: parsed.6,
         }
-    }
-}
-
-impl From<&Drive> for Token {
-    fn from(drive: &Drive) -> Token {
-        Token::Tuple(vec![
-            Token::Uint(drive.position),
-            Token::Uint(drive.log2_size),
-            Token::FixedBytes(drive.value.to_fixed_bytes().to_vec()),
-            Token::Address(drive.provider),
-            Token::Bool(drive.needs_provider),
-            Token::Bool(drive.needs_logger),
-        ])
     }
 }
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -232,48 +221,64 @@ impl DApp<()> for Descartes {
                     let payload: Payload = serde_json::from_str(&s)
                     .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
 
-                    let mut function = String::from("claimLoggerDrive");
                     if !ctx.input_drives[0].needs_logger {
-                        function = String::from("claimDirectDrive");
-                    } else {
-                        // the file name should be default to the root hash
-                        let request = SubmitFileRequest {
-                            path: format!("{:x}", payload.params.value.clone()),
-                            page_log2_size: 3,
-                            tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
-                        };
-
-                        let processed_response: SubmitFileResponse = get_logger_response(
-                            archive,
-                            "Descartes".into(),
-                            format!("{:x}", payload.params.value.clone()),
-                            LOGGER_METHOD_SUBMIT.to_string(),
-                            request.into(),
-                        )?
-                        .into();
-                        if processed_response.root != payload.params.value {
-                            error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
-                                processed_response.root,
-                                payload.params.value);
-                            return Ok(Reaction::Idle);
+                        if let Params::DirectValue(v) = payload.params {
+                            let request = TransactionRequest {
+                                contract_name: None, // Name not needed, is concern
+                                concern: instance.concern.clone(),
+                                value: U256::from(0),
+                                function: "claimDirectDrive".into(),
+                                data: vec![
+                                    Token::Uint(instance.index),
+                                    Token::Bytes(v),
+                                    ],
+                                gas: None,
+                                strategy: transaction::Strategy::Simplest,
+                            };
+                            return Ok(Reaction::Transaction(request));
                         }
+                        error!("Claimed drive type doesn't match with pending drive");
+                        return Ok(Reaction::Idle);
+                    } else {
+                        if let Params::RootHash(h) = payload.params {
+                            // the file name should be default to the root hash
+                            let request = SubmitFileRequest {
+                                path: format!("{:x}", h.clone()),
+                                page_log2_size: 3,
+                                tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
+                            };
+
+                            let processed_response: SubmitFileResponse = get_logger_response(
+                                archive,
+                                "Descartes".into(),
+                                format!("{:x}", h.clone()),
+                                LOGGER_METHOD_SUBMIT.to_string(),
+                                request.into(),
+                            )?
+                            .into();
+                            if processed_response.root != h {
+                                error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
+                                    processed_response.root,
+                                    h);
+                                return Ok(Reaction::Idle);
+                            }
+                            let request = TransactionRequest {
+                                contract_name: None, // Name not needed, is concern
+                                concern: instance.concern.clone(),
+                                value: U256::from(0),
+                                function: "claimLoggerDrive".into(),
+                                data: vec![
+                                    Token::Uint(instance.index),
+                                    Token::FixedBytes(h.to_fixed_bytes().to_vec()),
+                                    ],
+                                gas: None,
+                                strategy: transaction::Strategy::Simplest,
+                            };
+                            return Ok(Reaction::Transaction(request));
+                        }
+                        error!("Claimed drive type doesn't match with pending drive");
+                        return Ok(Reaction::Idle);
                     }
-                    let request = TransactionRequest {
-                        contract_name: None, // Name not needed, is concern
-                        concern: instance.concern.clone(),
-                        value: U256::from(0),
-                        function: function,
-                        data: vec![
-                            Token::Uint(instance.index),
-                            Token::FixedBytes(
-                                payload.params.value
-                                    .to_fixed_bytes()
-                                    .to_vec())
-                            ],
-                        gas: None,
-                        strategy: transaction::Strategy::Simplest,
-                    };
-                    return Ok(Reaction::Transaction(request));
                 };
                 if instance.concern.user_address != ctx.input_drives[0].provider {
                     // wait others to provide drives
@@ -538,7 +543,7 @@ fn react_by_machine_output(
         let log2_size = drive.log2_size.as_u64();
         if !drive.needs_logger {
             // write direct values to drive
-            let data = drive.value.to_fixed_bytes();
+            let data = drive.direct_value.clone();
             let archive_key = build_session_write_key(id.clone(), time, address, data.to_vec());
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();
@@ -559,9 +564,9 @@ fn react_by_machine_output(
                     request.into(),
                 )?;
         } else {
-            let downloaded_drive = format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.value.clone());
+            let downloaded_drive = format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash.clone());
             let request = DownloadFileRequest {
-                root: drive.value.clone(),
+                root: drive.root_hash.clone(),
                 path: downloaded_drive.clone(),
                 page_log2_size: 3,
                 tree_log2_size: drive.log2_size.as_u64(),
@@ -573,7 +578,7 @@ fn react_by_machine_output(
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                format!("{:x}", drive.value.clone()),
+                format!("{:x}", drive.root_hash.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?
@@ -742,7 +747,6 @@ fn react_by_machine_output(
                 data: vec![
                     Token::Uint(index),
                     Token::FixedBytes(calculated_final_hash.to_fixed_bytes().to_vec()),
-                    Token::Array(input_drives.iter().map(|d:&Drive| -> Token {d.into()}).collect()),
                     Token::Array(drives_siblings),
                     Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
                     Token::Array(output_siblings),
