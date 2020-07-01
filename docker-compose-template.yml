@@ -81,7 +81,6 @@ services:
     image: cartesi/machine-manager:0.4.1
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
-      - emulator_data:/opt/cartesi/srv/emulator-files
     networks:
       ethereum: {}
       node_{{ i }}:
@@ -91,7 +90,6 @@ services:
 
 volumes:
   ganache_data:
-  emulator_data:
   {% for i in range(players) %}dapp_data_{{ i }}:
   key_data_{{ i }}:
   {% endfor %}
