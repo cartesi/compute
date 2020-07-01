@@ -57,13 +57,11 @@ module.exports = async (callback) => {
         });
 
         const roundDuration = program.roundDuration;
-        const outputPosition = 0x2700;
+        const outputPosition = 0x9000000000000000;
         const finalTime = 1e13;
 
-        const driveHash = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const directDriveValue = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
         const drive = [
-            driveHash,
             0,
             5,
             directDriveValue,
@@ -75,8 +73,7 @@ module.exports = async (callback) => {
 
         const drives = [drive];
 
-        // TODO: update this with actual machine hash
-        const templateHash = "0x375fb938dcff562818779bc0dc4689a713a61d89659c8a9274a53551c7bc464c";
+        const templateHash = "c117acab04f4f65ff72aebd2637b3177af4606c998f69595c70411254810116f";
 
         const descartes = await Descartes.deployed();
         const transaction = await descartes.instantiate(
