@@ -1,6 +1,6 @@
 {
   "name": "@cartesi/descartes-sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Cartesi Descartes SDK",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
