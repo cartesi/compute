@@ -138,6 +138,7 @@ pub struct DescartesCtxParsed(
 
 #[derive(Serialize, Debug)]
 pub struct DescartesCtx {
+    pub template_hash: H256,
     pub initial_hash: H256,
     pub claimed_final_hash: H256,
     pub claimed_output: H256,
@@ -158,11 +159,12 @@ impl From<DescartesCtxParsed> for DescartesCtx {
             output_position: parsed.0.value[2],
             challenger: parsed.1.value[0],
             claimer: parsed.1.value[1],
-            initial_hash: parsed.2.value[0],
-            claimed_final_hash: parsed.2.value[1],
-            claimed_output: parsed.2.value[2],
+            template_hash: parsed.2.value[0],
+            initial_hash: parsed.2.value[1],
+            claimed_final_hash: parsed.2.value[2],
+            claimed_output: parsed.2.value[3],
             current_state: String::from_utf8(
-                    parsed.2.value[3]
+                    parsed.2.value[4]
                         .to_fixed_bytes()
                         .to_vec()
                         .iter()
@@ -296,7 +298,7 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.input_drives,
-                        ctx.initial_hash,
+                        ctx.template_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,
@@ -368,7 +370,7 @@ impl DApp<()> for Descartes {
                         instance.index,
                         &role,
                         ctx.input_drives,
-                        ctx.initial_hash,
+                        ctx.template_hash,
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,

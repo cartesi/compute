@@ -308,11 +308,12 @@ contract Descartes is Decorated, DescartesInterface {
         addressValues[0] = instance[_index].challenger;
         addressValues[1] = instance[_index].claimer;
 
-        bytes32[] memory bytesValues = new bytes32[](4);
-        bytesValues[0] = instance[_index].initialHash;
-        bytesValues[1] = instance[_index].claimedFinalHash;
-        bytesValues[2] = instance[_index].claimedOutput;
-        bytesValues[3] = getCurrentState(_index);
+        bytes32[] memory bytesValues = new bytes32[](5);
+        bytesValues[0] = instance[_index].templateHash;
+        bytesValues[1] = instance[_index].initialHash;
+        bytesValues[2] = instance[_index].claimedFinalHash;
+        bytesValues[3] = instance[_index].claimedOutput;
+        bytesValues[4] = getCurrentState(_index);
 
         if (instance[_index].currentState == State.WaitingProviders ||
             instance[_index].currentState == State.ProviderMissedDeadline) {
