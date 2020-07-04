@@ -143,23 +143,18 @@ contract Descartes is Decorated, DescartesInterface {
             Drive memory drive = _inputDrives[j];
 
             if (!drive.needsLogger) {
+                require(drive.driveLog2Size >= 3, "directValue has to be at least one word");
+                require(drive.driveLog2Size <= 10, "directValue cannot be bigger than 1kB");
+
                 if (!drive.waitsProvider) {
                     require(
-                        Merkle.isPowerOf2(drive.directValue.length),
-                        "directValue has to be power of 2"
+                        2 ** drive.driveLog2Size == drive.directValue.length,
+                        "Input bytes length doesn't match claimed log2 size"
                     );
-
-                    drive.driveLog2Size = Merkle.getLog2Floor(drive.directValue.length);
-
-                    require(drive.driveLog2Size >= 3, "directValue has to be at least one word");
-                    require(drive.driveLog2Size <= 10, "directValue cannot be bigger than 1kB");
 
                     bytes32[] memory data = getWordHashesFromBytes(drive.directValue);
                     i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
                 } else {
-                    require(drive.driveLog2Size >= 3, "directValue has to be at least one word");
-                    require(drive.driveLog2Size <= 10, "directValue cannot be bigger than 1kB");
-
                     i.driveHash[j] = bytes32(0);
                     currentState = State.WaitingProviders;
                     i.pendingDrives.push(j);
