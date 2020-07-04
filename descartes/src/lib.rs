@@ -35,6 +35,7 @@ extern crate transaction;
 extern crate compute;
 extern crate configuration;
 extern crate logger_service;
+extern crate hex;
 
 pub use descartes::Descartes;
 

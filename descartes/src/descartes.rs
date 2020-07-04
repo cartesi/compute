@@ -22,13 +22,14 @@
 use super::configuration::Concern;
 use super::dispatcher::{Archive, Reaction};
 use super::dispatcher::DApp;
-use super::dispatcher::{U256Array, Bytes32Array, AddressArray};
+use super::dispatcher::{U256Array, Bytes32Array, AddressArray,};
 use super::error::*;
 use super::ethabi::Token;
 use super::ethereum_types::{H256, U256, Address};
 use super::transaction;
 use super::transaction::TransactionRequest;
 use super::compute::vg::{VG, VGCtx, VGCtxParsed};
+use super::hex;
 
 pub use compute::{
     get_run_result, cartesi_machine, build_session_write_key,
@@ -74,7 +75,7 @@ pub enum TupleType {
 pub struct DriveParsed(
     U256,   // position
     U256,   // log2Size
-    Vec<u8>,// directValue
+    String, // directValue
     H256,   // loggerRootHash
     Address,// provider
     bool,   // needsProvider
@@ -105,7 +106,7 @@ impl From<&DriveParsed> for Drive {
         Drive {
             position: parsed.0,
             log2_size: parsed.1,
-            direct_value: parsed.2.clone(),
+            direct_value: hex::decode(&parsed.2[2..]).unwrap(),
             root_hash: parsed.3,
             provider: parsed.4,
             waits_provider: parsed.5,
@@ -119,9 +120,9 @@ impl From<&DriveParsed> for Drive {
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #[derive(Serialize, Deserialize)]
 pub struct DescartesCtxParsed(
-    U256Array, // finalTime, deadline
-    AddressArray, // challenger, claimer
-    Bytes32Array, // initialHash, claimedFinalHash, claimedOutput, currentState
+    U256Array,      // finalTime, deadline
+    AddressArray,   // challenger, claimer
+    Bytes32Array,   // templateHash, initialHash, claimedFinalHash, claimedOutput, currentState
     DriveArray,
 );
 
