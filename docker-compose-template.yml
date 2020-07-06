@@ -49,6 +49,7 @@ services:
       LOGGER_HOST: logger
       LOGGER_PORT: 50051
       DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
       - key_data_{{ i }}:/opt/cartesi/etc/keys
@@ -63,11 +64,11 @@ services:
 
   logger_{{ i }}:
     image: cartesi/logger-server:0.3.0
-    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json" ]
+    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
       - key_data_{{ i }}:/opt/cartesi/etc/keys
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/logger-server
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     environment:
       WEB3_PROVIDER_URI: http://ganache:8545
       DEPLOYMENT_SEMAPHORE: file:///opt/cartesi/share/blockchain/deploy_done
@@ -80,7 +81,7 @@ services:
   machine_manager_{{ i }}:
     image: cartesi/machine-manager:0.4.1
     volumes:
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes:ro
     networks:
       ethereum: {}
       node_{{ i }}:

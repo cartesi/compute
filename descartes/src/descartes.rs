@@ -217,6 +217,15 @@ impl DApp<()> for Descartes {
 
         match ctx.current_state.as_ref() {
             "WaitingProviders" => {
+                if instance.concern.user_address != ctx.input_drives[0].provider {
+                    // wait others to provide drives
+                    // or abort if the deadline is over
+                    return abort_by_deadline_or_idle(
+                        &instance.concern,
+                        instance.index,
+                        ctx.deadline.as_u64(),
+                    );
+                }
                 if let Some(s) = post_payload {
                     // got request from user to claim a pending drive
                     let payload: Payload = serde_json::from_str(&s)
@@ -228,7 +237,7 @@ impl DApp<()> for Descartes {
                                 contract_name: None, // Name not needed, is concern
                                 concern: instance.concern.clone(),
                                 value: U256::from(0),
-                                function: "claimDirectDrive".into(),
+                                function: "provideDirectDrive".into(),
                                 data: vec![
                                     Token::Uint(instance.index),
                                     Token::Bytes(v),
@@ -242,32 +251,11 @@ impl DApp<()> for Descartes {
                         return Ok(Reaction::Idle);
                     } else {
                         if let Params::RootHash(h) = payload.params {
-                            // the file name should be default to the root hash
-                            let request = SubmitFileRequest {
-                                path: format!("{:x}", h.clone()),
-                                page_log2_size: 3,
-                                tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
-                            };
-
-                            let processed_response: SubmitFileResponse = get_logger_response(
-                                archive,
-                                "Descartes".into(),
-                                format!("{:x}", h.clone()),
-                                LOGGER_METHOD_SUBMIT.to_string(),
-                                request.into(),
-                            )?
-                            .into();
-                            if processed_response.root != h {
-                                error!("Submitted log hash({:x}) doesn't match value from post_payload{:x}",
-                                    processed_response.root,
-                                    h);
-                                return Ok(Reaction::Idle);
-                            }
                             let request = TransactionRequest {
                                 contract_name: None, // Name not needed, is concern
                                 concern: instance.concern.clone(),
                                 value: U256::from(0),
-                                function: "claimLoggerDrive".into(),
+                                function: "provideLoggerDrive".into(),
                                 data: vec![
                                     Token::Uint(instance.index),
                                     Token::FixedBytes(h.to_fixed_bytes().to_vec()),
@@ -281,8 +269,10 @@ impl DApp<()> for Descartes {
                         return Ok(Reaction::Idle);
                     }
                 };
+            },
+            "WaitingReveals" => {
                 if instance.concern.user_address != ctx.input_drives[0].provider {
-                    // wait others to provide drives
+                    // wait others to reveal drives
                     // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
                         &instance.concern,
@@ -290,6 +280,42 @@ impl DApp<()> for Descartes {
                         ctx.deadline.as_u64(),
                     );
                 }
+                let root = ctx.input_drives[0].root_hash.clone();
+                let request = SubmitFileRequest {
+                    path: format!("{:x}", root.clone()),
+                    page_log2_size: 3,
+                    tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
+                };
+
+                let processed_response: SubmitFileResponse = get_logger_response(
+                    archive,
+                    "Descartes".into(),
+                    format!("{:x}.submit", root.clone()),
+                    LOGGER_METHOD_SUBMIT.to_string(),
+                    request.into(),
+                )?
+                .into();
+
+                if processed_response.root != root {
+                    error!("Submitted log hash({:x}) doesn't match value from drive({:x})",
+                        processed_response.root,
+                        root);
+                    return Ok(Reaction::Idle);
+                }
+                trace!("Submitted file with hash: {:x}...", processed_response.root);
+
+                let request = TransactionRequest {
+                    contract_name: None, // Name not needed, is concern
+                    concern: instance.concern.clone(),
+                    value: U256::from(0),
+                    function: "revealLoggerDrive".into(),
+                    data: vec![
+                        Token::Uint(instance.index),
+                        ],
+                    gas: None,
+                    strategy: transaction::Strategy::Simplest,
+                };
+                return Ok(Reaction::Transaction(request));
             },
             _ => {}
         };
@@ -565,21 +591,17 @@ fn react_by_machine_output(
                     request.into(),
                 )?;
         } else {
-            let downloaded_drive = format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash.clone());
             let request = DownloadFileRequest {
                 root: drive.root_hash.clone(),
-                path: downloaded_drive.clone(),
+                path: format!("{:x}", drive.root_hash.clone()),
                 page_log2_size: 3,
                 tree_log2_size: drive.log2_size.as_u64(),
             };
 
-            // mounted volume in dispatcher and logger is different path
-            // logger is at /opt/cartesi/srv/logger-server/
-            // dispatcher is at /opt/cartesi/srv/descartes/
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                format!("{:x}", drive.root_hash.clone()),
+                format!("{:x}.download", drive.root_hash.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?
@@ -588,7 +610,7 @@ fn react_by_machine_output(
 
             // TODO: rewrite with flash replacement call later
             
-            let data = std::fs::read(downloaded_drive)?;
+            let data = std::fs::read(processed_response.path)?;
             let archive_key = build_session_write_key(id.clone(), time, address, data.clone());
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();

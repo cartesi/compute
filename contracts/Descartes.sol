@@ -37,7 +37,9 @@ contract Descartes is Decorated, DescartesInterface {
     VGInterface vg;
 
     struct DescartesCtx {
-        uint256 pendingDrivesPointer; // the pointer to the current pending drive
+        bool needsRevealPhase; // one or more drives needs to reveal its content
+        uint256 revealDrivesPointer; // the pointer to the current reveal drive
+        uint256 providerDrivesPointer; // the pointer to the current provider drive
         uint256 finalTime; // max number of machine cycle to run
         uint64 outputPosition; // memory position of machine output
         uint256 roundDuration; // time interval to interact with this contract
@@ -50,7 +52,8 @@ contract Descartes is Decorated, DescartesInterface {
         address claimer; // responsible for claiming the machine output
         address challenger; // user can challenge claimer's output
         State currentState;
-        uint256[] pendingDrives; // indices of the pending drives
+        uint256[] revealDrives; // indices of the reveal drives
+        uint256[] providerDrives; // indices of the provider drives
         bytes32[] driveHash; // root hash of the drives
         Drive[] inputDrives;
     }
@@ -69,9 +72,15 @@ contract Descartes is Decorated, DescartesInterface {
     // | WaitingProviders |---------------------->| ProviderMissedDeadline |
     // +------------------+                       +------------------------+
     //   |
-    //   | claimLoggerDrive
+    //   | provideLoggerDrive
     //   | or
-    //   | claimDirectDrive
+    //   | provideDirectDrive
+    //   v
+    // +----------------+   abortByDeadline    +------------------------+
+    // | WaitingReveals |--------------------->| ProviderMissedDeadline |
+    // +----------------+                      +------------------------+
+    //   |
+    //   | revealLoggerDrive
     //   v
     // +--------------+   abortByDeadline    +-----------------------+
     // | WaitingClaim |--------------------->| ClaimerMissedDeadline |
@@ -136,7 +145,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(_challenger != _claimer, "Claimer cannot be a challenger");
 
-        State currentState = State.WaitingClaim;
+        bool needsProviderPhase = false;
         uint256 drivesLength = _inputDrives.length;
         i.driveHash = new bytes32[](drivesLength);
         for (uint256 j = 0; j < drivesLength; j++) {
@@ -155,19 +164,17 @@ contract Descartes is Decorated, DescartesInterface {
                     bytes32[] memory data = getWordHashesFromBytes(drive.directValue);
                     i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
                 } else {
-                    i.driveHash[j] = bytes32(0);
-                    currentState = State.WaitingProviders;
-                    i.pendingDrives.push(j);
+                    needsProviderPhase = true;
+                    i.providerDrives.push(j);
                 }
             } else {
-                if (!drive.waitsProvider &&
-                    li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size)
-                ) {
+                i.needsRevealPhase = true;
+                i.revealDrives.push(j);
+                if (!drive.waitsProvider) {
                     i.driveHash[j] = drive.loggerRootHash;
                 } else {
-                    i.driveHash[j] = bytes32(0);
-                    currentState = State.WaitingProviders;
-                    i.pendingDrives.push(j);
+                    needsProviderPhase = true;
+                    i.providerDrives.push(j);
                 }
             }
             i.inputDrives.push(Drive(
@@ -189,7 +196,13 @@ contract Descartes is Decorated, DescartesInterface {
         i.outputPosition = _outputPosition;
         i.roundDuration = _roundDuration;
         i.timeOfLastMove = now;
-        i.currentState = currentState;
+        if (needsProviderPhase) {
+            i.currentState = State.WaitingProviders;
+        } else if (i.needsRevealPhase) {
+            i.currentState = State.WaitingReveals;
+        } else {
+            i.currentState = State.WaitingClaim;
+        }
 
         emit DescartesCreated(
             currentIndex
@@ -329,10 +342,26 @@ contract Descartes is Decorated, DescartesInterface {
         bytesValues[3] = instance[_index].claimedOutput;
         bytesValues[4] = getCurrentState(_index);
 
-        if (instance[_index].currentState == State.WaitingProviders ||
-            instance[_index].currentState == State.ProviderMissedDeadline) {
+        if (instance[_index].currentState == State.WaitingProviders) {
             Drive[] memory drives = new Drive[](1);
-            drives[0] = instance[_index].inputDrives[instance[_index].pendingDrivesPointer];
+            drives[0] = instance[_index].inputDrives[instance[_index].providerDrivesPointer];
+            return (
+                uintValues,
+                addressValues,
+                bytesValues,
+                drives
+            );
+        } else if (instance[_index].currentState == State.WaitingReveals) {
+            Drive[] memory drives = new Drive[](1);
+            drives[0] = instance[_index].inputDrives[instance[_index].revealDrivesPointer];
+            return (
+                uintValues,
+                addressValues,
+                bytesValues,
+                drives
+            );
+        } else if (instance[_index].currentState == State.ProviderMissedDeadline) {
+            Drive[] memory drives = new Drive[](0);
             return (
                 uintValues,
                 addressValues,
@@ -356,6 +385,9 @@ contract Descartes is Decorated, DescartesInterface {
         State currentState = instance[_index].currentState;
         if (currentState == State.WaitingProviders) {
             return "WaitingProviders";
+        }
+        if (currentState == State.WaitingReveals) {
+            return "WaitingReveals";
         }
         if (currentState == State.ClaimerMissedDeadline) {
             return "ClaimerMissedDeadline";
@@ -399,59 +431,81 @@ contract Descartes is Decorated, DescartesInterface {
         return (a, i);
     }
 
-    /// @notice Claim the content of a direct drive (only drive provider can call it).
+    /// @notice Provide the content of a direct drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to.
     /// @param _value bytes value of the direct drive
-    function claimDirectDrive(uint256 _index, bytes memory _value) public
+    function provideDirectDrive(uint256 _index, bytes memory _value) public
         onlyInstantiated(_index)
-        requirementsForClaimDrive(_index)
+        requirementsForProviderDrive(_index)
     {
         DescartesCtx storage i = instance[_index];
-        uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
+        uint256 driveIndex = i.providerDrives[i.providerDrivesPointer];
         Drive storage drive = i.inputDrives[driveIndex];
 
-        require(drive.waitsProvider && !drive.needsLogger, "Invalid drive to claim for direct value");
+        require(!drive.needsLogger, "Invalid drive to claim for direct value");
         require(2 ** drive.driveLog2Size == _value.length, "driveValue doesn't match driveLog2Size");
 
         bytes32[] memory data = getWordHashesFromBytes(_value);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
         i.driveHash[driveIndex] = driveHash;
-        i.pendingDrivesPointer++;
+        i.providerDrivesPointer++;
         i.timeOfLastMove = now;
 
-        if (i.pendingDrivesPointer == i.pendingDrives.length) {
-            i.currentState = State.WaitingClaim;
+        if (i.providerDrivesPointer == i.providerDrives.length) {
+            if (i.needsRevealPhase) {
+                i.currentState = State.WaitingReveals;
+            } else {
+                i.currentState = State.WaitingClaim;
+            }
         }
     }
 
-    /// @notice Claim the hash of a logger drive (only drive provider can call it);
-    ///         Or claim that the content is available on logger with given hash.
+    /// @notice Provide the root hash of a logger drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to
     /// @param _root root hash of the logger drive
-    function claimLoggerDrive(uint256 _index, bytes32 _root) public
+    function provideLoggerDrive(uint256 _index, bytes32 _root) public
         onlyInstantiated(_index)
-        requirementsForClaimDrive(_index)
-     {
+        requirementsForProviderDrive(_index)
+    {
         DescartesCtx storage i = instance[_index];
-        uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
+        uint256 driveIndex = i.providerDrives[i.providerDrivesPointer];
         Drive storage drive = i.inputDrives[driveIndex];
 
         require(drive.needsLogger, "Invalid drive to claim for logger");
 
-        if (drive.waitsProvider) {
-            drive.loggerRootHash = _root;
-            drive.waitsProvider = false;
-        }
-
-        require(drive.loggerRootHash == _root, "Hash value doesn't match drive hash");
-        require(li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size), "Hash is not available on logger yet");
-
         i.driveHash[driveIndex] = drive.loggerRootHash;
-        i.pendingDrivesPointer++;
+        i.providerDrivesPointer++;
         i.timeOfLastMove = now;
 
-        if (i.pendingDrivesPointer == i.pendingDrives.length) {
+        if (i.providerDrivesPointer == i.providerDrives.length) {
+            if (i.needsRevealPhase) {
+                i.currentState = State.WaitingReveals;
+            } else {
+                i.currentState = State.WaitingClaim;
+            }
+        }
+    }
+
+    /// @notice Reveal the content of a logger drive (only drive provider can call it).
+    /// @param _index index of Descartes instance the drive belongs to
+    function revealLoggerDrive(uint256 _index) public
+        onlyInstantiated(_index)
+    {
+        DescartesCtx storage i = instance[_index];
+        uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
+        require(i.currentState == State.WaitingReveals, "The state is not WaitingReveals");
+        require(driveIndex < i.inputDrives.length, "Invalid driveIndex");
+
+        Drive memory drive = i.inputDrives[driveIndex];
+
+        require(drive.needsLogger, "needsLogger should be true");
+        require(li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size), "Hash is not available on logger yet");
+
+        i.revealDrivesPointer++;
+        i.timeOfLastMove = now;
+
+        if (i.revealDrivesPointer == i.revealDrives.length) {
             i.currentState = State.WaitingClaim;
         }
     }
@@ -499,6 +553,10 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = State.ProviderMissedDeadline;
             return;
         }
+        if (i.currentState == State.WaitingReveals) {
+            i.currentState = State.ProviderMissedDeadline;
+            return;
+        }
         if (i.currentState == State.WaitingClaim) {
             i.currentState = State.ClaimerMissedDeadline;
             return;
@@ -528,7 +586,15 @@ contract Descartes is Decorated, DescartesInterface {
             return (false, true, address(0), bytes32(0));
         }
         if (i.currentState == State.ProviderMissedDeadline) {
-            return (false, false, i.inputDrives[i.pendingDrivesPointer].provider, bytes32(0));
+            address userToBlame = address(0);
+            // check if resulted from the WaitingProviders phase
+            if (instance[_index].providerDrivesPointer < instance[_index].providerDrives.length) {
+                userToBlame = i.inputDrives[i.providerDrivesPointer].provider;
+            // check if resulted from the WaitingReveals phase
+            } else if (instance[_index].revealDrivesPointer < instance[_index].revealDrives.length) {
+                userToBlame = i.inputDrives[i.revealDrivesPointer].provider;
+            }
+            return (false, false, userToBlame, bytes32(0));
         }
         if (i.currentState == State.ClaimerMissedDeadline ||
             i.currentState == State.ChallengerWon) {
@@ -575,11 +641,16 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 partitionSize = 1;
         uint256 picoSecondsToRunInsn = 500; // 500 pico seconds to run a instruction
         uint256 timeToStartMachine = 40; // 40 seconds to start the machine for the first time
+
         if (instance[_index].currentState == State.WaitingProviders) {
-            // time to upload to logger + assemble pristine machine with drive
+            // time to react
+            return instance[_index].roundDuration;
+        }
+
+        if (instance[_index].currentState == State.WaitingReveals) {
+            // time to upload to logger + time to react
             uint256 maxLoggerUploadTime = 40 * 60;
-            return timeToStartMachine +
-                maxLoggerUploadTime +
+            return maxLoggerUploadTime +
                 instance[_index].roundDuration;
         }
 
@@ -616,16 +687,17 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice several require statements for a drive
-    modifier requirementsForClaimDrive(uint256 _index) {
+    modifier requirementsForProviderDrive(uint256 _index) {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingProviders, "The state is not WaitingProviders");
-        require(i.pendingDrivesPointer < i.pendingDrives.length, "No available pending drives");
+        require(i.providerDrivesPointer < i.providerDrives.length, "No available pending drives");
 
-        uint256 driveIndex = i.pendingDrives[i.pendingDrivesPointer];
+        uint256 driveIndex = i.providerDrives[i.providerDrivesPointer];
         require(driveIndex < i.inputDrives.length, "Invalid drive index");
 
         Drive memory drive = i.inputDrives[driveIndex];
         require(i.driveHash[driveIndex] == bytes32(0), "The drive hash shouldn't be filled");
+        require(drive.waitsProvider, "waitProvider should be true");
         require(drive.provider == msg.sender, "The sender is not provider");
 
         _;

@@ -62,14 +62,16 @@ module.exports = async (callback) => {
 
         // bytes of print(math.sin(1))
         const directDriveValue = "0x7072696e74286d6174682e73696e283129290000000000000000000000000000";
+        // hash of print(math.sin(1))
+        const loggerRootHash = "0xa87f79b5149218496af4d722798f46cdb1a15b12928ad05618892e5b3f999062"
         const drive = [
             "0x9000000000000000",
             5,
             directDriveValue,
-            "0x0",
+            loggerRootHash,
             claimer,
             false,
-            false
+            true
         ];
 
         const drives = [drive];
