@@ -61,7 +61,7 @@ module.exports = async (callback) => {
         const finalTime = 1e13;
 
         // bytes of print(math.sin(1))
-        const directDriveValue = "0x7072696e74286d6174682e73696e283129290000000000000000000000000000";
+        const directDriveValue = "0x7072696e74286d6174682e73696e28312929";
         // hash of print(math.sin(1))
         const loggerRootHash = "0xa87f79b5149218496af4d722798f46cdb1a15b12928ad05618892e5b3f999062"
         const drive = [
@@ -71,7 +71,7 @@ module.exports = async (callback) => {
             loggerRootHash,
             claimer,
             false,
-            true
+            false
         ];
 
         const drives = [drive];

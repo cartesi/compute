@@ -157,11 +157,20 @@ contract Descartes is Decorated, DescartesInterface {
 
                 if (!drive.waitsProvider) {
                     require(
-                        2 ** drive.driveLog2Size == drive.directValue.length,
-                        "Input bytes length doesn't match claimed log2 size"
+                        drive.directValue.length <= 2 ** drive.driveLog2Size,
+                        "Input bytes length exceeds the claimed log2 size"
                     );
 
-                    bytes32[] memory data = getWordHashesFromBytes(drive.directValue);
+                    // pad zero to the directValue if it's not exact power of 2
+                    bytes memory paddedDirectValue = drive.directValue;
+                    if (drive.directValue.length < 2 ** drive.driveLog2Size) {
+                        paddedDirectValue = abi.encodePacked(
+                                drive.directValue,
+                                new bytes(2 ** drive.driveLog2Size - drive.directValue.length)
+                        );
+                    }
+
+                    bytes32[] memory data = getWordHashesFromBytes(paddedDirectValue);
                     i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
                 } else {
                     needsProviderPhase = true;
@@ -443,9 +452,21 @@ contract Descartes is Decorated, DescartesInterface {
         Drive storage drive = i.inputDrives[driveIndex];
 
         require(!drive.needsLogger, "Invalid drive to claim for direct value");
-        require(2 ** drive.driveLog2Size == _value.length, "driveValue doesn't match driveLog2Size");
+        require(
+            _value.length <= 2 ** drive.driveLog2Size,
+            "Input bytes length exceeds the claimed log2 size"
+        );
 
-        bytes32[] memory data = getWordHashesFromBytes(_value);
+        // pad zero to the directValue if it's not exact power of 2
+        bytes memory paddedDirectValue = _value;
+        if (_value.length < 2 ** drive.driveLog2Size) {
+            paddedDirectValue = abi.encodePacked(
+                    _value,
+                    new bytes(2 ** drive.driveLog2Size - _value.length)
+            );
+        }
+
+        bytes32[] memory data = getWordHashesFromBytes(paddedDirectValue);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
         i.driveHash[driveIndex] = driveHash;
@@ -703,4 +724,3 @@ contract Descartes is Decorated, DescartesInterface {
         _;
     }
 }
-
