@@ -218,6 +218,11 @@ impl DApp<()> for Descartes {
         };
         trace!("Role played (index {}) is: {:?}", instance.index, role);
 
+        let current_time = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .chain_err(|| "System time before UNIX_EPOCH")?
+        .as_secs();
+
         match ctx.current_state.as_ref() {
             "WaitingProviders" => {
                 if instance.concern.user_address != ctx.input_drives[0].provider {
@@ -273,6 +278,38 @@ impl DApp<()> for Descartes {
                     }
                 };
             },
+            "WaitingChallengeDrives" => {
+                if current_time <= ctx.deadline.as_u64() {
+                    for drive in &ctx.input_drives {
+                        if drive.needs_logger {
+                            // TODO: lookup drives off-chain from IPFS or url
+                            archive.get_response(
+                                "ipfs".into(),
+                                format!("{:x}.ipfs", drive.root_hash.clone()),
+                                format!(
+                                    "api/v0/get?arg={:?}&output=/opt/cartesi/srv/descartes/{:?}",
+                                    drive.root_hash.clone(),
+                                    drive.root_hash.clone()
+                                ),
+                                vec![]
+                            )?;
+                            
+                            // drive not found
+                            let request = TransactionRequest {
+                                contract_name: None, // Name not needed, is concern
+                                concern: instance.concern.clone(),
+                                value: U256::from(0),
+                                function: "challengeDrives".into(),
+                                data: vec![Token::Uint(instance.index)],
+                                gas: None,
+                                strategy: transaction::Strategy::Simplest,
+                            };
+                            return Ok(Reaction::Transaction(request));
+                        }
+                    }
+                    return Ok(Reaction::Idle);
+                }
+            },
             "WaitingReveals" => {
                 if instance.concern.user_address != ctx.input_drives[0].provider {
                     // wait others to reveal drives
@@ -293,7 +330,7 @@ impl DApp<()> for Descartes {
                 let processed_response: SubmitFileResponse = get_logger_response(
                     archive,
                     "Descartes".into(),
-                    format!("{:x}.submit", root.clone()),
+                    format!("{:x}.logger.submit", root.clone()),
                     LOGGER_METHOD_SUBMIT.to_string(),
                     request.into(),
                 )?
@@ -339,6 +376,24 @@ impl DApp<()> for Descartes {
                         ctx.output_position,
                         ctx.output_log2_size,
                     );
+                },
+                "WaitingChallengeDrives" => {
+                    // calculate machine output
+                    if current_time > ctx.deadline.as_u64() {
+                        return react_by_machine_output(
+                            archive,
+                            &instance.concern,
+                            instance.index,
+                            &role,
+                            ctx.input_drives,
+                            ctx.template_hash,
+                            ctx.claimed_final_hash,
+                            ctx.final_time,
+                            ctx.output_position,
+                            ctx.output_log2_size,
+                        );
+                    }
+                    return Ok(Reaction::Idle);
                 },
                 "WaitingChallenge" => {
                     // we inspect the verification contract
@@ -606,6 +661,7 @@ fn react_by_machine_output(
                     request.into(),
                 )?;
         } else {
+            // TODO: get the drives from IPFS or url
             let request = DownloadFileRequest {
                 root: drive.root_hash.clone(),
                 path: format!("{:x}", drive.root_hash.clone()),
@@ -616,7 +672,7 @@ fn react_by_machine_output(
             let processed_response: DownloadFileResponse = get_logger_response(
                 archive,
                 "Descartes".into(),
-                format!("{:x}.download", drive.root_hash.clone()),
+                format!("{:x}.logger.download", drive.root_hash.clone()),
                 LOGGER_METHOD_DOWNLOAD.to_string(),
                 request.into(),
             )?

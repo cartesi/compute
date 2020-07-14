@@ -78,6 +78,17 @@ services:
         aliases:
           - logger
 
+  ipfs_{{ i }}:
+    image: ipfs/go-ipfs:latest
+    volumes:
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
+    networks:
+      node_{{ i }}:
+        aliases:
+          - ipfs
+    ports:
+        - "{{ 5001 + i }}:5001"
+
   machine_manager_{{ i }}:
     image: cartesi/machine-manager:0.4.1
     volumes:

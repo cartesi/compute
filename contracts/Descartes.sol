@@ -42,7 +42,6 @@ contract Descartes is Decorated, DescartesInterface {
 
     struct DescartesCtx {
         address owner; // the one who has power to shutdown the instance
-        bool needsRevealPhase; // one or more drives needs to reveal its content
         uint256 revealDrivesPointer; // the pointer to the current reveal drive
         uint256 providerDrivesPointer; // the pointer to the current provider drive
         uint256 finalTime; // max number of machine cycle to run
@@ -185,7 +184,6 @@ contract Descartes is Decorated, DescartesInterface {
                     i.providerDrives.push(j);
                 }
             } else {
-                i.needsRevealPhase = true;
                 i.revealDrives.push(j);
                 if (!drive.waitsProvider) {
                     i.driveHash[j] = drive.loggerRootHash;
@@ -219,8 +217,8 @@ contract Descartes is Decorated, DescartesInterface {
         i.timeOfLastMove = now;
         if (needsProviderPhase) {
             i.currentState = State.WaitingProviders;
-        } else if (i.needsRevealPhase) {
-            i.currentState = State.WaitingReveals;
+        } else if (i.revealDrives.length > 0) {
+            i.currentState = State.WaitingChallengeDrives;
         } else {
             i.currentState = State.WaitingClaim;
         }
@@ -269,6 +267,22 @@ contract Descartes is Decorated, DescartesInterface {
         emit ChallengeStarted(_index);
     }
 
+    /// @notice User requesting content of all drives to be revealed.
+    /// @param _index index of Descartes instance which is requested for the drives
+    function challengeDrives(uint256 _index) public
+        onlyInstantiated(_index)
+        increasesNonce(_index)
+    {
+        DescartesCtx storage i = instance[_index];
+        require(
+            i.currentState == State.WaitingChallengeDrives,
+            "State should be WaitingChallengeDrives"
+        );
+        require(isConcerned(_index, msg.sender), "Only concerned users can challengDrives");
+
+        i.currentState = State.WaitingReveals;
+    }
+
     /// @notice Claimer claims the machine final hash and also validate the drives and initial hash of the machine.
     /// @param _claimedFinalHash is the final hash of the machine
     /// @param _drivesSiblings is an array of siblings of each drive (see below example)
@@ -288,7 +302,11 @@ contract Descartes is Decorated, DescartesInterface {
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == State.WaitingClaim, "State should be WaitingClaim");
+        bool deadlinePassed = now > i.timeOfLastMove + getMaxStateDuration(_index);
+        require(
+            i.currentState == State.WaitingClaim ||
+            (i.currentState == State.WaitingChallengeDrives && deadlinePassed),
+            "State should be WaitingClaim, or WaitingChallengeDrives with deadline passed");
         require(i.inputDrives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
         require(_output.length == 2 ** i.outputLog2Size, "Output length doesn't match output log2 size");
 
@@ -417,6 +435,9 @@ contract Descartes is Decorated, DescartesInterface {
         if (currentState == State.WaitingReveals) {
             return "WaitingReveals";
         }
+        if (currentState == State.WaitingChallengeDrives) {
+            return "WaitingChallengeDrives";
+        }
         if (currentState == State.ClaimerMissedDeadline) {
             return "ClaimerMissedDeadline";
         }
@@ -499,8 +520,8 @@ contract Descartes is Decorated, DescartesInterface {
         i.timeOfLastMove = now;
 
         if (i.providerDrivesPointer == i.providerDrives.length) {
-            if (i.needsRevealPhase) {
-                i.currentState = State.WaitingReveals;
+            if (i.revealDrives.length > 0) {
+                i.currentState = State.WaitingChallengeDrives;
             } else {
                 i.currentState = State.WaitingClaim;
             }
@@ -527,8 +548,8 @@ contract Descartes is Decorated, DescartesInterface {
         i.timeOfLastMove = now;
 
         if (i.providerDrivesPointer == i.providerDrives.length) {
-            if (i.needsRevealPhase) {
-                i.currentState = State.WaitingReveals;
+            if (i.revealDrives.length > 0) {
+                i.currentState = State.WaitingChallengeDrives;
             } else {
                 i.currentState = State.WaitingClaim;
             }
@@ -715,6 +736,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _index
     ) private view returns (uint256)
     {
+        // TODO: make sure maxDuration calculations are reasonable
         uint256 partitionSize = 1;
         uint256 picoSecondsToRunInsn = 500; // 500 pico seconds to run a instruction
         uint256 timeToStartMachine = 40; // 40 seconds to start the machine for the first time
@@ -728,6 +750,12 @@ contract Descartes is Decorated, DescartesInterface {
             // time to upload to logger + time to react
             uint256 maxLoggerUploadTime = 40 * 60;
             return maxLoggerUploadTime +
+                instance[_index].roundDuration;
+        }
+
+        if (instance[_index].currentState == State.WaitingChallengeDrives) {
+            // number of logger drives * time to react
+            return instance[_index].revealDrives.length *
                 instance[_index].roundDuration;
         }
 

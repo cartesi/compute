@@ -32,9 +32,10 @@ contract DescartesInterface is Instantiator {
     enum State {
         WaitingProviders,
         ProviderMissedDeadline,
+        WaitingChallengeDrives,
         WaitingReveals,
-        ClaimerMissedDeadline,
         WaitingClaim,
+        ClaimerMissedDeadline,
         WaitingConfirmation,
         WaitingChallenge,
         ChallengerWon,
