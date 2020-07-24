@@ -49,12 +49,14 @@ def test_throws():
     final_time = 3000
     round_duration = 300
     output_position = 50000
+    output_log2_size = 5
     drives = [Drive.create_drive_tuple(0, 5, bytes(32), claimer, False, False)]
 
     tx_hash = base_test.descartes.functions.instantiate(
             final_time,
             template_hash,
             output_position,
+            output_log2_size,
             round_duration,
             claimer,
             challenger,

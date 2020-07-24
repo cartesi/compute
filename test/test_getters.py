@@ -48,12 +48,14 @@ def test_getters():
     final_time = 3000
     round_duration = 300
     output_position = 50000
+    output_log2_size = 5
     drives = [Drive.create_drive_tuple(0, 5, bytes(32), claimer, False, False,)]
 
     tx_hash = base_test.descartes.functions.instantiate(
             final_time,
             template_hash,
             output_position,
+            output_log2_size,
             round_duration,
             claimer,
             challenger,
@@ -62,7 +64,7 @@ def test_getters():
     descartes_logs = base_test.descartes.events.DescartesCreated().processReceipt(tx_receipt)
     index = descartes_logs[0]['args']['_index']
 
-    # (ret_uint[2], ret_address[2], ret_bytes32[5], ret_drives)
+    # (ret_uint[4], ret_address[2], ret_bytes32[4], ret_output_bytes, ret_drives)
     ret = base_test.descartes.functions.getState(index, claimer).call({'from': claimer})
     
     error_msg = "template_hash should match"
@@ -73,10 +75,10 @@ def test_getters():
 
     error_msg = "state should be WaitingClaim"
     expected_state = "WaitingClaim"
-    assert ret[2][4][:len(expected_state)] == bytes(expected_state, 'utf-8'), error_msg
+    assert ret[2][3][:len(expected_state)] == bytes(expected_state, 'utf-8'), error_msg
 
     error_msg = "should only be one drive"
-    assert len(ret[3]) == 1, error_msg
+    assert len(ret[4]) == 1, error_msg
 
     timeout = 341
     
@@ -86,9 +88,9 @@ def test_getters():
 
     base_test.descartes.functions.abortByDeadline(index).transact({'from': claimer})
     
-    # (ret_uint[2], ret_address[2], ret_bytes32[5], ret_drives)
+    # (ret_uint[4], ret_address[2], ret_bytes32[4], ret_output_bytes, ret_drives)
     ret = base_test.descartes.functions.getState(index, claimer).call({'from': claimer})
     
     error_msg = "state should be ClaimerMissedDeadline"
     expected_state = "ClaimerMissedDeadline"
-    assert ret[2][4][:len(expected_state)] == bytes(expected_state, 'utf-8'), error_msg
+    assert ret[2][3][:len(expected_state)] == bytes(expected_state, 'utf-8'), error_msg
