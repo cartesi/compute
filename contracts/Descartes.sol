@@ -688,7 +688,7 @@ contract Descartes is Decorated, DescartesInterface {
             bytes8 dataBytes8;
             for (uint256 j = 0; j < 8; j++) {
                 bytes8 tempBytes8 = _value[i * 8 + j];
-                tempBytes8 = tempBytes8 >> (i * 8);
+                tempBytes8 = tempBytes8 >> (j * 8);
                 dataBytes8 = dataBytes8 | tempBytes8;
             }
             data[i] = keccak256(abi.encodePacked(dataBytes8));
