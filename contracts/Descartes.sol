@@ -563,6 +563,17 @@ contract Descartes is Decorated, DescartesInterface {
         require(false, "State of VG is not final");
     }
 
+    /// @notice Deactivate a Descartes SDK instance.
+    /// @param _index index of Descartes instance to deactivate
+    function destruct(uint256 _index) public {
+        DescartesCtx storage i = instance[_index];
+        delete i.revealDrives;
+        delete i.providerDrives;
+        delete i.driveHash;
+        delete i.inputDrives;
+        deactivate(_index);
+    }
+
     /// @notice Abort the instance by missing deadline.
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {

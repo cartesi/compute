@@ -98,5 +98,8 @@ contract DescartesInterface is Instantiator {
         bool,
         address,
         bytes32);
-}
 
+    /// @notice Deactivate a Descartes SDK instance.
+    /// @param _index index of Descartes instance to deactivate
+    function destruct(uint256 _index) public;
+}
