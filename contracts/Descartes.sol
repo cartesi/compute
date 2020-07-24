@@ -114,6 +114,7 @@ contract Descartes is Decorated, DescartesInterface {
     event ResultConfirmed(uint256 _index);
     event ChallengeStarted(uint256 _index);
     event DescartesFinished(uint256 _index, uint8 _state);
+    event DriveInserted(uint256 _index, Drive _drive);
 
     constructor(
         address _liAddress,
@@ -480,6 +481,8 @@ contract Descartes is Decorated, DescartesInterface {
                 i.currentState = State.WaitingClaim;
             }
         }
+
+        emit DriveInserted(_index, i.inputDrives[driveIndex]);
     }
 
     /// @notice Provide the root hash of a logger drive (only drive provider can call it).
@@ -506,6 +509,8 @@ contract Descartes is Decorated, DescartesInterface {
                 i.currentState = State.WaitingClaim;
             }
         }
+
+        emit DriveInserted(_index, i.inputDrives[driveIndex]);
     }
 
     /// @notice Reveal the content of a logger drive (only drive provider can call it).
