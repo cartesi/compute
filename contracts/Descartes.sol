@@ -43,13 +43,14 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 providerDrivesPointer; // the pointer to the current provider drive
         uint256 finalTime; // max number of machine cycle to run
         uint64 outputPosition; // memory position of machine output
+        uint64 outputLog2Size; // log2 size of the output drive in the unit of bytes
         uint256 roundDuration; // time interval to interact with this contract
         uint256 timeOfLastMove; // last time someone made a move with deadline
         uint256 vgInstance;
         bytes32 templateHash; // pristine hash of machine
         bytes32 initialHash; // initial hash with all drives mounted
         bytes32 claimedFinalHash; // claimed final hash of the machine
-        bytes32 claimedOutput; // claimed final machine output
+        bytes claimedOutput; // claimed final machine output
         address claimer; // responsible for claiming the machine output
         address challenger; // user can challenge claimer's output
         State currentState;
@@ -138,6 +139,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _finalTime,
         bytes32 _templateHash,
         uint64 _outputPosition,
+        uint64 _outputLog2Size,
         uint256 _roundDuration,
         address _claimer,
         address _challenger,
@@ -199,6 +201,8 @@ contract Descartes is Decorated, DescartesInterface {
             ));
         }
 
+        require(_outputLog2Size >= 3, "output drive has to be at least one word");
+
         i.owner = msg.sender;
         i.challenger = _challenger;
         i.claimer = _claimer;
@@ -206,6 +210,7 @@ contract Descartes is Decorated, DescartesInterface {
         i.templateHash = _templateHash;
         i.initialHash = _templateHash;
         i.outputPosition = _outputPosition;
+        i.outputLog2Size = _outputLog2Size;
         i.roundDuration = _roundDuration;
         i.timeOfLastMove = now;
         if (needsProviderPhase) {
@@ -272,7 +277,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _index,
         bytes32 _claimedFinalHash,
         bytes32[][] memory _drivesSiblings,
-        bytes32 _output,
+        bytes memory _output,
         bytes32[] memory _outputSiblings) public
         onlyInstantiated(_index)
         onlyBy(instance[_index].claimer)
@@ -281,13 +286,13 @@ contract Descartes is Decorated, DescartesInterface {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingClaim, "State should be WaitingClaim");
         require(i.inputDrives.length == _drivesSiblings.length, "Claimed drive number should match claimed siblings number");
+        require(_output.length == 2 ** i.outputLog2Size, "Output length doesn't match output log2 size");
 
-        bytes32[] memory data = getWordHashesFromBytes32(_output);
-
+        bytes32[] memory data = getWordHashesFromBytes(_output);
         require(
             Merkle.getRootWithDrive(
                 i.outputPosition,
-                5,
+                i.outputLog2Size,
                 Merkle.calculateRootFromPowerOfTwo(data),
                 _outputSiblings) == _claimedFinalHash,
             "Output is not contained in the final hash"
@@ -334,58 +339,65 @@ contract Descartes is Decorated, DescartesInterface {
             uint256[] memory,
             address[] memory,
             bytes32[] memory,
+            bytes memory,
             Drive[] memory
         )
     {
-        uint256[] memory uintValues = new uint256[](3);
-        uintValues[0] = instance[_index].finalTime;
-        uintValues[1] = instance[_index].timeOfLastMove + getMaxStateDuration(
+        DescartesCtx storage i = instance[_index];
+
+        uint256[] memory uintValues = new uint256[](4);
+        uintValues[0] = i.finalTime;
+        uintValues[1] = i.timeOfLastMove + getMaxStateDuration(
             _index);
-        uintValues[2] = instance[_index].outputPosition;
+        uintValues[2] = i.outputPosition;
+        uintValues[3] = i.outputLog2Size;
 
         address[] memory addressValues = new address[](2);
-        addressValues[0] = instance[_index].challenger;
-        addressValues[1] = instance[_index].claimer;
+        addressValues[0] = i.challenger;
+        addressValues[1] = i.claimer;
 
-        bytes32[] memory bytesValues = new bytes32[](5);
-        bytesValues[0] = instance[_index].templateHash;
-        bytesValues[1] = instance[_index].initialHash;
-        bytesValues[2] = instance[_index].claimedFinalHash;
-        bytesValues[3] = instance[_index].claimedOutput;
-        bytesValues[4] = getCurrentState(_index);
+        bytes32[] memory bytes32Values = new bytes32[](4);
+        bytes32Values[0] = i.templateHash;
+        bytes32Values[1] = i.initialHash;
+        bytes32Values[2] = i.claimedFinalHash;
+        bytes32Values[3] = getCurrentState(_index);
 
-        if (instance[_index].currentState == State.WaitingProviders) {
+        if (i.currentState == State.WaitingProviders) {
             Drive[] memory drives = new Drive[](1);
-            drives[0] = instance[_index].inputDrives[instance[_index].providerDrivesPointer];
+            drives[0] = i.inputDrives[i.providerDrivesPointer];
             return (
                 uintValues,
                 addressValues,
-                bytesValues,
+                bytes32Values,
+                i.claimedOutput,
                 drives
             );
-        } else if (instance[_index].currentState == State.WaitingReveals) {
+        } else if (i.currentState == State.WaitingReveals) {
             Drive[] memory drives = new Drive[](1);
-            drives[0] = instance[_index].inputDrives[instance[_index].revealDrivesPointer];
+            drives[0] = i.inputDrives[i.revealDrivesPointer];
             return (
                 uintValues,
                 addressValues,
-                bytesValues,
+                bytes32Values,
+                i.claimedOutput,
                 drives
             );
-        } else if (instance[_index].currentState == State.ProviderMissedDeadline) {
+        } else if (i.currentState == State.ProviderMissedDeadline) {
             Drive[] memory drives = new Drive[](0);
             return (
                 uintValues,
                 addressValues,
-                bytesValues,
+                bytes32Values,
+                i.claimedOutput,
                 drives
             );
         } else {
             return (
                 uintValues,
                 addressValues,
-                bytesValues,
-                instance[_index].inputDrives
+                bytes32Values,
+                i.claimedOutput,
+                i.inputDrives
             );
         }
     }
@@ -624,7 +636,7 @@ contract Descartes is Decorated, DescartesInterface {
     /// @return bytes32, the result of the sdk if available
     function getResult(uint256 _index) public view
         onlyInstantiated(_index)
-        returns (bool, bool, address, bytes32)
+        returns (bool, bool, address, bytes memory)
     {
         DescartesCtx memory i = instance[_index];
         if (i.currentState == State.ConsensusResult) {
@@ -634,7 +646,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState == State.WaitingClaim ||
             i.currentState == State.WaitingConfirmation ||
             i.currentState == State.WaitingChallenge) {
-            return (false, true, address(0), bytes32(0));
+            return (false, true, address(0), "");
         }
         if (i.currentState == State.ProviderMissedDeadline) {
             address userToBlame = address(0);
@@ -645,14 +657,14 @@ contract Descartes is Decorated, DescartesInterface {
             } else if (instance[_index].revealDrivesPointer < instance[_index].revealDrives.length) {
                 userToBlame = i.inputDrives[i.revealDrivesPointer].provider;
             }
-            return (false, false, userToBlame, bytes32(0));
+            return (false, false, userToBlame, "");
         }
         if (i.currentState == State.ClaimerMissedDeadline ||
             i.currentState == State.ChallengerWon) {
-            return (false, false, i.claimer, bytes32(0));
+            return (false, false, i.claimer, "");
         }
         if (i.currentState == State.ClaimerWon) {
-            return (false, false, i.challenger, bytes32(0));
+            return (false, false, i.challenger, "");
         }
 
         revert("Unrecognized state");

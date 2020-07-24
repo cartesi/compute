@@ -82,6 +82,7 @@ contract DescartesInterface is Instantiator {
         uint256 _finalTime,
         bytes32 _templateHash,
         uint64 _outputPosition,
+        uint64 _outputLog2Size,
         uint256 _roundDuration,
         address _claimer,
         address _challenger,
@@ -97,7 +98,7 @@ contract DescartesInterface is Instantiator {
         bool,
         bool,
         address,
-        bytes32);
+        bytes memory);
 
     /// @notice Deactivate a Descartes SDK instance.
     /// @param _index index of Descartes instance to deactivate

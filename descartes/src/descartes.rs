@@ -22,7 +22,7 @@
 use super::configuration::Concern;
 use super::dispatcher::{Archive, Reaction};
 use super::dispatcher::DApp;
-use super::dispatcher::{U256Array, Bytes32Array, AddressArray,};
+use super::dispatcher::{U256Array, Bytes32Array, AddressArray, BytesField};
 use super::error::*;
 use super::ethabi::Token;
 use super::ethereum_types::{H256, U256, Address};
@@ -120,9 +120,10 @@ impl From<&DriveParsed> for Drive {
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #[derive(Serialize, Deserialize)]
 pub struct DescartesCtxParsed(
-    U256Array,      // finalTime, deadline
+    U256Array,      // finalTime, deadline, outputPosition, outputLog2Size
     AddressArray,   // challenger, claimer
-    Bytes32Array,   // templateHash, initialHash, claimedFinalHash, claimedOutput, currentState
+    Bytes32Array,   // templateHash, initialHash, claimedFinalHash, currentState
+    BytesField,     // claimedOutput
     DriveArray,
 );
 
@@ -131,11 +132,12 @@ pub struct DescartesCtx {
     pub template_hash: H256,
     pub initial_hash: H256,
     pub claimed_final_hash: H256,
-    pub claimed_output: H256,
+    pub claimed_output: Vec<u8>,
     pub claimer: Address,
     pub challenger: Address,
     pub deadline: U256,
     pub output_position: U256,
+    pub output_log2_size: U256,
     pub final_time: U256,
     pub current_state: String,
     pub input_drives: Vec<Drive>,
@@ -147,14 +149,14 @@ impl From<DescartesCtxParsed> for DescartesCtx {
             final_time: parsed.0.value[0],
             deadline: parsed.0.value[1],
             output_position: parsed.0.value[2],
+            output_log2_size: parsed.0.value[3],
             challenger: parsed.1.value[0],
             claimer: parsed.1.value[1],
             template_hash: parsed.2.value[0],
             initial_hash: parsed.2.value[1],
             claimed_final_hash: parsed.2.value[2],
-            claimed_output: parsed.2.value[3],
             current_state: String::from_utf8(
-                    parsed.2.value[4]
+                    parsed.2.value[3]
                         .to_fixed_bytes()
                         .to_vec()
                         .iter()
@@ -164,7 +166,8 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                     )
                 .unwrap()
                 .to_string(),
-            input_drives: parsed.3.value.iter().map(|d| d.into()).collect(),
+            claimed_output: parsed.3.value,
+            input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
         }
     }
 }
@@ -334,6 +337,7 @@ impl DApp<()> for Descartes {
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,
+                        ctx.output_log2_size,
                     );
                 },
                 "WaitingChallenge" => {
@@ -406,6 +410,7 @@ impl DApp<()> for Descartes {
                         ctx.claimed_final_hash,
                         ctx.final_time,
                         ctx.output_position,
+                        ctx.output_log2_size,
                     );
                 },
                 "WaitingChallenge" => {
@@ -538,6 +543,7 @@ fn react_by_machine_output(
     claimed_final_hash: H256,
     final_time: U256,
     output_position: U256,
+    output_log2_size: U256,
 ) -> Result<Reaction> {
     // create machine and fill in all the drives
     let id = build_machine_id(index, &concern.user_address);
@@ -562,7 +568,7 @@ fn react_by_machine_output(
 
     let mut drives_siblings = vec![];
     let mut output_siblings = vec![];
-    let mut calculated_output = H256::zero();
+    let mut calculated_output = vec![];
     
     let time = 0;
     for drive in &input_drives {
@@ -691,7 +697,8 @@ fn react_by_machine_output(
 
     if let Role::Claimer = role {
         // get output value
-        let length = 32;
+        let log2_size = output_log2_size.as_u64();
+        let length = 2_u64.pow(log2_size as u32);
         let address = output_position.as_u64();
     
         let archive_key = build_session_read_key(id.clone(), time, address, length);
@@ -719,15 +726,12 @@ fn react_by_machine_output(
             processed_response.read_content.data
         );
     
-        calculated_output = H256::from_slice(&processed_response.read_content.data);
+        calculated_output = processed_response.read_content.data.clone();
 
-        // get output drive siblings
-        let output_logsize_2 = 5;
-
-        let archive_key = build_session_proof_key(id.clone(), time, address, output_logsize_2);
+        let archive_key = build_session_proof_key(id.clone(), time, address, log2_size);
         let mut target = cartesi_machine::GetProofRequest::new();
         target.set_address(address);
-        target.set_log2_size(output_logsize_2);
+        target.set_log2_size(log2_size);
 
         let request = SessionGetProofRequest {
             session_id: id.clone(),
@@ -771,7 +775,7 @@ fn react_by_machine_output(
                     Token::Uint(index),
                     Token::FixedBytes(calculated_final_hash.to_fixed_bytes().to_vec()),
                     Token::Array(drives_siblings),
-                    Token::FixedBytes(calculated_output.to_fixed_bytes().to_vec()),
+                    Token::Bytes(calculated_output),
                     Token::Array(output_siblings),
                 ],
                 // TODO: change back to None after done testing

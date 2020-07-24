@@ -83,6 +83,7 @@ module.exports = async (callback) => {
             finalTime,
             templateHash,
             outputPosition,
+            5,
             roundDuration,
             claimer,
             challenger,
