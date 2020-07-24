@@ -37,6 +37,7 @@ contract Descartes is Decorated, DescartesInterface {
     VGInterface vg;
 
     struct DescartesCtx {
+        address owner; // the one who has power to shutdown the instance
         bool needsRevealPhase; // one or more drives needs to reveal its content
         uint256 revealDrivesPointer; // the pointer to the current reveal drive
         uint256 providerDrivesPointer; // the pointer to the current provider drive
@@ -198,6 +199,7 @@ contract Descartes is Decorated, DescartesInterface {
             ));
         }
 
+        i.owner = msg.sender;
         i.challenger = _challenger;
         i.claimer = _claimer;
         i.finalTime = _finalTime;
@@ -565,7 +567,10 @@ contract Descartes is Decorated, DescartesInterface {
 
     /// @notice Deactivate a Descartes SDK instance.
     /// @param _index index of Descartes instance to deactivate
-    function destruct(uint256 _index) public {
+    function destruct(uint256 _index) public
+        onlyInstantiated(_index)
+        onlyBy(instance[_index].owner)
+    {
         DescartesCtx storage i = instance[_index];
         delete i.revealDrives;
         delete i.providerDrives;
