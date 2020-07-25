@@ -572,6 +572,15 @@ contract Descartes is Decorated, DescartesInterface {
         onlyBy(instance[_index].owner)
     {
         DescartesCtx storage i = instance[_index];
+        require(
+            i.currentState == State.ProviderMissedDeadline ||
+            i.currentState == State.ClaimerMissedDeadline ||
+            i.currentState == State.ConsensusResult ||
+            i.currentState == State.ChallengerWon ||
+            i.currentState == State.ClaimerWon,
+            "Cannot destruct instance at current state"
+        );
+
         delete i.revealDrives;
         delete i.providerDrives;
         delete i.driveHash;
