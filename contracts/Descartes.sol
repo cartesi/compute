@@ -431,6 +431,12 @@ contract Descartes is Decorated, DescartesInterface {
         if (currentState == State.ConsensusResult) {
             return "ConsensusResult";
         }
+        if (currentState == State.ChallengerWon) {
+            return "ChallengerWon";
+        }
+        if (currentState == State.ClaimerWon) {
+            return "ClaimerWon";
+        }
 
         revert("Unrecognized state");
     }
