@@ -21,8 +21,10 @@
 
 #![warn(unused_extern_crates)]
 pub mod descartes;
+pub mod ipfs_service;
 
 extern crate error;
+extern crate grpc;
 
 #[macro_use]
 extern crate serde_derive;
@@ -35,6 +37,7 @@ extern crate transaction;
 extern crate compute;
 extern crate configuration;
 extern crate logger_service;
+extern crate ipfs_interface;
 extern crate hex;
 
 pub use descartes::Descartes;
@@ -46,7 +49,7 @@ pub use logger_service::{
     LOGGER_SERVICE_NAME,
 };
 
-use ethereum_types::{Address, U256};
+use ethereum_types::{Address, U256, H256};
 
 #[derive(Debug)]
 enum Role {
@@ -108,4 +111,20 @@ pub fn get_logger_response(
 
 pub fn build_machine_id(descartes_index: U256, player_address: &Address) -> String {
     return format!("{:x}:{}", player_address, descartes_index);
+}
+
+pub fn build_logger_submit_key(root_hash: H256) -> String {
+    return format!("{:x}.logger.submit", root_hash);
+}
+
+pub fn build_logger_download_key(root_hash: H256) -> String {
+    return format!("{:x}.logger.download", root_hash);
+}
+
+pub fn build_ipfs_add_key(file_path: String) -> String {
+    return format!("{}.ipfs.get", file_path);
+}
+
+pub fn build_ipfs_get_key(ipfs_path: String) -> String {
+    return format!("{}.ipfs.get", ipfs_path);
 }

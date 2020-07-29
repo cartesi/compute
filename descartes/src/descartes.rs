@@ -30,8 +30,7 @@ use super::transaction;
 use super::transaction::TransactionRequest;
 use super::compute::vg::{VG, VGCtx, VGCtxParsed};
 use super::hex;
-
-pub use compute::{
+use compute::{
     get_run_result, cartesi_machine, build_session_write_key,
     build_session_proof_key, build_session_read_key, build_session_run_key,
     SessionRunRequest, SessionReadMemoryRequest, SessionReadMemoryResponse,
@@ -40,34 +39,29 @@ pub use compute::{
     EMULATOR_SERVICE_NAME, EMULATOR_METHOD_WRITE, EMULATOR_METHOD_READ,
     EMULATOR_METHOD_PROOF, EMULATOR_METHOD_NEW
 };
-
-pub use logger_service::{
+use logger_service::{
     DownloadFileRequest, DownloadFileResponse,
     SubmitFileRequest, SubmitFileResponse,
     LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
 };
-use super::{Role, build_machine_id, get_logger_response};
+use ipfs_service::{
+    GetFileRequest, GetFileResponse, GetFileResponseOneOf,
+    IPFS_METHOD_GET, IPFS_SERVICE_NAME,
+};
+use super::{
+    Role, build_machine_id, get_logger_response,
+    build_logger_download_key, build_logger_submit_key,
+    build_ipfs_get_key,
+};
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Descartes();
 
 
-#[derive(Serialize, Deserialize, Debug)]
-struct Payload {
-    pub action: String,
-    pub params: Params,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-enum Params {
-    RootHash(H256),
-    DirectValue(Vec<u8>),
-}
-
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(uint64,uint64,bytes,bytes32,address,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint64,bytes,bytes,bytes32,address,bool,bool)[]")]
     DriveArrayType,
 }
 
@@ -76,6 +70,7 @@ pub struct DriveParsed(
     U256,   // position
     U256,   // log2Size
     String, // directValue
+    String, // loggerIpfsPath
     H256,   // loggerRootHash
     Address,// provider
     bool,   // needsProvider
@@ -95,6 +90,7 @@ pub struct Drive {
     position: U256,
     log2_size: U256,
     direct_value: Vec<u8>,
+    ipfs_path: String,
     root_hash: H256,
     provider: Address,
     waits_provider: bool,
@@ -107,10 +103,17 @@ impl From<&DriveParsed> for Drive {
             position: parsed.0,
             log2_size: parsed.1,
             direct_value: hex::decode(&parsed.2[2..]).unwrap(),
-            root_hash: parsed.3,
-            provider: parsed.4,
-            waits_provider: parsed.5,
-            needs_logger: parsed.6,
+            ipfs_path: hex::decode(&parsed.3[2..])
+                .and_then(|vec_u8| {
+                    let removed_trailing_zeros =
+                        vec_u8.iter().take_while(|&n| *n != 0).map(|&n| n).collect();
+                    Ok(String::from_utf8(removed_trailing_zeros).unwrap())
+                })
+                .unwrap(),
+            root_hash: parsed.4,
+            provider: parsed.5,
+            waits_provider: parsed.6,
+            needs_logger: parsed.7,
         }
     }
 }
@@ -164,8 +167,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                         .map(|&n| n)
                         .collect()
                     )
-                .unwrap()
-                .to_string(),
+                .unwrap(),
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
         }
@@ -179,7 +181,7 @@ impl DApp<()> for Descartes {
     fn react(
         instance: &state::Instance,
         archive: &Archive,
-        post_payload: &Option<String>,
+        _post_payload: &Option<String>,
         _: &(),
     ) -> Result<Reaction> {
         // get context (state) of the Descartes instance
@@ -219,9 +221,9 @@ impl DApp<()> for Descartes {
         trace!("Role played (index {}) is: {:?}", instance.index, role);
 
         let current_time = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .chain_err(|| "System time before UNIX_EPOCH")?
-        .as_secs();
+            .duration_since(UNIX_EPOCH)
+            .chain_err(|| "System time before UNIX_EPOCH")?
+            .as_secs();
 
         match ctx.current_state.as_ref() {
             "WaitingProviders" => {
@@ -234,80 +236,51 @@ impl DApp<()> for Descartes {
                         ctx.deadline.as_u64(),
                     );
                 }
-                if let Some(s) = post_payload {
-                    // got request from user to claim a pending drive
-                    let payload: Payload = serde_json::from_str(&s)
-                    .chain_err(|| format!("Could not parse post_payload: {}", &s))?;
-
-                    if !ctx.input_drives[0].needs_logger {
-                        if let Params::DirectValue(v) = payload.params {
-                            let request = TransactionRequest {
-                                contract_name: None, // Name not needed, is concern
-                                concern: instance.concern.clone(),
-                                value: U256::from(0),
-                                function: "provideDirectDrive".into(),
-                                data: vec![
-                                    Token::Uint(instance.index),
-                                    Token::Bytes(v),
-                                    ],
-                                gas: None,
-                                strategy: transaction::Strategy::Simplest,
-                            };
-                            return Ok(Reaction::Transaction(request));
-                        }
-                        error!("Claimed drive type doesn't match with pending drive");
-                        return Ok(Reaction::Idle);
-                    } else {
-                        if let Params::RootHash(h) = payload.params {
-                            let request = TransactionRequest {
-                                contract_name: None, // Name not needed, is concern
-                                concern: instance.concern.clone(),
-                                value: U256::from(0),
-                                function: "provideLoggerDrive".into(),
-                                data: vec![
-                                    Token::Uint(instance.index),
-                                    Token::FixedBytes(h.to_fixed_bytes().to_vec()),
-                                    ],
-                                gas: None,
-                                strategy: transaction::Strategy::Simplest,
-                            };
-                            return Ok(Reaction::Transaction(request));
-                        }
-                        error!("Claimed drive type doesn't match with pending drive");
-                        return Ok(Reaction::Idle);
-                    }
-                };
             },
             "WaitingChallengeDrives" => {
-                if current_time <= ctx.deadline.as_u64() {
-                    for drive in &ctx.input_drives {
-                        if drive.needs_logger {
-                            // TODO: lookup drives off-chain from IPFS or url
-                            archive.get_response(
-                                "ipfs".into(),
-                                format!("{:x}.ipfs", drive.root_hash.clone()),
-                                format!(
-                                    "api/v0/get?arg={:?}&output=/opt/cartesi/srv/descartes/{:?}",
-                                    drive.root_hash.clone(),
-                                    drive.root_hash.clone()
-                                ),
-                                vec![]
-                            )?;
-                            
-                            // drive not found
-                            let request = TransactionRequest {
-                                contract_name: None, // Name not needed, is concern
-                                concern: instance.concern.clone(),
-                                value: U256::from(0),
-                                function: "challengeDrives".into(),
-                                data: vec![Token::Uint(instance.index)],
-                                gas: None,
-                                strategy: transaction::Strategy::Simplest,
-                            };
-                            return Ok(Reaction::Transaction(request));
+                for drive in &ctx.input_drives {
+                    if drive.needs_logger {
+                        let request = GetFileRequest {
+                            ipfs_path: drive.ipfs_path.clone(),
+                            log2_size: drive.log2_size.as_u64() as u32,
+                            output_path: format!("{:x}", drive.root_hash),
+                            // TODO: come up with better timeout
+                            timeout: 120,
+                        };
+
+                        match archive.get_response(
+                            IPFS_SERVICE_NAME.into(),
+                            build_ipfs_get_key(drive.ipfs_path.clone()),
+                            IPFS_METHOD_GET.into(),
+                            request.into(),
+                        ) {
+                            Ok(data) => {
+                                // TODO: validate the root_hash
+                                let response: GetFileResponse = data.into();
+                                info!("Response received from Ipfs {:?}", response);
+                            },
+                            Err(e) => {
+                                match e.kind() {
+                                    ErrorKind::ResponseInvalidError(_service, _key, _m) => {
+                                        // drive not found in time
+                                        let request = TransactionRequest {
+                                            contract_name: None, // Name not needed, is concern
+                                            concern: instance.concern.clone(),
+                                            value: U256::from(0),
+                                            function: "challengeDrives".into(),
+                                            data: vec![Token::Uint(instance.index)],
+                                            gas: None,
+                                            strategy: transaction::Strategy::Simplest,
+                                        };
+                                        return Ok(Reaction::Transaction(request));
+                                    },
+                                    _ => {
+                                        return Err(e);
+                                    }
+                                }
+                            }
                         }
                     }
-                    return Ok(Reaction::Idle);
                 }
             },
             "WaitingReveals" => {
@@ -322,7 +295,7 @@ impl DApp<()> for Descartes {
                 }
                 let root = ctx.input_drives[0].root_hash.clone();
                 let request = SubmitFileRequest {
-                    path: format!("{:x}", root.clone()),
+                    path: format!("{:x}", root),
                     page_log2_size: 3,
                     tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
                 };
@@ -330,7 +303,7 @@ impl DApp<()> for Descartes {
                 let processed_response: SubmitFileResponse = get_logger_response(
                     archive,
                     "Descartes".into(),
-                    format!("{:x}.logger.submit", root.clone()),
+                    build_logger_submit_key(root.clone()),
                     LOGGER_METHOD_SUBMIT.to_string(),
                     request.into(),
                 )?
@@ -378,7 +351,7 @@ impl DApp<()> for Descartes {
                     );
                 },
                 "WaitingChallengeDrives" => {
-                    // calculate machine output
+                    // no one challenges the drives, claim output directly
                     if current_time > ctx.deadline.as_u64() {
                         return react_by_machine_output(
                             archive,
@@ -618,6 +591,7 @@ fn react_by_machine_output(
     let request = NewSessionRequest {
         session_id: id.clone(),
         machine: machine,
+        force: true,
     };
 
     // send newSession request to the emulator service
@@ -661,27 +635,64 @@ fn react_by_machine_output(
                     request.into(),
                 )?;
         } else {
-            // TODO: get the drives from IPFS or url
-            let request = DownloadFileRequest {
-                root: drive.root_hash.clone(),
-                path: format!("{:x}", drive.root_hash.clone()),
-                page_log2_size: 3,
-                tree_log2_size: drive.log2_size.as_u64(),
+            // get logger drive
+            let request = GetFileRequest {
+                ipfs_path: drive.ipfs_path.clone(),
+                log2_size: drive.log2_size.as_u64() as u32,
+                output_path: format!("{:x}", drive.root_hash),
+                // TODO: come up with better timeout
+                timeout: 120,
             };
 
-            let processed_response: DownloadFileResponse = get_logger_response(
-                archive,
-                "Descartes".into(),
-                format!("{:x}.logger.download", drive.root_hash.clone()),
-                LOGGER_METHOD_DOWNLOAD.to_string(),
+            let ipfs_key = build_ipfs_get_key(drive.ipfs_path.clone());
+
+            let drive_path = match archive.get_response(
+                IPFS_SERVICE_NAME.into(),
+                ipfs_key.clone(),
+                IPFS_METHOD_GET.into(),
                 request.into(),
-            )?
-            .into();
-            trace!("Downloaded! File stored at: {}...", processed_response.path);
+            ) {
+                // try to get drive from Ipfs first
+                Ok(data) => {
+                    let response: GetFileResponse = data.into();
+                    if let GetFileResponseOneOf::GetResult(s) = response.one_of {
+                        s.output_path
+                    } else {
+                        // shouldn't reach here
+                        // ipfs drive request should either be timeout
+                        // or complete with a GetFileResult
+                        return Err(Error::from(ErrorKind::ResponseInvalidError(
+                            IPFS_SERVICE_NAME.into(),
+                            ipfs_key,
+                            IPFS_METHOD_GET.into(),
+                        )))
+                    }
+                },
+                // fall back to logger if not found
+                Err(_) => {
+                    let request = DownloadFileRequest {
+                        root: drive.root_hash.clone(),
+                        path: format!("{:x}", drive.root_hash),
+                        page_log2_size: 3,
+                        tree_log2_size: drive.log2_size.as_u64(),
+                    };
+        
+                    let processed_response: DownloadFileResponse = get_logger_response(
+                        archive,
+                        "Descartes".into(),
+                        build_logger_download_key(drive.root_hash.clone()),
+                        LOGGER_METHOD_DOWNLOAD.to_string(),
+                        request.into(),
+                    )?
+                    .into();
+                    trace!("Downloaded! File stored at: {}...", processed_response.path);
+
+                    processed_response.path
+                }
+            };
 
             // TODO: rewrite with flash replacement call later
-            
-            let data = std::fs::read(processed_response.path)?;
+            let data = std::fs::read(drive_path)?;
             let archive_key = build_session_write_key(id.clone(), time, address, data.clone());
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();
@@ -694,7 +705,7 @@ fn react_by_machine_output(
                 position: position,
             };
 
-            let _processed_response = archive
+            let _ = archive
                 .get_response(
                     EMULATOR_SERVICE_NAME.to_string(),
                     archive_key.clone(),

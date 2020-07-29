@@ -17,7 +17,9 @@ target/
 dapp_data_0/
 dapp_data_1/
 .coverage_contracts/*
-
 coverage.json
 yarn-error.log
 deployments/*
+ipfs_interface/target
+ipfs_interface/src/*.rs
+!ipfs_interface/src/lib.rs

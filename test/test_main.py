@@ -38,7 +38,7 @@ class DescartesState(Enum):
 
 class Drive:
     def create_drive_tuple(position, drive_log2_size, value, provider, needs_provider, needs_logger):
-        return (position, drive_log2_size, value, value, provider, needs_provider, needs_logger)
+        return (position, drive_log2_size, value, value, value, provider, needs_provider, needs_logger)
 
 class BaseTest:
 
@@ -59,4 +59,3 @@ class BaseTest:
         with open('../build/contracts/Descartes.json') as json_file:
             descartes_data = json.load(json_file)
             self.descartes = w3.eth.contract(address=descartes_data['networks'][networkId]['address'], abi=descartes_data['abi'])
-

@@ -196,6 +196,7 @@ contract Descartes is Decorated, DescartesInterface {
                 drive.position,
                 drive.driveLog2Size,
                 drive.directValue,
+                drive.loggerIpfsPath,
                 drive.loggerRootHash,
                 drive.provider,
                 drive.waitsProvider,
@@ -755,7 +756,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         if (instance[_index].currentState == State.WaitingChallengeDrives) {
             // number of logger drives * time to react
-            return instance[_index].revealDrives.length *
+            return instance[_index].revealDrives.length * 2 *
                 instance[_index].roundDuration;
         }
 

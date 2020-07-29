@@ -62,6 +62,8 @@ contract DescartesInterface is Instantiator {
         uint64 driveLog2Size;
         // direct value inserted to the drive
         bytes directValue;
+        // ipfs object path of the logger drive
+        bytes loggerIpfsPath;
         // root hash of the drive submitted to the logger
         bytes32 loggerRootHash;
         // the user who's responsible for filling out the drive
