@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "Cartesi Descartes SDK",
   "scripts": {
+    "migrate_dev": "cd ./scripts; ./deploy_development.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,11 +26,20 @@
     "@cartesi/util": "^0.2.1"
   },
   "devDependencies": {
+    "axios": "^0.19.2",
+    "@nomiclabs/buidler": "^1.3.8",
+    "@nomiclabs/buidler-ethers": "^2.0.0",
+    "@nomiclabs/buidler-truffle5": "^1.3.4",
+    "@nomiclabs/buidler-waffle": "^2.0.0",
+    "@nomiclabs/buidler-web3": "^1.3.4",
     "@truffle/contract": "^4.2.10",
     "@truffle/hdwallet-provider": "^1.0.40",
     "commander": "^4.1.0",
-    "solidity-coverage": "^0.6.7",
-    "truffle": "^5.1.37"
+    "truffle": "^5.1.37",
+    "chai": "^4.2.0",
+    "ethereum-waffle": "^3.0.2",
+    "ethers": "^5.0.7",
+    "solidity-coverage": "^0.7.0"
   },
   "files": [
     "contracts",
