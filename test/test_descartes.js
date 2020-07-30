@@ -20,7 +20,7 @@ const deployDescartes = async ({ logger, vg, step }) => {
   const LoggerAddress = logger || LoggerJson.networks[network_id].address;
   const VGAddress = vg || VGInstantiatorJson.networks[network_id].address;
   const StepAddress = step || StepJson.networks[network_id].address;
-  const Descartes = await ethers.getContractFactory("TestDescartes");
+  const Descartes = await ethers.getContractFactory("Descartes");
   const descartes = await Descartes.deploy(
     LoggerAddress,
     VGAddress,

@@ -24,7 +24,11 @@
 pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
+// #if BUILD_TEST
+import './test/TestMerkle.sol';
+// #else
 import "@cartesi/util/contracts/Merkle.sol";
+// #endif
 import "@cartesi/util/contracts/Decorated.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";

@@ -11,8 +11,8 @@ const network = (name, network_id, url=`https://${name}.infura.io/v3/${project}`
 });
 
 usePlugin("@nomiclabs/buidler-waffle");
+usePlugin("@nomiclabs/buidler-solpp");
 usePlugin('solidity-coverage')
-
 
 module.exports = {
   defaultNetwork: "development",
@@ -30,9 +30,14 @@ module.exports = {
       gasPrice: 0x01      // <-- Use this low gas price
     },
     ropsten: network("ropsten", 3),
-    // kovan: network("kovan", 42),
-    // rinkeby: network("rinkeby", 4),
-    // matic_testnet: network("matic_testnet", 15001, 'https://testnetv3.matic.network'),
+    kovan: network("kovan", 42),
+    rinkeby: network("rinkeby", 4),
+    matic_testnet: network("matic_testnet", 15001, 'https://testnetv3.matic.network'),
+  },
+  solpp: {
+    defs: {
+      BUILD_TEST: process.argv.includes('test') || process.argv.includes('coverage'),
+    }
   },
   solc: {
     version: "0.5.16",
