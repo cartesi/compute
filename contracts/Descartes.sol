@@ -624,6 +624,10 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = State.ClaimerMissedDeadline;
             return;
         }
+        if (i.currentState == State.WaitingConfirmation) {
+            i.currentState = State.ConsensusResult;
+            return;
+        }
 
         revert("Cannot abort current state");
     }

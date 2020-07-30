@@ -384,6 +384,15 @@ impl DApp<()> for Descartes {
                         }
                     }
                 },
+                "WaitingConfirmation" => {
+                    // wait for the challenger to confirm/challenge
+                    // or claim consensus if the deadline is over
+                    return abort_by_deadline_or_idle(
+                        &instance.concern,
+                        instance.index,
+                        ctx.deadline.as_u64(),
+                    );
+                },
                 _ => {
                     return Ok(Reaction::Idle);
                 }
