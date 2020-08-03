@@ -38,7 +38,7 @@ services:
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: cartesi/descartes:0.1.1
+    image: cartesi/descartes:0.2.0
     environment:
       RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
       WEB3_PROVIDER_URI: http://ganache:8545
@@ -63,7 +63,7 @@ services:
       - "{{ 3001 + i }}:3001"
 
   logger_{{ i }}:
-    image: cartesi/logger-server:0.3.0
+    image: cartesi/logger-server:0.4.0
     command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
