@@ -24,3 +24,4 @@ logger_service = { path = "../logger-dlib/logger_service" }
 protobuf = "=2.8.1"
 bytes = "0.4.12"
 hex = "0.3.2"
+uint = "=0.8.3"
