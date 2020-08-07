@@ -9,3 +9,6 @@ test/*/
 *.ext2
 *.abi
 /out
+target/
+dapp_data_0/
+dapp_data_1/
