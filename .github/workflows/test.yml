@@ -16,10 +16,4 @@ jobs:
       - run: npm install -g --unsafe-perm=true --allow-root truffle
       - run: yarn install
 
-      - uses: actions/setup-python@v1
-        with:
-            python-version: '3.x'
-      - run: pip3 install -r requirements.txt
-      
-      - run: ./scripts/deploy_development.sh
-      - run: ./run_python_tests.sh
+      - run: ./scripts/automated_tests.sh
