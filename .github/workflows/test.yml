@@ -3,17 +3,10 @@ on: [push]
 jobs:
   test:
     runs-on: ubuntu-18.04
-    services:
-        ganache:
-            image: trufflesuite/ganache-cli
-            ports:
-                - 8545:8545
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
             node-version: '12.x'
-      - run: npm install -g --unsafe-perm=true --allow-root truffle
       - run: yarn install
-
       - run: ./scripts/automated_tests.sh

@@ -20,3 +20,4 @@ dapp_data_1/
 
 coverage.json
 yarn-error.log
+deployments/*
