@@ -306,7 +306,7 @@ describe("Descartes tests", () => {
       let [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
       expect(resultReady).to.be.false; // @discuss should it really be false?
       expect(sdkRunning).to.be.false;
-      expect(blameUser).to.be.equal(challengerAddress);
+      expect(blameUser).to.be.equal(claimerAddress);
       expect(result).to.be.equal(ethers.constants.HashZero);
       await revertSnapshot();
 
@@ -323,7 +323,7 @@ describe("Descartes tests", () => {
       [resultReady, sdkRunning, blameUser, result] = Object.values(tx5);
       expect(resultReady).to.be.false; // @discuss should it really be false?
       expect(sdkRunning).to.be.false;
-      expect(blameUser).to.be.equal(claimerAddress);
+      expect(blameUser).to.be.equal(challengerAddress);
       expect(result).to.be.equal(ethers.constants.HashZero);
 
       const tx6 = await descartes.getState(0, mainSignerAddress);
