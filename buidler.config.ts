@@ -16,7 +16,7 @@ usePlugin("@nomiclabs/buidler-solpp");
 usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("@nodefactory/buidler-typechain");
 usePlugin('solidity-coverage')
-// usePlugin("buidler-deploy");
+usePlugin("buidler-deploy");
 
 module.exports = {
   defaultNetwork: "development",
