@@ -1,7 +1,8 @@
-const { ethers } = require("@nomiclabs/buidler");
-const { expect, use } = require("chai");
-const { solidity } = require("ethereum-waffle");
-const { deployMockContract } = require("@ethereum-waffle/mock-contract");
+import { ethers } from "@nomiclabs/buidler";
+import { expect, use } from "chai";
+import { solidity } from "ethereum-waffle";
+import { deployMockContract, MockContract } from "@ethereum-waffle/mock-contract";
+import * as e from "ethers";
 const {
   driveMatcher,
   snapshotTaker,
@@ -16,7 +17,7 @@ const StepJson = require("@cartesi/machine-solidity-step/build/contracts/Step.js
 
 const network_id = 31337; // buidler node chain_id
 
-const deployDescartes = async ({ logger, vg, step }) => {
+const deployDescartes = async ({ logger, vg, step }:{ logger?: string, vg?:string, step?:string}={}): Promise<e.Contract> => {
   const LoggerAddress = logger || LoggerJson.networks[network_id].address;
   const VGAddress = vg || VGInstantiatorJson.networks[network_id].address;
   const StepAddress = step || StepJson.networks[network_id].address;
@@ -31,8 +32,13 @@ const deployDescartes = async ({ logger, vg, step }) => {
 };
 
 describe("Descartes tests", () => {
-  let mainSigner, claimer, challenger;
-  let accounts;
+  let mainSigner: e.Signer;
+  let mainSignerAddress: string;
+  let claimer: e.Signer;
+  let claimerAddress: string;
+  let challenger: e.Signer;
+  let challengerAddress: string;
+  let accounts: e.Signer[];
   let finalTime = 300;
   let templateHash = ethers.constants.HashZero;
   let outputPosition = 0;
@@ -44,17 +50,22 @@ describe("Descartes tests", () => {
     loggerRootHash: ethers.constants.HashZero,
     waitsProvider: false,
     needsLogger: false,
+    provider: "",
   };
-  let descartes;
-  let takeSnapshot;
-  let mockVG;
+  let descartes: e.Contract;
+  let takeSnapshot: Function;
+  let mockVG: MockContract;
+  let mockLogger: MockContract;
+  let instantiateTimestamp: number;
 
   before(async () => {
     accounts = await ethers.getSigners();
     [mainSigner, claimer, challenger] = accounts;
-    aDrive.provider = claimer._address;
+    aDrive.provider = await claimer.getAddress();
     takeSnapshot = snapshotTaker(mainSigner.provider);
-
+    mainSignerAddress = await mainSigner.getAddress();
+    claimerAddress = await claimer.getAddress();
+    challengerAddress = await challenger.getAddress();
     mockVG = await deployMockContract(mainSigner, VGInstantiatorJson.abi);
     mockLogger = await deployMockContract(mainSigner, LoggerJson.abi);
     descartes = await deployDescartes({
@@ -68,13 +79,14 @@ describe("Descartes tests", () => {
       /* Instantiate and provides all the necessary information to end this
       // transaction in "WaitingClaim"
       */
+      
       let tx = descartes.instantiate(
         finalTime,
         templateHash,
         outputPosition,
         roundDuration,
-        claimer._address,
-        challenger._address,
+        claimerAddress,
+        challengerAddress,
         [aDrive]
       );
       await expect(tx).to.emit(descartes, "DescartesCreated").withArgs(0);
@@ -83,16 +95,16 @@ describe("Descartes tests", () => {
         mainSigner.provider,
         (await tx).blockHash
       );
-      descartes.deployTimestamp = timestamp;
+      instantiateTimestamp = timestamp;
 
-      tx = await descartes.getState(0, mainSigner._address);
+      tx = await descartes.getState(0, mainSignerAddress);
       expect(tx[0][0]).to.equal(finalTime);
       expect(tx[0][1]).to.equal(timestamp + 40); // lastMoveTime  = now + timeToStartMachine(40)
       expect(tx[0][2]).to.equal(outputPosition);
       expect(tx).to.include.deep.members([
         [
-          challenger._address, // @TODO order inconsistency
-          claimer._address,
+          challengerAddress, // @TODO order inconsistency
+          claimerAddress,
         ],
         [
           templateHash,
@@ -107,16 +119,16 @@ describe("Descartes tests", () => {
     });
 
     it("Should respond isConcerned correctly", async () => {
-      let res = await descartes.isConcerned(0, claimer._address);
+      let res = await descartes.isConcerned(0, claimerAddress);
       expect(res).to.equal(true);
 
-      res = await descartes.isConcerned(0, challenger._address);
+      res = await descartes.isConcerned(0, challengerAddress);
       expect(res).to.equal(true);
 
-      res = await descartes.isConcerned(0, mainSigner._address);
+      res = await descartes.isConcerned(0, mainSignerAddress);
       expect(res).to.equal(false);
 
-      res = descartes.isConcerned(1, claimer._address);
+      res = descartes.isConcerned(1, claimerAddress);
       await expect(res).to.be.revertedWith("Index not instantiated");
     });
 
@@ -179,12 +191,12 @@ describe("Descartes tests", () => {
         .to.emit(descartes, "ClaimSubmitted")
         .withArgs(0, ethers.constants.HashZero);
 
-      tx = await descartes.getState(0, mainSigner._address);
+      tx = await descartes.getState(0, mainSignerAddress);
       expect(tx[0][2]).to.equal(outputPosition);
       expect(tx).to.include.deep.members([
         [
-          challenger._address, // @TODO order inconsistency
-          claimer._address,
+          challengerAddress, // @TODO order inconsistency
+          claimerAddress,
         ],
         [
           templateHash,
@@ -235,7 +247,7 @@ describe("Descartes tests", () => {
     });
 
     it("Should get empty getSubInstances", async () => {
-      let tx = await descartes.getSubInstances(0, mainSigner._address);
+      let tx = await descartes.getSubInstances(0, mainSignerAddress);
       expect(tx).to.have.length(2);
       expect(tx._addresses).to.be.empty;
       expect(tx._indices).to.be.empty;
@@ -255,11 +267,11 @@ describe("Descartes tests", () => {
 
       const getMaxInstanceDuration = 222;
       await mockVG.mock.getMaxInstanceDuration.returns(getMaxInstanceDuration);
-      tx = await descartes.getState(0, mainSigner._address);
+      tx = await descartes.getState(0, mainSignerAddress);
       expect(tx).to.have.length(4);
       expect(tx[0]).to.have.length(3);
       expect(tx[0][1]).to.be.equal(
-        descartes.deployTimestamp + getMaxInstanceDuration
+        instantiateTimestamp + getMaxInstanceDuration
       );
 
       tx = await descartes.getResult(0);
@@ -272,7 +284,7 @@ describe("Descartes tests", () => {
     });
 
     it("Should get vg at getSubInstances", async () => {
-      let tx = await descartes.getSubInstances(0, mainSigner._address);
+      let tx = await descartes.getSubInstances(0, mainSignerAddress);
       expect(tx).to.have.length(2);
       expect(tx._addresses).to.be.deep.equal([mockVG.address]);
       expect(tx._indices).to.have.length(1);
@@ -294,7 +306,7 @@ describe("Descartes tests", () => {
       let [resultReady, sdkRunning, blameUser, result] = tx;
       expect(resultReady).to.be.false; // @discuss should it really be false?
       expect(sdkRunning).to.be.false;
-      expect(blameUser).to.be.equal(challenger._address);
+      expect(blameUser).to.be.equal(challengerAddress);
       expect(result).to.be.equal(ethers.constants.HashZero);
       await revertSnapshot();
 
@@ -311,12 +323,12 @@ describe("Descartes tests", () => {
       [resultReady, sdkRunning, blameUser, result] = tx;
       expect(resultReady).to.be.false; // @discuss should it really be false?
       expect(sdkRunning).to.be.false;
-      expect(blameUser).to.be.equal(claimer._address);
+      expect(blameUser).to.be.equal(claimerAddress);
       expect(result).to.be.equal(ethers.constants.HashZero);
 
-      tx = await descartes.getState(0, mainSigner._address);
+      tx = await descartes.getState(0, mainSignerAddress);
       expect(tx).to.have.length(4);
-      expect(tx[0][1]).to.equal(descartes.deployTimestamp + 0); // lastMoveTime  = now + 
+      expect(tx[0][1]).to.equal(instantiateTimestamp + 0); // lastMoveTime  = now + 
 
       await revertSnapshot();
 
@@ -342,8 +354,8 @@ describe("Descartes tests", () => {
         templateHash,
         outputPosition,
         roundDuration,
-        claimer._address,
-        challenger._address,
+        claimerAddress,
+        challengerAddress,
         drives
       );
       const transaction = await tx;
@@ -358,17 +370,17 @@ describe("Descartes tests", () => {
         mainSigner.provider,
         transaction.blockHash
       );
-      descartes.deployTimestamp = timestamp;
+      instantiateTimestamp = timestamp;
 
-      tx = await descartes.getState(descartesIdx, mainSigner._address);
+      tx = await descartes.getState(descartesIdx, mainSignerAddress);
       expect(tx[0][0]).to.equal(finalTime);
       // lastMoveTime  = now + timeToStartMachine(40) + maxLoggerUploadTime(40 * 60)
       expect(tx[0][1]).to.equal(timestamp + 40 + 40 * 60);
       expect(tx[0][2]).to.equal(outputPosition);
       expect(tx).to.include.deep.members([
         [
-          challenger._address, // @TODO order inconsistency
-          claimer._address,
+          challengerAddress, // @TODO order inconsistency
+          claimerAddress,
         ],
         [
           templateHash,
@@ -394,7 +406,7 @@ describe("Descartes tests", () => {
       );
       tx = await descartes.getResult(descartesIdx);
       expect(tx).to.have.length(4);
-      [resultReady, sdkRunning, blameUser, result] = tx;
+      const [resultReady, sdkRunning, blameUser, result] = tx;
       expect(resultReady).to.be.false;
       expect(sdkRunning).to.be.false; // @discuss isn't it stopped?
       expect(blameUser).to.be.equal(aDrive.provider); // claimer
@@ -438,8 +450,8 @@ describe("Descartes tests", () => {
         templateHash,
         outputPosition,
         roundDuration,
-        claimer._address,
-        challenger._address,
+        claimerAddress,
+        challengerAddress,
         drives
       );
       const txResult = await (await tx).wait();

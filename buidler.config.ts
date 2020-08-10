@@ -1,7 +1,9 @@
+import { usePlugin } from "@nomiclabs/buidler/config";
+
 const project = process.env.PROJECT_ID;
 const mnemonic = process.env.MNEMONIC || "placeholder";
 
-const network = (name, network_id, url=`https://${name}.infura.io/v3/${project}`) => ({
+const network = (name:string, network_id:number, url=`https://${name}.infura.io/v3/${project}`) => ({
   url,
   accounts: {
     mnemonic,
@@ -10,9 +12,11 @@ const network = (name, network_id, url=`https://${name}.infura.io/v3/${project}`
   chainId: network_id,
 });
 
-usePlugin("@nomiclabs/buidler-waffle");
 usePlugin("@nomiclabs/buidler-solpp");
+usePlugin("@nomiclabs/buidler-waffle");
+usePlugin("@nodefactory/buidler-typechain");
 usePlugin('solidity-coverage')
+// usePlugin("buidler-deploy");
 
 module.exports = {
   defaultNetwork: "development",
@@ -34,10 +38,19 @@ module.exports = {
     rinkeby: network("rinkeby", 4),
     matic_testnet: network("matic_testnet", 15001, 'https://testnetv3.matic.network'),
   },
+  namedAccounts: {
+    deployer: {
+        default: 0
+    },
+  },
   solpp: {
     defs: {
       BUILD_TEST: process.argv.includes('test') || process.argv.includes('coverage'),
     }
+  },
+  typechain: {
+    outDir: "src/types",
+    target: "ethers-v5",
   },
   solc: {
     version: "0.5.16",

@@ -11,4 +11,3 @@ cd ./node_modules/@cartesi/util && npx truffle migrate --network development && 
 cd ./node_modules/@cartesi/arbitration && npx truffle migrate --network development && cd $root
 cd ./node_modules/@cartesi/machine-solidity-step && npx truffle migrate --network development && cd $root
 cd ./node_modules/@cartesi/logger && npx truffle migrate --network development && cd $root
-npx truffle migrate --network development

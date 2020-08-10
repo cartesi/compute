@@ -3,6 +3,7 @@ node_modules/
 build/*
 artifacts/*
 cache/*
+src/types/*
 coverage/*
 test/*/
 .venv
@@ -18,3 +19,4 @@ dapp_data_1/
 .coverage_contracts/*
 
 coverage.json
+yarn-error.log
