@@ -564,7 +564,6 @@ contract Descartes is Decorated, DescartesInterface {
     ///         then he or she can call this function to claim victory in
     ///         this contract as well.
     /// @param _index index of Descartes instance to win
-    // @discuss maybe we should emit event for state transitions here
     function winByVG(uint256 _index) public
         onlyInstantiated(_index)
         increasesNonce(_index)
@@ -614,8 +613,6 @@ contract Descartes is Decorated, DescartesInterface {
     /// @notice Abort the instance by missing deadline.
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
-        // @discuss I don't see any way to transition from WaitingConfirmation to ConsensusResult
-        //  as per the transition diagram on the comment at the begining.
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = now > (
             i.timeOfLastMove + getMaxStateDuration(
@@ -627,7 +624,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         if (i.currentState == State.WaitingProviders) {
             i.currentState = State.ProviderMissedDeadline;
-            return;  // @discuss emit event over here?
+            return;
         }
         if (i.currentState == State.WaitingReveals) {
             i.currentState = State.ProviderMissedDeadline;
@@ -635,7 +632,7 @@ contract Descartes is Decorated, DescartesInterface {
         }
         if (i.currentState == State.WaitingClaim) {
             i.currentState = State.ClaimerMissedDeadline;
-            return; // @discuss emit event over here?
+            return;
         }
         if (i.currentState == State.WaitingConfirmation) {
             i.currentState = State.ConsensusResult;
@@ -650,7 +647,7 @@ contract Descartes is Decorated, DescartesInterface {
     /// @return bool, indicates the result is ready
     /// @return bool, indicates the sdk is still running
     /// @return address, the user to blame for the abnormal stop of the sdk
-    /// @return bytes32, the result of the sdk if available
+    /// @return bytes, the result of the sdk if available
     function getResult(uint256 _index) public view
         onlyInstantiated(_index)
         returns (bool, bool, address, bytes memory)

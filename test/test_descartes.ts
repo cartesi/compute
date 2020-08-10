@@ -1,7 +1,10 @@
 import { ethers } from "@nomiclabs/buidler";
 import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
-import { deployMockContract, MockContract } from "@ethereum-waffle/mock-contract";
+import {
+  deployMockContract,
+  MockContract,
+} from "@ethereum-waffle/mock-contract";
 import * as e from "ethers";
 import { Descartes } from "../src/types/Descartes";
 const {
@@ -18,7 +21,15 @@ const StepJson = require("@cartesi/machine-solidity-step/build/contracts/Step.js
 
 const network_id = 31337; // buidler node chain_id
 
-const deployDescartes = async ({ logger, vg, step }:{ logger?: string, vg?:string, step?:string}={}): Promise<Descartes> => {
+const deployDescartes = async ({
+  logger,
+  vg,
+  step,
+}: {
+  logger?: string;
+  vg?: string;
+  step?: string;
+} = {}): Promise<Descartes> => {
   const LoggerAddress = logger || LoggerJson.networks[network_id].address;
   const VGAddress = vg || VGInstantiatorJson.networks[network_id].address;
   const StepAddress = step || StepJson.networks[network_id].address;
@@ -44,6 +55,8 @@ describe("Descartes tests", () => {
   let templateHash = ethers.constants.HashZero;
   let outputPosition = 0;
   let roundDuration = 0;
+  let outputLog2Size = 3;
+  let output = '0x' + '00'.repeat(8);
   let aDrive = {
     position: 0,
     driveLog2Size: 3,
@@ -80,17 +93,20 @@ describe("Descartes tests", () => {
       /* Instantiate and provides all the necessary information to end this
       // transaction in "WaitingClaim"
       */
-      
+
       const tx = descartes.instantiate(
         finalTime,
         templateHash,
         outputPosition,
+        outputLog2Size,
         roundDuration,
         claimerAddress,
         challengerAddress,
         [aDrive]
       );
-      await expect(tx).to.emit(descartes, "DescartesCreated").withArgs(0);
+      await expect(tx)
+        .to.emit(descartes, "DescartesCreated")
+        .withArgs(0);
       // save 'now' used in other pieces of the contract
       const timestamp = await getBlockTimestampByHash(
         mainSigner.provider,
@@ -111,12 +127,13 @@ describe("Descartes tests", () => {
           templateHash,
           templateHash, // initialHash
           ethers.constants.HashZero, // claimedFinalHash
-          ethers.constants.HashZero, // claimedOutput
           ethers.utils.formatBytes32String("WaitingClaim"), // currentState
         ],
+        "0x",
       ]);
-      expect(tx2[3]).to.have.length(1);
-      driveMatcher(tx2[3][0], aDrive);
+
+      expect(tx2[4]).to.have.length(1);
+      driveMatcher(tx2[4][0], aDrive);
     });
 
     it("Should respond isConcerned correctly", async () => {
@@ -129,7 +146,9 @@ describe("Descartes tests", () => {
       res = await descartes.isConcerned(0, mainSignerAddress);
       expect(res).to.equal(false);
 
-      await expect(descartes.isConcerned(1, claimerAddress)).to.be.revertedWith("Index not instantiated");
+      await expect(descartes.isConcerned(1, claimerAddress)).to.be.revertedWith(
+        "Index not instantiated"
+      );
     });
 
     it("Should succeed to abortByDeadline -ClaimerMissedDeadline-", async () => {
@@ -166,11 +185,24 @@ describe("Descartes tests", () => {
         "Claimed drive number should match claimed siblings number"
       );
 
+      tx = descartes
+        .connect(claimer)
+        .submitClaim(
+          0,
+          ethers.constants.HashZero,
+          [[ethers.constants.HashZero]],
+          ethers.constants.HashZero,
+          [ethers.constants.HashZero]
+        );
+      await expect(tx).to.be.revertedWith(
+        "Output length doesn't match output log2 size"
+      );
+
       tx = descartes.connect(claimer).submitClaim(
         0,
         "0xa00d9e556b6a50ea387769f51017057482fae0e7ed2e117a2056d4b3e6031430", // a wrong claimed final hash
         [[ethers.constants.HashZero]],
-        ethers.constants.HashZero,
+        output,
         [ethers.constants.HashZero]
       );
       await expect(tx).to.be.revertedWith(
@@ -183,7 +215,7 @@ describe("Descartes tests", () => {
           0,
           ethers.constants.HashZero,
           [[ethers.constants.HashZero]],
-          ethers.constants.HashZero,
+          output,
           [ethers.constants.HashZero]
         );
 
@@ -202,13 +234,13 @@ describe("Descartes tests", () => {
           templateHash,
           templateHash, // initialHash
           ethers.constants.HashZero, // claimedFinalHash
-          ethers.constants.HashZero, // claimedOutput
           ethers.utils.formatBytes32String("WaitingConfirmation"), // currentState
         ],
+        output,
       ]);
     });
 
-    it("Should fail to abortByDeadline", async () => {
+    it("Should abortByDeadline correctly", async () => {
       let tx = descartes.abortByDeadline(0);
       await expect(tx).to.be.revertedWith(
         "Deadline is not over for this specific state"
@@ -218,7 +250,13 @@ describe("Descartes tests", () => {
       await advanceTime(mainSigner.provider, finalTime);
 
       tx = descartes.abortByDeadline(0);
-      await expect(tx).to.be.revertedWith("Cannot abort current state");
+      await expect(tx).not.to.be.reverted;
+      
+      const tx2 = await descartes.getCurrentState(0);
+      expect(tx2).to.be.equal(
+        ethers.utils.formatBytes32String("ConsensusResult")
+      );
+
       await revertSnapshot();
     });
 
@@ -228,7 +266,9 @@ describe("Descartes tests", () => {
       await expect(tx).to.be.revertedWith("Cannot be called by user");
 
       tx = descartes.connect(challenger).confirm(0);
-      await expect(tx).to.emit(descartes, "ResultConfirmed").withArgs(0);
+      await expect(tx)
+        .to.emit(descartes, "ResultConfirmed")
+        .withArgs(0);
 
       const tx2 = await descartes.getCurrentState(0);
       expect(tx2).to.be.equal(
@@ -241,7 +281,7 @@ describe("Descartes tests", () => {
       expect(resultReady).to.be.true;
       expect(sdkRunning).to.be.false;
       expect(blameUser).to.be.equal(ethers.constants.AddressZero);
-      expect(result).to.be.equal(ethers.constants.HashZero);
+      expect(result).to.be.equal(output);
 
       await revertSnapshot();
     });
@@ -258,7 +298,9 @@ describe("Descartes tests", () => {
 
       await mockVG.mock.instantiate.returns(123);
       tx = descartes.connect(challenger).challenge(0);
-      await expect(tx).to.emit(descartes, "ChallengeStarted").withArgs(0);
+      await expect(tx)
+        .to.emit(descartes, "ChallengeStarted")
+        .withArgs(0);
 
       const tx2 = await descartes.getCurrentState(0);
       expect(tx2).to.be.equal(
@@ -268,8 +310,8 @@ describe("Descartes tests", () => {
       const getMaxInstanceDuration = 222;
       await mockVG.mock.getMaxInstanceDuration.returns(getMaxInstanceDuration);
       const tx3 = await descartes.getState(0, mainSignerAddress);
-      expect(tx3).to.have.length(4);
-      expect(tx3[0]).to.have.length(3);
+      expect(tx3).to.have.length(5);
+      expect(tx3[0]).to.have.length(4);
       expect(tx3[0][1]).to.be.equal(
         instantiateTimestamp + getMaxInstanceDuration
       );
@@ -280,7 +322,7 @@ describe("Descartes tests", () => {
       expect(resultReady).to.be.false;
       expect(sdkRunning).to.be.true;
       expect(blameUser).to.be.equal(ethers.constants.AddressZero);
-      expect(result).to.be.equal(ethers.constants.HashZero);
+      expect(result).to.be.equal('0x');
     });
 
     it("Should get vg at getSubInstances", async () => {
@@ -300,14 +342,16 @@ describe("Descartes tests", () => {
 
       const tx = await descartes.winByVG(0);
       const tx2 = await descartes.getCurrentState(0);
-      expect(tx2).to.be.equal(ethers.utils.formatBytes32String("ChallengerWon"));
+      expect(tx2).to.be.equal(
+        ethers.utils.formatBytes32String("ChallengerWon")
+      );
       const tx3 = await descartes.getResult(0);
       expect(tx3).to.have.length(4);
       let [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
-      expect(resultReady).to.be.false; // @discuss should it really be false?
+      expect(resultReady).to.be.false;
       expect(sdkRunning).to.be.false;
       expect(blameUser).to.be.equal(claimerAddress);
-      expect(result).to.be.equal(ethers.constants.HashZero);
+      expect(result).to.be.equal('0x');
       await revertSnapshot();
 
       // ---- Claimer Wins
@@ -321,21 +365,23 @@ describe("Descartes tests", () => {
       const tx5 = await descartes.getResult(0);
       expect(tx5).to.have.length(4);
       [resultReady, sdkRunning, blameUser, result] = Object.values(tx5);
-      expect(resultReady).to.be.false; // @discuss should it really be false?
+      expect(resultReady).to.be.false;
       expect(sdkRunning).to.be.false;
       expect(blameUser).to.be.equal(challengerAddress);
-      expect(result).to.be.equal(ethers.constants.HashZero);
+      expect(result).to.be.equal('0x');
 
       const tx6 = await descartes.getState(0, mainSignerAddress);
-      expect(tx6).to.have.length(4);
-      expect(tx6[0][1]).to.equal(instantiateTimestamp + 0); // lastMoveTime  = now + 
+      expect(tx6).to.have.length(5);
+      expect(tx6[0][1]).to.equal(instantiateTimestamp + 0); // lastMoveTime  = now +
 
       await revertSnapshot();
 
       // ---- VG is not finished
       await mockVG.mock.stateIsFinishedChallengerWon.returns(false);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
-      await expect(descartes.winByVG(0)).to.be.revertedWith("State of VG is not final");
+      await expect(descartes.winByVG(0)).to.be.revertedWith(
+        "State of VG is not final"
+      );
     });
   });
 
@@ -343,6 +389,7 @@ describe("Descartes tests", () => {
     let descartesIdx = 1;
     it("Should instantiate with different types of drives", async () => {
       const drives = [
+        { ...aDrive, directValue: "0x" + "00".repeat(7) },
         { ...aDrive, waitsProvider: true },
         { ...aDrive, needsLogger: true, waitsProvider: true },
         { ...aDrive, needsLogger: true, waitsProvider: false },
@@ -352,6 +399,7 @@ describe("Descartes tests", () => {
         finalTime,
         templateHash,
         outputPosition,
+        outputLog2Size,
         roundDuration,
         claimerAddress,
         challengerAddress,
@@ -373,8 +421,8 @@ describe("Descartes tests", () => {
 
       const tx2 = await descartes.getState(descartesIdx, mainSignerAddress);
       expect(tx2[0][0]).to.equal(finalTime);
-      // lastMoveTime  = now + timeToStartMachine(40) + maxLoggerUploadTime(40 * 60)
-      expect(tx2[0][1]).to.equal(timestamp + 40 + 40 * 60);
+      // lastMoveTime  = now + roundDuration(0)
+      expect(tx2[0][1]).to.equal(timestamp);
       expect(tx2[0][2]).to.equal(outputPosition);
       expect(tx2).to.include.deep.members([
         [
@@ -385,12 +433,12 @@ describe("Descartes tests", () => {
           templateHash,
           templateHash, // initialHash
           ethers.constants.HashZero, // claimedFinalHash
-          ethers.constants.HashZero, // claimedOutput
           ethers.utils.formatBytes32String("WaitingProviders"), // currentState
         ],
+        '0x'
       ]);
-      expect(tx2[3]).to.have.length(1);
-      driveMatcher(tx2[3][0], drives[0]);
+      expect(tx2[4]).to.have.length(1);
+      driveMatcher(tx2[4][0], drives[0]);
     });
 
     it("Should abortByDeadline - ProviderMissedDeadline", async () => {
@@ -407,47 +455,90 @@ describe("Descartes tests", () => {
       expect(tx2).to.have.length(4);
       const [resultReady, sdkRunning, blameUser, result] = Object.values(tx2);
       expect(resultReady).to.be.false;
-      expect(sdkRunning).to.be.false; // @discuss isn't it stopped?
+      expect(sdkRunning).to.be.false;
       expect(blameUser).to.be.equal(aDrive.provider); // claimer
-      expect(result).to.be.equal(ethers.constants.HashZero);
+      expect(result).to.be.equal('0x');
       await revertSnapshot();
     });
-
-    it("Should claim(Direct/Logger)Drive correctly", async () => {
-      let data = "0x12";
-      let tx = descartes.claimDirectDrive(descartesIdx, data);
+      
+    it("Should fail to revealLoggerDrive", async () => {
+      let tx = descartes.revealLoggerDrive(descartesIdx);
+      await expect(tx).to.be.revertedWith("The state is not WaitingReveals")
+    })
+    
+    it("Should provide(Direct/Logger)Drive correctly", async () => {
+      let data = "0x" + "12".repeat(10);
+      let tx = descartes.provideDirectDrive(descartesIdx, data);
       await expect(tx).to.be.revertedWith("The sender is not provider");
-      tx = descartes.connect(claimer).claimDirectDrive(descartesIdx, data);
+      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
       await expect(tx).to.be.revertedWith(
-        "driveValue doesn't match driveLog2Size"
+        "Input bytes length exceeds the claimed log2 size"
       );
 
-      data = "0x" + "12".repeat(8);
-      tx = descartes.connect(claimer).claimDirectDrive(descartesIdx, data);
+      data = "0x" + "12".repeat(7);
+      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
       await expect(tx).to.not.be.reverted;
 
-      tx = descartes.connect(claimer).claimDirectDrive(descartesIdx, data);
+      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
       await expect(tx).to.be.revertedWith(
         "Invalid drive to claim for direct value"
       );
 
       data = "0x" + "12".repeat(32);
-      tx = descartes.connect(claimer).claimLoggerDrive(descartesIdx, data);
+      tx = descartes.connect(claimer).provideLoggerDrive(descartesIdx, data);
       await expect(tx).to.not.be.reverted;
 
-      expect(await descartes.getCurrentState(descartesIdx))
-        .to.be.equal(ethers.utils.formatBytes32String("WaitingClaim"));
+      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+        ethers.utils.formatBytes32String("WaitingReveals")
+      );
+      
+    });
+    it("Should fail to reveal by abortByDeadline", async () => {
+      const revertSnapshot = await takeSnapshot();
+      await advanceTime(mainSigner.provider, finalTime + 40 * 60); //40*60 time to react
+
+      const tx = descartes.abortByDeadline(descartesIdx);
+      // await expect(tx).to.be.revertedWith('a');
+      await expect(tx).not.to.be.reverted;
+      
+      const tx2 = await descartes.getCurrentState(descartesIdx);
+      expect(tx2).to.be.equal(
+        ethers.utils.formatBytes32String("ProviderMissedDeadline")
+      );
+
+      const tx3 = await descartes.getResult(descartesIdx);
+      expect(tx3).to.have.length(4);
+      const [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
+      expect(resultReady).to.be.false;
+      expect(sdkRunning).to.be.false;
+      expect(blameUser).to.be.equal(claimerAddress);
+      expect(result).to.be.equal('0x');
+
+      await revertSnapshot();
     });
 
-    it('Should call claimDirectDrive and transition to WaitingClaim', async () => {
-      const drives = [
-        { ...aDrive, waitsProvider: true },
-      ];
-      const data = "0x" + "12".repeat(8);
+    it("Should revealLoggerDrive", async () => {
+      await mockLogger.mock.isLogAvailable.returns(false);
+      let tx = descartes.revealLoggerDrive(descartesIdx);
+      await expect(tx).to.be.revertedWith("Hash is not available on logger yet");
+
+      await mockLogger.mock.isLogAvailable.returns(true);
+      tx = descartes.revealLoggerDrive(descartesIdx);
+      await expect(tx).not.to.be.reverted;
+
+      await mockLogger.mock.isLogAvailable.returns(true);
+      tx = descartes.revealLoggerDrive(descartesIdx);
+      await expect(tx).not.to.be.reverted;
+    });
+
+    it("Should call provideDirectDrive and transition to WaitingClaim", async () => {
+      const drives = [{ ...aDrive, waitsProvider: true }];
+      const data = "0x" + "12".repeat(5); // 5 so we exercise the ability to fill/pad zeroes
       const tx = descartes.instantiate(
         finalTime,
         templateHash,
         outputPosition,
+        outputLog2Size,
         roundDuration,
         claimerAddress,
         challengerAddress,
@@ -455,11 +546,14 @@ describe("Descartes tests", () => {
       );
       const txResult = await (await tx).wait();
       descartesIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
-      const tx2 = descartes.connect(claimer).claimDirectDrive(descartesIdx, data);
+      const tx2 = descartes
+        .connect(claimer)
+        .provideDirectDrive(descartesIdx, data);
       await expect(tx2).to.not.be.reverted;
 
-      expect(await descartes.getCurrentState(descartesIdx))
-        .to.be.equal(ethers.utils.formatBytes32String("WaitingClaim"));
-    })
+      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+        ethers.utils.formatBytes32String("WaitingClaim")
+      );
+    });
   });
 });
