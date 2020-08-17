@@ -48,6 +48,8 @@ services:
       MACHINE_MANAGER_PORT: 50051
       LOGGER_HOST: logger
       LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
       DOCKER: "TRUE"
       RUST_BACKTRACE: 1
     volumes:
@@ -79,7 +81,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: ipfs/go-ipfs:latest
+    image: cartesi/ipfs:0.1.0
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
@@ -87,7 +89,7 @@ services:
         aliases:
           - ipfs
     ports:
-        - "{{ 5001 + i }}:5001"
+        - "{{ 50051 + i }}:50051"
 
   machine_manager_{{ i }}:
     image: cartesi/machine-manager:0.4.1

@@ -64,8 +64,8 @@ module.exports = async (callback) => {
         const directDriveValue = "0x7072696e74286d6174682e73696e28312929";
         // hash of print(math.sin(1))
         const loggerRootHash = "0xa87f79b5149218496af4d722798f46cdb1a15b12928ad05618892e5b3f999062";
-        // bytes of "QmeCXnPMGMymihD1QvvKQdwhp7wRp3iXzbz5jQ5XyPCN1w" (content: "print(math.sin(1))")
-        const loggerIpfsPath = "0x516d6543586e504d474d796d696844315176764b5164776870377752703369587a627a356a5135587950434e3177";
+        // bytes of "/ipfs/QmeCXnPMGMymihD1QvvKQdwhp7wRp3iXzbz5jQ5XyPCN1w" (content: "print(math.sin(1))")
+        const loggerIpfsPath = "0x2f697066732f516d6543586e504d474d796d696844315176764b5164776870377752703369587a627a356a5135587950434e3177";
         const drive = [
             "0x9000000000000000",
             5,

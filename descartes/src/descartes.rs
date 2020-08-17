@@ -243,21 +243,35 @@ impl DApp<()> for Descartes {
                         let request = GetFileRequest {
                             ipfs_path: drive.ipfs_path.clone(),
                             log2_size: drive.log2_size.as_u64() as u32,
-                            output_path: format!("{:x}", drive.root_hash),
+                            output_path: format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash),
                             // TODO: come up with better timeout
                             timeout: 120,
                         };
 
+                        let key = build_ipfs_get_key(drive.ipfs_path.clone());
                         match archive.get_response(
                             IPFS_SERVICE_NAME.into(),
-                            build_ipfs_get_key(drive.ipfs_path.clone()),
+                            key.clone(),
                             IPFS_METHOD_GET.into(),
-                            request.into(),
+                            request.clone().into(),
                         ) {
                             Ok(data) => {
                                 // TODO: validate the root_hash
                                 let response: GetFileResponse = data.into();
                                 info!("Response received from Ipfs {:?}", response);
+
+                                if let GetFileResponseOneOf::GetProgress(p) = response.one_of {
+                                    return Err(Error::from(ErrorKind::ServiceNeedsRetry(
+                                        IPFS_SERVICE_NAME.to_string(),
+                                        key,
+                                        IPFS_METHOD_GET.into(),
+                                        request.into(),
+                                        "Descartes".into(),
+                                        1,
+                                        p.progress,
+                                        "IPFS still getting".to_string()
+                                    )))
+                                }
                             },
                             Err(e) => {
                                 match e.kind() {
@@ -639,7 +653,7 @@ fn react_by_machine_output(
             let request = GetFileRequest {
                 ipfs_path: drive.ipfs_path.clone(),
                 log2_size: drive.log2_size.as_u64() as u32,
-                output_path: format!("{:x}", drive.root_hash),
+                output_path: format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash),
                 // TODO: come up with better timeout
                 timeout: 120,
             };

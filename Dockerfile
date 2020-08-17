@@ -20,6 +20,7 @@ WORKDIR $BASE
 
 COPY ./arbitration-dlib/ $BASE/arbitration-dlib
 COPY ./logger-dlib/ $BASE/logger-dlib
+COPY ./ipfs_interface/ $BASE/ipfs_interface
 
 WORKDIR $BASE/descartes
 
