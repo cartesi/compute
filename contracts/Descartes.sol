@@ -516,6 +516,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32[] memory data = getWordHashesFromBytes(paddedDirectValue);
         bytes32 driveHash = Merkle.calculateRootFromPowerOfTwo(data);
 
+        drive.directValue = _value;
         i.driveHash[driveIndex] = driveHash;
         i.providerDrivesPointer++;
         i.timeOfLastMove = now;
@@ -544,6 +545,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(drive.needsLogger, "Invalid drive to claim for logger");
 
+        drive.loggerRootHash = _root;
         i.driveHash[driveIndex] = drive.loggerRootHash;
         i.providerDrivesPointer++;
         i.timeOfLastMove = now;
