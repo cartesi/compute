@@ -61,6 +61,7 @@ describe("Descartes tests", () => {
     position: 0,
     driveLog2Size: 3,
     directValue: "0x" + "00".repeat(8),
+    loggerIpfsPath: "0x" + "00".repeat(8),
     loggerRootHash: ethers.constants.HashZero,
     waitsProvider: false,
     needsLogger: false,
@@ -486,6 +487,13 @@ describe("Descartes tests", () => {
 
       data = "0x" + "12".repeat(32);
       tx = descartes.connect(claimer).provideLoggerDrive(descartesIdx, data);
+      await expect(tx).to.not.be.reverted;
+
+      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+        ethers.utils.formatBytes32String("WaitingChallengeDrives")
+      );
+
+      tx = descartes.connect(claimer).challengeDrives(descartesIdx);
       await expect(tx).to.not.be.reverted;
 
       expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
