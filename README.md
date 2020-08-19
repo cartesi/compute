@@ -46,22 +46,15 @@ The instance could be retrieved by the command:
 ```
 
 This will run an environment connected to a private net (ganache or geth), with no descartes deployed.
-To deploy a new descartes you need to run the `instantiate_descartes.js` truffle script. To do this you need to have `truffle` installed, and run:
+To deploy a new descartes you need to run the `instantiate_descartes.ts` script. To do this you need to have `buidler` installed, and run:
 
 ```
-% truffle exec instantiate_descartes.js --network development
+% npx buidler run scripts/instantiate_descartes.ts --network development
 ```
-This will print something like this:
 
+To compile the smart contracts only:
 ```
-Using network 'development'.
-
-Creating descartes instance
-Logger => 0x1c18eADf263d0d76A8944D225F702C662596B595
-VGInstantiator => 0x90015115745a6B12429608543cf1E1E69AF56C63
-Step => 0x84e9c63e38D7b2950f8Fc991789b00210d2538F1
-Descartes => 0x7E8066A9dc6ed98CC2e3D508B1b807E57f10d355
-Descartes instance created: 0x88a7e7e5d1ad19a1b441adda72958fc0ad6761be3d1e3346bc17e6d0afb5ac3c
+% npx buidler compile
 ```
 
 ## Contributing

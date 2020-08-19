@@ -37,6 +37,9 @@ module.exports = {
     kovan: network("kovan", 42),
     rinkeby: network("rinkeby", 4),
     matic_testnet: network("matic_testnet", 15001, 'https://testnetv3.matic.network'),
+    ganache: {
+      url: "http://ganache:8545"
+    },
   },
   namedAccounts: {
     deployer: {
@@ -57,7 +60,7 @@ module.exports = {
      // See the solidity docs for advice about optimization and evmVersion
      optimizer: {
       enabled: true,
-      runs: 200,
+      runs: 110,
     },
   },
 };

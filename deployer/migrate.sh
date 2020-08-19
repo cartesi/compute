@@ -16,7 +16,7 @@ echo "Deploying @cartesi/logger"
 cd node_modules/@cartesi/logger && truffle migrate --network ${ETHEREUM_NETWORK} && cd ../../..
 
 echo "Deploying descartes"
-truffle migrate --network ${ETHEREUM_NETWORK}
+npx buidler deploy --network ${ETHEREUM_NETWORK} --write true
 
 echo "Creating deploy_done file"
 touch deploy_done
