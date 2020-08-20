@@ -45,6 +45,12 @@ module.exports = {
     deployer: {
         default: 0
     },
+    claimer: {
+        default: 0
+    },
+    challenger: {
+        default: 1
+    },
   },
   solpp: {
     defs: {

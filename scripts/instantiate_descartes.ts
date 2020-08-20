@@ -3,7 +3,7 @@
 // When running the script with `buidler run <script>` you'll find the Buidler
 // Runtime Environment's members available in the global scope.
 import { Descartes } from "../src/types/Descartes";
-const { ethers } = require ("@nomiclabs/buidler");
+const { ethers, getNamedAccounts } = require ("@nomiclabs/buidler");
 const DescartesJson = require("../deployments/ganache_1337/Descartes.json");
 
 async function main() {
@@ -12,11 +12,9 @@ async function main() {
   // to make sure everything is compiled
   // await bre.run('compile');
 
-  const accounts = await ethers.getSigners();
-  const DescartesAddress = DescartesJson.address;
+  const {claimer, challenger} = await getNamedAccounts();
 
-  const claimer = await accounts[0].getAddress();
-  const challenger = await accounts[1].getAddress();
+  const DescartesAddress = DescartesJson.address;
   
   // We get the contract to deploy
   const descartes = await ethers.getContractAt(
