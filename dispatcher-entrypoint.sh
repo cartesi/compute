@@ -3,13 +3,22 @@
 # exit when any command fails
 set -e
 
-if [ -z "${MNEMONIC}" ]; then
-    echo "No MNEMONIC, waiting for key file at /opt/cartesi/etc/keys/"
-    dockerize -wait file:///opt/cartesi/etc/keys/keys_done -timeout ${ETHEREUM_TIMEOUT}
 
-    export CARTESI_CONCERN_KEY=$(cat /opt/cartesi/etc/keys/private_key)
-    export ACCOUNT_ADDRESS=$(cat /opt/cartesi/etc/keys/account)
-else
+
+if [ -n "${CONCERN_SEMAPHORE}" ]; then
+    # wait for key file and read from them
+    echo "Waiting for key signal at ${CONCERN_SEMAPHORE}"
+    dockerize -wait ${CONCERN_SEMAPHORE} -timeout ${ETHEREUM_TIMEOUT}
+
+    if [[ -f "/opt/cartesi/etc/keys/private_key" ]]; then
+        export CARTESI_CONCERN_KEY=$(cat /opt/cartesi/etc/keys/private_key)
+    fi
+
+    if [[ -f "/opt/cartesi/etc/keys/account" ]]; then
+        export ACCOUNT_ADDRESS=$(cat /opt/cartesi/etc/keys/account)
+    fi
+
+elif [ -n "${MNEMONIC}" ]; then
     echo "Initializing key and account from MNEMONIC"
     export CARTESI_CONCERN_KEY=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].private_key')
     export ACCOUNT_ADDRESS=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].address')
@@ -27,6 +36,12 @@ dockerize \
     -wait tcp://${LOGGER_HOST}:${LOGGER_PORT} \
     -wait tcp://${ETHEREUM_HOST}:${ETHEREUM_PORT} \
     -timeout ${ETHEREUM_TIMEOUT}
+
+
+if [ -z "${CONCERN_SEMAPHORE}" ] && [ -z "${MNEMONIC}" ]; then
+    echo "No mnemonic or file set, using external signer"
+    export ACCOUNT_ADDRESS=$(curl -X POST --data '{"jsonrpc":"2.0","method":"eth_accounts","params":[],"id":1}' http://${ETHEREUM_HOST}:${ETHEREUM_PORT} | jq -r '.result[0]')
+fi
 
 echo "Creating configuration file at /opt/cartesi/etc/descartes/config.yaml with account ${ACCOUNT_ADDRESS}"
 envsubst < /opt/cartesi/etc/descartes/config-template.yaml > /opt/cartesi/etc/descartes/config.yaml

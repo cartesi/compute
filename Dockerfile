@@ -37,7 +37,7 @@ ENV BASE /opt/cartesi
 
 RUN \
     apt-get update && \
-    apt-get install --no-install-recommends -y ca-certificates wget gettext jq && \
+    apt-get install --no-install-recommends -y ca-certificates wget gettext jq curl && \
     rm -rf /var/lib/apt/lists/*
 
 ENV DOCKERIZE_VERSION v0.6.1
