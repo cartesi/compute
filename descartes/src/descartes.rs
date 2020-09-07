@@ -256,21 +256,37 @@ impl DApp<()> for Descartes {
                             request.clone().into(),
                         ) {
                             Ok(data) => {
-                                // TODO: validate the root_hash
                                 let response: GetFileResponse = data.into();
                                 info!("Response received from Ipfs {:?}", response);
 
-                                if let GetFileResponseOneOf::GetProgress(p) = response.one_of {
-                                    return Err(Error::from(ErrorKind::ServiceNeedsRetry(
-                                        IPFS_SERVICE_NAME.to_string(),
-                                        key,
-                                        IPFS_METHOD_GET.into(),
-                                        request.into(),
-                                        "Descartes".into(),
-                                        1,
-                                        p.progress,
-                                        "IPFS still getting".to_string()
-                                    )))
+                                match response.one_of {
+                                    GetFileResponseOneOf::GetProgress(p) => {
+                                        return Err(Error::from(ErrorKind::ServiceNeedsRetry(
+                                            IPFS_SERVICE_NAME.to_string(),
+                                            key,
+                                            IPFS_METHOD_GET.into(),
+                                            request.into(),
+                                            "Descartes".into(),
+                                            1,
+                                            p.progress,
+                                            "IPFS still getting".to_string()
+                                        )))
+                                    },
+                                    GetFileResponseOneOf::GetResult(r) => {
+                                        if r.root_hash != drive.root_hash {
+                                            // the root hash of drive doesn't match
+                                            let request = TransactionRequest {
+                                                contract_name: None, // Name not needed, is concern
+                                                concern: instance.concern.clone(),
+                                                value: U256::from(0),
+                                                function: "challengeDrives".into(),
+                                                data: vec![Token::Uint(instance.index)],
+                                                gas: None,
+                                                strategy: transaction::Strategy::Simplest,
+                                            };
+                                            return Ok(Reaction::Transaction(request));
+                                        }
+                                    }
                                 }
                             },
                             Err(e) => {
