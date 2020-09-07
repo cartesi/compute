@@ -323,19 +323,20 @@ contract Descartes is Decorated, DescartesInterface {
 
         uint256 drivesLength = i.inputDrives.length;
         for (uint256 j = 0; j < drivesLength; j++) {
+            bytes32[] memory driveSiblings = _drivesSiblings[j];
             require(
                 Merkle.getRootWithDrive(
                     i.inputDrives[j].position,
                     i.inputDrives[j].driveLog2Size,
                     Merkle.getPristineHash(uint8(i.inputDrives[j].driveLog2Size)),
-                    _drivesSiblings[j]) == i.initialHash,
+                    driveSiblings) == i.initialHash,
                 "Drive siblings must be compatible with previous initial hash for empty drive"
             );
             i.initialHash = Merkle.getRootWithDrive(
                 i.inputDrives[j].position,
                 i.inputDrives[j].driveLog2Size,
                 i.driveHash[j],
-                _drivesSiblings[j]
+                driveSiblings
             );
         }
 
