@@ -93,7 +93,7 @@ services:
         - "{{ 50051 + i }}:50051"
 
   machine_manager_{{ i }}:
-    image: cartesi/machine-manager:0.4.1
+    image: cartesi/machine-manager:0.4.2
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes:ro
     networks:
