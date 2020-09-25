@@ -1,5 +1,6 @@
 // Copyright (C) 2020 Cartesi Pte. Ltd.
 
+// SPDX-License-Identifier: GPL-3.0-only
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
 // Foundation, either version 3 of the License, or (at your option) any later
@@ -21,13 +22,13 @@
 
 /// @title DescartesInterface
 /// @author Stephen Chen
-pragma solidity ^0.5.0;
+pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "@cartesi/util/contracts/Instantiator.sol";
 
 
-contract DescartesInterface is Instantiator {
+interface DescartesInterface is Instantiator {
 
     enum State {
         WaitingProviders,
@@ -59,7 +60,7 @@ contract DescartesInterface is Instantiator {
         // start position of the drive
         uint64 position;
         // log2 size of the drive in the unit of bytes
-        uint64 driveLog2Size;
+        uint8 driveLog2Size;
         // direct value inserted to the drive
         bytes directValue;
         // ipfs object path of the logger drive
@@ -91,7 +92,7 @@ contract DescartesInterface is Instantiator {
         uint256 _finalTime,
         bytes32 _templateHash,
         uint64 _outputPosition,
-        uint64 _outputLog2Size,
+        uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
         Drive[] memory _inputDrives) public returns (uint256);
@@ -102,7 +103,7 @@ contract DescartesInterface is Instantiator {
     /// @return bool, indicates the sdk is still running
     /// @return address, the user to blame for the abnormal stop of the sdk
     /// @return bytes32, the result of the sdk if available
-    function getResult(uint256 _index) public view returns (
+    function getResult(uint256 _index) external view returns (
         bool,
         bool,
         address,
@@ -110,5 +111,5 @@ contract DescartesInterface is Instantiator {
 
     /// @notice Deactivate a Descartes SDK instance.
     /// @param _index index of Descartes instance to deactivate
-    function destruct(uint256 _index) public;
+    function destruct(uint256 _index) external;
 }

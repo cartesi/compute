@@ -1,5 +1,6 @@
 // Copyright (C) 2020 Cartesi Pte. Ltd.
 
+// SPDX-License-Identifier: GPL-3.0-only
 // This program is free software: you can redistribute it and/or modify it under
 // the terms of the GNU General Public License as published by the Free Software
 // Foundation, either version 3 of the License, or (at your option) any later
@@ -21,7 +22,7 @@
 
 /// @title Descartes
 /// @author Stephen Chen
-pragma solidity ^0.5.0;
+pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 // #if BUILD_TEST
@@ -30,12 +31,13 @@ import "./test/TestMerkle.sol";
 import "@cartesi/util/contracts/Merkle.sol";
 // #endif
 import "@cartesi/util/contracts/Decorated.sol";
+import "@cartesi/util/contracts/InstantiatorImpl.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
 import "./DescartesInterface.sol";
 
 
-contract Descartes is Decorated, DescartesInterface {
+contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     address machine; // machine which will run the challenge
     LoggerInterface li;
     VGInterface vg;
@@ -46,7 +48,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 providerDrivesPointer; // the pointer to the current provider drive
         uint256 finalTime; // max number of machine cycle to run
         uint64 outputPosition; // memory position of machine output
-        uint64 outputLog2Size; // log2 size of the output drive in the unit of bytes
+        uint8 outputLog2Size; // log2 size of the output drive in the unit of bytes
         uint256 roundDuration; // time interval to interact with this contract
         uint256 timeOfLastMove; // last time someone made a move with deadline
         uint256 vgInstance;
@@ -127,7 +129,7 @@ contract Descartes is Decorated, DescartesInterface {
     constructor(
         address _liAddress,
         address _vgAddress,
-        address _machineAddress) public
+        address _machineAddress)
     {
         machine = _machineAddress;
         vg = VGInterface(_vgAddress);
@@ -145,7 +147,7 @@ contract Descartes is Decorated, DescartesInterface {
         uint256 _finalTime,
         bytes32 _templateHash,
         uint64 _outputPosition,
-        uint64 _outputLog2Size,
+        uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
         Drive[] memory _inputDrives) public returns (uint256)
@@ -224,7 +226,7 @@ contract Descartes is Decorated, DescartesInterface {
         i.outputPosition = _outputPosition;
         i.outputLog2Size = _outputLog2Size;
         i.roundDuration = _roundDuration;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
         if (needsProviderPhase) {
             i.currentState = State.WaitingProviders;
         } else if (i.revealDrives.length > 0) {
@@ -355,7 +357,10 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Is the given user concern about this instance.
-    function isConcerned(uint256 _index, address _user) public view
+    function isConcerned(uint256 _index, address _user)
+        public
+        override
+        view
         onlyInstantiated(_index)
         returns (bool)
     {
@@ -496,7 +501,10 @@ contract Descartes is Decorated, DescartesInterface {
     }
 
     /// @notice Get sub-instances of the instance.
-    function getSubInstances(uint256 _index, address) public view
+    function getSubInstances(uint256 _index, address)
+        public
+        override
+        view
         onlyInstantiated(_index)
         returns (address[] memory _addresses, uint256[] memory _indices)
     {
@@ -547,7 +555,7 @@ contract Descartes is Decorated, DescartesInterface {
         drive.directValue = _value;
         i.driveHash[driveIndex] = driveHash;
         i.providerDrivesPointer++;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
         if (i.providerDrivesPointer == i.providerDrives.length) {
             if (i.revealDrives.length > 0) {
@@ -576,7 +584,7 @@ contract Descartes is Decorated, DescartesInterface {
         drive.loggerRootHash = _root;
         i.driveHash[driveIndex] = drive.loggerRootHash;
         i.providerDrivesPointer++;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
         if (i.providerDrivesPointer == i.providerDrives.length) {
             if (i.revealDrives.length > 0) {
@@ -605,7 +613,7 @@ contract Descartes is Decorated, DescartesInterface {
         require(li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size), "Hash is not available on logger yet");
 
         i.revealDrivesPointer++;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
         if (i.revealDrivesPointer == i.revealDrives.length) {
             i.currentState = State.WaitingClaim;
@@ -655,7 +663,9 @@ contract Descartes is Decorated, DescartesInterface {
 
     /// @notice Deactivate a Descartes SDK instance.
     /// @param _index index of Descartes instance to deactivate
-    function destruct(uint256 _index) public
+    function destruct(uint256 _index)
+        public
+        override     
         onlyInstantiated(_index)
         onlyBy(instance[_index].owner)
     {
@@ -680,7 +690,7 @@ contract Descartes is Decorated, DescartesInterface {
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
         DescartesCtx storage i = instance[_index];
-        bool afterDeadline = now > (
+        bool afterDeadline = block.timestamp > (
             i.timeOfLastMove + getMaxStateDuration(
                 _index
             )
@@ -714,7 +724,10 @@ contract Descartes is Decorated, DescartesInterface {
     /// @return bool, indicates the sdk is still running
     /// @return address, the user to blame for the abnormal stop of the sdk
     /// @return bytes, the result of the sdk if available
-    function getResult(uint256 _index) public view
+    function getResult(uint256 _index)
+        public
+        override
+        view
         onlyInstantiated(_index)
         returns (bool, bool, address, bytes memory)
     {
