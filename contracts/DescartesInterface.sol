@@ -74,6 +74,12 @@ contract DescartesInterface is Instantiator {
         bool needsLogger;
     }
 
+    struct Party {
+        bool isParty;
+        bool hasVoted;
+        bool hasCheated;
+    }
+
     /// @notice Instantiate a Descartes SDK instance.
     /// @param _finalTime max cycle of the machine for that computation
     /// @param _templateHash hash of the machine with all drives empty

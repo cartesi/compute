@@ -40,12 +40,6 @@ contract Descartes is Decorated, DescartesInterface {
     LoggerInterface li;
     VGInterface vg;
 
-    struct Party {
-        bool isParty;
-        bool hasVoted;
-        bool hasCheated;
-    }
-
     struct DescartesCtx {
         address owner; // the one who has power to shutdown the instance
         uint256 revealDrivesPointer; // the pointer to the current reveal drive
@@ -62,7 +56,7 @@ contract Descartes is Decorated, DescartesInterface {
         bytes claimedOutput; // claimed final machine output
         address claimer; // responsible for claiming the machine output
         address currentChallenger; // it tracks who did the last challenge
-        address partiesArray; // user can challenge claimer's output
+        address[] partiesArray; // user can challenge claimer's output
         uint64 votesCounter;  // helps manage end state
         mapping(address => Party) parties; // control structure for challengers
         State currentState;
@@ -106,7 +100,7 @@ contract Descartes is Decorated, DescartesInterface {
     //   v
     // +-----------------------------+             +-----------------+
     // | WaitingConfirmationDeadline |------------>| ConsensusResult |
-    // +----------------------------+   deadline +-----------------+
+    // +----------------------------+   deadline  +-----------------+
     //   |
     //   |
     //   | challenge
@@ -158,8 +152,12 @@ contract Descartes is Decorated, DescartesInterface {
     {
         DescartesCtx storage i = instance[currentIndex];
 
-        // @dev do we need any new checks here?
-        // require(_challenger != _claimer, "Claimer cannot be a challenger");
+        for(uint256 j = 0; j < parties.length; j++) {
+            require(i.parties[parties[j]].isParty == false, "Repetition of parties' addresses is not allowed");
+            i.parties[parties[j]].isParty = true;
+            i.partiesArray = parties[j];
+        }
+
 
         bool needsProviderPhase = false;
         uint256 drivesLength = _inputDrives.length;
@@ -217,15 +215,9 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(_outputLog2Size >= 3, "output drive has to be at least one word");
 
-        for(uint256 j = 0; j < parties.length; j++) {
-            i.parties[parties[j]].isParty = true;
-            i.partiesArray = parties[j];
-        }
-
         i.owner = msg.sender;
         i.claimer = parties[0]; // first on the list is selected to be claimer
         i.votesCounter = 1;  // first vote is always a submitClaim, so we count it once here
-        // i.partiesArray = parties; //@dev shouldnt this work?
         i.finalTime = _finalTime;
         i.templateHash = _templateHash;
         i.initialHash = _templateHash;
@@ -365,7 +357,7 @@ contract Descartes is Decorated, DescartesInterface {
         return i.parties[_user].isParty;
     }
 
-    function getPartyState(uint256 _index, address p) public view
+    function getPartyState(uint256 _index, address _p) public view
         onlyInstantiated(_index)
         returns (
             bool isParty,
@@ -379,7 +371,7 @@ contract Descartes is Decorated, DescartesInterface {
         hasCheated = party.hasCheated;
     }
     /// @notice Get state of the instance concerning given user.
-    function getState(uint256 _index, address) public view
+    function getState(uint256 _index, address _user) public view
         onlyInstantiated(_index)
         returns (
             uint256[] memory,
@@ -387,15 +379,12 @@ contract Descartes is Decorated, DescartesInterface {
             bytes32[] memory,
             bytes memory,
             Drive[] memory,
-            address[] memory parties
+            Party user
         )
     {
         DescartesCtx storage i = instance[_index];
 
-        parties = new addresses[](i.partiesArray.length);
-        for (uint256 j = 0 ; j < i.partiesArray.length; j++) {
-            parties[j] = i.partiesArray[j];
-        }
+        user = i[_index].parties[_user];
 
         uint256[] memory uintValues = new uint256[](4);
         uintValues[0] = i.finalTime;
@@ -433,7 +422,7 @@ contract Descartes is Decorated, DescartesInterface {
                 bytes32Values,
                 i.claimedOutput,
                 drives,
-                parties
+                user
             );
         } else if (i.currentState == State.ProviderMissedDeadline) {
             Drive[] memory drives = new Drive[](0);
@@ -443,7 +432,7 @@ contract Descartes is Decorated, DescartesInterface {
                 bytes32Values,
                 i.claimedOutput,
                 drives,
-                parties
+                user
             );
         } else {
             return (
@@ -452,7 +441,7 @@ contract Descartes is Decorated, DescartesInterface {
                 bytes32Values,
                 i.claimedOutput,
                 i.inputDrives,
-                parties
+                user
             );
         }
     }
@@ -557,7 +546,7 @@ contract Descartes is Decorated, DescartesInterface {
             if (i.revealDrives.length > 0) {
                 i.currentState = State.WaitingChallengeDrives;
             } else {
-                i.currentState = State.Waiti    ngClaim;
+                i.currentState = State.WaitingClaim;
             }
         }
 
