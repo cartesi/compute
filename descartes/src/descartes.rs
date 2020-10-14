@@ -117,6 +117,32 @@ impl From<&DriveParsed> for Drive {
         }
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct PartyParsed(
+    bool,   // isParty
+    bool,   // hasVoted
+    bool,   // hasCheated
+);
+
+#[derive(Serialize, Debug)]
+pub struct Party {
+    isParty: bool,
+    hasVoted: bool,
+    hasCheated: bool,
+}
+
+
+impl From<&PartyParsed> for Party {
+    fn from(parsed: &PartyParsed) -> Party {
+        Party {
+            isParty: parsed.0,
+            hasVoted: parsed.1,
+            hasCheated: parsed.2,
+        }
+    }
+}
+
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // these two structs and the From trait below shuld be
 // obtained from a simple derive
@@ -128,6 +154,7 @@ pub struct DescartesCtxParsed(
     Bytes32Array,   // templateHash, initialHash, claimedFinalHash, currentState
     BytesField,     // claimedOutput
     DriveArray,
+    PartyParsed,
 );
 
 #[derive(Serialize, Debug)]
@@ -144,6 +171,7 @@ pub struct DescartesCtx {
     pub final_time: U256,
     pub current_state: String,
     pub input_drives: Vec<Drive>,
+    pub partyState: Party,
 }
 
 impl From<DescartesCtxParsed> for DescartesCtx {
@@ -170,6 +198,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                 .unwrap(),
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
+            partyState: parsed.5.value.into(),
         }
     }
 }
@@ -212,11 +241,7 @@ impl DApp<()> for Descartes {
         let role = match instance.concern.user_address {
             cl if (cl == ctx.claimer) => Role::Claimer,
             ch if (ch == ctx.challenger) => Role::Challenger,
-            _ => {
-                return Err(Error::from(ErrorKind::InvalidContractState(String::from(
-                    "User is neither claimer nor challenger",
-                ))));
-            }
+            _ => Role::Other,
         };
         trace!("Role played (index {}) is: {:?}", instance.index, role);
 
@@ -398,7 +423,7 @@ impl DApp<()> for Descartes {
                     }
                     return Ok(Reaction::Idle);
                 },
-                "WaitingChallenge" => {
+                "WaitingChallengeResult" => {
                     // we inspect the verification contract
                     let vg_instance = instance.sub_instances.get(0).ok_or(Error::from(
                         ErrorKind::InvalidContractState(format!(
@@ -442,7 +467,7 @@ impl DApp<()> for Descartes {
                         }
                     }
                 },
-                "WaitingConfirmation" => {
+                "WaitingConfirmationDeadline" => {
                     // wait for the challenger to confirm/challenge
                     // or claim consensus if the deadline is over
                     return abort_by_deadline_or_idle(
@@ -455,7 +480,7 @@ impl DApp<()> for Descartes {
                     return Ok(Reaction::Idle);
                 }
             },
-            Role::Challenger => match ctx.current_state.as_ref() {
+            Role::Other => match ctx.current_state.as_ref() {
                 "WaitingClaim" => {
                     // wait for the claimer to claim output
                     // or abort if the deadline is over
@@ -465,7 +490,9 @@ impl DApp<()> for Descartes {
                         ctx.deadline.as_u64(),
                     );
                 }
-                "WaitingConfirmation" => {
+                "WaitingConfirmationDeadline" => {
+                    if(ctx.partyState.hasCheated) 
+                        return Ok(Reaction::Idle);
                     // determine the reaction based on the calculated machine output
                     return react_by_machine_output(
                         archive,
@@ -480,7 +507,13 @@ impl DApp<()> for Descartes {
                         ctx.output_log2_size,
                     );
                 },
-                "WaitingChallenge" => {
+                _ => {
+                    return Ok(Reaction::Idle);
+                }
+            },
+
+            Role::Challenger => match ctx.current_state.as_ref() {
+                "WaitingChallengeResult" => {
                     // we inspect the verification contract
                     let vg_instance = instance.sub_instances.get(0).ok_or(Error::from(
                         ErrorKind::InvalidContractState(format!(
@@ -527,7 +560,7 @@ impl DApp<()> for Descartes {
                 _ => {
                     return Ok(Reaction::Idle);
                 }
-            },
+            }
         };
     }
 
@@ -890,10 +923,10 @@ fn react_by_machine_output(
             };
             return Ok(Reaction::Transaction(request));
         },
-        Role::Challenger => {
+        Role::Other => {
             let mut function = String::from("challenge");
             if calculated_final_hash == claimed_final_hash {
-                function = String::from("confirm");
+                return Ok(Reaction::Idle);
             }
 
             let request = TransactionRequest {

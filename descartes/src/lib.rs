@@ -55,6 +55,7 @@ use ethereum_types::{Address, U256, H256};
 enum Role {
     Claimer,
     Challenger,
+    Other,
 }
 
 pub fn get_logger_response(
