@@ -25,7 +25,7 @@ pragma solidity ^0.5.0;
 pragma experimental ABIEncoderV2;
 
 // #if BUILD_TEST
-import './test/TestMerkle.sol';
+import "./test/TestMerkle.sol";
 // #else
 import "@cartesi/util/contracts/Merkle.sol";
 // #endif
@@ -39,6 +39,12 @@ contract Descartes is Decorated, DescartesInterface {
     address machine; // machine which will run the challenge
     LoggerInterface li;
     VGInterface vg;
+
+    struct Party {
+        bool isParty;
+        bool hasVoted;
+        bool hasCheated;
+    }
 
     struct DescartesCtx {
         address owner; // the one who has power to shutdown the instance
@@ -55,7 +61,10 @@ contract Descartes is Decorated, DescartesInterface {
         bytes32 claimedFinalHash; // claimed final hash of the machine
         bytes claimedOutput; // claimed final machine output
         address claimer; // responsible for claiming the machine output
-        address challenger; // user can challenge claimer's output
+        address currentChallenger; // it tracks who did the last challenge
+        address partiesArray; // user can challenge claimer's output
+        uint64 votesCounter;  // helps manage end state
+        mapping(address => Party) parties; // control structure for challengers
         State currentState;
         uint256[] revealDrives; // indices of the reveal drives
         uint256[] providerDrives; // indices of the provider drives
@@ -95,21 +104,21 @@ contract Descartes is Decorated, DescartesInterface {
     //   |
     //   | submitClaim
     //   v
-    // +---------------------+  confirm    +-----------------+
-    // | WaitingConfirmation |------------>| ConsensusResult |
-    // +---------------------+ or deadline +-----------------+
+    // +-----------------------------+             +-----------------+
+    // | WaitingConfirmationDeadline |------------>| ConsensusResult |
+    // +----------------------------+   deadline +-----------------+
     //   |
     //   |
     //   | challenge
     //   v
-    // +------------------+    winByVG     +------------+
-    // | WaitingChallenge |--------------->| ClaimerWon |
-    // +------------------+                +------------+
+    // +------------------------+    winByVG     +------------+  if there are challengers
+    // | WaitingChallengeResult |--------------->| ClaimerWon |-----------------------> WaitingConfirmationDeadline
+    // +-----------------------+                +------------+    left; go back to
     //   |
     //   |
-    //   |                  winByVG        +---------------+
-    //   +-------------------------------->| ChallengerWon |
-    //                                     +---------------+
+    //   |                  winByVG        +---------------+  if there are challengers
+    //   +-------------------------------->| ChallengerWon |------------------------> WaitingClaim
+    //                                     +---------------+  left; go back to
     //
 
     event DescartesCreated(
@@ -144,13 +153,13 @@ contract Descartes is Decorated, DescartesInterface {
         uint64 _outputPosition,
         uint64 _outputLog2Size,
         uint256 _roundDuration,
-        address _claimer,
-        address _challenger,
+        address[] memory parties,
         Drive[] memory _inputDrives) public returns (uint256)
     {
         DescartesCtx storage i = instance[currentIndex];
 
-        require(_challenger != _claimer, "Claimer cannot be a challenger");
+        // @dev do we need any new checks here?
+        // require(_challenger != _claimer, "Claimer cannot be a challenger");
 
         bool needsProviderPhase = false;
         uint256 drivesLength = _inputDrives.length;
@@ -208,9 +217,15 @@ contract Descartes is Decorated, DescartesInterface {
 
         require(_outputLog2Size >= 3, "output drive has to be at least one word");
 
+        for(uint256 j = 0; j < parties.length; j++) {
+            i.parties[parties[j]].isParty = true;
+            i.partiesArray = parties[j];
+        }
+
         i.owner = msg.sender;
-        i.challenger = _challenger;
-        i.claimer = _claimer;
+        i.claimer = parties[0]; // first on the list is selected to be claimer
+        i.votesCounter = 1;  // first vote is always a submitClaim, so we count it once here
+        // i.partiesArray = parties; //@dev shouldnt this work?
         i.finalTime = _finalTime;
         i.templateHash = _templateHash;
         i.initialHash = _templateHash;
@@ -233,40 +248,31 @@ contract Descartes is Decorated, DescartesInterface {
         return currentIndex++;
     }
 
-    /// @notice Challenger accepts claim.
-    /// @param _index index of Descartes instance that the challenger is confirming the claim.
-    function confirm(uint256 _index) public
-        onlyInstantiated(_index)
-        onlyBy(instance[_index].challenger)
-        increasesNonce(_index)
-    {
-        DescartesCtx storage i = instance[_index];
-        require(i.currentState == State.WaitingConfirmation, "State should be WaitingConfirmation");
-
-        i.currentState = State.ConsensusResult;
-        emit ResultConfirmed(_index);
-    }
 
     /// @notice Challenger disputes the claim, starting a verification game.
     /// @param _index index of Descartes instance which challenger is starting the VG.
     function challenge(uint256 _index) public
         onlyInstantiated(_index)
-        onlyBy(instance[_index].challenger)
+        onlyByParty(_index)
+        onlyNoVotes(_index)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        require(i.currentState == State.WaitingConfirmation, "State should be WaitingConfirmation");
+        require(i.currentState == State.WaitingConfirmationDeadline, "State should be WaitingConfirmationDeadline");
 
         i.vgInstance = vg.instantiate(
-            i.challenger,
+            msg.sender, // challenger
             i.claimer,
             i.roundDuration,
             machine,
             i.initialHash,
             i.claimedFinalHash,
             i.finalTime);
-        i.currentState = State.WaitingChallenge;
-
+        i.currentState = State.WaitingChallengeResult;
+        i.parties[msg.sender].hasVoted = true;
+        i.currentChallenger = msg.sender;
+        i.votesCounter++;
+        // @dev should we update timeOfLastMove over here too?
         emit ChallengeStarted(_index);
     }
 
@@ -281,7 +287,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState == State.WaitingChallengeDrives,
             "State should be WaitingChallengeDrives"
         );
-        require(isConcerned(_index, msg.sender), "Only concerned users can challengDrives");
+        require(i.parties[msg.sender].isParty, "Only concerned users can challengDrives");
 
         i.currentState = State.WaitingReveals;
     }
@@ -343,8 +349,9 @@ contract Descartes is Decorated, DescartesInterface {
         }
 
         i.claimedFinalHash = _claimedFinalHash;
-        i.currentState = State.WaitingConfirmation;
+        i.currentState = State.WaitingConfirmationDeadline;
         i.claimedOutput = _output;
+        i.parties[i.claimer].hasVoted = true;
 
         emit ClaimSubmitted(_index, _claimedFinalHash);
     }
@@ -354,10 +361,23 @@ contract Descartes is Decorated, DescartesInterface {
         onlyInstantiated(_index)
         returns (bool)
     {
-        DescartesCtx memory i = instance[_index];
-        return (_user == i.claimer || _user == i.challenger);
+        DescartesCtx storage i = instance[_index];
+        return i.parties[_user].isParty;
     }
 
+    function getPartyState(uint256 _index, address p) public view
+        onlyInstantiated(_index)
+        returns (
+            bool isParty,
+            bool hasVoted,
+            bool hasCheated
+        )
+    {
+        Party storage party = instance[_index].parties[p];
+        isParty = party.isParty;
+        hasVoted = party.hasVoted;
+        hasCheated = party.hasCheated;
+    }
     /// @notice Get state of the instance concerning given user.
     function getState(uint256 _index, address) public view
         onlyInstantiated(_index)
@@ -366,10 +386,16 @@ contract Descartes is Decorated, DescartesInterface {
             address[] memory,
             bytes32[] memory,
             bytes memory,
-            Drive[] memory
+            Drive[] memory,
+            address[] memory parties
         )
     {
         DescartesCtx storage i = instance[_index];
+
+        parties = new addresses[](i.partiesArray.length);
+        for (uint256 j = 0 ; j < i.partiesArray.length; j++) {
+            parties[j] = i.partiesArray[j];
+        }
 
         uint256[] memory uintValues = new uint256[](4);
         uintValues[0] = i.finalTime;
@@ -379,7 +405,7 @@ contract Descartes is Decorated, DescartesInterface {
         uintValues[3] = i.outputLog2Size;
 
         address[] memory addressValues = new address[](2);
-        addressValues[0] = i.challenger;
+        addressValues[0] = i.currentChallenger;
         addressValues[1] = i.claimer;
 
         bytes32[] memory bytes32Values = new bytes32[](4);
@@ -406,7 +432,8 @@ contract Descartes is Decorated, DescartesInterface {
                 addressValues,
                 bytes32Values,
                 i.claimedOutput,
-                drives
+                drives,
+                parties
             );
         } else if (i.currentState == State.ProviderMissedDeadline) {
             Drive[] memory drives = new Drive[](0);
@@ -415,7 +442,8 @@ contract Descartes is Decorated, DescartesInterface {
                 addressValues,
                 bytes32Values,
                 i.claimedOutput,
-                drives
+                drives,
+                parties
             );
         } else {
             return (
@@ -423,7 +451,8 @@ contract Descartes is Decorated, DescartesInterface {
                 addressValues,
                 bytes32Values,
                 i.claimedOutput,
-                i.inputDrives
+                i.inputDrives,
+                parties
             );
         }
     }
@@ -451,11 +480,11 @@ contract Descartes is Decorated, DescartesInterface {
         if (currentState == State.WaitingClaim) {
             return "WaitingClaim";
         }
-        if (currentState == State.WaitingConfirmation) {
-            return "WaitingConfirmation";
+        if (currentState == State.WaitingConfirmationDeadline) {
+            return "WaitingConfirmationDeadline";
         }
-        if (currentState == State.WaitingChallenge) {
-            return "WaitingChallenge";
+        if (currentState == State.WaitingChallengeResult) {
+            return "WaitingChallengeResult";
         }
         if (currentState == State.ConsensusResult) {
             return "ConsensusResult";
@@ -478,7 +507,7 @@ contract Descartes is Decorated, DescartesInterface {
         address[] memory a;
         uint256[] memory i;
 
-        if (instance[_index].currentState == State.WaitingChallenge) {
+        if (instance[_index].currentState == State.WaitingChallengeResult) {
             a = new address[](1);
             i = new uint256[](1);
             a[0] = address(vg);
@@ -528,7 +557,7 @@ contract Descartes is Decorated, DescartesInterface {
             if (i.revealDrives.length > 0) {
                 i.currentState = State.WaitingChallengeDrives;
             } else {
-                i.currentState = State.WaitingClaim;
+                i.currentState = State.Waiti    ngClaim;
             }
         }
 
@@ -597,17 +626,30 @@ contract Descartes is Decorated, DescartesInterface {
     {
         DescartesCtx storage i = instance[_index];
         require(
-            i.currentState == State.WaitingChallenge,
-            "State is not WaitingChallenge, cannot winByVG"
+            i.currentState == State.WaitingChallengeResult,
+            "State is not WaitingChallengeResult, cannot winByVG"
         );
         uint256 vgIndex = i.vgInstance;
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
+            if(i.votesCounter == i.partiesArray.length) {
+                i.currentState = State.WaitingClaim;
+                i.parties[i.claimer].hasCheated = true;
+                i.claimer = i.currentChallenger;
+                i.currentChallenger = address(0);
+                return;
+            }
             i.currentState = State.ChallengerWon;
             return;
         }
 
         if (vg.stateIsFinishedClaimerWon(vgIndex)) {
+            if(i.votesCounter == i.partiesArray.length) {
+                i.currentState = State.WaitingConfirmationDeadline;
+                i.parties[i.currentChallenger].hasCheated = true;
+                i.currentChallenger = address(0);
+                return;
+            }
             i.currentState = State.ClaimerWon;
             return;
         }
@@ -661,7 +703,7 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState = State.ClaimerMissedDeadline;
             return;
         }
-        if (i.currentState == State.WaitingConfirmation) {
+        if (i.currentState == State.WaitingConfirmationDeadline) {
             i.currentState = State.ConsensusResult;
             return;
         }
@@ -685,8 +727,8 @@ contract Descartes is Decorated, DescartesInterface {
         }
         if (i.currentState == State.WaitingProviders ||
             i.currentState == State.WaitingClaim ||
-            i.currentState == State.WaitingConfirmation ||
-            i.currentState == State.WaitingChallenge) {
+            i.currentState == State.WaitingConfirmationDeadline ||
+            i.currentState == State.WaitingChallengeResult) {
             return (false, true, address(0), "");
         }
         if (i.currentState == State.ProviderMissedDeadline) {
@@ -772,14 +814,14 @@ contract Descartes is Decorated, DescartesInterface {
                 instance[_index].roundDuration;
         }
 
-        if (instance[_index].currentState == State.WaitingConfirmation) {
+        if (instance[_index].currentState == State.WaitingConfirmationDeadline) {
             // time to run entire machine + time to react
             return timeToStartMachine +
                 ((instance[_index].finalTime * picoSecondsToRunInsn) / 1e12) +
                 instance[_index].roundDuration;
         }
 
-        if (instance[_index].currentState == State.WaitingChallenge) {
+        if (instance[_index].currentState == State.WaitingChallengeResult) {
             // time to run a verification game + time to react
             return vg.getMaxInstanceDuration(
                 instance[_index].roundDuration,
@@ -811,6 +853,19 @@ contract Descartes is Decorated, DescartesInterface {
         require(drive.waitsProvider, "waitProvider should be true");
         require(drive.provider == msg.sender, "The sender is not provider");
 
+        _;
+    }
+
+    /// @notice checks whether or not it's a party to this instance
+    modifier onlyByParty(uint _index) {
+        DescartesCtx storage i = instance[_index];
+        require(i.parties[msg.sender].isParty, "There sender is not party to this instance");
+        _;
+    }
+    /// @notice checks whether or not it's a party to this instance
+    modifier onlyNoVotes(uint _index) {
+        DescartesCtx storage i = instance[_index];
+        require(!i.parties[msg.sender].hasVoted, "Sender has already challenged or claimed");
         _;
     }
 }

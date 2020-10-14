@@ -36,8 +36,8 @@ contract DescartesInterface is Instantiator {
         WaitingReveals,
         WaitingClaim,
         ClaimerMissedDeadline,
-        WaitingConfirmation,
-        WaitingChallenge,
+        WaitingConfirmationDeadline, // "Voting Phase"
+        WaitingChallengeResult, // "Voting Phase"
         ChallengerWon,
         ClaimerWon,
         ConsensusResult
