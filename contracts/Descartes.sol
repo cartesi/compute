@@ -155,7 +155,7 @@ contract Descartes is Decorated, DescartesInterface {
         for(uint256 j = 0; j < parties.length; j++) {
             require(i.parties[parties[j]].isParty == false, "Repetition of parties' addresses is not allowed");
             i.parties[parties[j]].isParty = true;
-            i.partiesArray = parties[j];
+            i.partiesArray.push(parties[j]);
         }
 
 
@@ -264,6 +264,8 @@ contract Descartes is Decorated, DescartesInterface {
         i.parties[msg.sender].hasVoted = true;
         i.currentChallenger = msg.sender;
         i.votesCounter++;
+        i.timeOfLastMove = now;
+
         // @dev should we update timeOfLastMove over here too?
         emit ChallengeStarted(_index);
     }
@@ -282,6 +284,8 @@ contract Descartes is Decorated, DescartesInterface {
         require(i.parties[msg.sender].isParty, "Only concerned users can challengDrives");
 
         i.currentState = State.WaitingReveals;
+        i.timeOfLastMove = now;
+
     }
 
     /// @notice Claimer claims the machine final hash and also validate the drives and initial hash of the machine.
@@ -344,6 +348,8 @@ contract Descartes is Decorated, DescartesInterface {
         i.currentState = State.WaitingConfirmationDeadline;
         i.claimedOutput = _output;
         i.parties[i.claimer].hasVoted = true;
+        i.timeOfLastMove = now;
+
 
         emit ClaimSubmitted(_index, _claimedFinalHash);
     }
@@ -365,7 +371,7 @@ contract Descartes is Decorated, DescartesInterface {
             bool hasCheated
         )
     {
-        Party storage party = instance[_index].parties[p];
+        Party storage party = instance[_index].parties[_p];
         isParty = party.isParty;
         hasVoted = party.hasVoted;
         hasCheated = party.hasCheated;
@@ -379,12 +385,12 @@ contract Descartes is Decorated, DescartesInterface {
             bytes32[] memory,
             bytes memory,
             Drive[] memory,
-            Party user
+            Party memory user
         )
     {
         DescartesCtx storage i = instance[_index];
 
-        user = i[_index].parties[_user];
+        user = i.parties[_user];
 
         uint256[] memory uintValues = new uint256[](4);
         uintValues[0] = i.finalTime;
@@ -411,7 +417,8 @@ contract Descartes is Decorated, DescartesInterface {
                 addressValues,
                 bytes32Values,
                 i.claimedOutput,
-                drives
+                drives,
+                user
             );
         } else if (i.currentState == State.WaitingReveals) {
             Drive[] memory drives = new Drive[](1);
@@ -618,28 +625,29 @@ contract Descartes is Decorated, DescartesInterface {
             i.currentState == State.WaitingChallengeResult,
             "State is not WaitingChallengeResult, cannot winByVG"
         );
+        i.timeOfLastMove = now;
         uint256 vgIndex = i.vgInstance;
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
             if(i.votesCounter == i.partiesArray.length) {
-                i.currentState = State.WaitingClaim;
-                i.parties[i.claimer].hasCheated = true;
-                i.claimer = i.currentChallenger;
-                i.currentChallenger = address(0);
+                i.currentState = State.ChallengerWon;  
                 return;
             }
-            i.currentState = State.ChallengerWon;
+            i.currentState = State.WaitingClaim;
+            i.parties[i.claimer].hasCheated = true;
+            i.claimer = i.currentChallenger;
+            i.currentChallenger = address(0);
             return;
         }
 
         if (vg.stateIsFinishedClaimerWon(vgIndex)) {
             if(i.votesCounter == i.partiesArray.length) {
-                i.currentState = State.WaitingConfirmationDeadline;
-                i.parties[i.currentChallenger].hasCheated = true;
-                i.currentChallenger = address(0);
+                i.currentState = State.ClaimerWon;
                 return;
             }
-            i.currentState = State.ClaimerWon;
+            i.currentState = State.WaitingConfirmationDeadline;
+            i.parties[i.currentChallenger].hasCheated = true;
+            i.currentChallenger = address(0);
             return;
         }
         require(false, "State of VG is not final");
@@ -736,7 +744,7 @@ contract Descartes is Decorated, DescartesInterface {
             return (false, false, i.claimer, "");
         }
         if (i.currentState == State.ClaimerWon) {
-            return (false, false, i.challenger, "");
+            return (false, false, i.currentChallenger, "");
         }
 
         revert("Unrecognized state");
@@ -848,7 +856,7 @@ contract Descartes is Decorated, DescartesInterface {
     /// @notice checks whether or not it's a party to this instance
     modifier onlyByParty(uint _index) {
         DescartesCtx storage i = instance[_index];
-        require(i.parties[msg.sender].isParty, "There sender is not party to this instance");
+        require(i.parties[msg.sender].isParty, "The sender is not party to this instance");
         _;
     }
     /// @notice checks whether or not it's a party to this instance

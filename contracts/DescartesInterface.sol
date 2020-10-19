@@ -93,8 +93,7 @@ contract DescartesInterface is Instantiator {
         uint64 _outputPosition,
         uint64 _outputLog2Size,
         uint256 _roundDuration,
-        address _claimer,
-        address _challenger,
+        address[] memory parties,
         Drive[] memory _inputDrives) public returns (uint256);
 
     /// @notice Get result of a finished instance.

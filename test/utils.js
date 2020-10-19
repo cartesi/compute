@@ -30,54 +30,26 @@ const driveMatcher = (expected, toEqual) => {
   );
 };
 
-const snapshotTaker = (provider) => {
+const snapshotTaker = provider => {
   return async function takeSnapshot() {
-    const payload = {
-      method: "evm_snapshot",
-      params: [],
-      jsonrpc: "2.0",
-      id: 0,
-    };
-    const response = await axios.post(provider._buidlerProvider._url, payload);
-    const id = response.data.result;
+    const id = await provider.send("evm_snapshot", []);
     return async function revert() {
-      const payload = {
-        method: "evm_revert",
-        params: [id],
-        jsonrpc: "2.0",
-        id: 0,
-      };
-      const response = await axios.post(
-        provider._buidlerProvider._url,
-        payload
-      );
+      const response = await provider.send("evm_revert", [id]);
     };
   };
 };
 
 const advanceTime = async (provider, seconds) => {
-  const payload = {
-    method: "evm_increaseTime",
-    params: [seconds],
-    jsonrpc: "2.0",
-    id: 0,
-  };
-  await axios.post(provider._buidlerProvider._url, payload);
+  await provider.send("evm_increaseTime", [seconds]);
 };
 
 const getBlockTimestampByHash = async (provider, hash) => {
-  const payload = {
-    method: "eth_getBlockByHash",
-    params: [hash, false],
-    jsonrpc: "2.0",
-    id: 0,
-  };
-  const response = await axios.post(provider._buidlerProvider._url, payload);
-  return ethers.BigNumber.from(response.data.result.timestamp).toNumber()
+  const response = await provider.send("eth_getBlockByHash", [hash, false]);
+  return ethers.BigNumber.from(response.timestamp).toNumber();
 };
 module.exports = {
   driveMatcher,
   snapshotTaker,
   advanceTime,
-  getBlockTimestampByHash,
+  getBlockTimestampByHash
 };
