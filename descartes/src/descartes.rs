@@ -133,8 +133,8 @@ pub struct Party {
 }
 
 
-impl From<&PartyParsed> for Party {
-    fn from(parsed: &PartyParsed) -> Party {
+impl From<PartyParsed> for Party {
+    fn from(parsed: PartyParsed) -> Party {
         Party {
             isParty: parsed.0,
             hasVoted: parsed.1,
@@ -198,7 +198,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                 .unwrap(),
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
-            partyState: parsed.5.value.into(),
+            partyState: parsed.5.into(),
         }
     }
 }
@@ -491,8 +491,9 @@ impl DApp<()> for Descartes {
                     );
                 }
                 "WaitingConfirmationDeadline" => {
-                    if(ctx.partyState.hasCheated) 
+                    if ctx.partyState.hasCheated  {
                         return Ok(Reaction::Idle);
+                    }
                     // determine the reaction based on the calculated machine output
                     return react_by_machine_output(
                         archive,
@@ -654,7 +655,7 @@ fn react_by_machine_output(
     let request = NewSessionRequest {
         session_id: id.clone(),
         machine: machine,
-        force: true,
+        // force: true, @dev @stephen did this really got updated?
     };
 
     // send newSession request to the emulator service
@@ -940,5 +941,8 @@ fn react_by_machine_output(
             };
             return Ok(Reaction::Transaction(request));
         },
+        _ => {
+            return Ok(Reaction::Idle); //@dev this shouldnt happen, shoud we explode here? how?
+        }
     }
 }
