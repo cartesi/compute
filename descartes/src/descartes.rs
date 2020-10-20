@@ -655,7 +655,7 @@ fn react_by_machine_output(
     let request = NewSessionRequest {
         session_id: id.clone(),
         machine: machine,
-        // force: true, @dev @stephen did this really got updated?
+        force: true,
     };
 
     // send newSession request to the emulator service
