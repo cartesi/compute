@@ -266,7 +266,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         i.parties[msg.sender].hasVoted = true;
         i.currentChallenger = msg.sender;
         i.votesCounter++;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
         // @dev should we update timeOfLastMove over here too?
         emit ChallengeStarted(_index);
@@ -286,7 +286,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         require(i.parties[msg.sender].isParty, "Only concerned users can challengDrives");
 
         i.currentState = State.WaitingReveals;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
     }
 
@@ -309,7 +309,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
-        bool deadlinePassed = now > i.timeOfLastMove + getMaxStateDuration(_index);
+        bool deadlinePassed = block.timestamp > i.timeOfLastMove + getMaxStateDuration(_index);
         require(
             i.currentState == State.WaitingClaim ||
             (i.currentState == State.WaitingChallengeDrives && deadlinePassed),
@@ -350,7 +350,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         i.currentState = State.WaitingConfirmationDeadline;
         i.claimedOutput = _output;
         i.parties[i.claimer].hasVoted = true;
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
 
 
         emit ClaimSubmitted(_index, _claimedFinalHash);
@@ -633,7 +633,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.currentState == State.WaitingChallengeResult,
             "State is not WaitingChallengeResult, cannot winByVG"
         );
-        i.timeOfLastMove = now;
+        i.timeOfLastMove = block.timestamp;
         uint256 vgIndex = i.vgInstance;
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
@@ -731,7 +731,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         onlyInstantiated(_index)
         returns (bool, bool, address, bytes memory)
     {
-        DescartesCtx memory i = instance[_index];
+        DescartesCtx storage i = instance[_index];
         if (i.currentState == State.ConsensusResult) {
             return (true, false, address(0), i.claimedOutput);
         }
