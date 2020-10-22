@@ -10,11 +10,11 @@ if [ -n "${CONCERN_SEMAPHORE}" ]; then
     echo "Waiting for key signal at ${CONCERN_SEMAPHORE}"
     dockerize -wait ${CONCERN_SEMAPHORE} -timeout ${ETHEREUM_TIMEOUT}
 
-    if [[ -f "/opt/cartesi/etc/keys/private_key" ]]; then
+    if [ -f "/opt/cartesi/etc/keys/private_key" ]; then
         export CARTESI_CONCERN_KEY=$(cat /opt/cartesi/etc/keys/private_key)
     fi
 
-    if [[ -f "/opt/cartesi/etc/keys/account" ]]; then
+    if [ -f "/opt/cartesi/etc/keys/account" ]; then
         export ACCOUNT_ADDRESS=$(cat /opt/cartesi/etc/keys/account)
     fi
 
