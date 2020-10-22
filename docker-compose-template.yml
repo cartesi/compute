@@ -52,6 +52,7 @@ services:
       IPFS_PORT: 50051
       DOCKER: "TRUE"
       RUST_BACKTRACE: 1
+      CONCERN_SEMAPHORE: file:///opt/cartesi/etc/keys/keys_done
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
       - key_data_{{ i }}:/opt/cartesi/etc/keys
