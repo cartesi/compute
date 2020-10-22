@@ -47,8 +47,7 @@ async function main() {
     5,
     // round duration
     45,
-    claimer,
-    challenger,
+    [claimer, challenger],
     [aDrive]
   );
 }

@@ -62,7 +62,9 @@ pub struct Descartes();
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
     #[serde(rename = "(uint64,uint64,bytes,bytes,bytes32,address,bool,bool)[]")]
-    DriveArrayType,
+    DriveArrayTuple,
+    #[serde(rename = "(bool,bool,bool)")]
+    PartyTypeTuple,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -118,6 +120,15 @@ impl From<&DriveParsed> for Drive {
     }
 }
 
+
+#[derive(Serialize, Deserialize)]
+pub struct PartyType {
+    pub name: String,
+    #[serde(rename = "type")]
+    pub ty: TupleType,
+    pub value: PartyParsed,
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct PartyParsed(
     bool,   // isParty
@@ -154,7 +165,7 @@ pub struct DescartesCtxParsed(
     Bytes32Array,   // templateHash, initialHash, claimedFinalHash, currentState
     BytesField,     // claimedOutput
     DriveArray,
-    PartyParsed,
+    PartyType,
 );
 
 #[derive(Serialize, Debug)]
@@ -198,7 +209,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
                 .unwrap(),
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
-            partyState: parsed.5.into(),
+            partyState: parsed.5.value.into(),
         }
     }
 }
