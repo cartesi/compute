@@ -1,18 +1,18 @@
 import fs from "fs";
 import { Wallet } from "@ethersproject/wallet";
-import { BuidlerConfig, task, usePlugin } from "@nomiclabs/buidler/config";
-import { HttpNetworkConfig } from "@nomiclabs/buidler/types";
+import { HardhatUserConfig, task } from "hardhat/config";
+import { HttpNetworkUserConfig } from "hardhat/types";
 
-usePlugin("@nomiclabs/buidler-ethers");
-usePlugin("@nomiclabs/buidler-waffle");
-usePlugin("@nodefactory/buidler-typechain");
-usePlugin("buidler-deploy");
+import "@nomiclabs/hardhat-ethers";
+import "@nomiclabs/hardhat-waffle";
+import "hardhat-typechain";
+import "hardhat-deploy";
 
-usePlugin("@nomiclabs/buidler-solpp");
-usePlugin("solidity-coverage");
+import "@nomiclabs/hardhat-solpp";
+// import "solidity-coverage"; @dev WIP this plugin is not updated to hardhat yet
 
-// This is a sample Buidler task. To learn how to create your own go to
-// https://buidler.dev/guides/create-task.html
+// This is a sample hardhat task. To learn how to create your own go to
+// https://hardhat.dev/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   const accounts = await bre.ethers.getSigners();
 
@@ -29,7 +29,7 @@ try {
     .toString();
 } catch (e) {}
 
-// create a Buidler EVM account array from mnemonic
+// create a hardhat EVM account array from mnemonic
 const mnemonicAccounts = (n = 10) => {
   return mnemonic
     ? Array.from(Array(n).keys()).map((i) => {
@@ -49,7 +49,7 @@ const infuraNetwork = (
   network: string,
   chainId?: number,
   gas?: number
-): HttpNetworkConfig => {
+): HttpNetworkUserConfig => {
   return {
     url: `https://${network}.infura.io/v3/${process.env.PROJECT_ID}`,
     chainId,
@@ -58,9 +58,9 @@ const infuraNetwork = (
   };
 };
 
-const config: BuidlerConfig = {
+const config: HardhatUserConfig = {
   networks: {
-    buidlerevm: mnemonic ? { accounts: mnemonicAccounts() } : {},
+    hardhat: mnemonic ? { accounts: mnemonicAccounts() } : {},
     localhost: {
       url: "http://localhost:8545",
       accounts: mnemonic ? { mnemonic } : undefined,
@@ -86,11 +86,14 @@ const config: BuidlerConfig = {
       accounts: mnemonic ? { mnemonic } : undefined,
     },
   },
-  solc: {
+  solidity: {
     version: "0.7.1",
-    optimizer: {
-      enabled: true,
-    },
+    settings: {
+      optimizer: {
+        runs: 110,
+        enabled: true,
+      },
+    }
   },
   paths: {
     artifacts: "artifacts",
@@ -148,6 +151,7 @@ const config: BuidlerConfig = {
         "node_modules/@cartesi/machine-solidity-step/deployments/bsc_testnet",
       ],
     },
+    deploy: ["node_modules/@cartesi/util/deploy"],
   },
   solpp: {
     defs: {
@@ -162,6 +166,12 @@ const config: BuidlerConfig = {
   namedAccounts: {
     deployer: {
       default: 0,
+    },
+    user: {
+      default: 0,
+    },
+    worker: {
+      default: 1,
     },
     alice: {
       default: 0,
