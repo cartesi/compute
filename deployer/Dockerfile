@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:14.15-alpine3.12
 
 # install dockerize, as we need to wait on ganache to be responding
 RUN apk add --no-cache \
