@@ -21,11 +21,28 @@ or using the http address:
 git clone --recurse-submodules https://github.com/cartesi/descartes.git
 ```
 
+### Building
+
+To build the Docker image, use the following command
+
+```shell
+docker build . -t cartesi/descartes
+```
+
+#### Building for ARM
+
+To build the Docker image for ARM, use the following argument to specify an ARM build
+
+```shell
+docker build --build-arg ARCH=ARM . -t cartesi/descartes
+```
+
+
+
 ### Running
 
 To run execute:
 ```
-% docker build . -t cartesi/descartes
 % yarn
 % rm deploy_done
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - up --build
