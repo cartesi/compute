@@ -1,5 +1,3 @@
-import fs from "fs";
-import { Wallet } from "@ethersproject/wallet";
 import { HardhatUserConfig, task } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 
@@ -15,7 +13,6 @@ import "@nomiclabs/hardhat-solpp";
 // https://hardhat.dev/guides/create-task.html
 task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
   const accounts = await bre.ethers.getSigners();
-
   for (const account of accounts) {
     console.log(await account.getAddress());
   }
@@ -23,27 +20,6 @@ task("accounts", "Prints the list of accounts", async (taskArgs, bre) => {
 
 // read MNEMONIC from file or from env variable
 let mnemonic = process.env.MNEMONIC;
-try {
-  mnemonic = fs
-    .readFileSync(process.env.MNEMONIC_PATH || ".mnemonic")
-    .toString();
-} catch (e) {}
-
-// create a hardhat EVM account array from mnemonic
-const mnemonicAccounts = (n = 10) => {
-  return mnemonic
-    ? Array.from(Array(n).keys()).map((i) => {
-        const wallet = Wallet.fromMnemonic(
-          mnemonic as string,
-          `m/44'/60'/0'/0/${i}`
-        );
-        return {
-          privateKey: wallet.privateKey,
-          balance: "1000000000000000000000",
-        };
-      })
-    : undefined;
-};
 
 const infuraNetwork = (
   network: string,
@@ -60,7 +36,7 @@ const infuraNetwork = (
 
 const config: HardhatUserConfig = {
   networks: {
-    hardhat: mnemonic ? { accounts: mnemonicAccounts() } : {},
+    hardhat: mnemonic ? { accounts: { mnemonic } } : {},
     localhost: {
       url: "http://localhost:8545",
       accounts: mnemonic ? { mnemonic } : undefined,
@@ -87,13 +63,13 @@ const config: HardhatUserConfig = {
     },
   },
   solidity: {
-    version: "0.7.1",
+    version: "0.7.4",
     settings: {
       optimizer: {
         runs: 110,
         enabled: true,
       },
-    }
+    },
   },
   paths: {
     artifacts: "artifacts",
@@ -101,19 +77,26 @@ const config: HardhatUserConfig = {
     deployments: "deployments",
   },
   external: {
-    artifacts: [
-      "node_modules/@cartesi/util/artifacts",
-      "node_modules/@cartesi/arbitration/artifacts",
-      "node_modules/@cartesi/logger/artifacts",
-      "node_modules/@cartesi/machine-solidity-step/artifacts",
+    contracts: [
+      {
+        artifacts: "node_modules/@cartesi/util/export/artifacts",
+        deploy: "node_modules/@cartesi/util/dist/deploy",
+      },
+      {
+        artifacts: "node_modules/@cartesi/arbitration/export/artifacts",
+        deploy: "node_modules/@cartesi/arbitration/dist/deploy",
+      },
+      {
+        artifacts: "node_modules/@cartesi/logger/export/artifacts",
+        deploy: "node_modules/@cartesi/logger/dist/deploy",
+
+      },
+      {
+        deploy: "node_modules/@cartesi/machine-solidity-step/dist/deploy",
+        artifacts: "node_modules/@cartesi/machine-solidity-step/export/artifacts",
+      },
     ],
     deployments: {
-      localhost: [
-        "node_modules/@cartesi/util/deployments/localhost",
-        "node_modules/@cartesi/arbitration/deployments/localhost",
-        "node_modules/@cartesi/logger/deployments/localhost",
-        "node_modules/@cartesi/machine-solidity-step/deployments/localhost",
-      ],
       ropsten: [
         "node_modules/@cartesi/util/deployments/ropsten",
         "node_modules/@cartesi/arbitration/deployments/ropsten",
@@ -151,7 +134,6 @@ const config: HardhatUserConfig = {
         "node_modules/@cartesi/machine-solidity-step/deployments/bsc_testnet",
       ],
     },
-    deploy: ["node_modules/@cartesi/util/deploy"],
   },
   solpp: {
     defs: {

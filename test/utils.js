@@ -1,4 +1,4 @@
-const { ethers } = require("@nomiclabs/buidler");
+const { ethers } = require("hardhat");
 const { expect, use } = require("chai");
 const { solidity } = require("ethereum-waffle");
 const axios = require("axios");
