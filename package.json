@@ -5,7 +5,7 @@
   "scripts": {
     "info": "npm-scripts-info",
     "prepare": "hardhat compile && hardhat typechain",
-    "test": "hardhat test",
+    "test": "hardhat test --deploy-fixture",
     "clean": "rimraf artifacts && rimraf cache && rimraf deployments/localhost && rimraf deployments/coverage && rimraf src/types/*",
     "deploy": "run-s deploy:development",
     "deploy:testnet": "run-s deploy:ropsten deploy:rinkeby deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet",

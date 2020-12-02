@@ -1,27 +1,25 @@
-// We require the Buidler Runtime Environment explicitly here. This is optional 
+// We require the Hardhat Runtime Environment explicitly here. This is optional 
 // but useful for running the script in a standalone fashion through `node <script>`.
-// When running the script with `buidler run <script>` you'll find the Buidler
+// When running the script with `hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
+import hre from "hardhat";
 import { Descartes } from "../src/types/Descartes";
-const { ethers, getNamedAccounts } = require ("@nomiclabs/buidler");
-const DescartesJson = require("../deployments/ganache_1337/Descartes.json");
 
 async function main() {
-  // Buidler always runs the compile task when running scripts through it. 
+  const { ethers, getNamedAccounts } = hre;
+  const { Descartes } = await hre.deployments.all();
+  // Hardhat always runs the compile task when running scripts through it. 
   // If this runs in a standalone fashion you may want to call compile manually 
   // to make sure everything is compiled
-  // await bre.run('compile');
-
-  const {claimer, challenger} = await getNamedAccounts();
-
-  const DescartesAddress = DescartesJson.address;
+  // await hre.run('compile');
   
-  // We get the contract to deploy
+  const {claimer, challenger} = await getNamedAccounts();
+  
+  // We get the contract to deployed
   const descartes = await ethers.getContractAt(
-      "Descartes",
-      DescartesAddress
-  ) as Descartes;
-
+    "Descartes",
+    Descartes.address,
+    ) as Descartes;
   const aDrive = {
     position: "0x9000000000000000",
     driveLog2Size: 5,

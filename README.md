@@ -46,15 +46,15 @@ The instance could be retrieved by the command:
 ```
 
 This will run an environment connected to a private net (ganache or geth), with no descartes deployed.
-To deploy a new descartes you need to run the `instantiate_descartes.ts` script. To do this you need to have `buidler` installed, and run:
+To deploy a new descartes you need to run the `instantiate_descartes.ts` script. To do this you need to have `hardhat` installed, and run:
 
 ```
-% npx buidler run scripts/instantiate_descartes.ts --network development
+% npx hardhat run scripts/instantiate_descartes.ts --network localhost
 ```
 
 To compile the smart contracts only:
 ```
-% npx buidler compile
+% npx hardhat compile
 ```
 
 ## Contributing

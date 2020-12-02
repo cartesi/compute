@@ -9,4 +9,4 @@ jobs:
         with:
             node-version: '12.x'
       - run: yarn install
-      - run: ./scripts/automated_tests.sh
+      - run: yarn test
