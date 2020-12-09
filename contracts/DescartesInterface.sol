@@ -265,7 +265,7 @@ interface DescartesInterface is Instantiator {
         uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
-        Drive[] memory _inputDrives) public returns (uint256);
+        Drive[] memory _inputDrives) external returns (uint256);
 
     /// @notice Get result of a finished instance.
     /// @param _index index of Descartes instance to get result

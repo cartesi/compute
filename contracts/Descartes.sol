@@ -320,7 +320,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
-        Drive[] memory _inputDrives) public returns (uint256)
+        Drive[] memory _inputDrives) override public returns (uint256)
     {
         DescartesCtx storage i = instance[currentIndex];
 

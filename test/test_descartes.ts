@@ -25,7 +25,7 @@ const deployDescartes = async ({
   const DescartesFactory = await ethers.getContractFactory("Descartes");
   const descartes = await DescartesFactory.deploy(logger, vg, step);
   await descartes.deployed();
-  return descartes as Descartes;
+  return descartes as unknown as Descartes;
 };
 
 describe("Descartes tests", () => {
