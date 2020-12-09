@@ -57,7 +57,7 @@ COPY ./dispatcher-entrypoint.sh $BASE/bin/
 COPY ./config-template.yaml $BASE/etc/descartes/
 RUN mkdir -p $BASE/srv/descartes
 
-ENV ETHEREUM_HOST "ganache"
+ENV ETHEREUM_HOST "hardhatnet"
 ENV ETHEREUM_PORT "8545"
 ENV ETHEREUM_TIMEOUT "120s"
 

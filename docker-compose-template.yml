@@ -1,48 +1,30 @@
 {% set players = num_players | int %}
 version: '3'
 services:
-  ganache:
-    image: trufflesuite/ganache-cli:v6.9.1
-    command: ["ganache-cli", "--accounts", "{{ players }}", "--account_keys_path", "/ganache-data/keys"]
-    volumes:
-      - ganache_data:/ganache-data
+  hardhatnet:
+    build:
+      context: .
+      dockerfile: ./deployer/Dockerfile
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
     expose:
       - 8545
     ports:
       - 8545:8545
-    networks:
-      - ethereum
-
-  deployer:
-    depends_on: [ganache]
-    build:
-      context: .
-      dockerfile: ./deployer/Dockerfile
-      args:
-        NPM_TOKEN: ${NPM_TOKEN}
-    environment:
-      ETHEREUM_HOST: ganache
-      ETHEREUM_NETWORK: ganache
     volumes:
       - ./:/opt/cartesi/share/blockchain
     networks:
       - ethereum
-
-  key_distributor:
-    depends_on: [ganache]
-    image: cartesi/key-distributor
-    volumes:
-      - ganache_data:/keys
-      {% for i in range(players) %}- key_data_{{ i }}:/key-{{ i }}
-      {% endfor %}
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: cartesi/descartes:0.2.0
+    image: descartes
     environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "{{ i }}"
       RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
-      WEB3_PROVIDER_URI: http://ganache:8545
-      DEPLOYMENT_SEMAPHORE: file:///opt/cartesi/share/blockchain/deploy_done
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
       MACHINE_MANAGER_HOST: machine-manager
       MACHINE_MANAGER_PORT: 50051
@@ -55,7 +37,7 @@ services:
       CONCERN_SEMAPHORE: file:///opt/cartesi/etc/keys/keys_done
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - key_data_{{ i }}:/opt/cartesi/etc/keys
+      # - key_data_{{ i }}:/opt/cartesi/etc/keys
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
       ethereum: {}
@@ -66,15 +48,17 @@ services:
       - "{{ 3001 + i }}:3001"
 
   logger_{{ i }}:
-    image: cartesi/logger-server:0.4.0
-    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/build/contracts/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    image: cartesi/logger-server:0.6.1
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - key_data_{{ i }}:/opt/cartesi/etc/keys
+      # - key_data_{{ i }}:/opt/cartesi/etc/keys
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     environment:
-      WEB3_PROVIDER_URI: http://ganache:8545
-      DEPLOYMENT_SEMAPHORE: file:///opt/cartesi/share/blockchain/deploy_done
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "{{ i }}"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
     networks:
       ethereum: {}
       node_{{ i }}:

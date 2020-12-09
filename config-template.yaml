@@ -1,12 +1,12 @@
 concerns:
-  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/PartitionInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/PartitionInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
-  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/MMInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/MMInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
-  - abi: "/opt/cartesi/share/blockchain/node_modules/@cartesi/arbitration/build/contracts/VGInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/VGInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
 main_concern:
-  abi: "/opt/cartesi/share/blockchain/deployments/ganache_1337/Descartes.json"
+  abi: "/opt/cartesi/share/blockchain/deployments/localhost/Descartes.json"
   user_address: "${ACCOUNT_ADDRESS}"
 confirmations: 12
 max_delay: 500

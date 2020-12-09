@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:14-alpine
 
 # install dockerize, as we need to wait on ganache to be responding
 RUN apk add --no-cache \
@@ -6,32 +6,33 @@ RUN apk add --no-cache \
     git \
     openssl \
     python \
-    python-dev \
+#     python-dev \
     py-pip
 
-ENV DOCKERIZE_VERSION v0.6.1
-RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+# ENV DOCKERIZE_VERSION v0.6.1
+# RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#     && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+#     && rm dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz
 
 ENV BASE /opt/cartesi
 
-RUN yarn global add truffle@5.1.8
-RUN yarn add @truffle/hdwallet-provider@1.0.28
-RUN yarn add @truffle/contract@4.1.3
-
 WORKDIR $BASE/deployer
-COPY deployer/migrate.sh .
-COPY deployer/unlockAccount.js .
+COPY yarn.lock .
+COPY package.json .
+COPY hardhat.config.ts .
+COPY contracts .
+COPY deploy .
 
-ENV ETHEREUM_HOST "ganache"
+RUN yarn 
+
+ENV ETHEREUM_HOST "hardhatnet"
 ENV ETHEREUM_PORT "8545"
 ENV ETHEREUM_TIMEOUT "10s"
 ENV ETHEREUM_NETWORK "development"
+ENV DOCKER true
+
+EXPOSE 8545  
 
 WORKDIR $BASE/share/blockchain
 
-CMD dockerize \
-    -wait tcp://${ETHEREUM_HOST}:${ETHEREUM_PORT} \
-    -timeout ${ETHEREUM_TIMEOUT} \
-    $BASE/deployer/migrate.sh
+CMD ["npx", "hardhat",  "node" ]
