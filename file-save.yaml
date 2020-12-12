@@ -1,0 +1,168 @@
+
+version: '3'
+services:
+  hardhatnet:
+    build:
+      context: .
+      dockerfile: ./deployer/Dockerfile
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+    expose:
+      - 8545
+    ports:
+      - 8545:8545
+    volumes:
+      - ./:/opt/cartesi/share/blockchain
+    networks:
+      - ethereum
+  
+
+  dispatcher_0:
+    image: descartes
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "0"
+      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,partition=trace,vg=trace
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+      QUERY_PORT: 3001
+      MACHINE_MANAGER_HOST: machine-manager
+      MACHINE_MANAGER_PORT: 50051
+      LOGGER_HOST: logger
+      LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
+      DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_0:/opt/cartesi/srv/descartes
+    networks:
+      ethereum: {}
+      node_0:
+        aliases:
+          - dispatcher
+    ports:
+      - "3001:3001"
+
+  logger_0:
+    image: cartesi/logger-server:0.6.1
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json"]
+    # , "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_0:/opt/cartesi/srv/descartes
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "0"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+    networks:
+      ethereum: {}
+      node_0:
+        aliases:
+          - logger
+
+  ipfs_0:
+    image: cartesi/ipfs:0.1.0
+    volumes:
+      - ./dapp_data_0:/opt/cartesi/srv/descartes
+    networks:
+      ipfs: {}
+      node_0:
+        aliases:
+          - ipfs
+    ports:
+        - "50051:50051"
+
+  machine_manager_0:
+    image: cartesicorp/machine-manager:0.5.0-rc2
+    volumes:
+      - ./dapp_data_0:/opt/cartesi/srv/descartes:ro
+    networks:
+      ethereum: {}
+      node_0:
+        aliases:
+          - machine-manager
+
+  dispatcher_1:
+    image: descartes
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "1"
+      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,partition=trace,vg=trace
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+      QUERY_PORT: 3001
+      MACHINE_MANAGER_HOST: machine-manager
+      MACHINE_MANAGER_PORT: 50051
+      LOGGER_HOST: logger
+      LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
+      DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_1:/opt/cartesi/srv/descartes
+    networks:
+      ethereum: {}
+      node_1:
+        aliases:
+          - dispatcher
+    ports:
+      - "3002:3001"
+
+  logger_1:
+    image: cartesi/logger-server:0.6.1
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json"]
+    # , "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_1:/opt/cartesi/srv/descartes
+    environment:
+      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      ACCOUNT_INDEX: "1"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+    networks:
+      ethereum: {}
+      node_1:
+        aliases:
+          - logger
+
+  ipfs_1:
+    image: cartesi/ipfs:0.1.0
+    volumes:
+      - ./dapp_data_1:/opt/cartesi/srv/descartes
+    networks:
+      ipfs: {}
+      node_1:
+        aliases:
+          - ipfs
+    ports:
+        - "50052:50051"
+
+  machine_manager_1:
+    image: cartesicorp/machine-manager:0.5.0-rc2
+    command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
+    volumes:
+      - ./dapp_data_1:/opt/cartesi/srv/descartes:ro
+    networks:
+      ethereum: {}
+      node_1:
+        aliases:
+          - machine-manager
+
+
+volumes:
+  dapp_data_0:
+  dapp_data_1:
+  
+
+networks:
+  ipfs:
+  ethereum:
+  node_0:
+  node_1:
+  

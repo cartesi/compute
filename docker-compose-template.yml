@@ -34,10 +34,8 @@ services:
       IPFS_PORT: 50051
       DOCKER: "TRUE"
       RUST_BACKTRACE: 1
-      CONCERN_SEMAPHORE: file:///opt/cartesi/etc/keys/keys_done
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      # - key_data_{{ i }}:/opt/cartesi/etc/keys
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
       ethereum: {}
@@ -49,10 +47,10 @@ services:
 
   logger_{{ i }}:
     image: cartesi/logger-server:0.6.1
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json"]
+    # , "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      # - key_data_{{ i }}:/opt/cartesi/etc/keys
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     environment:
       MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
@@ -66,7 +64,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: cartesi/ipfs:0.1.0
+    image: cartesicorp/ipfs:0.1.1
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
@@ -78,7 +76,7 @@ services:
         - "{{ 50051 + i }}:50051"
 
   machine_manager_{{ i }}:
-    image: cartesi/machine-manager:0.4.2
+    image: cartesicorp/machine-manager:0.5.0-rc1
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes:ro
     networks:
@@ -89,9 +87,7 @@ services:
 {% endfor %}
 
 volumes:
-  ganache_data:
   {% for i in range(players) %}dapp_data_{{ i }}:
-  key_data_{{ i }}:
   {% endfor %}
 
 networks:

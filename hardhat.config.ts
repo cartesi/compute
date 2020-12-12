@@ -158,6 +158,9 @@ const config: HardhatUserConfig = {
     alice: {
       default: 0,
     },
+    bob: {
+      default: 1,
+    },
     proxy: {
       default: 1,
     },

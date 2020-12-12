@@ -61,7 +61,7 @@ pub struct Descartes();
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(uint64,uint64,bytes,bytes,bytes32,address,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint8,bytes,bytes,bytes32,address,bool,bool)[]")]
     DriveArrayTuple,
     #[serde(rename = "(bool,bool,bool)")]
     PartyTypeTuple,
