@@ -19,10 +19,11 @@ services:
 
   dispatcher_0:
     image: descartes
+    restart: always
     environment:
       MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
       ACCOUNT_INDEX: "0"
-      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,partition=trace,vg=trace
+      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,compute=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
@@ -76,7 +77,8 @@ services:
         - "50051:50051"
 
   machine_manager_0:
-    image: cartesicorp/machine-manager:0.5.0-rc2
+    # image: cartesicorp/machine-manager:0.5.0-rc2
+    image: cartesicorp/machine-manager:0.5.0-vg-test
     volumes:
       - ./dapp_data_0:/opt/cartesi/srv/descartes:ro
     networks:
@@ -87,10 +89,11 @@ services:
 
   dispatcher_1:
     image: descartes
+    restart: always
     environment:
       MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
       ACCOUNT_INDEX: "1"
-      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,partition=trace,vg=trace
+      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace,compute=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
@@ -144,7 +147,8 @@ services:
         - "50052:50051"
 
   machine_manager_1:
-    image: cartesicorp/machine-manager:0.5.0-rc2
+    # image: cartesicorp/machine-manager:0.5.0-rc2
+    image: cartesicorp/machine-manager:0.5.0-vg-test
     command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
     volumes:
       - ./dapp_data_1:/opt/cartesi/srv/descartes:ro
@@ -165,4 +169,3 @@ networks:
   ethereum:
   node_0:
   node_1:
-  

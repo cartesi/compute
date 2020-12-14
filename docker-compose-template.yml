@@ -19,6 +19,7 @@ services:
 {% for i in range(players) %}
   dispatcher_{{ i }}:
     image: descartes
+    restart: always
     environment:
       MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
       ACCOUNT_INDEX: "{{ i }}"
