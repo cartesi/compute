@@ -39,7 +39,7 @@ describe("Descartes tests", () => {
   let finalTime = 300;
   let templateHash = ethers.constants.HashZero;
   let outputPosition = 0;
-  let roundDuration = 0;
+  let roundDuration = 50;
   let outputLog2Size = 3;
   let output = "0x" + "00".repeat(8);
   let aDrive = {
@@ -100,7 +100,7 @@ describe("Descartes tests", () => {
 
       const tx2 = await descartes.getState(0, mainSignerAddress);
       expect(tx2[0][0]).to.equal(finalTime);
-      expect(tx2[0][1]).to.equal(timestamp + 40); // lastMoveTime  = now + timeToStartMachine(40)
+      expect(tx2[0][1]).to.equal(timestamp + 40 + roundDuration); // lastMoveTime  = now + timeToStartMachine(40)
       expect(tx2[0][2]).to.equal(outputPosition);
       expect(tx2).to.include.deep.members([
         [
@@ -279,7 +279,7 @@ describe("Descartes tests", () => {
       const tx3 = await descartes.getState(0, claimerAddress);
       expect(tx3).to.have.length(6);
       expect(tx3[0]).to.have.length(4);
-      expect(tx3[0][1]).to.be.equal(lastMoveTS + getMaxInstanceDuration);
+      expect(tx3[0][1]).to.be.equal(lastMoveTS + getMaxInstanceDuration + roundDuration);
       expect(tx3[5]).to.have.deep.property("isParty", true);
       expect(tx3[5]).to.have.deep.property("hasVoted", true);
       expect(tx3[5]).to.have.deep.property("hasCheated", false);
@@ -393,8 +393,8 @@ describe("Descartes tests", () => {
 
       const tx2 = await descartes.getState(descartesIdx, mainSignerAddress);
       expect(tx2[0][0]).to.equal(finalTime);
-      // lastMoveTime  = now + roundDuration(0)
-      expect(tx2[0][1]).to.equal(timestamp);
+      // lastMoveTime  = now + roundDuration
+      expect(tx2[0][1]).to.equal(timestamp + roundDuration);
       expect(tx2[0][2]).to.equal(outputPosition);
       expect(tx2).to.include.deep.members([
         [ethers.constants.AddressZero, claimerAddress],

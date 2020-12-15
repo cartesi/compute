@@ -322,7 +322,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         address[] memory parties,
         Drive[] memory _inputDrives) override public returns (uint256)
     {
-        require(_roundDuration > 50);
+        require(_roundDuration >= 50, "round duration has to be at least 50 seconds");
         DescartesCtx storage i = instance[currentIndex];
 
         for(uint256 j = 0; j < parties.length; j++) {
