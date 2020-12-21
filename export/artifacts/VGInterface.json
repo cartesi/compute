@@ -1,0 +1,400 @@
+{
+  "contractName": "VGInterface",
+  "sourceName": "@cartesi/arbitration/contracts/VGInterface.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimVictoryByTime",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "deactivate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCurrentState",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timeToStartMachine",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_partitionSize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxCycle",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_picoSecondsToRunInsn",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMaxInstanceDuration",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNonce",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPartitionGameIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPartitionQuerySize",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getSubInstances",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "_addresses",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_indices",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_machineAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_claimerFinalHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_finalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "instantiate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "isActive",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "isConcerned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "settleVerificationGame",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "startMachineRunChallenge",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsFinishedChallengerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsFinishedClaimerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "winByPartitionTimeout",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "evm": {
+    "bytecode": {
+      "generatedSources": [],
+      "linkReferences": {},
+      "object": "",
+      "opcodes": "",
+      "sourceMap": ""
+    },
+    "deployedBytecode": {
+      "generatedSources": [],
+      "immutableReferences": {},
+      "linkReferences": {},
+      "object": "",
+      "opcodes": "",
+      "sourceMap": ""
+    },
+    "gasEstimates": null,
+    "methodIdentifiers": {
+      "claimVictoryByTime(uint256)": "a2dc7973",
+      "deactivate(uint256)": "916b9bef",
+      "getCurrentState(uint256)": "5748c130",
+      "getMaxInstanceDuration(uint256,uint256,uint256,uint256,uint256)": "370f31aa",
+      "getNonce(uint256)": "3d46b819",
+      "getPartitionGameIndex(uint256)": "00446386",
+      "getPartitionQuerySize(uint256)": "0c91927b",
+      "getSubInstances(uint256,address)": "c526656c",
+      "instantiate(address,address,uint256,address,bytes32,bytes32,uint256)": "20b73870",
+      "isActive(uint256)": "82afd23b",
+      "isConcerned(uint256,address)": "01ff62ab",
+      "settleVerificationGame(uint256)": "a703df28",
+      "startMachineRunChallenge(uint256)": "cd3784e7",
+      "stateIsFinishedChallengerWon(uint256)": "b6b5c319",
+      "stateIsFinishedClaimerWon(uint256)": "6cc9f17e",
+      "winByPartitionTimeout(uint256)": "bfa69ed8"
+    }
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"claimVictoryByTime\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"deactivate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getCurrentState\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_timeToStartMachine\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_partitionSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_maxCycle\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_picoSecondsToRunInsn\",\"type\":\"uint256\"}],\"name\":\"getMaxInstanceDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getNonce\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getPartitionGameIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getPartitionQuerySize\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getSubInstances\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_addresses\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_indices\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_machineAddress\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_claimerFinalHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_finalTime\",\"type\":\"uint256\"}],\"name\":\"instantiate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"isActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"isConcerned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"settleVerificationGame\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"startMachineRunChallenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsFinishedChallengerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsFinishedClaimerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"winByPartitionTimeout\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"@cartesi/arbitration/contracts/VGInterface.sol\":\"VGInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":110},\"remappings\":[]},\"sources\":{\"@cartesi/arbitration/contracts/MMInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Interface for memory manager instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface MMInterface is Instantiator {\\n    enum state {WaitingProofs, WaitingReplay, FinishedReplay}\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _owner,\\n        address _provider,\\n        bytes32 _initialHash\\n    ) external returns (uint256);\\n\\n    function newHash(uint256 _index) external view returns (bytes32);\\n\\n    function finishProofPhase(uint256 _index) external;\\n\\n    function finishReplayPhase(uint256 _index) external;\\n\\n    function getRWArrays(\\n        uint256 _index\\n    )\\n    external\\n    view\\n    returns (\\n        uint64[] memory,\\n        bytes8[] memory,\\n        bool[] memory\\n    );\\n\\n    function stateIsWaitingProofs(uint256 _index) external view returns (bool);\\n\\n    function stateIsWaitingReplay(uint256 _index) external view returns (bool);\\n\\n    function stateIsFinishedReplay(uint256 _index) external view returns (bool);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x9d54d1313fb89fffc10dd80a1ea13227a5df26f669716d61704186dee5bf95d9\",\"license\":\"GPL-3.0-only\"},\"@cartesi/arbitration/contracts/MachineInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\n/// @title MachineInterface interface contract\\npragma solidity ^0.7.0;\\n\\n\\ninterface MachineInterface {\\n    event StepGiven(uint8 exitCode);\\n\\n    function step(\\n        uint64[] memory _rwPositions,\\n        bytes8[] memory _rwValues,\\n        bool[] memory _isRead\\n    ) external returns (uint8, uint256);\\n\\n    function getMemoryInteractor() external view returns (address);\\n}\\n\",\"keccak256\":\"0x227a51ac54bc8246aec29d73bc48701c6c2bcd0ad0b606105c079f31283526d7\",\"license\":\"GPL-3.0-only\"},\"@cartesi/arbitration/contracts/PartitionInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Abstract interface for partition instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface PartitionInterface is Instantiator {\\n    enum state {\\n        WaitingQuery,\\n        WaitingHashes,\\n        ChallengerWon,\\n        ClaimerWon,\\n        DivergenceFound\\n    }\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime,\\n        uint256 _querySize,\\n        uint256 _roundDuration\\n    ) external returns (uint256);\\n\\n    function timeHash(uint256 _index, uint256 key)\\n        external\\n        view\\n        returns (bytes32);\\n\\n    function divergenceTime(uint256 _index) external view returns (uint256);\\n\\n    function stateIsWaitingQuery(uint256 _index) external view returns (bool);\\n\\n    function stateIsWaitingHashes(uint256 _index) external view returns (bool);\\n\\n    function stateIsChallengerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsClaimerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsDivergenceFound(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getQuerySize(uint256 _index) external view returns (uint256);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x00b63017019412475d1ceee5a817fa1d714d7e6cff9aac7d2662eaef492f6687\",\"license\":\"GPL-3.0-only\"},\"@cartesi/arbitration/contracts/VGInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n// @title Verification game instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Decorated.sol\\\";\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\nimport \\\"./PartitionInterface.sol\\\";\\nimport \\\"./MMInterface.sol\\\";\\nimport \\\"./MachineInterface.sol\\\";\\n\\ninterface VGInterface is Instantiator {\\n    enum state {\\n        WaitPartition,\\n        WaitMemoryProveValues,\\n        FinishedClaimerWon,\\n        FinishedChallengerWon\\n    }\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        uint256 _roundDuration,\\n        address _machineAddress,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime\\n    ) external returns (uint256);\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function stateIsFinishedClaimerWon(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function stateIsFinishedChallengerWon(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function winByPartitionTimeout(uint256 _index) external;\\n\\n    function startMachineRunChallenge(uint256 _index) external;\\n\\n    function settleVerificationGame(uint256 _index) external;\\n\\n    function claimVictoryByTime(uint256 _index) external;\\n\\n    //function stateIsWaitPartition(uint256 _index) public view returns (bool);\\n    //function stateIsWaitMemoryProveValues(uint256 _index) public view\\n    //  returns (bool);\\n    //function clearInstance(uint256 _index) internal;\\n    //function challengerWins(uint256 _index) private;\\n    //function claimerWins(uint256 _index) private;\\n\\n    function getPartitionQuerySize(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x520380137623cac076f23ab845ed9f6611f56065cab174455fcf9815c81d5ba6\",\"license\":\"GPL-3.0-only\"},\"@cartesi/util/contracts/Decorated.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\n\\ncontract Decorated {\\n    // This contract defines several modifiers but does not use\\n    // them - they will be used in derived contracts.\\n    modifier onlyBy(address user) {\\n        require(msg.sender == user, \\\"Cannot be called by user\\\");\\n        _;\\n    }\\n\\n    modifier onlyAfter(uint256 time) {\\n        require(block.timestamp > time, \\\"Cannot be called now\\\");\\n        _;\\n    }\\n}\\n\",\"keccak256\":\"0xdbba019b8f7f93b212a5bbae402ee988321c4fa82ed2b4c9e55b4d7ddf35dcc3\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/Instantiator.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n\\npragma solidity ^0.7.0;\\n\\n\\ninterface Instantiator {\\n\\n    modifier onlyInstantiated(uint256 _index) virtual;\\n\\n    modifier onlyActive(uint256 _index) virtual;\\n\\n    modifier increasesNonce(uint256 _index) virtual;\\n\\n    function isActive(uint256 _index) external view returns (bool);\\n\\n    function getNonce(uint256 _index) external view returns (uint256);\\n\\n    function isConcerned(uint256 _index, address _user) external view returns (bool);\\n\\n    function getSubInstances(uint256 _index, address) external view returns (address[] memory _addresses, uint256[] memory _indices);\\n\\n    function deactivate(uint256 _index) external;\\n}\\n\",\"keccak256\":\"0x084e3e769f423b3f32bd8faf119be132a478eeea8006bed69b527b2fdcfd45a1\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

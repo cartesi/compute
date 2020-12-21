@@ -4,9 +4,10 @@
   "description": "Cartesi Descartes SDK",
   "scripts": {
     "info": "npm-scripts-info",
-    "prepare": "hardhat compile && hardhat typechain",
+    "build": "hardhat compile && tsc",
     "test": "hardhat test --deploy-fixture",
     "clean": "rimraf artifacts && rimraf cache && rimraf deployments/localhost && rimraf deployments/coverage && rimraf src/types/*",
+    "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src",
     "deploy": "run-s deploy:development",
     "deploy:development": "hardhat deploy --network localhost --export export/abi/localhost.json",
     "deploy:testnet": "run-s deploy:ropsten deploy:ropsten deploy:rinkeby deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet",
@@ -16,7 +17,9 @@
     "deploy:goerli": "hardhat deploy --network goerli --export export/abi/goerli.json",
     "deploy:matic_testnet": "hardhat deploy --network matic_testnet --export export/abi/matic_testnet.json",
     "deploy:bsc_testnet": "hardhat deploy --network bsc_testnet --export export/abi/bsc_testnet.json",
+    "export": "hardhat export-artifacts export/artifacts",
     "prepack": "run-s clean deploy:testnet",
+    "prepare": "run-s build copy-dts export",
     "start": "hardhat node"
   },
   "scripts-info": {
@@ -42,6 +45,8 @@
   ],
   "author": "Danilo Tuler <danilo.tuler@cartesi.io>",
   "license": "GPL-3.0-only",
+  "main": "./dist/src/types/index.js",
+  "types": "./dist/src/types/index.d.ts",
   "bugs": {
     "url": "https://github.com/cartesi/descartes/issues"
   },
@@ -52,6 +57,8 @@
     "@cartesi/machine-solidity-step": "^0.6.1",
     "@cartesi/util": "0.6.2",
     "antlr4": "^4.8.0",
+    "copyfiles": "^2.4.1",
+    "npm-run-all": "^4.1.5",
     "solc": "^0.7.0"
   },
   "devDependencies": {
@@ -79,8 +86,11 @@
     "antlr4": "4.8.0"
   },
   "files": [
-    "artifacts",
     "contracts",
-    "deployments"
+    "deployments/*/*.json",
+    "deployments/*/.chainid",
+    "dist/src/types",
+    "dist/deploy/*.js",
+    "export"
   ]
 }

@@ -27,7 +27,6 @@ To run execute:
 ```
 % docker build . -t cartesi/descartes
 % yarn
-% rm deploy_done
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - up --build
 ```
 

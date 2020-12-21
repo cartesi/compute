@@ -1,0 +1,107 @@
+{
+  "contractName": "MachineInterface",
+  "sourceName": "@cartesi/arbitration/contracts/MachineInterface.sol",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "exitCode",
+          "type": "uint8"
+        }
+      ],
+      "name": "StepGiven",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "getMemoryInteractor",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64[]",
+          "name": "_rwPositions",
+          "type": "uint64[]"
+        },
+        {
+          "internalType": "bytes8[]",
+          "name": "_rwValues",
+          "type": "bytes8[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "_isRead",
+          "type": "bool[]"
+        }
+      ],
+      "name": "step",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        },
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "evm": {
+    "bytecode": {
+      "generatedSources": [],
+      "linkReferences": {},
+      "object": "",
+      "opcodes": "",
+      "sourceMap": ""
+    },
+    "deployedBytecode": {
+      "generatedSources": [],
+      "immutableReferences": {},
+      "linkReferences": {},
+      "object": "",
+      "opcodes": "",
+      "sourceMap": ""
+    },
+    "gasEstimates": null,
+    "methodIdentifiers": {
+      "getMemoryInteractor()": "a35b2d07",
+      "step(uint64[],bytes8[],bool[])": "7718d4c8"
+    }
+  },
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"exitCode\",\"type\":\"uint8\"}],\"name\":\"StepGiven\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"getMemoryInteractor\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64[]\",\"name\":\"_rwPositions\",\"type\":\"uint64[]\"},{\"internalType\":\"bytes8[]\",\"name\":\"_rwValues\",\"type\":\"bytes8[]\"},{\"internalType\":\"bool[]\",\"name\":\"_isRead\",\"type\":\"bool[]\"}],\"name\":\"step\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"},{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"@cartesi/arbitration/contracts/MachineInterface.sol\":\"MachineInterface\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":110},\"remappings\":[]},\"sources\":{\"@cartesi/arbitration/contracts/MachineInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\n/// @title MachineInterface interface contract\\npragma solidity ^0.7.0;\\n\\n\\ninterface MachineInterface {\\n    event StepGiven(uint8 exitCode);\\n\\n    function step(\\n        uint64[] memory _rwPositions,\\n        bytes8[] memory _rwValues,\\n        bool[] memory _isRead\\n    ) external returns (uint8, uint256);\\n\\n    function getMemoryInteractor() external view returns (address);\\n}\\n\",\"keccak256\":\"0x227a51ac54bc8246aec29d73bc48701c6c2bcd0ad0b606105c079f31283526d7\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  }
+}

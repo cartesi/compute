@@ -4,6 +4,7 @@ build/*
 artifacts/*
 cache/*
 src/types/*
+dist/*
 coverage/*
 test/*/
 .venv
