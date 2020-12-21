@@ -18,7 +18,7 @@ services:
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: descartes
+    image: cartesi/descartes:latest
     restart: always
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
