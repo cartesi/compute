@@ -6,7 +6,7 @@
 
 - Docker
 - docker-compose
-- node 12.x
+- node 14.x
 - yarn
 - jinja2
 
