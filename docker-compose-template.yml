@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: ./deployer/Dockerfile
     environment:
-      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
     expose:
       - 8545
     ports:
@@ -21,7 +21,7 @@ services:
     image: descartes
     restart: always
     environment:
-      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "{{ i }}"
       RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
@@ -54,7 +54,7 @@ services:
       - ./:/opt/cartesi/share/blockchain:ro
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     environment:
-      MNEMONIC: "juice gas shield caution gown furnace session soldier property fatigue cruel diesel"
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "{{ i }}"
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
