@@ -184,9 +184,11 @@ contract Descartes is Decorated, DescartesInterface {
                     i.providerDrives.push(j);
                 }
             } else {
-                i.revealDrives.push(j);
                 if (!drive.waitsProvider) {
                     i.driveHash[j] = drive.loggerRootHash;
+                    if (!li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size)) {
+                        i.revealDrives.push(j);
+                    }
                 } else {
                     needsProviderPhase = true;
                     i.providerDrives.push(j);
