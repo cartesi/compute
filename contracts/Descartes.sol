@@ -398,7 +398,7 @@ contract Descartes is Decorated, DescartesInterface {
             );
         } else if (i.currentState == State.WaitingReveals) {
             Drive[] memory drives = new Drive[](1);
-            drives[0] = i.inputDrives[i.revealDrivesPointer];
+            drives[0] = i.inputDrives[i.revealDrives[i.revealDrivesPointer]];
             return (
                 uintValues,
                 addressValues,
@@ -694,7 +694,7 @@ contract Descartes is Decorated, DescartesInterface {
                 userToBlame = i.inputDrives[i.providerDrivesPointer].provider;
             // check if resulted from the WaitingReveals phase
             } else if (instance[_index].revealDrivesPointer < instance[_index].revealDrives.length) {
-                userToBlame = i.inputDrives[i.revealDrivesPointer].provider;
+                userToBlame = i.inputDrives[i.revealDrives[i.revealDrivesPointer]].provider;
             }
             return (false, false, userToBlame, "");
         }
