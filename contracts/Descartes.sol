@@ -388,7 +388,7 @@ contract Descartes is Decorated, DescartesInterface {
 
         if (i.currentState == State.WaitingProviders) {
             Drive[] memory drives = new Drive[](1);
-            drives[0] = i.inputDrives[i.providerDrivesPointer];
+            drives[0] = i.inputDrives[i.providerDrives[i.providerDrivesPointer]];
             return (
                 uintValues,
                 addressValues,
@@ -691,7 +691,7 @@ contract Descartes is Decorated, DescartesInterface {
             address userToBlame = address(0);
             // check if resulted from the WaitingProviders phase
             if (instance[_index].providerDrivesPointer < instance[_index].providerDrives.length) {
-                userToBlame = i.inputDrives[i.providerDrivesPointer].provider;
+                userToBlame = i.inputDrives[i.providerDrives[i.providerDrivesPointer]].provider;
             // check if resulted from the WaitingReveals phase
             } else if (instance[_index].revealDrivesPointer < instance[_index].revealDrives.length) {
                 userToBlame = i.inputDrives[i.revealDrives[i.revealDrivesPointer]].provider;
