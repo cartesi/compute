@@ -7,5 +7,9 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "outDir": "dist"
-  }
+  },
+  "exclude": [
+    "logger-dlib",
+    "arbitration-dlib"
+  ]
 }
