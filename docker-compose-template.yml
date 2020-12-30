@@ -65,7 +65,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: cartesicorp/ipfs:0.1.1
+    image: cartesicorp/ipfs:0.1.0
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
@@ -79,7 +79,8 @@ services:
   machine_manager_{{ i }}:
     image: cartesicorp/machine-manager:0.5.0-rc1
     volumes:
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes:ro
+      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
     networks:
       ethereum: {}
       node_{{ i }}:
