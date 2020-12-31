@@ -44,16 +44,22 @@ The instance could be retrieved by the command:
 % docker ps --format {{.Names}}
 ```
 
-This will run an environment connected to a private net (ganache or geth), with no descartes deployed.
-To deploy a new descartes you need to run the `instantiate_descartes.ts` script. To do this you need to have `hardhat` installed, and run:
+This will run an environment connected to a private net (ganache or geth), with descartes already deployed.
 
+There are a number of sample computations available within the `scripts` directory. To execute one of these computations on the environment, you need to first store the corresponding machine template in the `machines` directory (as configured in the docker-compose template). As such, for the `helloworld` application, execute the following commands:
 ```
-% npx hardhat run scripts/instantiate_descartes.ts --network localhost
+% cd scripts
+% ./helloworld/build-cartesi-machine.sh ../machines
 ```
 
-To compile the smart contracts only:
+Then, instantiate the computation using `hardhat`:
 ```
-% npx hardhat compile
+% npx hardhat run --network localhost --no-compile helloworld/instantiate.ts
+```
+
+After that, it will possible to query the computation result running the `getResult.ts` script:
+```
+% npx hardhat run --network localhost --no-compile getResult.ts
 ```
 
 ## Contributing
