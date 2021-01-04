@@ -10,6 +10,7 @@
   },
   "exclude": [
     "logger-dlib",
-    "arbitration-dlib"
+    "arbitration-dlib",
+    "dist"
   ]
 }
