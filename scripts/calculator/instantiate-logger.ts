@@ -8,6 +8,7 @@
  * - "data": defines mathematical expression to evaluate (default is "2^71 + 36^12")
  */
 import hre from "hardhat";
+import LoggerJson from "@cartesi/logger/export/artifacts/Logger.json"
 
 async function main() {
   const { ethers, getNamedAccounts } = hre;
@@ -15,10 +16,12 @@ async function main() {
   
   const {alice, bob} = await getNamedAccounts();
 
+
   // retrieves deployed Descartes instance based on its address
   const descartes = await ethers.getContractAt("Descartes", Descartes.address);
   // retrieves deployed Logger instance based on its address
-  const logger = await ethers.getContractAt("Logger", Logger.address);
+  let [signer] = await ethers.getSigners();
+  const logger = new ethers.Contract(Logger.address, LoggerJson.abi, signer);
 
   let data = "2^71 + 36^12";
   if (process.env.data) {
@@ -36,7 +39,7 @@ async function main() {
   const logRoot = await new Promise(resolve => {
     logger.on("MerkleRootCalculatedFromData", (_1, _2, root, _4) => resolve(root))
   });
-  console.log(`Submitted data to logger with root hash ${logRoot} (tx: ${txLogger.hash} ; blocknumber: ${txLogger.blockNumber})\n`);
+  console.log(`Submitted data to logger with root hash '${logRoot}' (tx: ${txLogger.hash} ; blocknumber: ${txLogger.blockNumber})\n`);
 
   // defines input drive
   const input = {
