@@ -48,7 +48,7 @@ services:
 
   logger_{{ i }}:
     image: cartesi/logger-server:0.6.1
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/contracts/Logger.json"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json"]
     # , "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
