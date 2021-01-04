@@ -25,3 +25,5 @@ ipfs_interface/target
 ipfs_interface/src/*.rs
 !ipfs_interface/src/lib.rs
 scripts/coverage/*
+machines/*
+!machines/.gitkeep
