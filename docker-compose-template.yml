@@ -37,7 +37,7 @@ services:
       RUST_BACKTRACE: 1
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
     networks:
       ethereum: {}
       node_{{ i }}:
@@ -48,11 +48,10 @@ services:
 
   logger_{{ i }}:
     image: cartesi/logger-server:0.6.1
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json"]
-    # , "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "{{ i }}"
