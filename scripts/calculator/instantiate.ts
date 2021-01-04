@@ -25,6 +25,7 @@ async function main() {
   console.log("");
   console.log(`Instantiating "Calculator" for data "${data}"...\n`);
 
+  // defines input drive
   const input = {
     position: "0x9000000000000000",
     driveLog2Size: 5,
@@ -36,6 +37,7 @@ async function main() {
     provider: alice
   };
 
+  // instantiates descartes computation
   const tx = await descartes.instantiate(
     // final time: 1e11 gives us ~50 seconds for completing the computation itself
     1e11,
@@ -50,7 +52,13 @@ async function main() {
     [alice, bob],
     [input]
   );
-  console.log(`Instantiaton successfull (tx: ${tx.hash} ; blocknumber: ${tx.blockNumber})\n`);
+
+  // retrieves created computation's index
+  const index = await new Promise(resolve => {
+    descartes.on("DescartesCreated", index => resolve(index))
+  });
+
+  console.log(`Instantiation successful with index '${index}' (tx: ${tx.hash} ; blocknumber: ${tx.blockNumber})\n`);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
