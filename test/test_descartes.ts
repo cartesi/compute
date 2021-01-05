@@ -365,9 +365,9 @@ describe("Descartes tests", () => {
         { ...aDrive, directValue: "0x" + "00".repeat(7) },
         { ...aDrive, waitsProvider: true },
         { ...aDrive, needsLogger: true, waitsProvider: true },
-        { ...aDrive, needsLogger: true, waitsProvider: false },
+        { ...aDrive, needsLogger: true, waitsProvider: false }, // a reveal drive
       ];
-      await mockLogger.mock.isLogAvailable.returns(true);
+      await mockLogger.mock.isLogAvailable.returns(false);
       const tx = descartes.instantiate(
         finalTime,
         templateHash,
@@ -407,7 +407,7 @@ describe("Descartes tests", () => {
         "0x",
       ]);
       expect(tx2[4]).to.have.length(1);
-      driveMatcher(tx2[4][0], drives[0]);
+      driveMatcher(tx2[4][0], drives[1]);
     });
 
     it("Should abortByDeadline - ProviderMissedDeadline", async () => {
@@ -506,7 +506,9 @@ describe("Descartes tests", () => {
 
       await mockLogger.mock.isLogAvailable.returns(true);
       tx = descartes.revealLoggerDrive(descartesIdx);
-      await expect(tx).not.to.be.reverted;
+      await expect(tx).to.be.revertedWith(
+        "The state is not WaitingReveals"
+      );
     });
 
     it("Should call provideDirectDrive and transition to WaitingClaim", async () => {

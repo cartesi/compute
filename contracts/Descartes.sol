@@ -774,8 +774,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         onlyInstantiated(_index)
     {
         DescartesCtx storage i = instance[_index];
-        uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
         require(i.currentState == State.WaitingReveals, "The state is not WaitingReveals");
+        
+        uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
         require(driveIndex < i.inputDrives.length, "Invalid driveIndex");
 
         Drive memory drive = i.inputDrives[driveIndex];
