@@ -32,8 +32,8 @@ async function main() {
 
   // submits data to the logger
   const dataUint8Array = ethers.utils.toUtf8Bytes(data);
-  // TEMP: using '0x33' (number '3') as fixed data for testing
-  const txLogger = await logger.calculateMerkleRootFromData(5, ['0x0000000000000033']);
+  // TEMP: always using "2^71 + 36^12" in hex form for testing
+  const txLogger = await logger.calculateMerkleRootFromData(5, ['0x325E3731202B2033','0x365E313200000000']);
 
   // retrieves root hash for submitted logger data 
   const logRoot = await new Promise(resolve => {
