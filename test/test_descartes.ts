@@ -154,7 +154,7 @@ describe("Descartes tests", () => {
         ethers.constants.HashZero,
         [ethers.constants.HashZero]
       );
-      await expect(tx).to.be.revertedWith("Cannot be called by user");
+      await expect(tx).to.be.revertedWith("The sender is not Claimer at this instance");
 
       tx = descartes
         .connect(claimer)

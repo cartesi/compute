@@ -249,6 +249,7 @@ interface DescartesInterface is Instantiator {
         bool isParty;
         bool hasVoted;
         bool hasCheated;
+        uint64 arrayIdx;
     }
 
     /// @notice Instantiate a Descartes SDK instance.

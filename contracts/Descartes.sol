@@ -226,9 +226,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes32 initialHash; // initial hash with all drives mounted
         bytes32 claimedFinalHash; // claimed final hash of the machine
         bytes claimedOutput; // claimed final machine output
-        address claimer; // responsible for claiming the machine output
-        address currentChallenger; // it tracks who did the last challenge
         address[] partiesArray; // user can challenge claimer's output
+        uint64 claimer; // responsible for claiming the machine output
+        uint64 currentChallenger; // it tracks who did the last challenge
         uint64 votesCounter;  // helps manage end state
         mapping(address => Party) parties; // control structure for challengers
         State currentState;
@@ -325,9 +325,10 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         require(_roundDuration >= 50, "round duration has to be at least 50 seconds");
         DescartesCtx storage i = instance[currentIndex];
 
-        for(uint256 j = 0; j < parties.length; j++) {
+        for(uint64 j = 0; j < parties.length; j++) {
             require(i.parties[parties[j]].isParty == false, "Repetition of parties' addresses is not allowed");
             i.parties[parties[j]].isParty = true;
+            i.parties[parties[j]].arrayIdx = j;
             i.partiesArray.push(parties[j]);
         }
 
@@ -389,7 +390,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         require(_outputLog2Size >= 3, "output drive has to be at least one word");
 
         i.owner = msg.sender;
-        i.claimer = parties[0]; // first on the list is selected to be claimer
+        // i.claimer = 0; parties[0]; // first on the list is selected to be claimer
         i.votesCounter = 1;  // first vote is always a submitClaim, so we count it once here
         i.finalTime = _finalTime;
         i.templateHash = _templateHash;
@@ -427,7 +428,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         i.vgInstance = vg.instantiate(
             msg.sender, // challenger
-            i.claimer,
+            i.partiesArray[i.claimer],
             i.roundDuration,
             machine,
             i.initialHash,
@@ -435,7 +436,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.finalTime);
         i.currentState = State.WaitingChallengeResult;
         i.parties[msg.sender].hasVoted = true;
-        i.currentChallenger = msg.sender;
+        i.currentChallenger = i.parties[msg.sender].arrayIdx;
         i.votesCounter++;
         i.timeOfLastMove = block.timestamp;
 
@@ -476,7 +477,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes memory _output,
         bytes32[] memory _outputSiblings) public
         onlyInstantiated(_index)
-        onlyBy(instance[_index].claimer)
+        onlyByClaimer(_index)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
@@ -520,7 +521,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         i.claimedFinalHash = _claimedFinalHash;
         i.currentState = State.WaitingConfirmationDeadline;
         i.claimedOutput = _output;
-        i.parties[i.claimer].hasVoted = true;
+        i.parties[i.partiesArray[i.claimer]].hasVoted = true;
         i.timeOfLastMove = block.timestamp;
 
 
@@ -576,8 +577,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         uintValues[3] = i.outputLog2Size;
 
         address[] memory addressValues = new address[](2);
-        addressValues[0] = i.currentChallenger;
-        addressValues[1] = i.claimer;
+        if(i.currentChallenger != 0)
+            addressValues[0] = i.partiesArray[i.currentChallenger];
+        addressValues[1] = i.partiesArray[i.claimer];
 
         bytes32[] memory bytes32Values = new bytes32[](4);
         bytes32Values[0] = i.templateHash;
@@ -814,9 +816,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                 return;
             }
             i.currentState = State.WaitingClaim;
-            i.parties[i.claimer].hasCheated = true;
+            i.parties[i.partiesArray[i.claimer]].hasCheated = true;
             i.claimer = i.currentChallenger;
-            i.currentChallenger = address(0);
+            i.currentChallenger = 0;
             return;
         }
 
@@ -826,8 +828,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                 return;
             }
             i.currentState = State.WaitingConfirmationDeadline;
-            i.parties[i.currentChallenger].hasCheated = true;
-            i.currentChallenger = address(0);
+            i.parties[i.partiesArray[i.currentChallenger]].hasCheated = true;
+            i.currentChallenger = 0;
             return;
         }
         require(false, "State of VG is not final");
@@ -926,10 +928,10 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         }
         if (i.currentState == State.ClaimerMissedDeadline ||
             i.currentState == State.ChallengerWon) {
-            return (false, false, i.claimer, "");
+            return (false, false, i.partiesArray[i.claimer], "");
         }
         if (i.currentState == State.ClaimerWon) {
-            return (false, false, i.currentChallenger, "");
+            return (false, false, i.partiesArray[i.currentChallenger], "");
         }
 
         revert("Unrecognized state");
@@ -1044,6 +1046,13 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         require(i.parties[msg.sender].isParty, "The sender is not party to this instance");
         _;
     }
+
+    modifier onlyByClaimer(uint _index) {
+        DescartesCtx storage i = instance[_index];
+        require(i.partiesArray[i.claimer] == msg.sender, "The sender is not Claimer at this instance");
+        _;
+    }
+
     /// @notice checks whether or not it's a party to this instance
     modifier onlyNoVotes(uint _index) {
         DescartesCtx storage i = instance[_index];
