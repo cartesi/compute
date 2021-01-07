@@ -63,7 +63,7 @@ pub struct Descartes();
 pub enum TupleType {
     #[serde(rename = "(uint64,uint8,bytes,bytes,bytes32,address,bool,bool)[]")]
     DriveArrayTuple,
-    #[serde(rename = "(bool,bool,bool)")]
+    #[serde(rename = "(bool,bool,bool,uint64)")]
     PartyTypeTuple,
 }
 
@@ -134,6 +134,7 @@ pub struct PartyParsed(
     bool,   // isParty
     bool,   // hasVoted
     bool,   // hasCheated
+    U256,    // partyArrayIndex
 );
 
 #[derive(Serialize, Debug)]
@@ -141,6 +142,7 @@ pub struct Party {
     isParty: bool,
     hasVoted: bool,
     hasCheated: bool,
+    arrayIdx: U256,
 }
 
 
@@ -150,6 +152,7 @@ impl From<PartyParsed> for Party {
             isParty: parsed.0,
             hasVoted: parsed.1,
             hasCheated: parsed.2,
+            arrayIdx: parsed.3,
         }
     }
 }
