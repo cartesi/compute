@@ -64,7 +64,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: cartesicorp/ipfs:0.1.0
+    image: cartesi/ipfs-server:0.2.0
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
     networks:
