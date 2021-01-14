@@ -76,7 +76,7 @@ services:
         - "{{ 50051 + i }}:50051"
 
   machine_manager_{{ i }}:
-    image: cartesicorp/machine-manager:0.5.0-rc1
+    image: cartesi/machine-manager:0.5.0
     volumes:
       - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
