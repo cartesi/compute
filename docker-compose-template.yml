@@ -18,7 +18,7 @@ services:
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: cartesi/descartes:latest
+    image: cartesi/descartes:local
     restart: always
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
@@ -41,6 +41,7 @@ services:
     networks:
       ethereum: {}
       node_{{ i }}:
+        
         aliases:
           - dispatcher
     ports:

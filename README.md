@@ -25,7 +25,7 @@ git clone --recurse-submodules https://github.com/cartesi/descartes.git
 
 To run execute:
 ```
-% docker build . -t cartesi/descartes
+% docker build . -t cartesi/descartes:local
 % yarn
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - up --build
 ```
