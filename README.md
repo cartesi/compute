@@ -61,6 +61,14 @@ After that, it will possible to query the computation result running the `getRes
 ```
 % npx hardhat run --network localhost --no-compile getResult.ts
 ```
+### IPFS Example
+  
+  Among the sample computations, there is an example of usage of drive distribution through IPFS. Inside the folder there is a file `run.sh` and that is the only script you need to execute after starting the environment.
+
+  ```
+  % ./scripts/ipfs/run.sh
+  ```
+  
 
 ## Contributing
 

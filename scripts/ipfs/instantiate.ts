@@ -2,7 +2,6 @@ import hre from "hardhat";
 
 const config = {
   ipfsPath: process.env.IPFS_PATH || "",
-  loggerIpfsPath: process.env.IPFS_PATH_DATA || "",
   loggerRootHash: process.env.LOGGER_ROOT_HASH || "",
   machineTemplateHash: process.env.MACHINE_TEMPLATE_HASH || "",
 }
@@ -29,7 +28,8 @@ async function main() {
     // bytes of print(math.sin(1))
     directValue: ethers.utils.formatBytes32String(""),
     //  bytes of "ipfs_path:"/ipfs/QmVX3WoKxjy96wjCJXtkdgvpirT86MsncX6J9UQBc4XXSJ" (content: "print(math.sin(1))")
-    loggerIpfsPath: `0x${config.loggerIpfsPath.replace(/\s+/g, '')}`,
+    loggerIpfsPath: ethers.utils.hexlify(ethers.utils.toUtf8Bytes(config.ipfsPath.replace(/\s+/g, ''))),
+    //`0x${config.loggerIpfsPath.replace(/\s+/g, '')}`,
     // hash of print(math.sin(1))
     loggerRootHash: `0x${config.loggerRootHash}`,
     waitsProvider: false,

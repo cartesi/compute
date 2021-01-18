@@ -15,8 +15,5 @@ output=$(docker run \
 
 IPFS_PATH=$( echo ${output:96:52} |tr '\n' ' ')
 echo "New IPFS Path: $IPFS_PATH"
-IPFS_PATH_DATA=$(echo -n $IPFS_PATH | xxd -p)
-echo "IPFS path bytes 0x$IPFS_PATH_DATA"
 
 export IPFS_PATH
-export IPFS_PATH_DATA
