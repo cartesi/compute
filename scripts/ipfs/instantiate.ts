@@ -3,8 +3,8 @@ import hre from "hardhat";
 const config = {
   ipfsPath: process.env.IPFS_PATH || "",
   loggerIpfsPath: process.env.IPFS_PATH_DATA || "",
-  loggerRootHash: process.env.LOOGER_ROOT_HASH || "",
-  machineTemplateHash: process.env.MACHINE_TEMP_HASH || "",
+  loggerRootHash: process.env.LOGGER_ROOT_HASH || "",
+  machineTemplateHash: process.env.MACHINE_TEMPLATE_HASH || "",
 }
 
 Object.entries(config).forEach(([key, value]) => {
@@ -38,8 +38,8 @@ async function main() {
   };
 
   const tx = await descartes.instantiate(
-    // final time
-    1e13,
+    // final time: 1e11 gives us ~50 seconds for completing the computation itself
+    1e11,
     // template hash
     `0x${config.machineTemplateHash}`,
     // output position

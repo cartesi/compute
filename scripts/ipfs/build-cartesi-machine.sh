@@ -18,7 +18,7 @@ fi
 # builds machine (running with 0 cycles)
 # - initial (template) hash is printed on screen
 # - machine is stored in temporary directory
-output=$(docker run \
+docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
@@ -31,17 +31,9 @@ output=$(docker run \
     --store="$MACHINE_TEMP_DIR" \
     --flash-drive="label:input,length:1<<12" \
     --flash-drive="label:output,length:1<<12" \
-    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' > /input_script ; chmod +x /input_script ; /input_script | dd status=none of=$(flashdrive output)' 2>&1)
+    -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' > /input_script ; chmod +x /input_script ; /input_script | dd status=none of=$(flashdrive output)'
 
-
-echo $output
-MACHINE_TEMP_HASH=${output:3:64}
-echo "hash: $MACHINE_TEMP_HASH"
-
-export MACHINE_TEMP_HASH
-
-# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
-mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
+MACHINE_TEMPLATE_HASH=$(docker run \
   -e USER=$(id -u -n) \
   -e GROUP=$(id -g -n) \
   -e UID=$(id -u) \
@@ -50,3 +42,8 @@ mv $MACHINE_TEMP_DIR $MACHINES_DIR/$(docker run \
   -h playground \
   -w /home/$(id -u -n) \
   --rm $CARTESI_PLAYGROUND_DOCKER cartesi-machine-stored-hash $MACHINE_TEMP_DIR/)
+
+export MACHINE_TEMPLATE_HASH
+
+# moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
+mv $MACHINE_TEMP_DIR $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
