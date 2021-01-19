@@ -1,10 +1,11 @@
 descartes/target
-node_modules/
-build/*
-artifacts/*
-cache/*
-src/types/*
-dist/*
+node_modules
+build
+/artifacts
+cache
+**/solcInputs
+src/types
+dist
 coverage/*
 test/*/
 .venv
@@ -20,7 +21,7 @@ dapp_data_1/
 .coverage_contracts/*
 coverage.json
 yarn-error.log
-deployments/*
+deployments/localhost
 ipfs_interface/target
 ipfs_interface/src/*.rs
 !ipfs_interface/src/lib.rs
