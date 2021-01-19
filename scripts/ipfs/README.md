@@ -2,7 +2,7 @@
 
 IPFS can be used to share larger data drives among users without relying on the ethereum blockchain resulting on costs savings. 
 
-Inside the `run.sh` script there are the basic steps to make use of it, even how to fill out the information to instantiate the Descartes contract.
+The run.sh script executes a number of steps in order to run a test using IPFS drives, first preparing the data then adequately instantiating the Descartes computation.
 
 First we create a machine that can execute generic scripts.
 
@@ -10,13 +10,13 @@ First we create a machine that can execute generic scripts.
 . ./src/build-cartesi-machine.sh $DESCARTES_DIR/machines
 ```
 
-Then we can create the script, trucante it to the size we specified on the machine creation (4096) and calculate the root hash for this drive. 
+Then we create the script, truncate it to the size we specified on the machine creation (4096) and calculate the root hash for this drive. 
 
 ```sh
 . ./src/build-flash-drive.sh $DESCARTES_DIR
 ```
 
-Finally, we add to the user's IPFS node the file we want to make avaible to all the users involved in this computation. Here we have preselected the first user of the `docker-compose-template.yml`. 
+Finally, we add to the user's IPFS node the file we want to make available to all the users involved in this computation. Here we have preselected the first user of the `docker-compose-template.yml`. 
 
 
 ```sh
