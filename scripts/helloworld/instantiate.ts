@@ -23,7 +23,7 @@ async function main() {
     // final time: 1e11 gives us ~50 seconds for completing the computation itself
     1e11,
     // template hash
-    "0x65e171ad372e1ec29d1d02d0446e666ac06b54f908103c28009bec9b0e566344",
+    "0x3f5762be44332cb56188fc77b8ac02472399dabe610cebc9d75aae3f77a755a7",
     // output position
     "0x9000000000000000",
     // output log2 size

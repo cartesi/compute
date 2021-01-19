@@ -3,7 +3,7 @@
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_machine
-CARTESI_PLAYGROUND_DOCKER=cartesicorp/playground:develop
+CARTESI_PLAYGROUND_DOCKER=cartesi/playground:0.3.0
 
 # set machines directory to specified path if provided
 if [ $1 ]; then
