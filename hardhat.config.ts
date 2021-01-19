@@ -47,7 +47,6 @@ const config: HardhatUserConfig = {
       gas: 0xfffffffffff, // <-- Use this high gas value
       gasPrice: 0x01, // <-- Use this low gas price
     },
-    ropsten: infuraNetwork("ropsten", 3, 6283185),
     rinkeby: infuraNetwork("rinkeby", 4, 6283185),
     kovan: infuraNetwork("kovan", 42, 6283185),
     goerli: infuraNetwork("goerli", 5, 6283185),
@@ -97,12 +96,6 @@ const config: HardhatUserConfig = {
       },
     ],
     deployments: {
-      ropsten: [
-        "node_modules/@cartesi/util/deployments/ropsten",
-        "node_modules/@cartesi/arbitration/deployments/ropsten",
-        "node_modules/@cartesi/logger/deployments/ropsten",
-        "node_modules/@cartesi/machine-solidity-step/deployments/ropsten",
-      ],
       rinkeby: [
         "node_modules/@cartesi/util/deployments/rinkeby",
         "node_modules/@cartesi/arbitration/deployments/rinkeby",
