@@ -6,6 +6,11 @@ IPFS_COMPOSE_NETWORK=descartes_ipfs
 IPFS_SERVICE_ADDRESS="ipfs_0:50051"  # 0 is alice
 INPUT_DRIVE_FILENAME=$LOGGER_ROOT_HASH
 
+# set ipfs service to specified address if provided
+if [ $1 ]; then
+  IPFS_SERVICE_ADDRESS=$1
+fi
+
 output=$(docker run \
   --network=$IPFS_COMPOSE_NETWORK \
   --entrypoint "/opt/cartesi/bin/test_client" \

@@ -4,7 +4,7 @@
 FULL_PATH=$(dirname $(realpath $0))
 DESCARTES_DIR=$(dirname $(dirname $FULL_PATH))
 
-# set machines directory to specified path if provided
+# set base descartes directory to specified path if provided
 if [ $1 ]; then
   DESCARTES_DIR=$1
 fi
