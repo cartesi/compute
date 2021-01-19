@@ -55,10 +55,7 @@
     "@cartesi/arbitration": "~0.5.2",
     "@cartesi/logger": "~0.6.2",
     "@cartesi/machine-solidity-step": "~0.6.2",
-    "@cartesi/util": "~0.6.2",
-    "copyfiles": "^2.4.1",
-    "npm-run-all": "^4.1.5",
-    "solc": "^0.7.0"
+    "@cartesi/util": "~0.6.2"
   },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.1",
@@ -69,6 +66,8 @@
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.14.2",
     "chai": "^4.2.0",
+    "copyfiles": "^2.4.1",
+    "npm-run-all": "^4.1.5",
     "commander": "^4.1.0",
     "ethereum-waffle": "^3.2.0",
     "ethers": "^5.0.24",
