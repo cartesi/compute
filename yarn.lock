@@ -16,10 +16,10 @@
   dependencies:
     "@cartesi/util" "^0.6.2"
 
-"@cartesi/machine-solidity-step@~0.6.2":
-  version "0.6.2"
-  resolved "https://registry.yarnpkg.com/@cartesi/machine-solidity-step/-/machine-solidity-step-0.6.2.tgz#09ce97f838fda5be8862a9e06e918d9004743ba6"
-  integrity sha512-j76rTiaEb8kalQz5G+PsXfyaRWV6wJ1pykaVf3NBM3H+Gfov8tjI2T8B2KQ+u1Kx9Mt0mmr15bNQN60AIz4ZwQ==
+"@cartesi/machine-solidity-step@~0.6.3":
+  version "0.6.3"
+  resolved "https://registry.yarnpkg.com/@cartesi/machine-solidity-step/-/machine-solidity-step-0.6.3.tgz#6457a01dcb994163365ad1e80cbc8b92e54a2f83"
+  integrity sha512-91+q9kze8xxQAg3YQqhkA7kFInPAYQIcYLeJ68rmMAVhmZSZ6UL3y9PT+UIummGKSjILFF+Byki0nvJGbuj5bw==
   dependencies:
     "@cartesi/arbitration" "^0.5.2"
     "@cartesi/util" "^0.6.2"
