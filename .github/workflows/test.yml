@@ -2,11 +2,15 @@ name: Test
 on: [push]
 jobs:
   test:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
             node-version: '14.x'
+      
+      - name: Code format check
+        run: npx prettier --check scripts/**/*.ts deploy/**/*.ts
+        
       - run: yarn install
       - run: yarn test

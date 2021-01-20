@@ -1,16 +1,12 @@
 {
-  "compilerOptions": {
-    "declaration": true,
-    "target": "es5",
-    "module": "commonjs",
-    "strict": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "outDir": "dist"
-  },
-  "exclude": [
-    "logger-dlib",
-    "arbitration-dlib",
-    "dist"
-  ]
+    "compilerOptions": {
+        "declaration": true,
+        "target": "es5",
+        "module": "commonjs",
+        "strict": true,
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "outDir": "dist"
+    },
+    "exclude": ["logger-dlib", "arbitration-dlib", "dist"]
 }
