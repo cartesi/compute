@@ -1,9 +1,9 @@
 {
-  "name": "rinkeby",
-  "chainId": "4",
+  "name": "goerli",
+  "chainId": "5",
   "contracts": {
     "Descartes": {
-      "address": "0xDad64841ccf6528Ab2395B44e954527CC1cA1c94",
+      "address": "0x7F64B7c77509b3dABB9233f4D4cfed8121cA5E99",
       "abi": [
         {
           "inputs": [
@@ -722,7 +722,7 @@
       ]
     },
     "BitsManipulationLibrary": {
-      "address": "0xAc301c9CD929bBC333BB47cf12802B5045A31820",
+      "address": "0x343BD99E797f5EB81f4711123E2859ba98c6cb16",
       "abi": [
         {
           "inputs": [
@@ -813,7 +813,7 @@
       ]
     },
     "Merkle": {
-      "address": "0x1801CA814d200E3b890Ad1A05FB2e805D99e20e5",
+      "address": "0x46573864b95A1035D956F125b5FeD36c7B373b5f",
       "abi": [
         {
           "inputs": [
@@ -957,7 +957,7 @@
       ]
     },
     "WorkerAuthManagerImpl": {
-      "address": "0x10D022307724eA0eC63f66048Ba376aE3a884F4A",
+      "address": "0x1D878a6EAF1a9E7418BaEf4a2F521fde70C68e4F",
       "abi": [
         {
           "inputs": [
@@ -1102,7 +1102,7 @@
       ]
     },
     "WorkerManagerImpl": {
-      "address": "0xFB8dF7b171CCB1956c43a629ca7280dfeD299780",
+      "address": "0xed555f965686768851b9cd0416C91AD61C4b9a7b",
       "abi": [
         {
           "anonymous": false,
@@ -1350,7 +1350,7 @@
       ]
     },
     "ComputeInstantiator": {
-      "address": "0x55578d2098Fd079946FdB6f985Df712a51626441",
+      "address": "0x34A8fC50398C7D4484C7E96d9b21a6144Ad64232",
       "abi": [
         {
           "inputs": [
@@ -1960,7 +1960,7 @@
       ]
     },
     "Hasher": {
-      "address": "0x38d31B2D54BaD3B1C9A6d72cEF7E92f9A1D0C0e7",
+      "address": "0xFa88aDb853f48Eb533940Af2C33A99803531870c",
       "abi": [
         {
           "inputs": [
@@ -2053,7 +2053,7 @@
       ]
     },
     "MMInstantiator": {
-      "address": "0xb6FdA390148f87292aFD559119B6d569D0bd3CD6",
+      "address": "0x86D8a35a49e64D61Fe8c0eBE3c0145a0f865c02c",
       "abi": [
         {
           "anonymous": false,
@@ -2647,7 +2647,7 @@
       ]
     },
     "MMInstantiatorTestAux": {
-      "address": "0x6d1BD2C4f5D3F26F29D66A28beA1A6Ba967AfDe9",
+      "address": "0x512bB037CD40E3e486d0E5cA87b6A6F8b8A7d14c",
       "abi": [
         {
           "anonymous": false,
@@ -3277,7 +3277,7 @@
       ]
     },
     "PartitionInstantiator": {
-      "address": "0xdB973FEC327153d797E430be61A3B99f32319892",
+      "address": "0x2B58A366a8fe2bE06628B1F7E379A921A4c3C6cC",
       "abi": [
         {
           "anonymous": false,
@@ -3974,7 +3974,7 @@
       ]
     },
     "PartitionTestAux": {
-      "address": "0x0E1c2255Cc3c2614b02a88042ed5427bCe471796",
+      "address": "0xC8318A115d1Dc696EAD84A1a50f37475bB2D0A14",
       "abi": [
         {
           "anonymous": false,
@@ -5052,7 +5052,7 @@
       ]
     },
     "SimpleMemoryInstantiator": {
-      "address": "0x2CdD33A7b012a175e3b50c04CD45B87b7dE0B37F",
+      "address": "0x0f4E152E9bc18De7043aB842B2445d8Cfa780336",
       "abi": [
         {
           "inputs": [],
@@ -5395,7 +5395,7 @@
       ]
     },
     "TestHash": {
-      "address": "0x2dAe4cBdb7F359f013e4D0B23EcA75f4a6d552Fe",
+      "address": "0xc9129903751dA0855c7a7df7ab4b2b5e1DDd0C5c",
       "abi": [
         {
           "anonymous": false,
@@ -5444,7 +5444,7 @@
       ]
     },
     "VGInstantiator": {
-      "address": "0xb79960e28819fE97ECF9F951344fbc325b9E17CA",
+      "address": "0xCCeb2268b31b3bd24d934EBF6AD5902F12C8d4e1",
       "abi": [
         {
           "inputs": [
@@ -6006,7 +6006,7 @@
       ]
     },
     "Logger": {
-      "address": "0x49fE5DA4C3ed81b5E75556D1bA01891346806B52",
+      "address": "0x05b57bC1d6410C70213FDFc01947bF8e0e07e7ba",
       "abi": [
         {
           "anonymous": false,
@@ -6196,7 +6196,7 @@
       ]
     },
     "LoggerTestInstantiator": {
-      "address": "0xe95F60f7c05C76918283D222F944590Cc99f71b7",
+      "address": "0x0e38b65ad9f28209BF646f876E83afa2038187e3",
       "abi": [
         {
           "inputs": [
@@ -6521,23 +6521,23 @@
       ]
     },
     "ArithmeticImmediateInstructions": {
-      "address": "0x203CCba48ae61cb296F069C74d133968c916b1De",
+      "address": "0x240447D79aef7b208E778a728C4858cDef5922b5",
       "abi": []
     },
     "ArithmeticInstructions": {
-      "address": "0x20808b6451bB203Aa28C4c15ab3Da2F58C685e40",
+      "address": "0xae8A9e083d99ca9CF14AA7921a05AA24Bbbf50a5",
       "abi": []
     },
     "AtomicInstructions": {
-      "address": "0x29B33E43Bed18B6f3cA2913d074FeAc5f14d3185",
+      "address": "0x19d5A495Fd64D22bA8c0E9A8F7026e6Fc58159a0",
       "abi": []
     },
     "BranchInstructions": {
-      "address": "0xff7c20eCE07FCC8f34b9D3d0DF3E3A5B41d460b6",
+      "address": "0xed0c90cB52FA9eE5E70133822D011E3D572Ba028",
       "abi": []
     },
     "CLINT": {
-      "address": "0x9223a1179A7151d69E0E91558AeeC3283079aECa",
+      "address": "0xfA7AB9Cb2C6b66D481818080Ace4F3D43F475986",
       "abi": [
         {
           "inputs": [],
@@ -6555,23 +6555,23 @@
       ]
     },
     "CSR": {
-      "address": "0x92b49c6e2982AF5FFe01935D23D3C05eeCD76eDb",
+      "address": "0xB0e8ED7d7D4Af82d79Ba6e2f2D679B5944A8c1e1",
       "abi": []
     },
     "CSRExecute": {
-      "address": "0x4f3ad9445ec7D19FB1E38E77a5Df43D8dc62da79",
+      "address": "0x5EB59eCd79f6D3aaa7bD0645aA2251794cd25092",
       "abi": []
     },
     "CSRReads": {
-      "address": "0xaCA865f590a2A6DDD2D3dEc2590719D6007Ef38b",
+      "address": "0xc8C72Fb8078C3BaB0aaD933E9a9237Dd1F5290C9",
       "abi": []
     },
     "EnvTrapIntInstructions": {
-      "address": "0x1db021C81E5307541A0CF6D7203F7885db9dc003",
+      "address": "0x0eA9fB188804da5449A424C6cAac3dAA63370E60",
       "abi": []
     },
     "Exceptions": {
-      "address": "0x6D9E4c7500dBac3b3F3A1DDfa50770bB22Cf54A2",
+      "address": "0x3b9650f193f577526A810084689Db301B895129b",
       "abi": [
         {
           "inputs": [],
@@ -6745,15 +6745,15 @@
       ]
     },
     "Execute": {
-      "address": "0xE1B9c48ECC4D98865AD991775E886496D8De8651",
+      "address": "0x8C312Df85a05BD195F5727b5a091556a18F073Af",
       "abi": []
     },
     "Fetch": {
-      "address": "0xDd6DC3a42220d3a15CF0e828933562D42a27E84a",
+      "address": "0xBf108162392b4cc6bb35b6E197b0F686A6078172",
       "abi": []
     },
     "HTIF": {
-      "address": "0xaDf9B44e5CFe87cC7e32c46d0b196C3063821c17",
+      "address": "0x9dcF79E28E42e5b0DA47d515519Fe72D868eE7B2",
       "abi": [
         {
           "inputs": [],
@@ -6797,7 +6797,7 @@
       ]
     },
     "Interrupts": {
-      "address": "0xe49cd08884986b22e0df26D3b16F44616f025453",
+      "address": "0x6ab980990aB312E41963E1d19cf562cDe32Dd0F8",
       "abi": [
         {
           "inputs": [
@@ -6821,7 +6821,7 @@
       ]
     },
     "MemoryInteractor": {
-      "address": "0xbEF95E6fE7720851b6Db5294369CE8De058d69e8",
+      "address": "0xcd23F4a8d04bc12d631c4B16a5962081EC346180",
       "abi": [
         {
           "inputs": [],
@@ -7841,7 +7841,7 @@
       ]
     },
     "PMA": {
-      "address": "0x1a7E08B3f472D7465B1A83DC68023A9E9ca731B2",
+      "address": "0x0afa475E6D71601f4B98b3387A28116212CDf32D",
       "abi": [
         {
           "inputs": [
@@ -7979,7 +7979,7 @@
       ]
     },
     "RealTimeClock": {
-      "address": "0xDB7e8096298D92a83E80ba2F0edB8601c41A94bf",
+      "address": "0xE41CeAA87523E7ebFe34aE310F5E576C26e824C1",
       "abi": [
         {
           "inputs": [
@@ -8022,7 +8022,7 @@
       ]
     },
     "RiscVConstants": {
-      "address": "0xe7C1808F9DB156235a7c0cE6e2919b9e1322A032",
+      "address": "0x4a452a5bc03D2dDa1BFD65abD85F4dA8d5f5411A",
       "abi": [
         {
           "inputs": [],
@@ -9418,7 +9418,7 @@
       ]
     },
     "RiscVDecoder": {
-      "address": "0x1EfaA831Bd6c1C59ECabbb99c1bcDF9e118eB0a8",
+      "address": "0x93a25Ee292809A07c4d932F7966cA8c0D06a4186",
       "abi": [
         {
           "inputs": [
@@ -9708,11 +9708,11 @@
       ]
     },
     "S_Instructions": {
-      "address": "0x9C677bb30c6baFF0d8C535C2a1619D474e7226bE",
+      "address": "0xFdb2042fbaeFe25A1F127f68738f85837C2adc0E",
       "abi": []
     },
     "ShadowAddresses": {
-      "address": "0x35323c7063fc1FEE755723Cdf02Edd1906B3a660",
+      "address": "0xA3355eAff2feE04FB4E3dE9a90e469784F1dDAFe",
       "abi": [
         {
           "inputs": [],
@@ -10068,11 +10068,11 @@
       ]
     },
     "StandAloneInstructions": {
-      "address": "0xb1d5479B208E8c4f8A43F4167AC52193C6D3F987",
+      "address": "0xF3E995C5c14cccfc40021FfE9C009412Db1705eF",
       "abi": []
     },
     "Step": {
-      "address": "0x345fA4EBDbB15F4Ec40C3097d4ec521044cD5a56",
+      "address": "0x909825d31af983A839A20Ead76750bD373761df9",
       "abi": [
         {
           "inputs": [
@@ -10167,7 +10167,7 @@
       ]
     },
     "VirtualMemory": {
-      "address": "0x345929b88947E58E81615D2Ba2E9a9CAed8BA640",
+      "address": "0x1c207Ed29b77641DB12d256Ad55D079d40601e6E",
       "abi": []
     }
   }
