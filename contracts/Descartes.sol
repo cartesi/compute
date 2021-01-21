@@ -418,7 +418,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @notice Challenger disputes the claim, starting a verification game.
     /// @param _index index of Descartes instance which challenger is starting the VG.
     function challenge(uint256 _index) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         onlyByParty(_index)
         onlyNoVotes(_index)
         increasesNonce(_index)
@@ -447,7 +447,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @notice User requesting content of all drives to be revealed.
     /// @param _index index of Descartes instance which is requested for the drives
     function challengeDrives(uint256 _index) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
@@ -476,7 +476,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes32[][] memory _drivesSiblings,
         bytes memory _output,
         bytes32[] memory _outputSiblings) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         onlyByClaimer(_index)
         increasesNonce(_index)
     {
@@ -700,7 +700,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @param _index index of Descartes instance the drive belongs to.
     /// @param _value bytes value of the direct drive
     function provideDirectDrive(uint256 _index, bytes memory _value) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         requirementsForProviderDrive(_index)
     {
         DescartesCtx storage i = instance[_index];
@@ -745,7 +745,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @param _index index of Descartes instance the drive belongs to
     /// @param _root root hash of the logger drive
     function provideLoggerDrive(uint256 _index, bytes32 _root) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         requirementsForProviderDrive(_index)
     {
         DescartesCtx storage i = instance[_index];
@@ -773,11 +773,11 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @notice Reveal the content of a logger drive (only drive provider can call it).
     /// @param _index index of Descartes instance the drive belongs to
     function revealLoggerDrive(uint256 _index) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
     {
         DescartesCtx storage i = instance[_index];
         require(i.currentState == State.WaitingReveals, "The state is not WaitingReveals");
-        
+
         uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
         require(driveIndex < i.inputDrives.length, "Invalid driveIndex");
 
@@ -799,7 +799,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     ///         this contract as well.
     /// @param _index index of Descartes instance to win
     function winByVG(uint256 _index) public
-        onlyInstantiated(_index)
+        onlyActive(_index)
         increasesNonce(_index)
     {
         DescartesCtx storage i = instance[_index];
@@ -812,7 +812,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
             if(i.votesCounter == i.partiesArray.length) {
-                i.currentState = State.ChallengerWon;  
+                i.currentState = State.ChallengerWon;
                 return;
             }
             i.currentState = State.WaitingClaim;
@@ -839,8 +839,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @param _index index of Descartes instance to deactivate
     function destruct(uint256 _index)
         public
-        override     
-        onlyInstantiated(_index)
+        override
+        onlyActive(_index)
         onlyBy(instance[_index].owner)
     {
         DescartesCtx storage i = instance[_index];
@@ -862,7 +862,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
     /// @notice Abort the instance by missing deadline.
     /// @param _index index of Descartes instance to abort
-    function abortByDeadline(uint256 _index) public onlyInstantiated(_index) {
+    function abortByDeadline(uint256 _index) public onlyActive(_index) {
         DescartesCtx storage i = instance[_index];
         bool afterDeadline = block.timestamp > (
             i.timeOfLastMove + getMaxStateDuration(
