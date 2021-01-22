@@ -13,7 +13,13 @@ async function main() {
     const { ethers, getNamedAccounts } = hre;
     const { Descartes } = await hre.deployments.all();
 
-    const { alice, bob } = await getNamedAccounts();
+    const { alice, bob, charlie, dave } = await getNamedAccounts();
+
+    let num_peers = 2;
+    if (process.env.num_peers) {
+        num_peers = Number.parseInt(process.env.num_peers);
+    }
+    const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
     // retrieves deployed Descartes instance based on its address
     const descartes = await ethers.getContractAt(
@@ -26,7 +32,9 @@ async function main() {
         data = process.env.data;
     }
     console.log("");
-    console.log(`Instantiating "Calculator" for data "${data}"...\n`);
+    console.log(
+        `Instantiating "Calculator" for data "${data}" with ${peers.length} peers...\n`
+    );
 
     // defines input drive
     const input = {
@@ -52,7 +60,7 @@ async function main() {
         10,
         // round duration
         51,
-        [alice, bob],
+        peers,
         [input]
     );
 

@@ -18,7 +18,13 @@ async function main() {
 
     const { ethers, getNamedAccounts } = hre;
     const { Descartes } = await hre.deployments.all();
-    const { alice, bob } = await getNamedAccounts();
+    const { alice, bob, charlie, dave } = await getNamedAccounts();
+
+    let num_peers = 2;
+    if (process.env.num_peers) {
+        num_peers = Number.parseInt(process.env.num_peers);
+    }
+    const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
     const descartes = await ethers.getContractAt(
         "Descartes",
@@ -41,6 +47,9 @@ async function main() {
         provider: alice,
     };
 
+    console.log("");
+    console.log(`Instantiating "IPFS" with ${peers.length} peers...\n`);
+
     const tx = await descartes.instantiate(
         // final time: 1e11 gives us ~50 seconds for completing the computation itself
         1e11,
@@ -52,7 +61,7 @@ async function main() {
         5,
         // round duration
         51,
-        [alice, bob],
+        peers,
         [aDrive]
     );
 }

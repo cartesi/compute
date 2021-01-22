@@ -7,7 +7,6 @@ cache
 src/types
 dist
 coverage/*
-test/*/
 .venv
 .vscode
 .node*

@@ -1,0 +1,244 @@
+
+version: '3'
+services:
+  hardhatnet:
+    build:
+      context: .
+      dockerfile: ./deployer/Dockerfile
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+    expose:
+      - 8545
+    ports:
+      - 8545:8545
+    volumes:
+      - ./:/opt/cartesi/share/blockchain
+    networks:
+      - ethereum
+  
+
+  dispatcher_0:
+    image: cartesi/descartes:local
+    restart: always
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "0"
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+      QUERY_PORT: 3001
+      MACHINE_MANAGER_HOST: machine-manager
+      MACHINE_MANAGER_PORT: 50051
+      LOGGER_HOST: logger
+      LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
+      DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_0:
+        
+        aliases:
+          - dispatcher
+    ports:
+      - "3001:3001"
+
+  logger_0:
+    image: cartesi/logger-server:0.6.2
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "0"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+    networks:
+      ethereum: {}
+      node_0:
+        aliases:
+          - logger
+
+  ipfs_0:
+    image: cartesi/ipfs-server:0.2.0
+    volumes:
+      - ./dapp_data_0:/opt/cartesi/srv/descartes
+    networks:
+      ipfs: {}
+      node_0:
+        aliases:
+          - ipfs
+    ports:
+        - "50051:50051"
+
+  machine_manager_0:
+    image: cartesi/machine-manager:0.5.0
+    volumes:
+      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_0:
+        aliases:
+          - machine-manager
+
+  dispatcher_1:
+    image: cartesi/descartes:local
+    restart: always
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "1"
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+      QUERY_PORT: 3001
+      MACHINE_MANAGER_HOST: machine-manager
+      MACHINE_MANAGER_PORT: 50051
+      LOGGER_HOST: logger
+      LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
+      DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_1:
+        
+        aliases:
+          - dispatcher
+    ports:
+      - "3002:3001"
+
+  logger_1:
+    image: cartesi/logger-server:0.6.2
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "1"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+    networks:
+      ethereum: {}
+      node_1:
+        aliases:
+          - logger
+
+  ipfs_1:
+    image: cartesi/ipfs-server:0.2.0
+    volumes:
+      - ./dapp_data_1:/opt/cartesi/srv/descartes
+    networks:
+      ipfs: {}
+      node_1:
+        aliases:
+          - ipfs
+    ports:
+        - "50052:50051"
+
+  machine_manager_1:
+    image: cartesicorp/machine-manager:0.5.0-rc1
+    volumes:
+      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_1:
+        aliases:
+          - machine-manager
+
+  dispatcher_2:
+    image: cartesi/descartes:local
+    restart: always
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "2"
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+      QUERY_PORT: 3001
+      MACHINE_MANAGER_HOST: machine-manager
+      MACHINE_MANAGER_PORT: 50051
+      LOGGER_HOST: logger
+      LOGGER_PORT: 50051
+      IPFS_HOST: ipfs
+      IPFS_PORT: 50051
+      DOCKER: "TRUE"
+      RUST_BACKTRACE: 1
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_2:
+        
+        aliases:
+          - dispatcher
+    ports:
+      - "3003:3001"
+
+  logger_2:
+    image: cartesi/logger-server:0.6.2
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    volumes:
+      - ./:/opt/cartesi/share/blockchain:ro
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    environment:
+      MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
+      ACCOUNT_INDEX: "2"
+      WEB3_PROVIDER_URI: http://hardhatnet:8545
+      DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
+    networks:
+      ethereum: {}
+      node_2:
+        aliases:
+          - logger
+
+  ipfs_2:
+    image: cartesi/ipfs-server:0.2.0
+    volumes:
+      - ./dapp_data_2:/opt/cartesi/srv/descartes
+    networks:
+      ipfs: {}
+      node_2:
+        aliases:
+          - ipfs
+    ports:
+        - "50053:50051"
+
+  machine_manager_2:
+    image: cartesi/machine-manager:0.5.0
+    command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
+    volumes:
+      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    networks:
+      ethereum: {}
+      node_2:
+        aliases:
+          - machine-manager
+
+
+volumes:
+  dapp_data_0:
+  dapp_data_1:
+  dapp_data_2:
+  
+
+networks:
+  ipfs:
+  ethereum:
+  node_0:
+  node_1:
+  node_2:
+  

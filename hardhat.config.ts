@@ -156,6 +156,12 @@ const config: HardhatUserConfig = {
         bob: {
             default: 1,
         },
+        charlie: {
+          default: 2,
+        },
+        dave: {
+          default: 3,
+        },
         proxy: {
             default: 1,
         },

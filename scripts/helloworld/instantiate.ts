@@ -10,7 +10,13 @@ async function main() {
     const { ethers, getNamedAccounts } = hre;
     const { Descartes } = await hre.deployments.all();
 
-    const { alice, bob } = await getNamedAccounts();
+    const { alice, bob, charlie, dave } = await getNamedAccounts();
+
+    let num_peers = 2;
+    if (process.env.num_peers) {
+        num_peers = Number.parseInt(process.env.num_peers);
+    }
+    const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
     // retrieves deployed Descartes instance based on its address
     const descartes = await ethers.getContractAt(
@@ -19,7 +25,7 @@ async function main() {
     );
 
     console.log("");
-    console.log(`Instantiating "HelloWorld"...\n`);
+    console.log(`Instantiating "HelloWorld" with ${peers.length} peers...\n`);
 
     // instantiates descartes computation
     const tx = await descartes.instantiate(
@@ -33,7 +39,7 @@ async function main() {
         5,
         // round duration
         51,
-        [alice, bob],
+        peers,
         []
     );
 
