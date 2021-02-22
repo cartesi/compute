@@ -64,6 +64,15 @@ async function main() {
         peers,
         [aDrive]
     );
+
+    // retrieves created computation's index
+    const index = await new Promise((resolve) => {
+        descartes.on("DescartesCreated", (index) => resolve(index));
+    });
+
+    console.log(
+        `Instantiation successful with index '${index}' (tx: ${tx.hash} ; blocknumber: ${tx.blockNumber})\n`
+    );
 }
 
 // We recommend this pattern to be able to use async/await everywhere
