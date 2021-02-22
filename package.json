@@ -9,6 +9,7 @@
         "info": "npm-scripts-info",
         "prepare": "run-s build copy-dts export",
         "test": "hardhat test --deploy-fixture",
+        "test:integration": "./test/integration/run.sh",
         "clean": "rimraf artifacts && rimraf cache && rimraf deployments/localhost && rimraf deployments/coverage && rimraf src/types/*",
         "deploy": "run-s deploy:development",
         "deploy:testnet": "run-s deploy:rinkeby deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet",
