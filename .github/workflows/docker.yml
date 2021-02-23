@@ -46,8 +46,13 @@ jobs:
 
       - name: Integration tests        
         timeout-minutes: 35
-        run:  |
+        run: |
+          yarn install
           DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
+          
+      - name: Compress logs
+        if:  ${{ always() }}
+        run: |
           gzip -9 logs.txt
       
       - name: Upload integration logs
