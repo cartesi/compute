@@ -45,12 +45,14 @@ jobs:
         if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
 
       - name: Integration tests        
+        timeout-minutes: 35
         run:  |
           DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
           gzip -9 logs.txt
       
       - name: Upload integration logs
         uses: actions/upload-artifact@v2
+        if:  ${{ always() }}
         with:
           name: integration-logs
           path: logs.txt.gz
