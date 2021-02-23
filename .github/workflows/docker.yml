@@ -37,3 +37,6 @@ jobs:
           docker push cartesi/descartes:build
           docker push cartesi/descartes:${TAG}
         if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+
+      - name: Integration tests        
+        run: DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
