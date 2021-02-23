@@ -2,7 +2,7 @@
 
 # general definitions
 CARTESI_IPFS_DOCKER=cartesi/ipfs-server:0.2.0
-IPFS_COMPOSE_NETWORK=descartes_ipfs
+IPFS_COMPOSE_NETWORK=ipfs
 IPFS_SERVICE_ADDRESS="ipfs_0:50051"  # 0 is alice
 INPUT_DRIVE_FILENAME=$LOGGER_ROOT_HASH
 

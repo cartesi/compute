@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 FULL_PATH=$(dirname $(realpath $0))
 DESCARTES_DIR=$(dirname $(dirname $FULL_PATH))
@@ -15,10 +15,9 @@ wait-for-url() {
     do echo "Waiting for ${0}" && sleep 2;\
     done' ${1}
     echo "OK!"
-    curl -I $1
 }
 
-jinja2 -D num_players=2 -D image=$TAG docker-compose-template.yml | docker-compose -f - up --build --no-color >& logs.txt&
+jinja2 -D num_players=2 -D image=$TAG docker-compose-template.yml | docker-compose -f - up --build --no-color &> logs.txt&
 wait-for-url http://localhost:8545
 
 

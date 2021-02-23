@@ -94,6 +94,7 @@ volumes:
 
 networks:
   ipfs:
+    name: ipfs
   ethereum:
   {% for i in range(players) %}node_{{ i }}:
   {% endfor %}
