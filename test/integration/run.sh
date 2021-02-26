@@ -32,6 +32,8 @@ npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiat
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 
 npx hardhat run --network localhost --no-compile ./test/integration/wait-results.ts
-
+exitStatus=$?
 
 jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - down -v
+
+exit $exitStatus
