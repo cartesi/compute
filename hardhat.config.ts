@@ -1,10 +1,10 @@
 import { HardhatUserConfig, task } from "hardhat/config";
 import { HttpNetworkUserConfig } from "hardhat/types";
 
-import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "hardhat-typechain";
 import "hardhat-deploy";
+import "hardhat-deploy-ethers";
 
 import "@nomiclabs/hardhat-solpp";
 // import "solidity-coverage"; @dev WIP this plugin is not updated to hardhat yet
@@ -157,10 +157,10 @@ const config: HardhatUserConfig = {
             default: 1,
         },
         charlie: {
-          default: 2,
+            default: 2,
         },
         dave: {
-          default: 3,
+            default: 3,
         },
         proxy: {
             default: 1,

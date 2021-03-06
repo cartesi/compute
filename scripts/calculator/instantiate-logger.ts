@@ -8,22 +8,20 @@
  * - "data": defines mathematical expression to evaluate (default is "2^71 + 36^12")
  */
 import hre from "hardhat";
-import LoggerJson from "@cartesi/logger/export/artifacts/Logger.json";
+
+const config = {
+    roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
+};
 
 async function main() {
-    const { ethers, getNamedAccounts } = hre;
-    const { Descartes, Logger } = await hre.deployments.all();
+    console.log("Loaded Configs: ", JSON.stringify(config, null, 2));
 
+    const { ethers, getNamedAccounts } = hre;
     const { alice, bob } = await getNamedAccounts();
 
-    // retrieves deployed Descartes instance based on its address
-    const descartes = await ethers.getContractAt(
-        "Descartes",
-        Descartes.address
-    );
-    // retrieves deployed Logger instance based on its address
-    let [signer] = await ethers.getSigners();
-    const logger = new ethers.Contract(Logger.address, LoggerJson.abi, signer);
+    // retrieves Descartes and Logger deployed contracts
+    const descartes = await ethers.getContract("Descartes");
+    const logger = await ethers.getContract("Logger");
 
     let data = "2^71 + 36^12";
     if (process.env.data) {
@@ -75,7 +73,7 @@ async function main() {
         // output log2 size
         10,
         // round duration
-        51,
+        config.roundDuration,
         [alice, bob],
         [input]
     );

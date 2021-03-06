@@ -5,10 +5,11 @@ const config = {
     loggerRootHash: process.env.LOGGER_ROOT_HASH || "",
     machineTemplateHash: process.env.MACHINE_TEMPLATE_HASH || "",
     driveLog2Size: process.env.DRIVE_LOG2_SIZE || "12",
+    roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
 };
 
 Object.entries(config).forEach(([key, value]) => {
-    if (value.length === 0) {
+    if (value === "") {
         console.error(`${key} could not be found in environment vars`, config);
         process.exit(-1);
     }
@@ -18,7 +19,6 @@ async function main() {
     console.log("Loaded Configs: ", JSON.stringify(config, null, 2));
 
     const { ethers, getNamedAccounts } = hre;
-    const { Descartes } = await hre.deployments.all();
     const { alice, bob, charlie, dave } = await getNamedAccounts();
 
     let num_peers = 2;
@@ -26,11 +26,14 @@ async function main() {
         num_peers = Number.parseInt(process.env.num_peers);
     }
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
+    console.log(
+        `Configured peers ${JSON.stringify(peers)} from named accounts.`
+    );
 
-    const descartes = await ethers.getContractAt(
-        "Descartes",
-        Descartes.address
-    ); // as unknown as Descartes;
+    // retrieves Descartes deployed contract
+    const descartes = await ethers.getContract("Descartes");
+
+    // creates drive
     const aDrive = {
         position: "0x9000000000000000",
         driveLog2Size: config.driveLog2Size,
@@ -60,7 +63,7 @@ async function main() {
         // output log2 size
         5,
         // round duration
-        51,
+        config.roundDuration,
         peers,
         [aDrive]
     );

@@ -6,10 +6,14 @@
  */
 import hre from "hardhat";
 
-async function main() {
-    const { ethers, getNamedAccounts } = hre;
-    const { Descartes } = await hre.deployments.all();
+const config = {
+    roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
+};
 
+async function main() {
+    console.log("Loaded Configs: ", JSON.stringify(config, null, 2));
+
+    const { ethers, getNamedAccounts } = hre;
     const { alice, bob, charlie, dave } = await getNamedAccounts();
 
     let num_peers = 2;
@@ -19,10 +23,7 @@ async function main() {
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
     // retrieves deployed Descartes instance based on its address
-    const descartes = await ethers.getContractAt(
-        "Descartes",
-        Descartes.address
-    );
+    const descartes = await ethers.getContract("Descartes");
 
     console.log("");
     console.log(`Instantiating "HelloWorld" with ${peers.length} peers...\n`);
@@ -38,7 +39,7 @@ async function main() {
         // output log2 size
         5,
         // round duration
-        51,
+        config.roundDuration,
         peers,
         []
     );
