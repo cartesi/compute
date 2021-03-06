@@ -29,7 +29,7 @@ docker run \
     --max-mcycle=0 \
     --initial-hash \
     --store="$MACHINE_TEMP_DIR" \
-    --flash-drive="label:input,length:1<<12" \
+    --flash-drive="label:input,length:1<<$DRIVE_LOG2_SIZE" \
     --flash-drive="label:output,length:1<<12" \
     -- $'dd status=none if=$(flashdrive input) | lua -e \'print((string.unpack("z",  io.read("a"))))\' > /input_script ; chmod +x /input_script ; /input_script | dd status=none of=$(flashdrive output)'
 
@@ -46,4 +46,5 @@ MACHINE_TEMPLATE_HASH=$(docker run \
 export MACHINE_TEMPLATE_HASH
 
 # moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
+rm -rf $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
 mv $MACHINE_TEMP_DIR $MACHINES_DIR/$MACHINE_TEMPLATE_HASH

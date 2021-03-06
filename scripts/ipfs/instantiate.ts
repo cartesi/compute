@@ -4,6 +4,7 @@ const config = {
     ipfsPath: process.env.IPFS_PATH || "",
     loggerRootHash: process.env.LOGGER_ROOT_HASH || "",
     machineTemplateHash: process.env.MACHINE_TEMPLATE_HASH || "",
+    driveLog2Size: process.env.DRIVE_LOG2_SIZE || "12",
 };
 
 Object.entries(config).forEach(([key, value]) => {
@@ -32,15 +33,14 @@ async function main() {
     ); // as unknown as Descartes;
     const aDrive = {
         position: "0x9000000000000000",
-        driveLog2Size: 12,
+        driveLog2Size: config.driveLog2Size,
         // bytes of print(math.sin(1))
         directValue: ethers.utils.formatBytes32String(""),
-        //  bytes of "ipfs_path:"/ipfs/QmVX3WoKxjy96wjCJXtkdgvpirT86MsncX6J9UQBc4XXSJ" (content: "print(math.sin(1))")
+        //  bytes of "/ipfs/QmVX3WoKxjy96wjCJXtkdgvpirT86MsncX6J9UQBc4XXSJ" (content: "print(math.sin(1))")
         loggerIpfsPath: ethers.utils.hexlify(
-            ethers.utils.toUtf8Bytes(config.ipfsPath.replace(/\s+/g, ""))
+            ethers.utils.toUtf8Bytes(config.ipfsPath)
         ),
-        //`0x${config.loggerIpfsPath.replace(/\s+/g, '')}`,
-        // hash of print(math.sin(1))
+        // hash of 'print(math.sin(1))' padded to drive's size
         loggerRootHash: `0x${config.loggerRootHash}`,
         waitsProvider: false,
         needsLogger: true,

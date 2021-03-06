@@ -18,7 +18,11 @@ output=$(docker run \
   --rm  $CARTESI_IPFS_DOCKER \
   -address $IPFS_SERVICE_ADDRESS -mode add -argument /opt/cartesi/srv/descartes/flashdrive/$INPUT_DRIVE_FILENAME 2>&1)
 
-IPFS_PATH=$( echo ${output:96:52} |tr '\n' ' ')
+# searches for string 'ipfs_path:"', after which comes the desired value
+output=${output#*\ipfs_path:\"}
+
+# IPFS path is retrieved by selecting the next 52 characters: "/ipfs/<46-char-hash>"
+IPFS_PATH=${output:0:52}
 echo "New IPFS Path: $IPFS_PATH"
 
 export IPFS_PATH
