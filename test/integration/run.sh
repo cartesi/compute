@@ -25,6 +25,8 @@ wait-for-url http://localhost:8545
 ./scripts/helloworld/build-cartesi-machine.sh ./machines
 ./scripts/calculator/build-cartesi-machine.sh ./machines
 ./scripts/ipfs/run.sh
+./scripts/ipfs/run-large-1M.sh
+./scripts/ipfs/run-logger-fallback.sh
 
 
 npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
