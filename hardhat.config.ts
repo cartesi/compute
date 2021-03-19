@@ -60,6 +60,11 @@ const config: HardhatUserConfig = {
             chainId: 97,
             accounts: mnemonic ? { mnemonic } : undefined,
         },
+        avax_testnet: {
+            url: "https://api.avax-test.network/ext/bc/C/rpc",
+            chainId: 0xa869,
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
     },
     solidity: {
         version: "0.7.4",
@@ -126,6 +131,12 @@ const config: HardhatUserConfig = {
                 "node_modules/@cartesi/arbitration/deployments/bsc_testnet",
                 "node_modules/@cartesi/logger/deployments/bsc_testnet",
                 "node_modules/@cartesi/machine-solidity-step/deployments/bsc_testnet",
+            ],
+            avax_testnet: [
+                "node_modules/@cartesi/util/deployments/avax_testnet",
+                "node_modules/@cartesi/arbitration/deployments/avax_testnet",
+                "node_modules/@cartesi/logger/deployments/avax_testnet",
+                "node_modules/@cartesi/machine-solidity-step/deployments/avax_testnet",
             ],
         },
     },
