@@ -967,7 +967,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.currentState == State.WaitingChallengeDrives ||
             i.currentState == State.WaitingClaim ||
             i.currentState == State.WaitingConfirmationDeadline ||
-            i.currentState == State.WaitingChallengeResult
+            i.currentState == State.WaitingChallengeResult ||
+            i.currentState == State.WaitingReveals
         ) {
             return (false, true, address(0), "");
         }
