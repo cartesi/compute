@@ -33,6 +33,7 @@ npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiat
 ./scripts/calculator/build-cartesi-machine.sh ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
 ./scripts/ipfs/run.sh
