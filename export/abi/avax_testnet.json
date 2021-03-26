@@ -2,6 +2,712 @@
   "name": "avax_testnet",
   "chainId": "43113",
   "contracts": {
+    "Descartes": {
+      "address": "0x5C9a69315D74F3898eBeE37bce167814C23888C8",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_liAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_vgAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_machineAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "ChallengeStarted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "_claimedFinalHash",
+              "type": "bytes32"
+            }
+          ],
+          "name": "ClaimSubmitted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "DescartesCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "_state",
+              "type": "uint8"
+            }
+          ],
+          "name": "DescartesFinished",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "position",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "driveLog2Size",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "directValue",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "loggerIpfsPath",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "loggerRootHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "provider",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "waitsProvider",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "needsLogger",
+                  "type": "bool"
+                }
+              ],
+              "indexed": false,
+              "internalType": "struct DescartesInterface.Drive",
+              "name": "_drive",
+              "type": "tuple"
+            }
+          ],
+          "name": "DriveInserted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "ResultConfirmed",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "abortByDeadline",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "challenge",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "challengeDrives",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "currentIndex",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "destruct",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "getCurrentState",
+          "outputs": [
+            {
+              "internalType": "bytes32",
+              "name": "",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "getNonce",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "currentNonce",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_p",
+              "type": "address"
+            }
+          ],
+          "name": "getPartyState",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "isParty",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "hasVoted",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "hasCheated",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "getResult",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_user",
+              "type": "address"
+            }
+          ],
+          "name": "getState",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "",
+              "type": "bytes"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "position",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "driveLog2Size",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "directValue",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "loggerIpfsPath",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "loggerRootHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "provider",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "waitsProvider",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "needsLogger",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct DescartesInterface.Drive[]",
+              "name": "",
+              "type": "tuple[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "bool",
+                  "name": "isParty",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasVoted",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "hasCheated",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "arrayIdx",
+                  "type": "uint64"
+                }
+              ],
+              "internalType": "struct DescartesInterface.Party",
+              "name": "user",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "getSubInstances",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "_addresses",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "_indices",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_finalTime",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "_templateHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "_outputPosition",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_outputLog2Size",
+              "type": "uint8"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_roundDuration",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address[]",
+              "name": "parties",
+              "type": "address[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint64",
+                  "name": "position",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint8",
+                  "name": "driveLog2Size",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "directValue",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes",
+                  "name": "loggerIpfsPath",
+                  "type": "bytes"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "loggerRootHash",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "address",
+                  "name": "provider",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "waitsProvider",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "needsLogger",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct DescartesInterface.Drive[]",
+              "name": "_inputDrives",
+              "type": "tuple[]"
+            }
+          ],
+          "name": "instantiate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "isActive",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_user",
+              "type": "address"
+            }
+          ],
+          "name": "isConcerned",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_value",
+              "type": "bytes"
+            }
+          ],
+          "name": "provideDirectDrive",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "_root",
+              "type": "bytes32"
+            }
+          ],
+          "name": "provideLoggerDrive",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "revealLoggerDrive",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "_claimedFinalHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32[][]",
+              "name": "_drivesSiblings",
+              "type": "bytes32[][]"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_output",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "_outputSiblings",
+              "type": "bytes32[]"
+            }
+          ],
+          "name": "submitClaim",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "winByVG",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "BitsManipulationLibrary": {
       "address": "0xdecac9ff6b588642887414e85dfdde740a797f56",
       "abi": [
@@ -7366,712 +8072,6 @@
     "VirtualMemory": {
       "address": "0x995ff7313259e65BD9dd3Eb9Db5bfE4A810E3bfc",
       "abi": []
-    },
-    "Descartes": {
-      "address": "0x7584B53DFd2011AF38E3d2bE982036C988553D7a",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_liAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_vgAddress",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_machineAddress",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "ChallengeStarted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "bytes32",
-              "name": "_claimedFinalHash",
-              "type": "bytes32"
-            }
-          ],
-          "name": "ClaimSubmitted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "DescartesCreated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint8",
-              "name": "_state",
-              "type": "uint8"
-            }
-          ],
-          "name": "DescartesFinished",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "uint64",
-                  "name": "position",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "driveLog2Size",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "directValue",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "loggerIpfsPath",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "loggerRootHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "provider",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "waitsProvider",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "needsLogger",
-                  "type": "bool"
-                }
-              ],
-              "indexed": false,
-              "internalType": "struct DescartesInterface.Drive",
-              "name": "_drive",
-              "type": "tuple"
-            }
-          ],
-          "name": "DriveInserted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "ResultConfirmed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "abortByDeadline",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "challenge",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "challengeDrives",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "currentIndex",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "destruct",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "getCurrentState",
-          "outputs": [
-            {
-              "internalType": "bytes32",
-              "name": "",
-              "type": "bytes32"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "getNonce",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "currentNonce",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_p",
-              "type": "address"
-            }
-          ],
-          "name": "getPartyState",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "isParty",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "hasVoted",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "hasCheated",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "getResult",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_user",
-              "type": "address"
-            }
-          ],
-          "name": "getState",
-          "outputs": [
-            {
-              "internalType": "uint256[]",
-              "name": "",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bytes32[]",
-              "name": "",
-              "type": "bytes32[]"
-            },
-            {
-              "internalType": "bytes",
-              "name": "",
-              "type": "bytes"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "uint64",
-                  "name": "position",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "driveLog2Size",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "directValue",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "loggerIpfsPath",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "loggerRootHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "provider",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "waitsProvider",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "needsLogger",
-                  "type": "bool"
-                }
-              ],
-              "internalType": "struct DescartesInterface.Drive[]",
-              "name": "",
-              "type": "tuple[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "bool",
-                  "name": "isParty",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "hasVoted",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "hasCheated",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "uint64",
-                  "name": "arrayIdx",
-                  "type": "uint64"
-                }
-              ],
-              "internalType": "struct DescartesInterface.Party",
-              "name": "user",
-              "type": "tuple"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "getSubInstances",
-          "outputs": [
-            {
-              "internalType": "address[]",
-              "name": "_addresses",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "_indices",
-              "type": "uint256[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_finalTime",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "_templateHash",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "uint64",
-              "name": "_outputPosition",
-              "type": "uint64"
-            },
-            {
-              "internalType": "uint8",
-              "name": "_outputLog2Size",
-              "type": "uint8"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_roundDuration",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address[]",
-              "name": "parties",
-              "type": "address[]"
-            },
-            {
-              "components": [
-                {
-                  "internalType": "uint64",
-                  "name": "position",
-                  "type": "uint64"
-                },
-                {
-                  "internalType": "uint8",
-                  "name": "driveLog2Size",
-                  "type": "uint8"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "directValue",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes",
-                  "name": "loggerIpfsPath",
-                  "type": "bytes"
-                },
-                {
-                  "internalType": "bytes32",
-                  "name": "loggerRootHash",
-                  "type": "bytes32"
-                },
-                {
-                  "internalType": "address",
-                  "name": "provider",
-                  "type": "address"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "waitsProvider",
-                  "type": "bool"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "needsLogger",
-                  "type": "bool"
-                }
-              ],
-              "internalType": "struct DescartesInterface.Drive[]",
-              "name": "_inputDrives",
-              "type": "tuple[]"
-            }
-          ],
-          "name": "instantiate",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "isActive",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "_user",
-              "type": "address"
-            }
-          ],
-          "name": "isConcerned",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_value",
-              "type": "bytes"
-            }
-          ],
-          "name": "provideDirectDrive",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "_root",
-              "type": "bytes32"
-            }
-          ],
-          "name": "provideLoggerDrive",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "revealLoggerDrive",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes32",
-              "name": "_claimedFinalHash",
-              "type": "bytes32"
-            },
-            {
-              "internalType": "bytes32[][]",
-              "name": "_drivesSiblings",
-              "type": "bytes32[][]"
-            },
-            {
-              "internalType": "bytes",
-              "name": "_output",
-              "type": "bytes"
-            },
-            {
-              "internalType": "bytes32[]",
-              "name": "_outputSiblings",
-              "type": "bytes32[]"
-            }
-          ],
-          "name": "submitClaim",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "winByVG",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
     }
   }
 }
