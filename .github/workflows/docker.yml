@@ -50,7 +50,7 @@ jobs:
           yarn install
           DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
         env:
-          ROUND_DURATION: 75
+          ROUND_DURATION: 100
           
       - name: Compress logs
         if:  ${{ always() }}
