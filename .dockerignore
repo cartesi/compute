@@ -2,3 +2,5 @@ node_modules/
 build/
 .git
 **/target
+**/solcInputs
+deployments/localhost

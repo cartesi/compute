@@ -1,12 +1,12 @@
 concerns:
-  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/PartitionInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/PartitionInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
-  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/MMInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/MMInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
-  - abi: "/opt/cartesi/share/blockchain/deployments/localhost/VGInstantiator.json"
+  - abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/VGInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
 main_concern:
-  abi: "/opt/cartesi/share/blockchain/deployments/localhost/Descartes.json"
+  abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/Descartes.json"
   user_address: "${ACCOUNT_ADDRESS}"
 confirmations: 12
 max_delay: 500

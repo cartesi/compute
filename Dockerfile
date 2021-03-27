@@ -31,6 +31,24 @@ COPY ./descartes/src ./src
 
 RUN cargo install -j $(nproc) --path .
 
+
+# Onchain image to retrieve deployment info from NPM dependencies
+FROM node:14-alpine as onchain
+
+RUN apk add --no-cache \
+    build-base \
+    git \
+    openssl \
+    python \
+    py-pip
+
+WORKDIR /opt/cartesi
+COPY yarn.lock .
+COPY package.json .
+
+RUN yarn install --ignore-scripts
+
+
 # Runtime image
 FROM debian:buster-slim as runtime
 
@@ -56,6 +74,10 @@ COPY --from=build /usr/local/cargo/bin/wagyu /usr/local/bin
 COPY ./dispatcher-entrypoint.sh $BASE/bin/
 COPY ./config-template.yaml $BASE/etc/descartes/
 RUN mkdir -p $BASE/srv/descartes
+
+# Copy deployments info
+COPY ./deployments $BASE/share/blockchain/deployments
+COPY --from=onchain $BASE/node_modules/@cartesi/arbitration/deployments $BASE/share/blockchain/deployments
 
 ENV ETHEREUM_HOST "hardhatnet"
 ENV ETHEREUM_PORT "8545"
