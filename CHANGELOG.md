@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2021-03-28
+
+### Changed
+
+- Fixed Docker image configuration so that off-chain dispatcher services can use supported testnet deployments
+
+## [1.1.0] - 2021-03-26
+
+### Added
+
+- Support for Avalanche FUJI C-Chain Testnet
+
+### Changed
+
+- Fixed handling of WaitingReveals state in Descartes.getResult
+
 ## [1.0.0] - 2021-01-20
 
 - First release
@@ -21,5 +37,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Upgraded on-chain code to Solidity 0.7
 - Packaging and deployment tooling migrated from Truffle to Hardhat
 
-[unreleased]: https://github.com/cartesi/descartes/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/cartesi/descartes/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/cartesi/descartes/releases/tag/v1.1.1
+[1.1.0]: https://github.com/cartesi/descartes/releases/tag/v1.1.0
 [1.0.0]: https://github.com/cartesi/descartes/releases/tag/v1.0.0
