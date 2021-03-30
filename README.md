@@ -35,6 +35,18 @@ To shutdown:
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - down -v
 ```
 
+To run using one of the [supported networks](https://cartesi.io/en/docs/descartes/supported-networks/), you should:
+- Define a `MNEMONIC` environment variable
+- If using Infura, define a `PROJECT_ID` environment variable
+- Specify the argument `"-D network=<name>"`, where `name` should be one of the following supported networks: `rinkeby`, `kovan`, `goerli`, `matic_testnet`, `bsc_testnet` or `avax_testnet`
+
+For instance, for using the Goerli testnet using Infura, run:
+```
+% export MNEMONIC=<your_mnemonic>
+% export PROJECT_ID=<your_infura_project_id>
+% jinja2 -D num_players=2 -D network=goerli docker-compose-template.yml | docker-compose -f - up --build
+```
+
 You can follow the output of a docker instance with:
 ```
 % docker logs -f [name of the instance]
