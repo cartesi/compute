@@ -1,0 +1,19 @@
+{% macro mnemonic() -%}
+${MNEMONIC}
+{%- endmacro -%}
+
+{% macro host() -%}
+goerli.infura.io
+{%- endmacro -%}
+
+{% macro port() -%}
+443
+{%- endmacro -%}
+
+{% macro provider() -%}
+https://goerli.infura.io/v3/${PROJECT_ID}
+{%- endmacro -%}
+
+{% macro semaphore() -%}
+https://infura.io
+{%- endmacro -%}

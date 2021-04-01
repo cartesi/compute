@@ -1,36 +1,8 @@
 {% set players = num_players | int %}
 {% if network is not defined or network == "localhost" %}
   {% set network = "localhost" %}
-  {% set mnemonic = "donor rather all fix tongue poverty camera oxygen have length thumb beach" %}
-  {% set host = "hardhatnet" %}
-  {% set port = "8545" %}
-  {% set provider = "http://hardhatnet:8545" %}
-  {% set semaphore = "http://hardhatnet:8545" %}
-{% else %}
-  {% set mnemonic = "${MNEMONIC}" %}
-  {% if network == "matic_testnet" %}
-    {% set host = "rpc-mumbai.matic.today" %}
-    {% set port = "443" %}
-    {% set provider = "https://rpc-mumbai.matic.today" %}
-    {% set semaphore = "https://rpc-mumbai.matic.today" %}
-  {% elif network == "bsc_testnet" %}
-    {% set host = "data-seed-prebsc-1-s1.binance.org" %}
-    {% set port = "8545" %}
-    {% set provider = "https://data-seed-prebsc-1-s1.binance.org:8545" %}
-    {% set semaphore = "https://data-seed-prebsc-1-s1.binance.org:8545" %}
-  {% elif network == "avax_testnet" %}
-    {% set host = "api.avax-test.network" %}
-    {% set port = "443" %}
-    {% set provider = "https://api.avax-test.network/ext/bc/C/rpc" %}
-    {% set semaphore = "https://api.avax-test.network/ext/bc/C/rpc" %}
-  {% else %}
-    # other networks (e.g., goerli, rinkeby, kovan) are assumed to be accessible via Infura
-    {% set host = network~".infura.io" %}
-    {% set port = "443" %}
-    {% set provider = "https://"~network~".infura.io/v3/${PROJECT_ID}" %}
-    {% set semaphore = "https://infura.io" %}
-  {% endif %}
 {% endif %}
+{% import "config/"~network~".j2" as config %}
 
 version: '3'
 services:
@@ -40,11 +12,11 @@ services:
       context: .
       dockerfile: ./deployer/Dockerfile
     environment:
-      MNEMONIC: "{{ mnemonic }}"
+      MNEMONIC: "{{ config.mnemonic() }}"
     expose:
-      - {{ port }}
+      - {{ config.port() }}
     ports:
-      - {{ port }}:{{ port }}
+      - {{ config.port() }}:{{ config.port() }}
     volumes:
       - ./:/opt/cartesi/share/blockchain
     networks:
@@ -56,13 +28,13 @@ services:
     image: {{ image |default("cartesi/descartes:local", true) }}
     restart: always
     environment:
-      MNEMONIC: "{{ mnemonic }}"
+      MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
       RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
-      WEB3_PROVIDER_URI: {{ provider }}
-      DEPLOYMENT_SEMAPHORE: {{ semaphore }}
-      ETHEREUM_HOST: {{ host }}
-      ETHEREUM_PORT: {{ port }}
+      WEB3_PROVIDER_URI: {{ config.provider() }}
+      DEPLOYMENT_SEMAPHORE: {{ config.semaphore() }}
+      ETHEREUM_HOST: {{ config.host() }}
+      ETHEREUM_PORT: {{ config.port() }}
       ETHEREUM_NETWORK: {{ network }}
       QUERY_PORT: 3001
       MACHINE_MANAGER_HOST: machine-manager
@@ -102,10 +74,10 @@ services:
 {% endif %}    
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
     environment:
-      MNEMONIC: "{{ mnemonic }}"
+      MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
-      WEB3_PROVIDER_URI: {{ provider }}
-      DEPLOYMENT_SEMAPHORE: {{ semaphore }}
+      WEB3_PROVIDER_URI: {{ config.provider() }}
+      DEPLOYMENT_SEMAPHORE: {{ config.semaphore() }}
     networks:
       ethereum: {}
       node_{{ i }}:
