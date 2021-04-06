@@ -534,5 +534,26 @@ describe("Descartes tests", () => {
         ethers.utils.formatBytes32String("WaitingClaim")
       );
     });
+
+    it("Should skip WaitingChallengeDrives phase when provider is 0", async () => {
+      const drives = [{ ...aDrive, needsLogger: true, provider: ethers.constants.AddressZero }];
+      const data = "0x" + "12".repeat(5); // 5 so we exercise the ability to fill/pad zeroes
+      await mockLogger.mock.isLogAvailable.returns(false);
+      const tx = descartes.instantiate(
+        finalTime,
+        templateHash,
+        outputPosition,
+        outputLog2Size,
+        roundDuration,
+        [claimerAddress, challengerAddress],
+        drives
+      );
+      const txResult = await (await tx).wait();
+      descartesIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
+
+      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+        ethers.utils.formatBytes32String("WaitingClaim")
+      );
+    });
   });
 });
