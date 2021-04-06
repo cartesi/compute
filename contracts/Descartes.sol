@@ -342,6 +342,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             Drive memory drive = _inputDrives[j];
 
             if (!drive.needsLogger) {
+                // direct drive
                 require(
                     drive.driveLog2Size >= 3,
                     "directValue has to be at least one word"
@@ -352,6 +353,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                 );
 
                 if (!drive.waitsProvider) {
+                    // direct drive provided at instantiation
                     require(
                         drive.directValue.length <= 2**drive.driveLog2Size,
                         "Input bytes length exceeds the claimed log2 size"
@@ -373,21 +375,27 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                         getWordHashesFromBytes(paddedDirectValue);
                     i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
                 } else {
+                    // direct drive provided in later ProviderPhase
                     needsProviderPhase = true;
                     i.providerDrives.push(j);
                 }
             } else {
+                // large drive
                 if (!drive.waitsProvider) {
+                    // large drive provided with logger hash at instantiation
                     i.driveHash[j] = drive.loggerRootHash;
                     if (
                         !li.isLogAvailable(
                             drive.loggerRootHash,
                             drive.driveLog2Size
-                        )
+                        ) && drive.provider != address(0)
                     ) {
+                        // offchain drive has provider being address(0)
+                        // cannot be revealed and challenged
                         i.revealDrives.push(j);
                     }
                 } else {
+                    // large drive provided with logger hash in later ProviderPhase
                     needsProviderPhase = true;
                     i.providerDrives.push(j);
                 }
