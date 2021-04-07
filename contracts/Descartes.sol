@@ -226,6 +226,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes32 claimedFinalHash; // claimed final hash of the machine
         bytes claimedOutput; // claimed final machine output
         address[] partiesArray; // user can challenge claimer's output
+        address[] confirmedParties; // parties that have confirmed the current claim
         uint64 claimer; // responsible for claiming the machine output
         uint64 currentChallenger; // it tracks who did the last challenge
         uint64 votesCounter; // helps manage end state
@@ -474,6 +475,36 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         // @dev should we update timeOfLastMove over here too?
         emit ChallengeStarted(_index);
+    }
+
+    /// @notice Party confirms the claim
+    /// @param _index index of Descartes instance which claimer being confirmed
+    function confirm(uint256 _index)
+        public
+        onlyActive(_index)
+        onlyByParty(_index)
+        onlyNoVotes(_index)
+        increasesNonce(_index)
+    {
+        DescartesCtx storage i = instance[_index];
+        require(
+            i.currentState == State.WaitingConfirmationDeadline,
+            "State should be WaitingConfirmationDeadline"
+        );
+
+        // record parties have confirmed current claim
+        i.confirmedParties.push(msg.sender);
+        i.parties[msg.sender].hasVoted = true;
+        i.votesCounter++;
+        // i.timeOfLastMove = block.timestamp;
+
+        if (i.votesCounter == i.partiesArray.length) {
+            i.currentState = State.ConsensusResult;
+        }
+
+        return;
+
+        // @dev should we emit a event here?
     }
 
     /// @notice User requesting content of all drives to be revealed.
@@ -870,24 +901,31 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         uint256 vgIndex = i.vgInstance;
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
+            i.parties[i.partiesArray[i.claimer]].hasCheated = true;
+            // all parties have confirmed cheated claimer should be marked cheated as well
+            for (uint p = 0; p < i.confirmedParties.length; p++) {
+                i.parties[i.confirmedParties[p]].hasCheated = true;
+            }
+            // reset confirmed parties
+            delete i.confirmedParties;
+
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ChallengerWon;
                 return;
             }
             i.currentState = State.WaitingClaim;
-            i.parties[i.partiesArray[i.claimer]].hasCheated = true;
             i.claimer = i.currentChallenger;
             i.currentChallenger = 0;
             return;
         }
 
         if (vg.stateIsFinishedClaimerWon(vgIndex)) {
+            i.parties[i.partiesArray[i.currentChallenger]].hasCheated = true;
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ClaimerWon;
                 return;
             }
             i.currentState = State.WaitingConfirmationDeadline;
-            i.parties[i.partiesArray[i.currentChallenger]].hasCheated = true;
             i.currentChallenger = 0;
             return;
         }

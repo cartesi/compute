@@ -218,7 +218,7 @@ impl From<DescartesCtxParsed> for DescartesCtx {
 }
 
 impl DApp<()> for Descartes {
-    /// React to the descartes contract, submitting drives, 
+    /// React to the descartes contract, submitting drives,
     /// submitting result, confirming or challenging result
     /// when appropriate
     fn react(
@@ -505,7 +505,7 @@ impl DApp<()> for Descartes {
                     );
                 }
                 "WaitingConfirmationDeadline" => {
-                    if ctx.partyState.hasCheated  {
+                    if ctx.partyState.hasVoted  {
                         return Ok(Reaction::Idle);
                     }
                     // determine the reaction based on the calculated machine output
@@ -665,7 +665,7 @@ fn react_by_machine_output(
 
     let mut machine = cartesi_machine::MachineRequest::new();
     machine.set_directory(format!("/opt/cartesi/srv/descartes/cartesi-machine/{:x}", template_hash));
-    
+
     let request = NewSessionRequest {
         session_id: id.clone(),
         machine: machine,
@@ -685,7 +685,7 @@ fn react_by_machine_output(
     let mut drives_siblings = vec![];
     let mut output_siblings = vec![];
     let mut calculated_output = vec![];
-    
+
     let time = 0;
     for drive in &input_drives {
         let address = drive.position.as_u64();
@@ -754,7 +754,7 @@ fn react_by_machine_output(
                         page_log2_size: 3,
                         tree_log2_size: drive.log2_size.as_u64(),
                     };
-        
+
                     let processed_response: DownloadFileResponse = get_logger_response(
                         archive,
                         "Descartes".into(),
@@ -797,13 +797,13 @@ fn react_by_machine_output(
             let mut target = cartesi_machine::GetProofRequest::new();
             target.set_address(address);
             target.set_log2_size(log2_size);
-    
+
             let request = SessionGetProofRequest {
                 session_id: id.clone(),
                 time: time,
                 target: target,
             };
-    
+
             let processed_response: SessionGetProofResponse = archive
                 .get_response(
                     EMULATOR_SERVICE_NAME.to_string(),
@@ -812,9 +812,9 @@ fn react_by_machine_output(
                     request.into(),
                 )?
                 .into();
-    
+
             trace!("Get proof result: {:?}...", processed_response.proof);
-    
+
             // get actual siblings
             let mut drive_siblings: Vec<_> = processed_response
                 .proof
@@ -854,18 +854,18 @@ fn react_by_machine_output(
         let log2_size = output_log2_size.as_u64();
         let length = 2_u64.pow(log2_size as u32);
         let address = output_position.as_u64();
-    
+
         let archive_key = build_session_read_key(id.clone(), time, address, length);
         let mut position = cartesi_machine::ReadMemoryRequest::new();
         position.set_address(address);
         position.set_length(length);
-    
+
         let request = SessionReadMemoryRequest {
             session_id: id.clone(),
             time: time,
             position: position,
         };
-    
+
         let processed_response: SessionReadMemoryResponse = archive
             .get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
@@ -874,12 +874,12 @@ fn react_by_machine_output(
                 request.into(),
             )?
             .into();
-    
+
         trace!(
             "Read memory result: {:?}...",
             processed_response.read_content.data
         );
-    
+
         calculated_output = processed_response.read_content.data.clone();
 
         let archive_key = build_session_proof_key(id.clone(), time, address, log2_size);
@@ -939,10 +939,13 @@ fn react_by_machine_output(
             return Ok(Reaction::Transaction(request));
         },
         Role::Other => {
-            let mut function = String::from("challenge");
-            if calculated_final_hash == claimed_final_hash {
-                return Ok(Reaction::Idle);
-            }
+            let function = {
+                if calculated_final_hash == claimed_final_hash {
+                    String::from("confirm")
+                } else {
+                    String::from("challenge")
+                }
+            };
 
             let request = TransactionRequest {
                 contract_name: None, // Name not needed, is concern
