@@ -7,6 +7,7 @@ const config = {
     driveLog2Size: process.env.DRIVE_LOG2_SIZE || "12",
     finalTime: JSON.parse(process.env.FINAL_TIME || "1e13"),
     roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
+    provider: process.env.PROVIDER,
 };
 
 Object.entries(config).forEach(([key, value]) => {
@@ -31,6 +32,11 @@ async function main() {
         `Configured peers ${JSON.stringify(peers)} from named accounts.`
     );
 
+    let provider = config.provider;
+    if (provider === undefined) {
+        provider = alice;
+    }
+
     // retrieves Descartes deployed contract
     const descartes = await ethers.getContract("Descartes");
 
@@ -48,7 +54,7 @@ async function main() {
         loggerRootHash: `0x${config.loggerRootHash}`,
         waitsProvider: false,
         needsLogger: true,
-        provider: alice,
+        provider: provider,
     };
 
     console.log("");

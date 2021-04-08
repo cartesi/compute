@@ -12,6 +12,7 @@ import hre from "hardhat";
 const config = {
     finalTime: JSON.parse(process.env.FINAL_TIME || "1e13"),
     roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
+    provider: process.env.PROVIDER,
 };
 
 async function main() {
@@ -52,6 +53,10 @@ async function main() {
     );
 
     // defines input drive
+    let provider = config.provider;
+    if (provider === undefined) {
+        provider = alice;
+    }
     const input = {
         position: "0x9000000000000000",
         driveLog2Size: 5,
@@ -60,7 +65,7 @@ async function main() {
         loggerRootHash: logRoot,
         waitsProvider: false,
         needsLogger: true,
-        provider: alice,
+        provider: provider,
     };
 
     // instantiates descartes computation

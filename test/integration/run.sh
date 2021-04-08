@@ -35,12 +35,16 @@ wait-for-url http://localhost:8545
 ./scripts/calculator/build-cartesi-machine.sh ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+export PROVIDER=0x0000000000000000000000000000000000000000
+npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+unset PROVIDER
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
 ./scripts/ipfs/run.sh
 ./scripts/ipfs/run-large-1M.sh
 ./scripts/ipfs/run-logger-fallback.sh
+./scripts/ipfs/run-no-provider.sh
 
 
 npx hardhat run --network localhost --no-compile ./test/integration/wait-results.ts
