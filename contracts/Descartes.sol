@@ -293,6 +293,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     event ChallengeStarted(uint256 _index);
     event DescartesFinished(uint256 _index, uint8 _state);
     event DriveInserted(uint256 _index, Drive _drive);
+    event Confirmed(uint256 _index, address _confirmParty);
 
     constructor(
         address _liAddress,
@@ -502,9 +503,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.currentState = State.ConsensusResult;
         }
 
-        return;
+        emit Confirmed(_index, msg.sender);
 
-        // @dev should we emit a event here?
+        return;
     }
 
     /// @notice User requesting content of all drives to be revealed.
