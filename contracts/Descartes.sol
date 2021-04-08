@@ -902,10 +902,12 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         if (vg.stateIsFinishedChallengerWon(vgIndex)) {
             i.parties[i.partiesArray[i.claimer]].hasCheated = true;
-            // all parties have confirmed cheated claimer should be marked cheated as well
-            for (uint p = 0; p < i.confirmedParties.length; p++) {
-                i.parties[i.confirmedParties[p]].hasCheated = true;
+            // all parties have confirmed cheated claimer should be reset
+            // this is a protection to avoid claimer losing dispute on purpose
+            for (uint256 p = 0; p < i.confirmedParties.length; p++) {
+                i.parties[i.confirmedParties[p]].hasVoted = false;
             }
+            i.votesCounter -= uint64(i.confirmedParties.length);
             // reset confirmed parties
             delete i.confirmedParties;
 
