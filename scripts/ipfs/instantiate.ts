@@ -5,6 +5,7 @@ const config = {
     loggerRootHash: process.env.LOGGER_ROOT_HASH || "",
     machineTemplateHash: process.env.MACHINE_TEMPLATE_HASH || "",
     driveLog2Size: process.env.DRIVE_LOG2_SIZE || "12",
+    finalTime: JSON.parse(process.env.FINAL_TIME || "1e13"),
     roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
 };
 
@@ -54,8 +55,8 @@ async function main() {
     console.log(`Instantiating "IPFS" with ${peers.length} peers...\n`);
 
     const tx = await descartes.instantiate(
-        // final time: 1e11 gives us ~50 seconds for completing the computation itself
-        1e11,
+        // final time
+        config.finalTime,
         // template hash
         `0x${config.machineTemplateHash}`,
         // output position

@@ -7,6 +7,7 @@
 import hre from "hardhat";
 
 const config = {
+    finalTime: JSON.parse(process.env.FINAL_TIME || "1e13"),
     roundDuration: Number.parseInt(process.env.ROUND_DURATION || "51"),
 };
 
@@ -30,8 +31,8 @@ async function main() {
 
     // instantiates descartes computation
     const tx = await descartes.instantiate(
-        // final time: 1e11 gives us ~50 seconds for completing the computation itself
-        1e11,
+        // final time
+        config.finalTime,
         // template hash
         "0x3f5762be44332cb56188fc77b8ac02472399dabe610cebc9d75aae3f77a755a7",
         // output position
