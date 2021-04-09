@@ -19,45 +19,40 @@
 // be used independently under the Apache v2 license. After this component is
 // rewritten, the entire component will be released under the Apache v2 license.
 
+use super::compute::vg::{VGCtx, VGCtxParsed, VG};
 use super::configuration::Concern;
-use super::dispatcher::{Archive, Reaction};
 use super::dispatcher::DApp;
-use super::dispatcher::{U256Array, Bytes32Array, AddressArray, BytesField};
+use super::dispatcher::{AddressArray, Bytes32Array, BytesField, U256Array};
+use super::dispatcher::{Archive, Reaction};
 use super::error::*;
 use super::ethabi::Token;
-use super::ethereum_types::{H256, U256, Address};
+use super::ethereum_types::{Address, H256, U256};
+use super::hex;
 use super::transaction;
 use super::transaction::TransactionRequest;
-use super::compute::vg::{VG, VGCtx, VGCtxParsed};
-use super::hex;
-use compute::{
-    get_run_result, cartesi_machine, build_session_write_key,
-    build_session_proof_key, build_session_read_key, build_session_run_key,
-    SessionRunRequest, SessionReadMemoryRequest, SessionReadMemoryResponse,
-    SessionWriteMemoryRequest, NewSessionRequest, NewSessionResponse,
-    SessionGetProofRequest, SessionGetProofResponse, SessionRunResult,
-    EMULATOR_SERVICE_NAME, EMULATOR_METHOD_WRITE, EMULATOR_METHOD_READ,
-    EMULATOR_METHOD_PROOF, EMULATOR_METHOD_NEW
+use super::{
+    build_ipfs_get_key, build_logger_download_key, build_logger_submit_key, build_machine_id,
+    get_logger_response, Role,
 };
-use logger_service::{
-    DownloadFileRequest, DownloadFileResponse,
-    SubmitFileRequest, SubmitFileResponse,
-    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
+use compute::{
+    build_session_proof_key, build_session_read_key, build_session_run_key,
+    build_session_write_key, cartesi_machine, get_run_result, NewSessionRequest,
+    NewSessionResponse, SessionGetProofRequest, SessionGetProofResponse, SessionReadMemoryRequest,
+    SessionReadMemoryResponse, SessionRunRequest, SessionRunResult, SessionWriteMemoryRequest,
+    EMULATOR_METHOD_NEW, EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE,
+    EMULATOR_SERVICE_NAME,
 };
 use ipfs_service::{
-    GetFileRequest, GetFileResponse, GetFileResponseOneOf,
-    IPFS_METHOD_GET, IPFS_SERVICE_NAME,
+    GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET, IPFS_SERVICE_NAME,
 };
-use super::{
-    Role, build_machine_id, get_logger_response,
-    build_logger_download_key, build_logger_submit_key,
-    build_ipfs_get_key,
+use logger_service::{
+    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest, SubmitFileResponse,
+    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
 };
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub struct Descartes();
-
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
@@ -69,14 +64,14 @@ pub enum TupleType {
 
 #[derive(Serialize, Deserialize)]
 pub struct DriveParsed(
-    U256,   // position
-    U256,   // log2Size
-    String, // directValue
-    String, // loggerIpfsPath
-    H256,   // loggerRootHash
-    Address,// provider
-    bool,   // needsProvider
-    bool,   // needsLogger
+    U256,    // position
+    U256,    // log2Size
+    String,  // directValue
+    String,  // loggerIpfsPath
+    H256,    // loggerRootHash
+    Address, // provider
+    bool,    // needsProvider
+    bool,    // needsLogger
 );
 
 #[derive(Serialize, Deserialize)]
@@ -120,7 +115,6 @@ impl From<&DriveParsed> for Drive {
     }
 }
 
-
 #[derive(Serialize, Deserialize)]
 pub struct PartyType {
     pub name: String,
@@ -131,10 +125,10 @@ pub struct PartyType {
 
 #[derive(Serialize, Deserialize)]
 pub struct PartyParsed(
-    bool,   // isParty
-    bool,   // hasVoted
-    bool,   // hasCheated
-    U256,    // partyArrayIndex
+    bool, // isParty
+    bool, // hasVoted
+    bool, // hasCheated
+    U256, // partyArrayIndex
 );
 
 #[derive(Serialize, Debug)]
@@ -144,7 +138,6 @@ pub struct Party {
     hasCheated: bool,
     arrayIdx: U256,
 }
-
 
 impl From<PartyParsed> for Party {
     fn from(parsed: PartyParsed) -> Party {
@@ -163,10 +156,10 @@ impl From<PartyParsed> for Party {
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #[derive(Serialize, Deserialize)]
 pub struct DescartesCtxParsed(
-    U256Array,      // finalTime, deadline, outputPosition, outputLog2Size
-    AddressArray,   // challenger, claimer
-    Bytes32Array,   // templateHash, initialHash, claimedFinalHash, currentState
-    BytesField,     // claimedOutput
+    U256Array,    // finalTime, deadline, outputPosition, outputLog2Size
+    AddressArray, // challenger, claimer
+    Bytes32Array, // templateHash, initialHash, claimedFinalHash, currentState
+    BytesField,   // claimedOutput
     DriveArray,
     PartyType,
 );
@@ -201,15 +194,15 @@ impl From<DescartesCtxParsed> for DescartesCtx {
             initial_hash: parsed.2.value[1],
             claimed_final_hash: parsed.2.value[2],
             current_state: String::from_utf8(
-                    parsed.2.value[3]
-                        .to_fixed_bytes()
-                        .to_vec()
-                        .iter()
-                        .take_while(|&n| *n != 0)
-                        .map(|&n| n)
-                        .collect()
-                    )
-                .unwrap(),
+                parsed.2.value[3]
+                    .to_fixed_bytes()
+                    .to_vec()
+                    .iter()
+                    .take_while(|&n| *n != 0)
+                    .map(|&n| n)
+                    .collect(),
+            )
+            .unwrap(),
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
             partyState: parsed.5.value.into(),
@@ -241,11 +234,11 @@ impl DApp<()> for Descartes {
         // these states should not occur as they indicate an innactive instance,
         // but it is possible that the blockchain state changed between queries
         match ctx.current_state.as_ref() {
-            "ProviderMissedDeadline" |
-            "ClaimerMissedDeadline" |
-            "ChallengerWon" |
-            "ClaimerWon" |
-            "ConsensusResult" => {
+            "ProviderMissedDeadline"
+            | "ClaimerMissedDeadline"
+            | "ChallengerWon"
+            | "ClaimerWon"
+            | "ConsensusResult" => {
                 return Ok(Reaction::Idle);
             }
             _ => {}
@@ -275,14 +268,17 @@ impl DApp<()> for Descartes {
                         ctx.deadline.as_u64(),
                     );
                 }
-            },
+            }
             "WaitingChallengeDrives" => {
                 for drive in &ctx.input_drives {
                     if drive.needs_logger {
                         let request = GetFileRequest {
                             ipfs_path: drive.ipfs_path.clone(),
                             log2_size: drive.log2_size.as_u64() as u32,
-                            output_path: format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash),
+                            output_path: format!(
+                                "/opt/cartesi/srv/descartes/flashdrive/{:x}",
+                                drive.root_hash
+                            ),
                             // TODO: come up with better timeout
                             timeout: 120,
                         };
@@ -308,9 +304,9 @@ impl DApp<()> for Descartes {
                                             "Descartes".into(),
                                             1,
                                             p.progress,
-                                            "IPFS still getting".to_string()
+                                            "IPFS still getting".to_string(),
                                         )))
-                                    },
+                                    }
                                     GetFileResponseOneOf::GetResult(r) => {
                                         if r.root_hash != drive.root_hash {
                                             // the root hash of drive doesn't match
@@ -327,7 +323,7 @@ impl DApp<()> for Descartes {
                                         }
                                     }
                                 }
-                            },
+                            }
                             Err(e) => {
                                 match e.kind() {
                                     ErrorKind::ResponseInvalidError(_service, _key, _m) => {
@@ -342,7 +338,7 @@ impl DApp<()> for Descartes {
                                             strategy: transaction::Strategy::Simplest,
                                         };
                                         return Ok(Reaction::Transaction(request));
-                                    },
+                                    }
                                     _ => {
                                         return Err(e);
                                     }
@@ -351,7 +347,7 @@ impl DApp<()> for Descartes {
                         }
                     }
                 }
-            },
+            }
             "WaitingReveals" => {
                 if instance.concern.user_address != ctx.input_drives[0].provider {
                     // wait others to reveal drives
@@ -379,9 +375,10 @@ impl DApp<()> for Descartes {
                 .into();
 
                 if processed_response.root != root {
-                    error!("Submitted log hash({:x}) doesn't match value from drive({:x})",
-                        processed_response.root,
-                        root);
+                    error!(
+                        "Submitted log hash({:x}) doesn't match value from drive({:x})",
+                        processed_response.root, root
+                    );
                     return Ok(Reaction::Idle);
                 }
                 trace!("Submitted file with hash: {:x}...", processed_response.root);
@@ -391,14 +388,12 @@ impl DApp<()> for Descartes {
                     concern: instance.concern.clone(),
                     value: U256::from(0),
                     function: "revealLoggerDrive".into(),
-                    data: vec![
-                        Token::Uint(instance.index),
-                        ],
+                    data: vec![Token::Uint(instance.index)],
                     gas: None,
                     strategy: transaction::Strategy::Simplest,
                 };
                 return Ok(Reaction::Transaction(request));
-            },
+            }
             _ => {}
         };
 
@@ -418,7 +413,7 @@ impl DApp<()> for Descartes {
                         ctx.output_position,
                         ctx.output_log2_size,
                     );
-                },
+                }
                 "WaitingChallengeDrives" => {
                     // no one challenges the drives, claim output directly
                     if current_time > ctx.deadline.as_u64() {
@@ -436,7 +431,7 @@ impl DApp<()> for Descartes {
                         );
                     }
                     return Ok(Reaction::Idle);
-                },
+                }
                 "WaitingChallengeResult" => {
                     // we inspect the verification contract
                     let vg_instance = instance.sub_instances.get(0).ok_or(Error::from(
@@ -476,11 +471,12 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id = build_machine_id(instance.index, &instance.concern.user_address);
+                            let machine_id =
+                                build_machine_id(instance.index, &instance.concern.user_address);
                             return VG::react(vg_instance, archive, &None, &machine_id);
                         }
                     }
-                },
+                }
                 "WaitingConfirmationDeadline" => {
                     // wait for the challenger to confirm/challenge
                     // or claim consensus if the deadline is over
@@ -489,7 +485,7 @@ impl DApp<()> for Descartes {
                         instance.index,
                         ctx.deadline.as_u64(),
                     );
-                },
+                }
                 _ => {
                     return Ok(Reaction::Idle);
                 }
@@ -521,7 +517,7 @@ impl DApp<()> for Descartes {
                         ctx.output_position,
                         ctx.output_log2_size,
                     );
-                },
+                }
                 _ => {
                     return Ok(Reaction::Idle);
                 }
@@ -567,15 +563,16 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id = build_machine_id(instance.index, &instance.concern.user_address);
+                            let machine_id =
+                                build_machine_id(instance.index, &instance.concern.user_address);
                             return VG::react(vg_instance, archive, &None, &machine_id);
                         }
                     }
-                },
+                }
                 _ => {
                     return Ok(Reaction::Idle);
                 }
-            }
+            },
         };
     }
 
@@ -619,11 +616,7 @@ impl DApp<()> for Descartes {
     }
 }
 
-fn abort_by_deadline_or_idle(
-    concern: &Concern,
-    index: U256,
-    deadline: u64,
-) -> Result<Reaction> {
+fn abort_by_deadline_or_idle(concern: &Concern, index: U256, deadline: u64) -> Result<Reaction> {
     let current_time = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .chain_err(|| "System time before UNIX_EPOCH")?
@@ -664,7 +657,10 @@ fn react_by_machine_output(
     let id = build_machine_id(index, &concern.user_address);
 
     let mut machine = cartesi_machine::MachineRequest::new();
-    machine.set_directory(format!("/opt/cartesi/srv/descartes/cartesi-machine/{:x}", template_hash));
+    machine.set_directory(format!(
+        "/opt/cartesi/srv/descartes/cartesi-machine/{:x}",
+        template_hash
+    ));
 
     let request = NewSessionRequest {
         session_id: id.clone(),
@@ -705,19 +701,21 @@ fn react_by_machine_output(
                 position: position,
             };
 
-            let _processed_response = archive
-                .get_response(
-                    EMULATOR_SERVICE_NAME.to_string(),
-                    archive_key.clone(),
-                    EMULATOR_METHOD_WRITE.to_string(),
-                    request.into(),
-                )?;
+            let _processed_response = archive.get_response(
+                EMULATOR_SERVICE_NAME.to_string(),
+                archive_key.clone(),
+                EMULATOR_METHOD_WRITE.to_string(),
+                request.into(),
+            )?;
         } else {
             // get logger drive
             let request = GetFileRequest {
                 ipfs_path: drive.ipfs_path.clone(),
                 log2_size: drive.log2_size.as_u64() as u32,
-                output_path: format!("/opt/cartesi/srv/descartes/flashdrive/{:x}", drive.root_hash),
+                output_path: format!(
+                    "/opt/cartesi/srv/descartes/flashdrive/{:x}",
+                    drive.root_hash
+                ),
                 // TODO: come up with better timeout
                 timeout: 120,
             };
@@ -743,9 +741,9 @@ fn react_by_machine_output(
                             IPFS_SERVICE_NAME.into(),
                             ipfs_key,
                             IPFS_METHOD_GET.into(),
-                        )))
+                        )));
                     }
-                },
+                }
                 // fall back to logger if not found
                 Err(_) => {
                     let request = DownloadFileRequest {
@@ -783,13 +781,12 @@ fn react_by_machine_output(
                 position: position,
             };
 
-            let _ = archive
-                .get_response(
-                    EMULATOR_SERVICE_NAME.to_string(),
-                    archive_key.clone(),
-                    EMULATOR_METHOD_WRITE.to_string(),
-                    request.into(),
-                )?;
+            let _ = archive.get_response(
+                EMULATOR_SERVICE_NAME.to_string(),
+                archive_key.clone(),
+                EMULATOR_METHOD_WRITE.to_string(),
+                request.into(),
+            )?;
         }
         if let Role::Claimer = role {
             // get input drive siblings
@@ -937,7 +934,7 @@ fn react_by_machine_output(
                 strategy: transaction::Strategy::Simplest,
             };
             return Ok(Reaction::Transaction(request));
-        },
+        }
         Role::Other => {
             let function = {
                 if calculated_final_hash == claimed_final_hash {
@@ -957,7 +954,7 @@ fn react_by_machine_output(
                 strategy: transaction::Strategy::Simplest,
             };
             return Ok(Reaction::Transaction(request));
-        },
+        }
         _ => {
             return Ok(Reaction::Idle); //@dev this shouldnt happen, shoud we explode here? how?
         }
