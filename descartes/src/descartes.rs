@@ -726,44 +726,52 @@ fn react_by_machine_output(
                 IPFS_SERVICE_NAME.into(),
                 ipfs_key.clone(),
                 IPFS_METHOD_GET.into(),
-                request.into(),
+                request.clone().into(),
             ) {
                 // try to get drive from Ipfs first
                 Ok(data) => {
                     let response: GetFileResponse = data.into();
-                    if let GetFileResponseOneOf::GetResult(s) = response.one_of {
-                        s.output_path
-                    } else {
-                        // shouldn't reach here
-                        // ipfs drive request should either be timeout
-                        // or complete with a GetFileResult
-                        return Err(Error::from(ErrorKind::ResponseInvalidError(
-                            IPFS_SERVICE_NAME.into(),
-                            ipfs_key,
-                            IPFS_METHOD_GET.into(),
-                        )));
+                    match response.one_of {
+                        GetFileResponseOneOf::GetResult(s) => s.output_path,
+                        GetFileResponseOneOf::GetProgress(p) => {
+                            return Err(Error::from(ErrorKind::ServiceNeedsRetry(
+                                IPFS_SERVICE_NAME.to_string(),
+                                ipfs_key,
+                                IPFS_METHOD_GET.into(),
+                                request.into(),
+                                "Descartes".into(),
+                                1,
+                                p.progress,
+                                "IPFS still getting".to_string(),
+                            )));
+                        }
                     }
                 }
-                // fall back to logger if not found
-                Err(_) => {
-                    let request = DownloadFileRequest {
-                        root: drive.root_hash.clone(),
-                        path: format!("{:x}", drive.root_hash),
-                        page_log2_size: 3,
-                        tree_log2_size: drive.log2_size.as_u64(),
-                    };
+                Err(e) => {
+                    if drive.provider == Address::zero() {
+                        // keep retrying IPFS since there's no provider
+                        return Err(e);
+                    } else {
+                        // fall back to logger if not found
+                        let request = DownloadFileRequest {
+                            root: drive.root_hash.clone(),
+                            path: format!("{:x}", drive.root_hash),
+                            page_log2_size: 3,
+                            tree_log2_size: drive.log2_size.as_u64(),
+                        };
 
-                    let processed_response: DownloadFileResponse = get_logger_response(
-                        archive,
-                        "Descartes".into(),
-                        build_logger_download_key(drive.root_hash.clone()),
-                        LOGGER_METHOD_DOWNLOAD.to_string(),
-                        request.into(),
-                    )?
-                    .into();
-                    trace!("Downloaded! File stored at: {}...", processed_response.path);
+                        let processed_response: DownloadFileResponse = get_logger_response(
+                            archive,
+                            "Descartes".into(),
+                            build_logger_download_key(drive.root_hash.clone()),
+                            LOGGER_METHOD_DOWNLOAD.to_string(),
+                            request.into(),
+                        )?
+                        .into();
+                        trace!("Downloaded! File stored at: {}...", processed_response.path);
 
-                    processed_response.path
+                        processed_response.path
+                    }
                 }
             };
 
@@ -956,6 +964,7 @@ fn react_by_machine_output(
             return Ok(Reaction::Transaction(request));
         }
         _ => {
+            error!("Challenger shouldn't get here!");
             return Ok(Reaction::Idle); //@dev this shouldnt happen, shoud we explode here? how?
         }
     }
