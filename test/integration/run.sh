@@ -26,8 +26,10 @@ wait-for-url http://localhost:8545
 
 
 # testing HelloWorld
-./scripts/helloworld/build-cartesi-machine.sh ./machines
-npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
+# TODO: removing test for now because of Machine Manager intermittent bug when running many jobs in parallel
+# https://github.com/cartesi-corp/machine-manager/issues/46
+# ./scripts/helloworld/build-cartesi-machine.sh ./machines
+# npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
 
 # testing Calculator
 ./scripts/calculator/build-cartesi-machine.sh ./machines
