@@ -221,6 +221,25 @@ describe("Descartes tests", () => {
       ]);
     });
 
+    it("Should transition to ConsensusResult after confirm", async () => {
+      const revertSnapshot = await takeSnapshot();
+
+      let tx = descartes
+        .connect(challenger)
+        .confirm(0);
+
+      await expect(tx)
+        .to.emit(descartes, "Confirmed")
+        .withArgs(0, challengerAddress);
+
+      const tx2 = await descartes.getCurrentState(0);
+      expect(tx2).to.be.equal(
+        ethers.utils.formatBytes32String("ConsensusResult")
+      );
+
+      await revertSnapshot();
+    });
+
     it("Should abortByDeadline correctly", async () => {
       let tx = descartes.abortByDeadline(0);
       await expect(tx).to.be.revertedWith(
