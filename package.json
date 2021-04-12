@@ -8,7 +8,7 @@
         "export": "hardhat export-artifacts export/artifacts",
         "info": "npm-scripts-info",
         "prepare": "run-s clean build copy-dts export",
-        "test": "hardhat test --deploy-fixture",
+        "test": "hardhat test --deploy-fixture ./test/*.ts",
         "test:integration": "./test/integration/run.sh",
         "clean": "rimraf artifacts && rimraf cache && rimraf deployments/localhost && rimraf deployments/coverage && rimraf src/types/* && rimraf dist",
         "deploy": "run-s deploy:development",
