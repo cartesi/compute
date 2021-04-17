@@ -289,9 +289,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
     event DescartesCreated(uint256 _index);
     event ClaimSubmitted(uint256 _index, bytes32 _claimedFinalHash);
-    event ResultConfirmed(uint256 _index);
     event ChallengeStarted(uint256 _index);
-    event DescartesFinished(uint256 _index, uint8 _state);
+    event DescartesFinished(uint256 _index, bytes32 _state);
     event DriveInserted(uint256 _index, Drive _drive);
     event Confirmed(uint256 _index, address _confirmParty);
 
@@ -499,11 +498,12 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         i.votesCounter++;
         // i.timeOfLastMove = block.timestamp;
 
+        emit Confirmed(_index, msg.sender);
+
         if (i.votesCounter == i.partiesArray.length) {
             i.currentState = State.ConsensusResult;
+            emit DescartesFinished(_index, getCurrentState(_index));
         }
-
-        emit Confirmed(_index, msg.sender);
 
         return;
     }
@@ -914,6 +914,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ChallengerWon;
+                emit DescartesFinished(_index, getCurrentState(_index));
                 return;
             }
             i.currentState = State.WaitingClaim;
@@ -926,6 +927,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.parties[i.partiesArray[i.currentChallenger]].hasCheated = true;
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ClaimerWon;
+                emit DescartesFinished(_index, getCurrentState(_index));
                 return;
             }
             i.currentState = State.WaitingConfirmationDeadline;
@@ -971,18 +973,22 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         if (i.currentState == State.WaitingProviders) {
             i.currentState = State.ProviderMissedDeadline;
+            emit DescartesFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingReveals) {
             i.currentState = State.ProviderMissedDeadline;
+            emit DescartesFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingClaim) {
             i.currentState = State.ClaimerMissedDeadline;
+            emit DescartesFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingConfirmationDeadline) {
             i.currentState = State.ConsensusResult;
+            emit DescartesFinished(_index, getCurrentState(_index));
             return;
         }
 
