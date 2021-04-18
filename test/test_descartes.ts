@@ -230,7 +230,9 @@ describe("Descartes tests", () => {
 
       await expect(tx)
         .to.emit(descartes, "Confirmed")
-        .withArgs(0, challengerAddress);
+        .withArgs(0, challengerAddress)
+        .to.emit(descartes, "DescartesFinished")
+        .withArgs(0, ethers.utils.formatBytes32String("ConsensusResult"));
 
       const tx2 = await descartes.getCurrentState(0);
       expect(tx2).to.be.equal(
@@ -328,6 +330,11 @@ describe("Descartes tests", () => {
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
 
       const tx = await descartes.winByVG(0);
+
+      await expect(tx)
+        .to.emit(descartes, "DescartesFinished")
+        .withArgs(0, ethers.utils.formatBytes32String("ChallengerWon"));
+
       const tx2 = await descartes.getCurrentState(0);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("ChallengerWon")
@@ -347,6 +354,11 @@ describe("Descartes tests", () => {
       await mockVG.mock.stateIsFinishedClaimerWon.returns(true);
 
       const winByVGTx = await descartes.winByVG(0);
+
+      await expect(winByVGTx)
+        .to.emit(descartes, "DescartesFinished")
+        .withArgs(0, ethers.utils.formatBytes32String("ClaimerWon"));
+
       const tx4 = await descartes.getCurrentState(0);
       expect(tx4).to.be.equal(ethers.utils.formatBytes32String("ClaimerWon"));
       const tx5 = await descartes.getResult(0);
