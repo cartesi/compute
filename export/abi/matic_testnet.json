@@ -3,7 +3,7 @@
   "chainId": "80001",
   "contracts": {
     "Descartes": {
-      "address": "0x470A953Fb69d44d47b8eb5A443524649c097DDf7",
+      "address": "0x8C312Df85a05BD195F5727b5a091556a18F073Af",
       "abi": [
         {
           "inputs": [
@@ -66,6 +66,25 @@
               "internalType": "uint256",
               "name": "_index",
               "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "_confirmParty",
+              "type": "address"
+            }
+          ],
+          "name": "Confirmed",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
             }
           ],
           "name": "DescartesCreated",
@@ -82,9 +101,9 @@
             },
             {
               "indexed": false,
-              "internalType": "uint8",
+              "internalType": "bytes32",
               "name": "_state",
-              "type": "uint8"
+              "type": "bytes32"
             }
           ],
           "name": "DescartesFinished",
@@ -152,19 +171,6 @@
           "type": "event"
         },
         {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            }
-          ],
-          "name": "ResultConfirmed",
-          "type": "event"
-        },
-        {
           "inputs": [
             {
               "internalType": "uint256",
@@ -199,6 +205,19 @@
             }
           ],
           "name": "challengeDrives",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "confirm",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
