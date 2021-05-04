@@ -29,7 +29,7 @@ COPY ./descartes/Cargo.toml ./
 COPY ./descartes/Cargo.lock ./
 COPY ./descartes/src ./src
 
-RUN cargo install -j $(nproc) --path .
+RUN cargo install -j $(nproc) --locked --path .
 
 
 # Onchain image to retrieve deployment info from NPM dependencies
