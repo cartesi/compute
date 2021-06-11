@@ -42,8 +42,9 @@ use compute::{
     NewSessionRequest, NewSessionResponse, SessionGetProofRequest,
     SessionGetProofResponse, SessionReadMemoryRequest,
     SessionReadMemoryResponse, SessionRunRequest, SessionRunResult,
-    SessionWriteMemoryRequest, EMULATOR_METHOD_NEW, EMULATOR_METHOD_PROOF,
-    EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE, EMULATOR_SERVICE_NAME,
+    SessionWriteMemoryRequest, TerminateSessionRequest, EMULATOR_METHOD_NEW,
+    EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_TERMINATE,
+    EMULATOR_METHOD_WRITE, EMULATOR_SERVICE_NAME,
 };
 use ipfs_service::{
     GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET,
@@ -238,6 +239,9 @@ impl DApp<()> for Descartes {
         let ctx: DescartesCtx = parsed.into();
         trace!("Context for descartes (index {}) {:?}", instance.index, ctx);
 
+        let machine_id =
+            build_machine_id(instance.index, &instance.concern.user_address);
+
         // these states should not occur as they indicate an innactive instance,
         // but it is possible that the blockchain state changed between queries
         match ctx.current_state.as_ref() {
@@ -246,6 +250,19 @@ impl DApp<()> for Descartes {
             | "ChallengerWon"
             | "ClaimerWon"
             | "ConsensusResult" => {
+                let request = TerminateSessionRequest {
+                    session_id: machine_id.clone(),
+                    ignore: true,
+                };
+
+                // send terminateSession request to the emulator service
+                let _processed_response = archive.get_response(
+                    EMULATOR_SERVICE_NAME.to_string(),
+                    machine_id.clone(),
+                    EMULATOR_METHOD_TERMINATE.to_string(),
+                    request.into(),
+                )?;
+
                 return Ok(Reaction::Idle);
             }
             _ => {}
@@ -387,6 +404,7 @@ impl DApp<()> for Descartes {
                         ctx.final_time,
                         ctx.output_position,
                         ctx.output_log2_size,
+                        machine_id,
                     );
                 }
                 "WaitingChallengeDrives" => {
@@ -403,6 +421,7 @@ impl DApp<()> for Descartes {
                             ctx.final_time,
                             ctx.output_position,
                             ctx.output_log2_size,
+                            machine_id,
                         );
                     }
                     return Ok(Reaction::Idle);
@@ -451,10 +470,6 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id = build_machine_id(
-                                instance.index,
-                                &instance.concern.user_address,
-                            );
                             return VG::react(
                                 vg_instance,
                                 archive,
@@ -504,6 +519,7 @@ impl DApp<()> for Descartes {
                         ctx.final_time,
                         ctx.output_position,
                         ctx.output_log2_size,
+                        machine_id,
                     );
                 }
                 _ => {
@@ -556,10 +572,6 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id = build_machine_id(
-                                instance.index,
-                                &instance.concern.user_address,
-                            );
                             return VG::react(
                                 vg_instance,
                                 archive,
@@ -657,10 +669,9 @@ fn react_by_machine_output(
     final_time: U256,
     output_position: U256,
     output_log2_size: U256,
+    machine_id: String,
 ) -> Result<Reaction> {
     // create machine and fill in all the drives
-    let id = build_machine_id(index, &concern.user_address);
-
     let mut machine = cartesi_machine::MachineRequest::new();
     machine.set_directory(format!(
         "/opt/cartesi/srv/descartes/cartesi-machine/{:x}",
@@ -668,7 +679,7 @@ fn react_by_machine_output(
     ));
 
     let request = NewSessionRequest {
-        session_id: id.clone(),
+        session_id: machine_id.clone(),
         machine: machine,
         force: true,
     };
@@ -677,7 +688,7 @@ fn react_by_machine_output(
     let _processed_response: NewSessionResponse = archive
         .get_response(
             EMULATOR_SERVICE_NAME.to_string(),
-            id.clone(),
+            machine_id.clone(),
             EMULATOR_METHOD_NEW.to_string(),
             request.into(),
         )?
@@ -695,7 +706,7 @@ fn react_by_machine_output(
             // write direct values to drive
             let data = drive.direct_value.clone();
             let archive_key = build_session_write_key(
-                id.clone(),
+                machine_id.clone(),
                 time,
                 address,
                 data.to_vec(),
@@ -706,7 +717,7 @@ fn react_by_machine_output(
             position.set_data(data.to_vec());
 
             let request = SessionWriteMemoryRequest {
-                session_id: id.clone(),
+                session_id: machine_id.clone(),
                 time: time,
                 position: position,
             };
@@ -765,7 +776,7 @@ fn react_by_machine_output(
             // TODO: rewrite with flash replacement call later
             let data = std::fs::read(drive_path)?;
             let archive_key = build_session_write_key(
-                id.clone(),
+                machine_id.clone(),
                 time,
                 address,
                 data.clone(),
@@ -776,7 +787,7 @@ fn react_by_machine_output(
             position.set_data(data);
 
             let request = SessionWriteMemoryRequest {
-                session_id: id.clone(),
+                session_id: machine_id.clone(),
                 time: time,
                 position: position,
             };
@@ -790,14 +801,18 @@ fn react_by_machine_output(
         }
         if let Role::Claimer = role {
             // get input drive siblings
-            let archive_key =
-                build_session_proof_key(id.clone(), time, address, log2_size);
+            let archive_key = build_session_proof_key(
+                machine_id.clone(),
+                time,
+                address,
+                log2_size,
+            );
             let mut target = cartesi_machine::GetProofRequest::new();
             target.set_address(address);
             target.set_log2_size(log2_size);
 
             let request = SessionGetProofRequest {
-                session_id: id.clone(),
+                session_id: machine_id.clone(),
                 time: time,
                 target: target,
             };
@@ -833,10 +848,11 @@ fn react_by_machine_output(
     let sample_points: Vec<u64> = vec![0, time];
 
     let request = SessionRunRequest {
-        session_id: id.clone(),
+        session_id: machine_id.clone(),
         times: sample_points.clone(),
     };
-    let archive_key = build_session_run_key(id.clone(), sample_points.clone());
+    let archive_key =
+        build_session_run_key(machine_id.clone(), sample_points.clone());
 
     let processed_result: SessionRunResult = get_run_result(
         archive,
@@ -854,13 +870,13 @@ fn react_by_machine_output(
         let address = output_position.as_u64();
 
         let archive_key =
-            build_session_read_key(id.clone(), time, address, length);
+            build_session_read_key(machine_id.clone(), time, address, length);
         let mut position = cartesi_machine::ReadMemoryRequest::new();
         position.set_address(address);
         position.set_length(length);
 
         let request = SessionReadMemoryRequest {
-            session_id: id.clone(),
+            session_id: machine_id.clone(),
             time: time,
             position: position,
         };
@@ -881,14 +897,18 @@ fn react_by_machine_output(
 
         calculated_output = processed_response.read_content.data.clone();
 
-        let archive_key =
-            build_session_proof_key(id.clone(), time, address, log2_size);
+        let archive_key = build_session_proof_key(
+            machine_id.clone(),
+            time,
+            address,
+            log2_size,
+        );
         let mut target = cartesi_machine::GetProofRequest::new();
         target.set_address(address);
         target.set_log2_size(log2_size);
 
         let request = SessionGetProofRequest {
-            session_id: id.clone(),
+            session_id: machine_id.clone(),
             time: time,
             target: target,
         };
