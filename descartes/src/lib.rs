@@ -42,7 +42,7 @@ extern crate ipfs_interface;
 extern crate logger_service;
 extern crate transaction;
 
-pub use descartes::Descartes;
+pub use descartes::{Descartes, DescartesCtx, DescartesCtxParsed};
 
 pub use logger_service::{
     DownloadFileRequest, DownloadFileResponse, SubmitFileRequest,
