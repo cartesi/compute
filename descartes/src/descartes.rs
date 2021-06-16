@@ -5,19 +5,21 @@
 // Foundation, either version 3 of the License, or (at your option) any later
 // version.
 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+// details.
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Note: This component currently has dependencies that are licensed under the GNU
-// GPL, version 3, and so you should treat this component as a whole as being under
-// the GPL version 3. But all Cartesi-written code in this component is licensed
-// under the Apache License, version 2, or a compatible permissive license, and can
-// be used independently under the Apache v2 license. After this component is
-// rewritten, the entire component will be released under the Apache v2 license.
+// Note: This component currently has dependencies that are licensed under the
+// GNU GPL, version 3, and so you should treat this component as a whole as
+// being under the GPL version 3. But all Cartesi-written code in this component
+// is licensed under the Apache License, version 2, or a compatible permissive
+// license, and can be used independently under the Apache v2 license. After
+// this component is rewritten, the entire component will be released under the
+// Apache v2 license.
 
 use super::compute::vg::{VGCtx, VGCtxParsed, VG};
 use super::configuration::Concern;
@@ -31,23 +33,25 @@ use super::hex;
 use super::transaction;
 use super::transaction::TransactionRequest;
 use super::{
-    build_ipfs_get_key, build_logger_download_key, build_logger_submit_key, build_machine_id,
-    get_logger_response, Role,
+    build_ipfs_get_key, build_logger_download_key, build_logger_submit_key,
+    build_machine_id, get_logger_response, Role,
 };
 use compute::{
     build_session_proof_key, build_session_read_key, build_session_run_key,
-    build_session_write_key, cartesi_machine, get_run_result, NewSessionRequest,
-    NewSessionResponse, SessionGetProofRequest, SessionGetProofResponse, SessionReadMemoryRequest,
-    SessionReadMemoryResponse, SessionRunRequest, SessionRunResult, SessionWriteMemoryRequest,
-    EMULATOR_METHOD_NEW, EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE,
-    EMULATOR_SERVICE_NAME,
+    build_session_write_key, cartesi_machine, get_run_result,
+    NewSessionRequest, NewSessionResponse, SessionGetProofRequest,
+    SessionGetProofResponse, SessionReadMemoryRequest,
+    SessionReadMemoryResponse, SessionRunRequest, SessionRunResult,
+    SessionWriteMemoryRequest, EMULATOR_METHOD_NEW, EMULATOR_METHOD_PROOF,
+    EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE, EMULATOR_SERVICE_NAME,
 };
 use ipfs_service::{
-    GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET, IPFS_SERVICE_NAME,
+    GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET,
+    IPFS_SERVICE_NAME,
 };
 use logger_service::{
-    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest, SubmitFileResponse,
-    LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
+    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest,
+    SubmitFileResponse, LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
 };
 
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -102,8 +106,11 @@ impl From<&DriveParsed> for Drive {
             direct_value: hex::decode(&parsed.2[2..]).unwrap(),
             ipfs_path: hex::decode(&parsed.3[2..])
                 .and_then(|vec_u8| {
-                    let removed_trailing_zeros =
-                        vec_u8.iter().take_while(|&n| *n != 0).map(|&n| n).collect();
+                    let removed_trailing_zeros = vec_u8
+                        .iter()
+                        .take_while(|&n| *n != 0)
+                        .map(|&n| n)
+                        .collect();
                     Ok(String::from_utf8(removed_trailing_zeros).unwrap())
                 })
                 .unwrap(),
@@ -259,7 +266,8 @@ impl DApp<()> for Descartes {
 
         match ctx.current_state.as_ref() {
             "WaitingProviders" => {
-                if instance.concern.user_address != ctx.input_drives[0].provider {
+                if instance.concern.user_address != ctx.input_drives[0].provider
+                {
                     // wait others to provide drives
                     // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
@@ -292,24 +300,31 @@ impl DApp<()> for Descartes {
                         ) {
                             Ok(data) => {
                                 let response: GetFileResponse = data.into();
-                                info!("Response received from Ipfs {:?}", response);
+                                info!(
+                                    "Response received from Ipfs {:?}",
+                                    response
+                                );
 
                                 match response.one_of {
                                     GetFileResponseOneOf::GetProgress(p) => {
-                                        return Err(Error::from(ErrorKind::ServiceNeedsRetry(
-                                            IPFS_SERVICE_NAME.to_string(),
-                                            key,
-                                            IPFS_METHOD_GET.into(),
-                                            request.into(),
-                                            "Descartes".into(),
-                                            1,
-                                            p.progress,
-                                            "IPFS still getting".to_string(),
-                                        )))
+                                        return Err(Error::from(
+                                            ErrorKind::ServiceNeedsRetry(
+                                                IPFS_SERVICE_NAME.to_string(),
+                                                key,
+                                                IPFS_METHOD_GET.into(),
+                                                request.into(),
+                                                "Descartes".into(),
+                                                1,
+                                                p.progress,
+                                                "IPFS still getting"
+                                                    .to_string(),
+                                            ),
+                                        ))
                                     }
                                     GetFileResponseOneOf::GetResult(r) => {
                                         if r.root_hash != drive.root_hash {
-                                            // the root hash of drive doesn't match
+                                            // the root hash of drive doesn't
+                                            // match
                                             let request = TransactionRequest {
                                                 contract_name: None, // Name not needed, is concern
                                                 concern: instance.concern.clone(),
@@ -319,25 +334,36 @@ impl DApp<()> for Descartes {
                                                 gas: None,
                                                 strategy: transaction::Strategy::Simplest,
                                             };
-                                            return Ok(Reaction::Transaction(request));
+                                            return Ok(Reaction::Transaction(
+                                                request,
+                                            ));
                                         }
                                     }
                                 }
                             }
                             Err(e) => {
                                 match e.kind() {
-                                    ErrorKind::ResponseInvalidError(_service, _key, _m) => {
+                                    ErrorKind::ResponseInvalidError(
+                                        _service,
+                                        _key,
+                                        _m,
+                                    ) => {
                                         // drive not found in time
                                         let request = TransactionRequest {
-                                            contract_name: None, // Name not needed, is concern
+                                            contract_name: None, /* Name not needed, is concern */
                                             concern: instance.concern.clone(),
                                             value: U256::from(0),
                                             function: "challengeDrives".into(),
-                                            data: vec![Token::Uint(instance.index)],
+                                            data: vec![Token::Uint(
+                                                instance.index,
+                                            )],
                                             gas: None,
-                                            strategy: transaction::Strategy::Simplest,
+                                            strategy:
+                                                transaction::Strategy::Simplest,
                                         };
-                                        return Ok(Reaction::Transaction(request));
+                                        return Ok(Reaction::Transaction(
+                                            request,
+                                        ));
                                     }
                                     _ => {
                                         return Err(e);
@@ -349,7 +375,8 @@ impl DApp<()> for Descartes {
                 }
             }
             "WaitingReveals" => {
-                if instance.concern.user_address != ctx.input_drives[0].provider {
+                if instance.concern.user_address != ctx.input_drives[0].provider
+                {
                     // wait others to reveal drives
                     // or abort if the deadline is over
                     return abort_by_deadline_or_idle(
@@ -365,14 +392,15 @@ impl DApp<()> for Descartes {
                     tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
                 };
 
-                let processed_response: SubmitFileResponse = get_logger_response(
-                    archive,
-                    "Descartes".into(),
-                    build_logger_submit_key(root.clone()),
-                    LOGGER_METHOD_SUBMIT.to_string(),
-                    request.into(),
-                )?
-                .into();
+                let processed_response: SubmitFileResponse =
+                    get_logger_response(
+                        archive,
+                        "Descartes".into(),
+                        build_logger_submit_key(root.clone()),
+                        LOGGER_METHOD_SUBMIT.to_string(),
+                        request.into(),
+                    )?
+                    .into();
 
                 if processed_response.root != root {
                     error!(
@@ -381,7 +409,10 @@ impl DApp<()> for Descartes {
                     );
                     return Ok(Reaction::Idle);
                 }
-                trace!("Submitted file with hash: {:x}...", processed_response.root);
+                trace!(
+                    "Submitted file with hash: {:x}...",
+                    processed_response.root
+                );
 
                 let request = TransactionRequest {
                     contract_name: None, // Name not needed, is concern
@@ -434,27 +465,32 @@ impl DApp<()> for Descartes {
                 }
                 "WaitingChallengeResult" => {
                     // we inspect the verification contract
-                    let vg_instance = instance.sub_instances.get(0).ok_or(Error::from(
-                        ErrorKind::InvalidContractState(format!(
+                    let vg_instance = instance.sub_instances.get(0).ok_or(
+                        Error::from(ErrorKind::InvalidContractState(format!(
                             "There is no vg instance {}",
                             ctx.current_state
-                        )),
-                    ))?;
-                    let vg_parsed: VGCtxParsed = serde_json::from_str(&vg_instance.json_data)
-                        .chain_err(|| {
-                            format!(
-                                "Could not parse vg instance json_data: {}",
-                                &vg_instance.json_data
-                            )
-                        })?;
+                        ))),
+                    )?;
+                    let vg_parsed: VGCtxParsed =
+                        serde_json::from_str(&vg_instance.json_data)
+                            .chain_err(|| {
+                                format!(
+                                    "Could not parse vg instance json_data: {}",
+                                    &vg_instance.json_data
+                                )
+                            })?;
                     let vg_ctx: VGCtx = vg_parsed.into();
 
                     match vg_ctx.current_state.as_ref() {
                         "FinishedClaimerWon" => {
                             // claim victory in descartes contract
-                            info!("Claiming victory for Descartes (index: {})", instance.index);
+                            info!(
+                                "Claiming victory for Descartes (index: {})",
+                                instance.index
+                            );
                             let request = TransactionRequest {
-                                contract_name: None, // Name not needed, is concern
+                                contract_name: None, /* Name not needed, is
+                                                      * concern */
                                 concern: instance.concern.clone(),
                                 value: U256::from(0),
                                 function: "winByVG".into(),
@@ -471,9 +507,16 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id =
-                                build_machine_id(instance.index, &instance.concern.user_address);
-                            return VG::react(vg_instance, archive, &None, &machine_id);
+                            let machine_id = build_machine_id(
+                                instance.index,
+                                &instance.concern.user_address,
+                            );
+                            return VG::react(
+                                vg_instance,
+                                archive,
+                                &None,
+                                &machine_id,
+                            );
                         }
                     }
                 }
@@ -501,10 +544,11 @@ impl DApp<()> for Descartes {
                     );
                 }
                 "WaitingConfirmationDeadline" => {
-                    if ctx.partyState.hasVoted  {
+                    if ctx.partyState.hasVoted {
                         return Ok(Reaction::Idle);
                     }
-                    // determine the reaction based on the calculated machine output
+                    // determine the reaction based on the calculated machine
+                    // output
                     return react_by_machine_output(
                         archive,
                         &instance.concern,
@@ -526,27 +570,32 @@ impl DApp<()> for Descartes {
             Role::Challenger => match ctx.current_state.as_ref() {
                 "WaitingChallengeResult" => {
                     // we inspect the verification contract
-                    let vg_instance = instance.sub_instances.get(0).ok_or(Error::from(
-                        ErrorKind::InvalidContractState(format!(
+                    let vg_instance = instance.sub_instances.get(0).ok_or(
+                        Error::from(ErrorKind::InvalidContractState(format!(
                             "There is no vg instance {}",
                             ctx.current_state
-                        )),
-                    ))?;
-                    let vg_parsed: VGCtxParsed = serde_json::from_str(&vg_instance.json_data)
-                        .chain_err(|| {
-                            format!(
-                                "Could not parse vg instance json_data: {}",
-                                &vg_instance.json_data
-                            )
-                        })?;
+                        ))),
+                    )?;
+                    let vg_parsed: VGCtxParsed =
+                        serde_json::from_str(&vg_instance.json_data)
+                            .chain_err(|| {
+                                format!(
+                                    "Could not parse vg instance json_data: {}",
+                                    &vg_instance.json_data
+                                )
+                            })?;
                     let vg_ctx: VGCtx = vg_parsed.into();
 
                     match vg_ctx.current_state.as_ref() {
                         "FinishedChallengerWon" => {
                             // claim victory in descartes contract
-                            info!("Claiming victory for Descartes (index: {})", instance.index);
+                            info!(
+                                "Claiming victory for Descartes (index: {})",
+                                instance.index
+                            );
                             let request = TransactionRequest {
-                                contract_name: None, // Name not needed, is concern
+                                contract_name: None, /* Name not needed, is
+                                                      * concern */
                                 concern: instance.concern.clone(),
                                 value: U256::from(0),
                                 function: "winByVG".into(),
@@ -563,9 +612,16 @@ impl DApp<()> for Descartes {
                         _ => {
                             // verification game is still active,
                             // pass control to the appropriate dapp
-                            let machine_id =
-                                build_machine_id(instance.index, &instance.concern.user_address);
-                            return VG::react(vg_instance, archive, &None, &machine_id);
+                            let machine_id = build_machine_id(
+                                instance.index,
+                                &instance.concern.user_address,
+                            );
+                            return VG::react(
+                                vg_instance,
+                                archive,
+                                &None,
+                                &machine_id,
+                            );
                         }
                     }
                 }
@@ -596,7 +652,8 @@ impl DApp<()> for Descartes {
 
         let mut pretty_sub_instances: Vec<Box<state::Instance>> = vec![];
 
-        let machine_id = build_machine_id(instance.index, &instance.concern.user_address);
+        let machine_id =
+            build_machine_id(instance.index, &instance.concern.user_address);
         for sub in &instance.sub_instances {
             pretty_sub_instances.push(Box::new(
                 VG::get_pretty_instance(sub, archive, &machine_id).unwrap(),
@@ -616,7 +673,11 @@ impl DApp<()> for Descartes {
     }
 }
 
-fn abort_by_deadline_or_idle(concern: &Concern, index: U256, deadline: u64) -> Result<Reaction> {
+fn abort_by_deadline_or_idle(
+    concern: &Concern,
+    index: U256,
+    deadline: u64,
+) -> Result<Reaction> {
     let current_time = SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .chain_err(|| "System time before UNIX_EPOCH")?
@@ -689,7 +750,12 @@ fn react_by_machine_output(
         if !drive.needs_logger {
             // write direct values to drive
             let data = drive.direct_value.clone();
-            let archive_key = build_session_write_key(id.clone(), time, address, data.to_vec());
+            let archive_key = build_session_write_key(
+                id.clone(),
+                time,
+                address,
+                data.to_vec(),
+            );
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();
             position.set_address(address);
@@ -734,16 +800,18 @@ fn react_by_machine_output(
                     match response.one_of {
                         GetFileResponseOneOf::GetResult(s) => s.output_path,
                         GetFileResponseOneOf::GetProgress(p) => {
-                            return Err(Error::from(ErrorKind::ServiceNeedsRetry(
-                                IPFS_SERVICE_NAME.to_string(),
-                                ipfs_key,
-                                IPFS_METHOD_GET.into(),
-                                request.into(),
-                                "Descartes".into(),
-                                1,
-                                p.progress,
-                                "IPFS still getting".to_string(),
-                            )));
+                            return Err(Error::from(
+                                ErrorKind::ServiceNeedsRetry(
+                                    IPFS_SERVICE_NAME.to_string(),
+                                    ipfs_key,
+                                    IPFS_METHOD_GET.into(),
+                                    request.into(),
+                                    "Descartes".into(),
+                                    1,
+                                    p.progress,
+                                    "IPFS still getting".to_string(),
+                                ),
+                            ));
                         }
                     }
                 }
@@ -760,15 +828,21 @@ fn react_by_machine_output(
                             tree_log2_size: drive.log2_size.as_u64(),
                         };
 
-                        let processed_response: DownloadFileResponse = get_logger_response(
-                            archive,
-                            "Descartes".into(),
-                            build_logger_download_key(drive.root_hash.clone()),
-                            LOGGER_METHOD_DOWNLOAD.to_string(),
-                            request.into(),
-                        )?
-                        .into();
-                        trace!("Downloaded! File stored at: {}...", processed_response.path);
+                        let processed_response: DownloadFileResponse =
+                            get_logger_response(
+                                archive,
+                                "Descartes".into(),
+                                build_logger_download_key(
+                                    drive.root_hash.clone(),
+                                ),
+                                LOGGER_METHOD_DOWNLOAD.to_string(),
+                                request.into(),
+                            )?
+                            .into();
+                        trace!(
+                            "Downloaded! File stored at: {}...",
+                            processed_response.path
+                        );
 
                         processed_response.path
                     }
@@ -777,7 +851,12 @@ fn react_by_machine_output(
 
             // TODO: rewrite with flash replacement call later
             let data = std::fs::read(drive_path)?;
-            let archive_key = build_session_write_key(id.clone(), time, address, data.clone());
+            let archive_key = build_session_write_key(
+                id.clone(),
+                time,
+                address,
+                data.clone(),
+            );
 
             let mut position = cartesi_machine::WriteMemoryRequest::new();
             position.set_address(address);
@@ -798,7 +877,8 @@ fn react_by_machine_output(
         }
         if let Role::Claimer = role {
             // get input drive siblings
-            let archive_key = build_session_proof_key(id.clone(), time, address, log2_size);
+            let archive_key =
+                build_session_proof_key(id.clone(), time, address, log2_size);
             let mut target = cartesi_machine::GetProofRequest::new();
             target.set_address(address);
             target.set_log2_size(log2_size);
@@ -860,7 +940,8 @@ fn react_by_machine_output(
         let length = 2_u64.pow(log2_size as u32);
         let address = output_position.as_u64();
 
-        let archive_key = build_session_read_key(id.clone(), time, address, length);
+        let archive_key =
+            build_session_read_key(id.clone(), time, address, length);
         let mut position = cartesi_machine::ReadMemoryRequest::new();
         position.set_address(address);
         position.set_length(length);
@@ -887,7 +968,8 @@ fn react_by_machine_output(
 
         calculated_output = processed_response.read_content.data.clone();
 
-        let archive_key = build_session_proof_key(id.clone(), time, address, log2_size);
+        let archive_key =
+            build_session_proof_key(id.clone(), time, address, log2_size);
         let mut target = cartesi_machine::GetProofRequest::new();
         target.set_address(address);
         target.set_log2_size(log2_size);
@@ -932,7 +1014,9 @@ fn react_by_machine_output(
                 function: "submitClaim".into(),
                 data: vec![
                     Token::Uint(index),
-                    Token::FixedBytes(calculated_final_hash.to_fixed_bytes().to_vec()),
+                    Token::FixedBytes(
+                        calculated_final_hash.to_fixed_bytes().to_vec(),
+                    ),
                     Token::Array(drives_siblings),
                     Token::Bytes(calculated_output),
                     Token::Array(output_siblings),

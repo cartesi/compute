@@ -8,19 +8,21 @@
 // Foundation, either version 3 of the License, or (at your option) any later
 // version.
 
-// This program is distributed in the hope that it will be useful, but WITHOUT ANY
-// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
-// PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// This program is distributed in the hope that it will be useful, but WITHOUT
+// ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+// FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+// details.
 
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// Note: This component currently has dependencies that are licensed under the GNU
-// GPL, version 3, and so you should treat this component as a whole as being under
-// the GPL version 3. But all Cartesi-written code in this component is licensed
-// under the Apache License, version 2, or a compatible permissive license, and can
-// be used independently under the Apache v2 license. After this component is
-// rewritten, the entire component will be released under the Apache v2 license.
+// Note: This component currently has dependencies that are licensed under the
+// GNU GPL, version 3, and so you should treat this component as a whole as
+// being under the GPL version 3. But all Cartesi-written code in this component
+// is licensed under the Apache License, version 2, or a compatible permissive
+// license, and can be used independently under the Apache v2 license. After
+// this component is rewritten, the entire component will be released under the
+// Apache v2 license.
 
 //! A collection of types that represent the manager grpc interface
 //! together with the conversion functions from the automatically
@@ -70,14 +72,12 @@ pub struct GetFileResult {
 impl From<ipfs::GetFileResponse_oneof_get_oneof> for GetFileResponseOneOf {
     fn from(one_of: ipfs::GetFileResponse_oneof_get_oneof) -> Self {
         match one_of {
-            ipfs::GetFileResponse_oneof_get_oneof::progress(s)
-            => {
+            ipfs::GetFileResponse_oneof_get_oneof::progress(s) => {
                 GetFileResponseOneOf::GetProgress(s.into())
-            },
-            ipfs::GetFileResponse_oneof_get_oneof::result(p)
-            => {
+            }
+            ipfs::GetFileResponse_oneof_get_oneof::result(p) => {
                 GetFileResponseOneOf::GetResult(p.into())
-            },
+            }
         }
     }
 }
@@ -109,10 +109,7 @@ impl From<ipfs::GetFileResult> for GetFileResult {
 impl From<ipfs::GetFileResponse> for GetFileResponse {
     fn from(response: ipfs::GetFileResponse) -> Self {
         GetFileResponse {
-            one_of: response
-                .get_oneof
-                .unwrap()
-                .into(),
+            one_of: response.get_oneof.unwrap().into(),
         }
     }
 }
@@ -143,14 +140,12 @@ pub struct AddFileResult {
 impl From<ipfs::AddFileResponse_oneof_add_oneof> for AddFileResponseOneOf {
     fn from(one_of: ipfs::AddFileResponse_oneof_add_oneof) -> Self {
         match one_of {
-            ipfs::AddFileResponse_oneof_add_oneof::progress(s)
-            => {
+            ipfs::AddFileResponse_oneof_add_oneof::progress(s) => {
                 AddFileResponseOneOf::AddProgress(s.into())
-            },
-            ipfs::AddFileResponse_oneof_add_oneof::result(p)
-            => {
+            }
+            ipfs::AddFileResponse_oneof_add_oneof::result(p) => {
                 AddFileResponseOneOf::AddResult(p.into())
-            },
+            }
         }
     }
 }
@@ -166,18 +161,16 @@ impl From<ipfs::AddFileResult> for AddFileResult {
 impl From<ipfs::AddFileResponse> for AddFileResponse {
     fn from(response: ipfs::AddFileResponse) -> Self {
         AddFileResponse {
-            one_of: response
-                .add_oneof
-                .unwrap()
-                .into(),
+            one_of: response.add_oneof.unwrap().into(),
         }
     }
 }
 
 impl From<Vec<u8>> for GetFileResponse {
     fn from(response: Vec<u8>) -> Self {
-        let marshaller: Box<dyn Marshaller<ipfs::GetFileResponse> + Sync + Send> =
-            Box::new(grpc::protobuf::MarshallerProtobuf);
+        let marshaller: Box<
+            dyn Marshaller<ipfs::GetFileResponse> + Sync + Send,
+        > = Box::new(grpc::protobuf::MarshallerProtobuf);
         marshaller
             .read(bytes::Bytes::from(response))
             .unwrap()
@@ -187,8 +180,9 @@ impl From<Vec<u8>> for GetFileResponse {
 
 impl From<Vec<u8>> for AddFileResponse {
     fn from(response: Vec<u8>) -> Self {
-        let marshaller: Box<dyn Marshaller<ipfs::AddFileResponse> + Sync + Send> =
-            Box::new(grpc::protobuf::MarshallerProtobuf);
+        let marshaller: Box<
+            dyn Marshaller<ipfs::AddFileResponse> + Sync + Send,
+        > = Box::new(grpc::protobuf::MarshallerProtobuf);
         marshaller
             .read(bytes::Bytes::from(response))
             .unwrap()
@@ -198,8 +192,9 @@ impl From<Vec<u8>> for AddFileResponse {
 
 impl From<GetFileRequest> for Vec<u8> {
     fn from(request: GetFileRequest) -> Self {
-        let marshaller: Box<dyn Marshaller<ipfs::GetFileRequest> + Sync + Send> =
-            Box::new(grpc::protobuf::MarshallerProtobuf);
+        let marshaller: Box<
+            dyn Marshaller<ipfs::GetFileRequest> + Sync + Send,
+        > = Box::new(grpc::protobuf::MarshallerProtobuf);
 
         let mut req = ipfs::GetFileRequest::new();
         req.set_ipfs_path(request.ipfs_path);
@@ -213,8 +208,9 @@ impl From<GetFileRequest> for Vec<u8> {
 
 impl From<AddFileRequest> for Vec<u8> {
     fn from(request: AddFileRequest) -> Self {
-        let marshaller: Box<dyn Marshaller<ipfs::AddFileRequest> + Sync + Send> =
-            Box::new(grpc::protobuf::MarshallerProtobuf);
+        let marshaller: Box<
+            dyn Marshaller<ipfs::AddFileRequest> + Sync + Send,
+        > = Box::new(grpc::protobuf::MarshallerProtobuf);
 
         let mut req = ipfs::AddFileRequest::new();
         req.set_file_path(request.file_path);
