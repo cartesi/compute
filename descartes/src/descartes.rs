@@ -280,75 +280,19 @@ impl DApp<()> for Descartes {
             "WaitingChallengeDrives" => {
                 for drive in &ctx.input_drives {
                     if drive.needs_logger {
-                        let request = GetFileRequest {
-                            ipfs_path: drive.ipfs_path.clone(),
-                            log2_size: drive.log2_size.as_u64() as u32,
-                            output_path: format!(
-                                "/opt/cartesi/srv/descartes/flashdrive/{:x}",
-                                drive.root_hash
-                            ),
-                            // TODO: come up with better timeout
-                            timeout: 120,
-                        };
-
-                        let key = build_ipfs_get_key(drive.ipfs_path.clone());
-                        match archive.get_response(
-                            IPFS_SERVICE_NAME.into(),
-                            key.clone(),
-                            IPFS_METHOD_GET.into(),
-                            request.clone().into(),
+                        if let Err(e) = get_ipfs_drive(
+                            archive,
+                            drive.ipfs_path.clone(),
+                            drive.log2_size.as_u64() as u32,
+                            drive.root_hash,
                         ) {
-                            Ok(data) => {
-                                let response: GetFileResponse = data.into();
-                                info!(
-                                    "Response received from Ipfs {:?}",
-                                    response
-                                );
-
-                                match response.one_of {
-                                    GetFileResponseOneOf::GetProgress(p) => {
-                                        return Err(Error::from(
-                                            ErrorKind::ServiceNeedsRetry(
-                                                IPFS_SERVICE_NAME.to_string(),
-                                                key,
-                                                IPFS_METHOD_GET.into(),
-                                                request.into(),
-                                                "Descartes".into(),
-                                                1,
-                                                p.progress,
-                                                "IPFS still getting"
-                                                    .to_string(),
-                                            ),
-                                        ))
-                                    }
-                                    GetFileResponseOneOf::GetResult(r) => {
-                                        if r.root_hash != drive.root_hash {
-                                            // the root hash of drive doesn't
-                                            // match
-                                            let request = TransactionRequest {
-                                                contract_name: None, // Name not needed, is concern
-                                                concern: instance.concern.clone(),
-                                                value: U256::from(0),
-                                                function: "challengeDrives".into(),
-                                                data: vec![Token::Uint(instance.index)],
-                                                gas: None,
-                                                strategy: transaction::Strategy::Simplest,
-                                            };
-                                            return Ok(Reaction::Transaction(
-                                                request,
-                                            ));
-                                        }
-                                    }
-                                }
-                            }
-                            Err(e) => {
-                                match e.kind() {
-                                    ErrorKind::ResponseInvalidError(
-                                        _service,
-                                        _key,
-                                        _m,
-                                    ) => {
-                                        // drive not found in time
+                            match e.kind() {
+                                ErrorKind::ResponseInvalidError(
+                                    _service,
+                                    _key,
+                                    _m,
+                                ) => {
+                                    if drive.provider != Address::zero() {
                                         let request = TransactionRequest {
                                             contract_name: None, /* Name not needed, is concern */
                                             concern: instance.concern.clone(),
@@ -365,9 +309,9 @@ impl DApp<()> for Descartes {
                                             request,
                                         ));
                                     }
-                                    _ => {
-                                        return Err(e);
-                                    }
+                                }
+                                _ => {
+                                    return Err(e);
                                 }
                             }
                         }
@@ -774,77 +718,46 @@ fn react_by_machine_output(
                 request.into(),
             )?;
         } else {
-            // get logger drive
-            let request = GetFileRequest {
-                ipfs_path: drive.ipfs_path.clone(),
-                log2_size: drive.log2_size.as_u64() as u32,
-                output_path: format!(
-                    "/opt/cartesi/srv/descartes/flashdrive/{:x}",
-                    drive.root_hash
-                ),
-                // TODO: come up with better timeout
-                timeout: 120,
-            };
-
-            let ipfs_key = build_ipfs_get_key(drive.ipfs_path.clone());
-
-            let drive_path = match archive.get_response(
-                IPFS_SERVICE_NAME.into(),
-                ipfs_key.clone(),
-                IPFS_METHOD_GET.into(),
-                request.clone().into(),
+            let drive_path = match get_ipfs_drive(
+                archive,
+                drive.ipfs_path.clone(),
+                drive.log2_size.as_u64() as u32,
+                drive.root_hash,
             ) {
                 // try to get drive from Ipfs first
-                Ok(data) => {
-                    let response: GetFileResponse = data.into();
-                    match response.one_of {
-                        GetFileResponseOneOf::GetResult(s) => s.output_path,
-                        GetFileResponseOneOf::GetProgress(p) => {
-                            return Err(Error::from(
-                                ErrorKind::ServiceNeedsRetry(
-                                    IPFS_SERVICE_NAME.to_string(),
-                                    ipfs_key,
-                                    IPFS_METHOD_GET.into(),
-                                    request.into(),
-                                    "Descartes".into(),
-                                    1,
-                                    p.progress,
-                                    "IPFS still getting".to_string(),
-                                ),
-                            ));
-                        }
-                    }
-                }
+                Ok(output_path) => output_path,
                 Err(e) => {
-                    if drive.provider == Address::zero() {
-                        // keep retrying IPFS since there's no provider
-                        return Err(e);
-                    } else {
-                        // fall back to logger if not found
-                        let request = DownloadFileRequest {
-                            root: drive.root_hash.clone(),
-                            path: format!("{:x}", drive.root_hash),
-                            page_log2_size: 3,
-                            tree_log2_size: drive.log2_size.as_u64(),
-                        };
+                    match e.kind() {
+                        ErrorKind::ResponseInvalidError(_service, _key, _m) => {
+                            // fall back to logger if drive not found in ipfs
+                            let request = DownloadFileRequest {
+                                root: drive.root_hash.clone(),
+                                path: format!("{:x}", drive.root_hash),
+                                page_log2_size: 3,
+                                tree_log2_size: drive.log2_size.as_u64(),
+                            };
 
-                        let processed_response: DownloadFileResponse =
-                            get_logger_response(
-                                archive,
-                                "Descartes".into(),
-                                build_logger_download_key(
-                                    drive.root_hash.clone(),
-                                ),
-                                LOGGER_METHOD_DOWNLOAD.to_string(),
-                                request.into(),
-                            )?
-                            .into();
-                        trace!(
-                            "Downloaded! File stored at: {}...",
+                            let processed_response: DownloadFileResponse =
+                                get_logger_response(
+                                    archive,
+                                    "Descartes".into(),
+                                    build_logger_download_key(
+                                        drive.root_hash.clone(),
+                                    ),
+                                    LOGGER_METHOD_DOWNLOAD.to_string(),
+                                    request.into(),
+                                )?
+                                .into();
+                            trace!(
+                                "Downloaded! File stored at: {}...",
+                                processed_response.path
+                            );
+
                             processed_response.path
-                        );
-
-                        processed_response.path
+                        }
+                        _ => {
+                            return Err(e);
+                        }
                     }
                 }
             };
@@ -1050,6 +963,68 @@ fn react_by_machine_output(
         _ => {
             error!("Challenger shouldn't get here!");
             return Ok(Reaction::Idle); //@dev this shouldnt happen, shoud we explode here? how?
+        }
+    }
+}
+
+fn get_ipfs_drive(
+    archive: &Archive,
+    ipfs_path: String,
+    log2_size: u32,
+    root_hash: H256,
+) -> std::result::Result<String, Error> {
+    let request = GetFileRequest {
+        ipfs_path: ipfs_path.clone(),
+        log2_size: log2_size,
+        output_path: format!(
+            "/opt/cartesi/srv/descartes/flashdrive/{:x}",
+            root_hash
+        ),
+        // TODO: come up with better timeout
+        timeout: 120,
+    };
+
+    let key = build_ipfs_get_key(ipfs_path);
+    match archive.get_response(
+        IPFS_SERVICE_NAME.into(),
+        key.clone(),
+        IPFS_METHOD_GET.into(),
+        request.clone().into(),
+    ) {
+        Ok(data) => {
+            let response: GetFileResponse = data.into();
+            info!("Response received from Ipfs {:?}", response);
+
+            match response.one_of {
+                GetFileResponseOneOf::GetProgress(p) => {
+                    return Err(Error::from(ErrorKind::ServiceNeedsRetry(
+                        IPFS_SERVICE_NAME.to_string(),
+                        key,
+                        IPFS_METHOD_GET.into(),
+                        request.into(),
+                        "Descartes".into(),
+                        1,
+                        p.progress,
+                        "IPFS still getting".to_string(),
+                    )))
+                }
+                GetFileResponseOneOf::GetResult(r) => {
+                    if r.root_hash != root_hash {
+                        return Err(Error::from(
+                            ErrorKind::ResponseInvalidError(
+                                IPFS_SERVICE_NAME.to_string(),
+                                key,
+                                "".to_string(),
+                            ),
+                        ));
+                    } else {
+                        Ok(r.output_path)
+                    }
+                }
+            }
+        }
+        Err(e) => {
+            return Err(e);
         }
     }
 }
