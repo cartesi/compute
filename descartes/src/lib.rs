@@ -80,7 +80,7 @@ pub fn get_logger_response(
             if response.status == 0 {
                 Ok(raw_response)
             } else {
-                error!(
+                warn!(
                     "Fail to get logger response, status: {}, description: {}",
                     response.status, response.description
                 );
@@ -101,7 +101,7 @@ pub fn get_logger_response(
             if response.status == 0 {
                 Ok(raw_response)
             } else {
-                error!(
+                warn!(
                     "Fail to get logger response, status: {}, description: {}",
                     response.status, response.description
                 );
