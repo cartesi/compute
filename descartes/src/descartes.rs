@@ -973,9 +973,22 @@ fn get_ipfs_drive(
     log2_size: u32,
     root_hash: H256,
 ) -> std::result::Result<String, Error> {
+    let key = build_ipfs_get_key(ipfs_path.clone());
+
+    let invalid_error = Error::from(ErrorKind::ResponseInvalidError(
+        IPFS_SERVICE_NAME.to_string(),
+        key.clone(),
+        "".to_string(),
+    ));
+
+    // skip empty ipfs path
+    if ipfs_path == "" {
+        return Err(invalid_error);
+    }
+
     let request = GetFileRequest {
-        ipfs_path: ipfs_path.clone(),
-        log2_size: log2_size,
+        ipfs_path,
+        log2_size,
         output_path: format!(
             "/opt/cartesi/srv/descartes/flashdrive/{:x}",
             root_hash
@@ -984,7 +997,6 @@ fn get_ipfs_drive(
         timeout: 120,
     };
 
-    let key = build_ipfs_get_key(ipfs_path);
     match archive.get_response(
         IPFS_SERVICE_NAME.into(),
         key.clone(),
@@ -997,7 +1009,7 @@ fn get_ipfs_drive(
 
             match response.one_of {
                 GetFileResponseOneOf::GetProgress(p) => {
-                    return Err(Error::from(ErrorKind::ServiceNeedsRetry(
+                    Err(Error::from(ErrorKind::ServiceNeedsRetry(
                         IPFS_SERVICE_NAME.to_string(),
                         key,
                         IPFS_METHOD_GET.into(),
@@ -1010,21 +1022,13 @@ fn get_ipfs_drive(
                 }
                 GetFileResponseOneOf::GetResult(r) => {
                     if r.root_hash != root_hash {
-                        return Err(Error::from(
-                            ErrorKind::ResponseInvalidError(
-                                IPFS_SERVICE_NAME.to_string(),
-                                key,
-                                "".to_string(),
-                            ),
-                        ));
+                        Err(invalid_error)
                     } else {
                         Ok(r.output_path)
                     }
                 }
             }
         }
-        Err(e) => {
-            return Err(e);
-        }
+        Err(e) => Err(e),
     }
 }
