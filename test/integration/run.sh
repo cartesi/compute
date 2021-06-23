@@ -25,25 +25,30 @@ jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | dock
 wait-for-url http://localhost:8545
 
 
-# testing HelloWorld
-# TODO: removing test for now because of Machine Manager intermittent bug when running many jobs in parallel
+# TODO: removing some tests for now because of Machine Manager intermittent bug when running many jobs in parallel
 # https://github.com/cartesi-corp/machine-manager/issues/46
+
+# testing HelloWorld
+# TODO: removing test temporarily
 # ./scripts/helloworld/build-cartesi-machine.sh ./machines
 # npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
 
 # testing Calculator
 ./scripts/calculator/build-cartesi-machine.sh ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+# TODO: removing test temporarily
+# npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 export PROVIDER=0x0000000000000000000000000000000000000000
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 unset PROVIDER
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
+# TODO: removing test temporarily
+# npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
-./scripts/ipfs/run.sh
-./scripts/ipfs/run-large-1M.sh
-./scripts/ipfs/run-logger-fallback.sh
+# TODO: removing tests temporarily
+# ./scripts/ipfs/run.sh
+# ./scripts/ipfs/run-large-1M.sh
+# ./scripts/ipfs/run-logger-fallback.sh
 ./scripts/ipfs/run-no-provider.sh
 
 
