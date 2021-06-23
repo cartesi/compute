@@ -9,10 +9,10 @@
   dependencies:
     "@cartesi/util" "^2.0.1"
 
-"@cartesi/logger@^0.7.0":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@cartesi/logger/-/logger-0.7.0.tgz#29b2ce945f06c517e065268ffce2151a3965ca9f"
-  integrity sha512-SLaOg4XHzESIA6hdC5zBXBoefLmHR5YpDK26tNxCiyU0+C+hlKeR6MAh6MWyh7wS0Q8SxFYJSd0XA/1Fmuabtw==
+"@cartesi/logger@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@cartesi/logger/-/logger-0.7.1.tgz#1270363c9fc958fac6a8a513eeb4dd3c33cde2f5"
+  integrity sha512-0oMZXKfDe2RJzqIvPSKyaNfIDd+JEwHklUbgBQQVd0KHHxWWnTcCCAEkv30Kww6UkBKhFSWUrzkihInuBDH3zg==
   dependencies:
     "@cartesi/util" "^2.0.1"
 

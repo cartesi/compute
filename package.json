@@ -1,6 +1,6 @@
 {
     "name": "@cartesi/descartes-sdk",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "Cartesi Descartes SDK",
     "scripts": {
         "build": "hardhat compile && tsc",
@@ -57,7 +57,7 @@
     "homepage": "https://github.com/cartesi/descartes#readme",
     "dependencies": {
         "@cartesi/arbitration": "^0.6.0",
-        "@cartesi/logger": "^0.7.0",
+        "@cartesi/logger": "^0.7.1",
         "@cartesi/machine-solidity-step": "^0.7.0",
         "@cartesi/util": "^2.0.1"
     },

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2021-06-23
+
+### Added
+
+- Support for input drives with no assigned provider (a.k.a. "off-chain drives")
+- Docker Compose template supporting known networks, which allows testing Descartes with local nodes pointing at those networks
+### Changed
+
+- Challenger node now by default submits a confirmation transaction when results match, which may incur in additional fees but speeds up execution
+- Fixed off-chain support for downloading Logger data from Matic Testnet
+- No longer trying to download Logger data from IPFS when no IPFS configuration is specified
 ## [1.1.1] - 2021-03-28
 
 ### Changed
