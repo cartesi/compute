@@ -36,9 +36,9 @@
         "deploy:rinkeby": "Deploy contracts to rinkeby. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:kovan": "Deploy contracts to kovan. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:goerli": "Deploy contracts to goerli. Requires two environment variables: PROJECT_ID and MNEMONIC.",
-        "deploy:matic_testnet": "Deploy contracts to matic_testnet.",
-        "deploy:bsc_testnet": "Deploy contracts to bsc_testnet.",
-        "deploy:avax_testnet": "Deploy contracts to avax_testnet."
+        "deploy:matic_testnet": "Deploy contracts to matic_testnet. Requires one environment variable: MNEMONIC.",
+        "deploy:bsc_testnet": "Deploy contracts to bsc_testnet. Requires one environment variable: MNEMONIC.",
+        "deploy:avax_testnet": "Deploy contracts to avax_testnet. Requires one environment variable: MNEMONIC."
     },
     "repository": {
         "type": "git",
