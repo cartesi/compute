@@ -35,7 +35,8 @@ wait-for-url http://localhost:8545
 
 # testing Calculator
 ./scripts/calculator/build-cartesi-machine.sh ./machines
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
+# TODO: removing test temporarily
+# npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
 # TODO: removing test temporarily
 # npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 export PROVIDER=0x0000000000000000000000000000000000000000
