@@ -50,11 +50,7 @@ const config: HardhatUserConfig = {
         rinkeby: infuraNetwork("rinkeby", 4, 6283185),
         kovan: infuraNetwork("kovan", 42, 6283185),
         goerli: infuraNetwork("goerli", 5, 6283185),
-        matic_testnet: {
-            url: "https://rpc-mumbai.maticvigil.com",
-            chainId: 80001,
-            accounts: mnemonic ? { mnemonic } : undefined,
-        },
+        matic_testnet: infuraNetwork("polygon-mumbai", 80001),
         bsc_testnet: {
             url: "https://data-seed-prebsc-1-s1.binance.org:8545",
             chainId: 97,
