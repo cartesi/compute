@@ -39,12 +39,12 @@ use super::{
 use compute::{
     build_session_proof_key, build_session_read_key, build_session_run_key,
     build_session_write_key, cartesi_machine, get_run_result,
-    NewSessionRequest, NewSessionResponse, SessionGetProofRequest,
-    SessionGetProofResponse, SessionReadMemoryRequest,
+    EndSessionRequest, NewSessionRequest, NewSessionResponse,
+    SessionGetProofRequest, SessionGetProofResponse, SessionReadMemoryRequest,
     SessionReadMemoryResponse, SessionRunRequest, SessionRunResult,
-    SessionWriteMemoryRequest, TerminateSessionRequest, EMULATOR_METHOD_NEW,
-    EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_TERMINATE,
-    EMULATOR_METHOD_WRITE, EMULATOR_SERVICE_NAME,
+    SessionWriteMemoryRequest, EMULATOR_METHOD_END, EMULATOR_METHOD_NEW,
+    EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE,
+    EMULATOR_SERVICE_NAME,
 };
 use ipfs_service::{
     GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET,
@@ -250,16 +250,16 @@ impl DApp<()> for Descartes {
             | "ChallengerWon"
             | "ClaimerWon"
             | "ConsensusResult" => {
-                let request = TerminateSessionRequest {
+                let request = EndSessionRequest {
                     session_id: machine_id.clone(),
-                    ignore: true,
+                    silent: true,
                 };
 
                 // send terminateSession request to the emulator service
                 let _processed_response = archive.get_response(
                     EMULATOR_SERVICE_NAME.to_string(),
                     machine_id.clone(),
-                    EMULATOR_METHOD_TERMINATE.to_string(),
+                    EMULATOR_METHOD_END.to_string(),
                     request.into(),
                 )?;
 
