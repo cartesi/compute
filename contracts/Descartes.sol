@@ -348,10 +348,6 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                     drive.driveLog2Size >= 3,
                     "directValue has to be at least one word"
                 );
-                require(
-                    drive.driveLog2Size <= 10,
-                    "directValue cannot be bigger than 1kB"
-                );
 
                 if (!drive.waitsProvider) {
                     // direct drive provided at instantiation
@@ -372,8 +368,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                         );
                     }
 
-                    bytes32[] memory data =
-                        getWordHashesFromBytes(paddedDirectValue);
+                    bytes32[] memory data = getWordHashesFromBytes(
+                        paddedDirectValue
+                    );
                     i.driveHash[j] = Merkle.calculateRootFromPowerOfTwo(data);
                 } else {
                     // direct drive provided in later ProviderPhase
@@ -545,8 +542,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes32[] memory _outputSiblings
     ) public onlyActive(_index) onlyByClaimer(_index) increasesNonce(_index) {
         DescartesCtx storage i = instance[_index];
-        bool deadlinePassed =
-            block.timestamp > i.timeOfLastMove + getMaxStateDuration(_index);
+        bool deadlinePassed = block.timestamp >
+            i.timeOfLastMove + getMaxStateDuration(_index);
         require(
             i.currentState == State.WaitingClaim ||
                 (i.currentState == State.WaitingChallengeDrives &&
@@ -966,8 +963,8 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @param _index index of Descartes instance to abort
     function abortByDeadline(uint256 _index) public onlyActive(_index) {
         DescartesCtx storage i = instance[_index];
-        bool afterDeadline =
-            block.timestamp > (i.timeOfLastMove + getMaxStateDuration(_index));
+        bool afterDeadline = block.timestamp >
+            (i.timeOfLastMove + getMaxStateDuration(_index));
 
         require(afterDeadline, "Deadline is not over for this specific state");
 
@@ -1034,19 +1031,17 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
                 instance[_index].providerDrivesPointer <
                 instance[_index].providerDrives.length
             ) {
-                userToBlame = i.inputDrives[
-                    i.providerDrives[i.providerDrivesPointer]
-                ]
-                    .provider;
+                userToBlame = i
+                .inputDrives[i.providerDrives[i.providerDrivesPointer]]
+                .provider;
                 // check if resulted from the WaitingReveals phase
             } else if (
                 instance[_index].revealDrivesPointer <
                 instance[_index].revealDrives.length
             ) {
-                userToBlame = i.inputDrives[
-                    i.revealDrives[i.revealDrivesPointer]
-                ]
-                    .provider;
+                userToBlame = i
+                .inputDrives[i.revealDrives[i.revealDrivesPointer]]
+                .provider;
             }
             return (false, false, userToBlame, "");
         }
@@ -1071,11 +1066,10 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     {
         bytes32[] memory data = new bytes32[](4);
         for (uint256 i = 0; i < 4; i++) {
-            bytes8 dataBytes8 =
-                bytes8(
-                    (_value << (i * 64)) &
-                        0xffffffffffffffff000000000000000000000000000000000000000000000000
-                );
+            bytes8 dataBytes8 = bytes8(
+                (_value << (i * 64)) &
+                    0xffffffffffffffff000000000000000000000000000000000000000000000000
+            );
             data[i] = keccak256(abi.encodePacked(dataBytes8));
         }
         return data;
