@@ -3,7 +3,7 @@
   "chainId": "80001",
   "contracts": {
     "Descartes": {
-      "address": "0x8C312Df85a05BD195F5727b5a091556a18F073Af",
+      "address": "0xC137b4c2a6019C8c4Af2615219a59A0Bd1afD5DA",
       "abi": [
         {
           "inputs": [
