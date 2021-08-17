@@ -7,7 +7,7 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 # install wagyu utility for mnemonic handling
-RUN cargo install wagyu
+RUN cargo install wagyu --locked
 
 WORKDIR $BASE/descartes
 
