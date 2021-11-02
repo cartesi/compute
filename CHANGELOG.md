@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+<<<<<<< HEAD
 ## [1.3.0] - 2022-02-04
 
 ### Changed
@@ -18,10 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.2.2] - 2021-09-29
 
-### Changed
-
 -   Fixed build issue due to changes in Rust Cargo dependencies
 
+=======
+- Fixed build issue due to changes in Rust Cargo dependencies
 ## [1.2.1] - 2021-07-24
 
 ### Changed
