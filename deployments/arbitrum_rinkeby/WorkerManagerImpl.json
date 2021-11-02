@@ -1,0 +1,372 @@
+{
+  "address": "0x8894F1200Ab355Dd47E6338B7f02B9BD7ed50481",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "JobAccepted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "JobOffer",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "JobRejected",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        }
+      ],
+      "name": "Retired",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "acceptJob",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "cancelHire",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getUser",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "hire",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isAvailable",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isOwned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isPending",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isRetired",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rejectJob",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address payable",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "retire",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x2cd381ae3550c93337a356203b2374f49039accacb50c4ed115475352406514c",
+  "receipt": {
+    "to": null,
+    "from": "0xD63A9d27E7A573e28889A363310443Cba076D546",
+    "contractAddress": "0x8894F1200Ab355Dd47E6338B7f02B9BD7ed50481",
+    "transactionIndex": 0,
+    "gasUsed": "5464980",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xffbcf7971abf90d9832ba1f2b68ca782bf2fea790746bd0b4abc70697d0cd17f",
+    "transactionHash": "0x2cd381ae3550c93337a356203b2374f49039accacb50c4ed115475352406514c",
+    "logs": [],
+    "blockNumber": 6124700,
+    "cumulativeGasUsed": "45720",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"JobAccepted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"JobOffer\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"JobRejected\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"Retired\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"acceptJob\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"cancelHire\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"getUser\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"hire\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"workerAddress\",\"type\":\"address\"}],\"name\":\"isAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"isOwned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"workerAddress\",\"type\":\"address\"}],\"name\":\"isPending\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"isRetired\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rejectJob\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address payable\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"retire\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"isAvailable(address)\":{\"params\":{\"workerAddress\":\"address of the worker node\"}},\"isPending(address)\":{\"params\":{\"workerAddress\":\"address of the worker node\"}}},\"stateVariables\":{\"MAXIMUM_FUNDING\":{\"details\":\"transfers bigger than maximum value should be done directly\"},\"MINIMUM_FUNDING\":{\"details\":\"user can only hire a worker if he sends more than minimum value\"},\"stateOf\":{\"details\":\"mapping from worker to its internal state\"},\"userOf\":{\"details\":\"mapping from worker to its user\"}},\"version\":1},\"userdoc\":{\"events\":{\"JobOffer(address,address)\":{\"notice\":\"Events signalling every state transition\"}},\"kind\":\"user\",\"methods\":{\"acceptJob()\":{\"notice\":\"Called by the worker to accept the job\"},\"isAvailable(address)\":{\"notice\":\"Returns true if worker node is available\"},\"isPending(address)\":{\"notice\":\"Returns true if worker node is pending\"},\"rejectJob()\":{\"notice\":\"Called by the worker to reject a job offer\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/WorkerManagerImpl.sol\":\"WorkerManagerImpl\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/WorkerManager.sol\":{\"content\":\"// Copyright 2010 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n/// @title WorkerManager\\n/// @author Danilo Tuler\\npragma solidity ^0.7.0;\\n\\ninterface WorkerManager {\\n    /// @notice Returns true if worker node is available\\n    /// @param workerAddress address of the worker node\\n    function isAvailable(address workerAddress) external view returns (bool);\\n\\n    /// @notice Returns true if worker node is pending\\n    /// @param workerAddress address of the worker node\\n    function isPending(address workerAddress) external view returns (bool);\\n\\n    /// @notice Get the owner of the worker node\\n    /// @param workerAddress address of the worker node\\n    function getOwner(address workerAddress) external view returns (address);\\n\\n    /// @notice Get the user of the worker node, which may not be the owner yet, or how was the previous owner of a retired node\\n    function getUser(address workerAddress) external view returns (address);\\n\\n    /// @notice Returns true if worker node is owned by some user\\n    function isOwned(address workerAddress) external view returns (bool);\\n\\n    /// @notice Asks the worker to work for the sender. Sender needs to pay something.\\n    /// @param workerAddress address of the worker\\n    function hire(address payable workerAddress) external payable;\\n\\n    /// @notice Called by the worker to accept the job\\n    function acceptJob() external;\\n\\n    /// @notice Called by the worker to reject a job offer\\n    function rejectJob() external payable;\\n\\n    /// @notice Called by the user to cancel a job offer\\n    /// @param workerAddress address of the worker node\\n    function cancelHire(address workerAddress) external;\\n\\n    /// @notice Called by the user to retire his worker.\\n    /// @param workerAddress address of the worker to be retired\\n    /// @dev this also removes all authorizations in place\\n    function retire(address payable workerAddress) external;\\n\\n    /// @notice Returns true if worker node was retired by its owner\\n    function isRetired(address workerAddress) external view returns (bool);\\n\\n    /// @notice Events signalling every state transition\\n    event JobOffer(address indexed worker, address indexed user);\\n    event JobAccepted(address indexed worker, address indexed user);\\n    event JobRejected(address indexed worker, address indexed user);\\n    event Retired(address indexed worker, address indexed user);\\n}\\n\",\"keccak256\":\"0x4125ae5b95704439e239db685d26aef470a341ae5b4668a01f31500ba352d72e\",\"license\":\"Apache-2.0\"},\"contracts/WorkerManagerImpl.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n/// @title WorkerManagerImpl\\n/// @author Danilo Tuler\\npragma solidity ^0.7.0;\\n\\nimport \\\"./WorkerManager.sol\\\";\\n\\ncontract WorkerManagerImpl is WorkerManager {\\n    /// @dev user can only hire a worker if he sends more than minimum value\\n    uint256 constant MINIMUM_FUNDING = 0.001 ether;\\n\\n    /// @dev transfers bigger than maximum value should be done directly\\n    uint256 constant MAXIMUM_FUNDING = 3 ether;\\n\\n    /// @notice A worker can be in 4 different states, starting from Available\\n    enum WorkerState {Available, Pending, Owned, Retired}\\n\\n    /// @dev mapping from worker to its user\\n    mapping(address => address payable) private userOf;\\n\\n    /// @dev mapping from worker to its internal state\\n    mapping(address => WorkerState) private stateOf;\\n\\n    function isAvailable(address workerAddress)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return stateOf[workerAddress] == WorkerState.Available;\\n    }\\n\\n    function isPending(address workerAddress)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return stateOf[workerAddress] == WorkerState.Pending;\\n    }\\n\\n    function getOwner(address _workerAddress)\\n        public\\n        override\\n        view\\n        returns (address)\\n    {\\n        return\\n            stateOf[_workerAddress] == WorkerState.Owned\\n                ? userOf[_workerAddress]\\n                : address(0);\\n    }\\n\\n    function getUser(address _workerAddress)\\n        public\\n        override\\n        view\\n        returns (address)\\n    {\\n        return userOf[_workerAddress];\\n    }\\n\\n    function isOwned(address _workerAddress)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return stateOf[_workerAddress] == WorkerState.Owned;\\n    }\\n\\n    function hire(address payable _workerAddress) public override payable {\\n        require(isAvailable(_workerAddress), \\\"worker is not available\\\");\\n        require(_workerAddress != address(0), \\\"worker address can not be 0x0\\\");\\n        require(msg.value >= MINIMUM_FUNDING, \\\"funding below minimum\\\");\\n        require(msg.value <= MAXIMUM_FUNDING, \\\"funding above maximum\\\");\\n\\n        // set owner\\n        userOf[_workerAddress] = msg.sender;\\n\\n        // change state\\n        stateOf[_workerAddress] = WorkerState.Pending;\\n\\n        // transfer ether to worker\\n        _workerAddress.transfer(msg.value);\\n\\n        // emit event\\n        emit JobOffer(_workerAddress, msg.sender);\\n    }\\n\\n    function acceptJob() public override {\\n        require(\\n            userOf[msg.sender] != address(0),\\n            \\\"worker does not have a job offer\\\"\\n        );\\n        require(\\n            stateOf[msg.sender] == WorkerState.Pending,\\n            \\\"worker not is not in pending state\\\"\\n        );\\n\\n        // change state\\n        stateOf[msg.sender] = WorkerState.Owned;\\n        // from now on getOwner will return the user\\n\\n        // emit event\\n        emit JobAccepted(msg.sender, userOf[msg.sender]);\\n    }\\n\\n    function rejectJob() public override payable {\\n        require(\\n            userOf[msg.sender] != address(0),\\n            \\\"worker does not have a job offer\\\"\\n        );\\n\\n        address payable owner = userOf[msg.sender];\\n\\n        // reset hirer back to null\\n        userOf[msg.sender] = address(0);\\n\\n        // change state\\n        stateOf[msg.sender] = WorkerState.Available;\\n\\n        // return the money\\n        owner.transfer(msg.value);\\n\\n        // emit event\\n        emit JobRejected(msg.sender, userOf[msg.sender]);\\n    }\\n\\n    function cancelHire(address _workerAddress) public override {\\n        require(\\n            userOf[_workerAddress] != address(0),\\n            \\\"worker does not have a job offer\\\"\\n        );\\n\\n        require(\\n            userOf[_workerAddress] == msg.sender,\\n            \\\"only hirer can cancel the offer\\\"\\n        );\\n\\n        // change state\\n        stateOf[_workerAddress] = WorkerState.Retired;\\n\\n        // emit event\\n        emit JobRejected(_workerAddress, msg.sender);\\n    }\\n\\n    function retire(address payable _workerAddress) public override {\\n        require(\\n            stateOf[_workerAddress] == WorkerState.Owned,\\n            \\\"worker not owned\\\"\\n        );\\n        require(\\n            userOf[_workerAddress] == msg.sender,\\n            \\\"only owner can retire worker\\\"\\n        );\\n\\n        // change state\\n        stateOf[_workerAddress] = WorkerState.Retired;\\n\\n        // emit event\\n        emit Retired(_workerAddress, msg.sender);\\n    }\\n\\n    function isRetired(address _workerAddress)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return stateOf[_workerAddress] == WorkerState.Retired;\\n    }\\n}\\n\",\"keccak256\":\"0x0a919bfb8480f904db94fc4f0b58f80fba8c990060ff481916956f7b07290228\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610a5f806100206000396000f3fe60806040526004361061009c5760003560e01c80639e6371ba116100645780639e6371ba14610189578063a00745b6146101bc578063b64b3bed146101ef578063d9d6bd8614610222578063f4dc754b14610248578063fa5441611461027b5761009c565b806303d6e81e146100a15780632896f60b146100ab5780636d3c6275146100f25780636f77926b146101255780639b789b7e14610174575b600080fd5b6100a96102ae565b005b3480156100b757600080fd5b506100de600480360360208110156100ce57600080fd5b50356001600160a01b03166103c6565b604080519115158252519081900360200190f35b3480156100fe57600080fd5b506100de6004803603602081101561011557600080fd5b50356001600160a01b03166103f8565b34801561013157600080fd5b506101586004803603602081101561014857600080fd5b50356001600160a01b0316610401565b604080516001600160a01b039092168252519081900360200190f35b34801561018057600080fd5b506100a961041f565b34801561019557600080fd5b506100a9600480360360208110156101ac57600080fd5b50356001600160a01b031661053e565b3480156101c857600080fd5b506100de600480360360208110156101df57600080fd5b50356001600160a01b0316610668565b3480156101fb57600080fd5b506100a96004803603602081101561021257600080fd5b50356001600160a01b0316610671565b6100a96004803603602081101561023857600080fd5b50356001600160a01b0316610799565b34801561025457600080fd5b506100de6004803603602081101561026b57600080fd5b50356001600160a01b03166109a5565b34801561028757600080fd5b506101586004803603602081101561029e57600080fd5b50356001600160a01b03166109ae565b336000908152602081905260409020546001600160a01b0316610318576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b3360009081526020818152604080832080546001600160a01b031981169091556001909252808320805460ff19169055516001600160a01b039091169182913480156108fc0292909190818181858888f1935050505015801561037f573d6000803e3d6000fd5b50336000818152602081905260408082205490516001600160a01b0390911692917fac8bfc64efe7b663f325ca81c7468a291a868aacc74c8f91cdc5c8141c15e38a91a350565b6000805b6001600160a01b03831660009081526001602052604090205460ff1660038111156103f157fe5b1492915050565b600060036103ca565b6001600160a01b039081166000908152602081905260409020541690565b336000908152602081905260409020546001600160a01b0316610489576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b60013360009081526001602052604090205460ff1660038111156104a957fe5b146104e55760405162461bcd60e51b8152600401808060200182810382526022815260200180610a086022913960400191505060405180910390fd5b336000818152600160209081526040808320805460ff19166002179055908290528082205490516001600160a01b0390911692917f0cfa12ab8ee8dc6f9b68938d5e764dafed737d43dc5ec8443abf81e645276eb691a3565b60026001600160a01b03821660009081526001602052604090205460ff16600381111561056757fe5b146105ac576040805162461bcd60e51b815260206004820152601060248201526f1ddbdc9ad95c881b9bdd081bdddb995960821b604482015290519081900360640190fd5b6001600160a01b0381811660009081526020819052604090205416331461061a576040805162461bcd60e51b815260206004820152601c60248201527f6f6e6c79206f776e65722063616e2072657469726520776f726b657200000000604482015290519081900360640190fd5b6001600160a01b038116600081815260016020526040808220805460ff19166003179055513392917f657b373e1262c26d1f1a83e8949f0af9067fe48026b308e47eec5ef6b40ff25d91a350565b600060016103ca565b6001600160a01b03818116600090815260208190526040902054166106dd576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b6001600160a01b0381811660009081526020819052604090205416331461074b576040805162461bcd60e51b815260206004820152601f60248201527f6f6e6c792068697265722063616e2063616e63656c20746865206f6666657200604482015290519081900360640190fd5b6001600160a01b038116600081815260016020526040808220805460ff19166003179055513392917fac8bfc64efe7b663f325ca81c7468a291a868aacc74c8f91cdc5c8141c15e38a91a350565b6107a2816103c6565b6107f3576040805162461bcd60e51b815260206004820152601760248201527f776f726b6572206973206e6f7420617661696c61626c65000000000000000000604482015290519081900360640190fd5b6001600160a01b03811661084e576040805162461bcd60e51b815260206004820152601d60248201527f776f726b657220616464726573732063616e206e6f7420626520307830000000604482015290519081900360640190fd5b66038d7ea4c680003410156108a2576040805162461bcd60e51b815260206004820152601560248201527466756e64696e672062656c6f77206d696e696d756d60581b604482015290519081900360640190fd5b6729a2241af62c00003411156108f7576040805162461bcd60e51b815260206004820152601560248201527466756e64696e672061626f7665206d6178696d756d60581b604482015290519081900360640190fd5b6001600160a01b03811660009081526020818152604080832080546001600160a01b03191633179055600191829052909120805460ff1916828002179055506040516001600160a01b038216903480156108fc02916000818181858888f1935050505015801561096b573d6000803e3d6000fd5b5060405133906001600160a01b038316907f2e0aa97ef0e6f4f76319861c90e91beec7a7a44a698cab856dfc1985a0c588f090600090a350565b600060026103ca565b600060026001600160a01b03831660009081526001602052604090205460ff1660038111156109d957fe5b146109e5576000610a01565b6001600160a01b03808316600090815260208190526040902054165b9291505056fe776f726b6572206e6f74206973206e6f7420696e2070656e64696e67207374617465a2646970667358221220f97ae1ecee63bfe102f0fe240b3342a47c2b40b0b0408356358d3cde0591b1fe64736f6c63430007040033",
+  "deployedBytecode": "0x60806040526004361061009c5760003560e01c80639e6371ba116100645780639e6371ba14610189578063a00745b6146101bc578063b64b3bed146101ef578063d9d6bd8614610222578063f4dc754b14610248578063fa5441611461027b5761009c565b806303d6e81e146100a15780632896f60b146100ab5780636d3c6275146100f25780636f77926b146101255780639b789b7e14610174575b600080fd5b6100a96102ae565b005b3480156100b757600080fd5b506100de600480360360208110156100ce57600080fd5b50356001600160a01b03166103c6565b604080519115158252519081900360200190f35b3480156100fe57600080fd5b506100de6004803603602081101561011557600080fd5b50356001600160a01b03166103f8565b34801561013157600080fd5b506101586004803603602081101561014857600080fd5b50356001600160a01b0316610401565b604080516001600160a01b039092168252519081900360200190f35b34801561018057600080fd5b506100a961041f565b34801561019557600080fd5b506100a9600480360360208110156101ac57600080fd5b50356001600160a01b031661053e565b3480156101c857600080fd5b506100de600480360360208110156101df57600080fd5b50356001600160a01b0316610668565b3480156101fb57600080fd5b506100a96004803603602081101561021257600080fd5b50356001600160a01b0316610671565b6100a96004803603602081101561023857600080fd5b50356001600160a01b0316610799565b34801561025457600080fd5b506100de6004803603602081101561026b57600080fd5b50356001600160a01b03166109a5565b34801561028757600080fd5b506101586004803603602081101561029e57600080fd5b50356001600160a01b03166109ae565b336000908152602081905260409020546001600160a01b0316610318576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b3360009081526020818152604080832080546001600160a01b031981169091556001909252808320805460ff19169055516001600160a01b039091169182913480156108fc0292909190818181858888f1935050505015801561037f573d6000803e3d6000fd5b50336000818152602081905260408082205490516001600160a01b0390911692917fac8bfc64efe7b663f325ca81c7468a291a868aacc74c8f91cdc5c8141c15e38a91a350565b6000805b6001600160a01b03831660009081526001602052604090205460ff1660038111156103f157fe5b1492915050565b600060036103ca565b6001600160a01b039081166000908152602081905260409020541690565b336000908152602081905260409020546001600160a01b0316610489576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b60013360009081526001602052604090205460ff1660038111156104a957fe5b146104e55760405162461bcd60e51b8152600401808060200182810382526022815260200180610a086022913960400191505060405180910390fd5b336000818152600160209081526040808320805460ff19166002179055908290528082205490516001600160a01b0390911692917f0cfa12ab8ee8dc6f9b68938d5e764dafed737d43dc5ec8443abf81e645276eb691a3565b60026001600160a01b03821660009081526001602052604090205460ff16600381111561056757fe5b146105ac576040805162461bcd60e51b815260206004820152601060248201526f1ddbdc9ad95c881b9bdd081bdddb995960821b604482015290519081900360640190fd5b6001600160a01b0381811660009081526020819052604090205416331461061a576040805162461bcd60e51b815260206004820152601c60248201527f6f6e6c79206f776e65722063616e2072657469726520776f726b657200000000604482015290519081900360640190fd5b6001600160a01b038116600081815260016020526040808220805460ff19166003179055513392917f657b373e1262c26d1f1a83e8949f0af9067fe48026b308e47eec5ef6b40ff25d91a350565b600060016103ca565b6001600160a01b03818116600090815260208190526040902054166106dd576040805162461bcd60e51b815260206004820181905260248201527f776f726b657220646f6573206e6f7420686176652061206a6f62206f66666572604482015290519081900360640190fd5b6001600160a01b0381811660009081526020819052604090205416331461074b576040805162461bcd60e51b815260206004820152601f60248201527f6f6e6c792068697265722063616e2063616e63656c20746865206f6666657200604482015290519081900360640190fd5b6001600160a01b038116600081815260016020526040808220805460ff19166003179055513392917fac8bfc64efe7b663f325ca81c7468a291a868aacc74c8f91cdc5c8141c15e38a91a350565b6107a2816103c6565b6107f3576040805162461bcd60e51b815260206004820152601760248201527f776f726b6572206973206e6f7420617661696c61626c65000000000000000000604482015290519081900360640190fd5b6001600160a01b03811661084e576040805162461bcd60e51b815260206004820152601d60248201527f776f726b657220616464726573732063616e206e6f7420626520307830000000604482015290519081900360640190fd5b66038d7ea4c680003410156108a2576040805162461bcd60e51b815260206004820152601560248201527466756e64696e672062656c6f77206d696e696d756d60581b604482015290519081900360640190fd5b6729a2241af62c00003411156108f7576040805162461bcd60e51b815260206004820152601560248201527466756e64696e672061626f7665206d6178696d756d60581b604482015290519081900360640190fd5b6001600160a01b03811660009081526020818152604080832080546001600160a01b03191633179055600191829052909120805460ff1916828002179055506040516001600160a01b038216903480156108fc02916000818181858888f1935050505015801561096b573d6000803e3d6000fd5b5060405133906001600160a01b038316907f2e0aa97ef0e6f4f76319861c90e91beec7a7a44a698cab856dfc1985a0c588f090600090a350565b600060026103ca565b600060026001600160a01b03831660009081526001602052604090205460ff1660038111156109d957fe5b146109e5576000610a01565b6001600160a01b03808316600090815260208190526040902054165b9291505056fe776f726b6572206e6f74206973206e6f7420696e2070656e64696e67207374617465a2646970667358221220f97ae1ecee63bfe102f0fe240b3342a47c2b40b0b0408356358d3cde0591b1fe64736f6c63430007040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "isAvailable(address)": {
+        "params": {
+          "workerAddress": "address of the worker node"
+        }
+      },
+      "isPending(address)": {
+        "params": {
+          "workerAddress": "address of the worker node"
+        }
+      }
+    },
+    "stateVariables": {
+      "MAXIMUM_FUNDING": {
+        "details": "transfers bigger than maximum value should be done directly"
+      },
+      "MINIMUM_FUNDING": {
+        "details": "user can only hire a worker if he sends more than minimum value"
+      },
+      "stateOf": {
+        "details": "mapping from worker to its internal state"
+      },
+      "userOf": {
+        "details": "mapping from worker to its user"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "JobOffer(address,address)": {
+        "notice": "Events signalling every state transition"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "acceptJob()": {
+        "notice": "Called by the worker to accept the job"
+      },
+      "isAvailable(address)": {
+        "notice": "Returns true if worker node is available"
+      },
+      "isPending(address)": {
+        "notice": "Returns true if worker node is pending"
+      },
+      "rejectJob()": {
+        "notice": "Called by the worker to reject a job offer"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 895,
+        "contract": "contracts/WorkerManagerImpl.sol:WorkerManagerImpl",
+        "label": "userOf",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_address,t_address_payable)"
+      },
+      {
+        "astId": 900,
+        "contract": "contracts/WorkerManagerImpl.sol:WorkerManagerImpl",
+        "label": "stateOf",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_enum(WorkerState)890)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_address_payable": {
+        "encoding": "inplace",
+        "label": "address payable",
+        "numberOfBytes": "20"
+      },
+      "t_enum(WorkerState)890": {
+        "encoding": "inplace",
+        "label": "enum WorkerManagerImpl.WorkerState",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_address,t_address_payable)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => address payable)",
+        "numberOfBytes": "32",
+        "value": "t_address_payable"
+      },
+      "t_mapping(t_address,t_enum(WorkerState)890)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => enum WorkerManagerImpl.WorkerState)",
+        "numberOfBytes": "32",
+        "value": "t_enum(WorkerState)890"
+      }
+    }
+  }
+}

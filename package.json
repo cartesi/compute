@@ -1,6 +1,6 @@
 {
     "name": "@cartesi/descartes-sdk",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "description": "Cartesi Descartes SDK",
     "scripts": {
         "build": "hardhat compile && tsc",

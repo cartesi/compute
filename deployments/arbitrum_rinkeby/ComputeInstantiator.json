@@ -1,0 +1,873 @@
+{
+  "address": "0xAfAC426e415339B6f2602Aa4278638cF37de64eF",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_vgInstantiatorAddress",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "ChallengeStarted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "_claimedFinalHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "ClaimSubmitted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_machineAddress",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_finalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "ComputeCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "_state",
+          "type": "uint8"
+        }
+      ],
+      "name": "ComputeFinished",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "ResultConfirmed",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "challenge",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimVictoryByTime",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "confirm",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCurrentState",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timeToStartMachine",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_partitionSize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxCycle",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_picoSecondsToRunInsn",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMaxInstanceDuration",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNonce",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "currentNonce",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getState",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_machine",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_finalTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_claimedFinalHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_currentState",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getSubInstances",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "_addresses",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_indices",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_machineAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_finalTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "instantiate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "isActive",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "isConcerned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsChallengerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsClaimerMissedDeadline",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsClaimerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsConsensusResult",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsWaitingChallange",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsWaitingClaim",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsWaitingConfirmation",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_claimedFinalHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "submitClaim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "winByVG",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xa6d07b7c910c3d6e7af6a4c17ca269b9258f766a0aa4d26692f05223d9d05a6f",
+  "receipt": {
+    "to": null,
+    "from": "0xD63A9d27E7A573e28889A363310443Cba076D546",
+    "contractAddress": "0xAfAC426e415339B6f2602Aa4278638cF37de64eF",
+    "transactionIndex": 0,
+    "gasUsed": "15752912",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x74d445328f993d9c0a347827c5b2f0229b2370e6d9b43b7cb2046eba8af99c01",
+    "transactionHash": "0xa6d07b7c910c3d6e7af6a4c17ca269b9258f766a0aa4d26692f05223d9d05a6f",
+    "logs": [],
+    "blockNumber": 6124720,
+    "cumulativeGasUsed": "364072",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x840C31e0f2F49Ac0Da95b51a87536c6693C00FD8"
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_vgInstantiatorAddress\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"ChallengeStarted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_claimedFinalHash\",\"type\":\"bytes32\"}],\"name\":\"ClaimSubmitted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"_machineAddress\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_finalTime\",\"type\":\"uint256\"}],\"name\":\"ComputeCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"_state\",\"type\":\"uint8\"}],\"name\":\"ComputeFinished\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"ResultConfirmed\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"challenge\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"claimVictoryByTime\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"confirm\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getCurrentState\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_timeToStartMachine\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_partitionSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_maxCycle\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_picoSecondsToRunInsn\",\"type\":\"uint256\"}],\"name\":\"getMaxInstanceDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getNonce\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"currentNonce\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getState\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_deadline\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_machine\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_finalTime\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"_claimedFinalHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_currentState\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getSubInstances\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"_addresses\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"_indices\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_machineAddress\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_finalTime\",\"type\":\"uint256\"}],\"name\":\"instantiate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"isActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"isConcerned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsChallengerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsClaimerMissedDeadline\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsClaimerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsConsensusResult\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsWaitingChallange\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsWaitingClaim\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsWaitingConfirmation\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"bytes32\",\"name\":\"_claimedFinalHash\",\"type\":\"bytes32\"}],\"name\":\"submitClaim\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"winByVG\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"challenge(uint256)\":{\"params\":{\"_index\":\"Index of compute instance which challenger is starting the VG.\"}},\"confirm(uint256)\":{\"params\":{\"_index\":\"Index of compute instance that the challenger is confirming the claim.\"}},\"getMaxInstanceDuration(uint256,uint256,uint256,uint256,uint256)\":{\"params\":{\"_maxCycle\":\"number of instructions until the machine is forcibly halted\",\"_picoSecondsToRunInsn\":\"time the offchain will take to run one instruction\"}},\"instantiate(address,address,uint256,address,bytes32,uint256)\":{\"params\":{\"_challenger\":\"address of the challenger.\",\"_claimer\":\"address of the claimer.\",\"_finalTime\":\"max cycle of the machine for that computation\",\"_initialHash\":\"hash in which both claimer and challenger agree on\",\"_machineAddress\":\"address of the machine that will run the instruction\",\"_roundDuration\":\"duration of the round (security param)\"},\"returns\":{\"_0\":\"Compute index.\"}},\"submitClaim(uint256,bytes32)\":{\"params\":{\"_claimedFinalHash\":\"hash of the machine after computation is completed.\",\"_index\":\"Index of instance that the claimer is interacting with\"}},\"winByVG(uint256)\":{\"params\":{\"_index\":\"Index of compute instance which challenger is starting the VG.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"challenge(uint256)\":{\"notice\":\"Challenger disputes the claim, starting a verification game.\"},\"claimVictoryByTime(uint256)\":{\"notice\":\"Claim victory for opponent timeout.\"},\"confirm(uint256)\":{\"notice\":\"Challenger accepts claim.\"},\"instantiate(address,address,uint256,address,bytes32,uint256)\":{\"notice\":\"Instantiates a compute instance.\"},\"submitClaim(uint256,bytes32)\":{\"notice\":\"Claimer claims the hash of the result of a computation\"},\"winByVG(uint256)\":{\"notice\":\"In case one of the parties wins the verification game, then he or she can call this function to claim victory in this contract as well.\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ComputeInstantiator.sol\":\"ComputeInstantiator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@cartesi/util/contracts/Decorated.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\n\\ncontract Decorated {\\n    // This contract defines several modifiers but does not use\\n    // them - they will be used in derived contracts.\\n    modifier onlyBy(address user) {\\n        require(msg.sender == user, \\\"Cannot be called by user\\\");\\n        _;\\n    }\\n\\n    modifier onlyAfter(uint256 time) {\\n        require(block.timestamp > time, \\\"Cannot be called now\\\");\\n        _;\\n    }\\n}\\n\",\"keccak256\":\"0xdbba019b8f7f93b212a5bbae402ee988321c4fa82ed2b4c9e55b4d7ddf35dcc3\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/Instantiator.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n\\npragma solidity ^0.7.0;\\n\\n\\ninterface Instantiator {\\n\\n    modifier onlyInstantiated(uint256 _index) virtual;\\n\\n    modifier onlyActive(uint256 _index) virtual;\\n\\n    modifier increasesNonce(uint256 _index) virtual;\\n\\n    function isActive(uint256 _index) external view returns (bool);\\n\\n    function getNonce(uint256 _index) external view returns (uint256);\\n\\n    function isConcerned(uint256 _index, address _user) external view returns (bool);\\n\\n    function getSubInstances(uint256 _index, address) external view returns (address[] memory _addresses, uint256[] memory _indices);\\n}\\n\",\"keccak256\":\"0x416e612dc09b10765de32ec06cf0a7ee4e050e16db8bf3b8ad832a6082b7dfd6\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/InstantiatorImpl.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\nimport \\\"./Instantiator.sol\\\";\\n\\nabstract contract InstantiatorImpl is Instantiator {\\n    uint256 public currentIndex = 0;\\n\\n    mapping(uint256 => bool) internal active;\\n    mapping(uint256 => uint256) internal nonce;\\n\\n    modifier onlyInstantiated(uint256 _index) override {\\n        require(currentIndex > _index, \\\"Index not instantiated\\\");\\n        _;\\n    }\\n\\n    modifier onlyActive(uint256 _index) override {\\n        require(currentIndex > _index, \\\"Index not instantiated\\\");\\n        require(isActive(_index), \\\"Index inactive\\\");\\n        _;\\n    }\\n\\n    modifier increasesNonce(uint256 _index) override {\\n        nonce[_index]++;\\n        _;\\n    }\\n\\n    function isActive(uint256 _index) public override view returns (bool) {\\n        return (active[_index]);\\n    }\\n\\n    function getNonce(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyActive(_index)\\n        returns (uint256 currentNonce)\\n    {\\n        return nonce[_index];\\n    }\\n\\n    function deactivate(uint256 _index) internal {\\n        active[_index] = false;\\n        nonce[_index] = 0;\\n    }\\n}\\n\",\"keccak256\":\"0x8f8e29b807e5c55198206a370b4d8751cbd98a663e3f89faff274e2f9d7cae75\",\"license\":\"Apache-2.0\"},\"contracts/ComputeInstantiator.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\n/// @title An instantiator of compute\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/InstantiatorImpl.sol\\\";\\nimport \\\"@cartesi/util/contracts/Decorated.sol\\\";\\nimport \\\"./ComputeInterface.sol\\\";\\nimport \\\"./VGInterface.sol\\\";\\n\\n\\ncontract ComputeInstantiator is InstantiatorImpl, ComputeInterface, Decorated {\\n    // after instantiation, the claimer will submit the final hash\\n    // then the challenger can either accept of challenge.\\n    // in the latter case a verification game will be instantiated\\n    // to resolve the dispute.\\n\\n    VGInterface private vg;\\n\\n    // IMPLEMENT GARBAGE COLLECTOR AFTER AN INSTACE IS FINISHED!\\n    struct ComputeCtx {\\n        address challenger;\\n        address claimer;\\n        uint256 roundDuration; // time interval to interact with this contract\\n        uint256 timeOfLastMove; // last time someone made a move with deadline\\n        address machine; // machine which will run the challenge\\n        bytes32 initialHash;\\n        uint256 finalTime;\\n        bytes32 claimedFinalHash;\\n        uint256 vgInstance; // instance of verification game in case of dispute\\n        state currentState;\\n    }\\n\\n    mapping(uint256 => ComputeCtx) internal instance;\\n\\n    // These are the possible states and transitions of the contract.\\n\\n    // +---+\\n    // |   |\\n    // +---+\\n    //   |\\n    //   | instantiate\\n    //   v\\n    // +--------------+ claimVictoryByTime +-----------------------+\\n    // | WaitingClaim |------------------->| ClaimerMisseddeadline |\\n    // +--------------+                    +-----------------------+\\n    //   |\\n    //   | submitClaim\\n    //   v\\n    // +---------------------+  confirm    +-----------------+\\n    // | WaitingConfirmation |------------>| ConsensusResult |\\n    // +---------------------+ or deadline +-----------------+\\n    //   |\\n    //   | challenge\\n    //   v\\n    // +------------------+ winByVG        +---------------+\\n    // | WaitingChallenge |--------------->| ChallengerWon |\\n    // +------------------+                +---------------+\\n    //   |\\n    //   |\\n    //   |                  winByVG        +------------+\\n    //   +-------------------------------->| ClaimerWon |\\n    //                                     +------------+\\n    //\\n\\n    event ComputeCreated(\\n        uint256 _index,\\n        address _challenger,\\n        address _claimer,\\n        uint256 _roundDuration,\\n        address _machineAddress,\\n        bytes32 _initialHash,\\n        uint256 _finalTime\\n    );\\n    event ClaimSubmitted(uint256 _index, bytes32 _claimedFinalHash);\\n    event ResultConfirmed(uint256 _index);\\n    event ChallengeStarted(uint256 _index);\\n    event ComputeFinished(uint256 _index, uint8 _state);\\n\\n    constructor(address _vgInstantiatorAddress) {\\n        vg = VGInterface(_vgInstantiatorAddress);\\n    }\\n\\n    /// @notice Instantiates a compute instance.\\n    /// @param _challenger address of the challenger.\\n    /// @param _claimer address of the claimer.\\n    /// @param _roundDuration duration of the round (security param)\\n    /// @param _machineAddress address of the machine that will run the instruction\\n    /// @param _initialHash hash in which both claimer and challenger agree on\\n    /// @param _finalTime max cycle of the machine for that computation\\n    /// @return Compute index.\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        uint256 _roundDuration,\\n        address _machineAddress,\\n        bytes32 _initialHash,\\n        uint256 _finalTime) public override returns (uint256)\\n    {\\n        require(_challenger != _claimer, \\\"Challenger and Claimer need to differ\\\");\\n        ComputeCtx storage currentInstance = instance[currentIndex];\\n        currentInstance.challenger = _challenger;\\n        currentInstance.claimer = _claimer;\\n        currentInstance.roundDuration = _roundDuration;\\n        currentInstance.machine = _machineAddress;\\n        currentInstance.initialHash = _initialHash;\\n        currentInstance.finalTime = _finalTime;\\n        currentInstance.currentState = state.WaitingClaim;\\n        currentInstance.timeOfLastMove = block.timestamp;\\n\\n        emit ComputeCreated(\\n            currentIndex,\\n            _challenger,\\n            _claimer,\\n            _roundDuration,\\n            _machineAddress,\\n            _initialHash,\\n            _finalTime);\\n\\n        active[currentIndex] = true;\\n        return currentIndex++;\\n    }\\n\\n    /// @notice Claimer claims the hash of the result of a computation\\n    /// @param _index Index of instance that the claimer is interacting with\\n    /// @param _claimedFinalHash hash of the machine after computation is completed.\\n    function submitClaim(uint256 _index, bytes32 _claimedFinalHash) public override\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].claimer)\\n        increasesNonce(_index)\\n    {\\n        require(instance[_index].currentState == state.WaitingClaim, \\\"State should be WaitingClaim\\\");\\n        instance[_index].claimedFinalHash = _claimedFinalHash;\\n        instance[_index].currentState = state.WaitingConfirmation;\\n\\n        emit ClaimSubmitted(_index, _claimedFinalHash);\\n    }\\n\\n    /// @notice Challenger accepts claim.\\n    /// @param _index Index of compute instance that the challenger is confirming the claim.\\n    function confirm(uint256 _index) public override\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].challenger)\\n        increasesNonce(_index)\\n    {\\n        require(instance[_index].currentState == state.WaitingConfirmation, \\\"State should be WaitingConfirmation\\\");\\n        instance[_index].currentState = state.ConsensusResult;\\n        clearInstance(_index);\\n        emit ResultConfirmed(_index);\\n    }\\n\\n    /// @notice Challenger disputes the claim, starting a verification game.\\n    /// @param _index Index of compute instance which challenger is starting the VG.\\n    function challenge(uint256 _index) public override\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].challenger)\\n        increasesNonce(_index)\\n    {\\n        require(instance[_index].currentState == state.WaitingConfirmation, \\\"State should be WaitingConfirmation\\\");\\n        instance[_index].vgInstance = vg.instantiate(\\n            instance[_index].challenger,\\n            instance[_index].claimer,\\n            instance[_index].roundDuration,\\n            instance[_index].machine,\\n            instance[_index].initialHash,\\n            instance[_index].claimedFinalHash,\\n            instance[_index].finalTime);\\n        instance[_index].currentState = state.WaitingChallenge;\\n\\n        emit ChallengeStarted(_index);\\n    }\\n\\n    /// @notice In case one of the parties wins the verification game,\\n    /// then he or she can call this function to claim victory in\\n    /// this contract as well.\\n    /// @param _index Index of compute instance which challenger is starting the VG.\\n    function winByVG(uint256 _index) public override\\n        onlyInstantiated(_index)\\n        increasesNonce(_index)\\n    {\\n        require(instance[_index].currentState == state.WaitingChallenge, \\\"State is not WaitingChallenge, cannot winByVG\\\");\\n        uint256 vgIndex = instance[_index].vgInstance;\\n\\n        if (vg.stateIsFinishedChallengerWon(vgIndex)) {\\n            challengerWins(_index);\\n            return;\\n        }\\n\\n        if (vg.stateIsFinishedClaimerWon(vgIndex)) {\\n            claimerWins(_index);\\n            return;\\n        }\\n        require(false, \\\"State of VG is not final\\\");\\n    }\\n\\n    /// @notice Claim victory for opponent timeout.\\n    function claimVictoryByTime(uint256 _index) public override\\n        onlyInstantiated(_index)\\n        increasesNonce(_index)\\n    {\\n       bool afterDeadline = (block.timestamp > instance[_index].timeOfLastMove + getMaxStateDuration(\\n               instance[_index].currentState,\\n               instance[_index].roundDuration,\\n               40, // time to start machine\\n               1, // vg is not instantiated, so it doesnt matter\\n               instance[_index].finalTime,\\n               500) // pico seconds to run instruction\\n           );\\n\\n\\n        require(afterDeadline, \\\"Deadline is not over for this specific state\\\");\\n\\n        if ((msg.sender == instance[_index].challenger) && (instance[_index].currentState == state.WaitingClaim)) {\\n            instance[_index].currentState = state.ClaimerMissedDeadline;\\n            deactivate(_index);\\n            emit ComputeFinished(_index, uint8(instance[_index].currentState));\\n            return;\\n        }\\n\\n        if ((msg.sender == instance[_index].claimer) && (instance[_index].currentState == state.WaitingConfirmation)) {\\n            instance[_index].currentState = state.ConsensusResult;\\n            deactivate(_index);\\n            emit ComputeFinished(_index, uint8(instance[_index].currentState));\\n            return;\\n        }\\n        revert(\\\"Fail to ClaimVictoryByTime in current condition\\\");\\n    }\\n\\n    /// @notice Get the worst case scenario duration for a specific state\\n    /// @param _roundDuration security parameter, the max time an agent\\n    //          has to react and submit one simple transaction\\n    /// @param _timeToStartMachine time to build the machine for the first time\\n    /// @param _partitionSize size of partition, how many instructions the\\n    //          will run to reach the necessary hash\\n    /// @param _maxCycle is the maximum amount of steps a machine can perform\\n    //          before being forced into becoming halted\\n    /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction\\n    function getMaxStateDuration(\\n        state _state,\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) private view returns (uint256)\\n    {\\n        if (_state == state.WaitingClaim) {\\n            // time to run entire machine + time to react\\n            return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;\\n        }\\n\\n        if (_state == state.WaitingConfirmation) {\\n            // time to run entire machine + time to react\\n            return _timeToStartMachine + ((_maxCycle * _picoSecondsToRunInsn) / 1e12) + _roundDuration;\\n        }\\n\\n        if (_state == state.WaitingChallenge) {\\n            // time to run a verification game + time to react\\n            return vg.getMaxInstanceDuration(_roundDuration, _timeToStartMachine, _partitionSize, _maxCycle, _picoSecondsToRunInsn) + _roundDuration;\\n        }\\n\\n        if (_state == state.ClaimerWon || _state == state.ChallengerWon || _state == state.ClaimerMissedDeadline || _state == state.ConsensusResult) {\\n            return 0; // final state\\n        }\\n    }\\n\\n    /// @notice Get the worst case scenario duration for an instance of this contract\\n    /// @param _roundDuration security parameter, the max time an agent\\n    //          has to react and submit one simple transaction\\n    /// @param _timeToStartMachine time to build the machine for the first time\\n    /// @param _partitionSize size of partition, how many instructions the\\n    //          will run to reach the necessary hash\\n    /// @param _maxCycle number of instructions until the machine is forcibly halted\\n    /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) public view returns (uint256)\\n    {\\n        uint256 waitingClaim = getMaxStateDuration(\\n            state.WaitingClaim,\\n            _roundDuration,\\n            _timeToStartMachine,\\n            _partitionSize,\\n            _maxCycle,\\n            _picoSecondsToRunInsn\\n        );\\n\\n        uint256 waitingConfirmation = getMaxStateDuration(\\n            state.WaitingConfirmation,\\n            _roundDuration,\\n            _timeToStartMachine,\\n            _partitionSize,\\n            _maxCycle,\\n            _picoSecondsToRunInsn\\n        );\\n\\n        uint256 waitingChallenge = getMaxStateDuration(\\n            state.WaitingChallenge,\\n            _roundDuration,\\n            _timeToStartMachine,\\n            _partitionSize,\\n            _maxCycle,\\n            _picoSecondsToRunInsn\\n        );\\n\\n        return waitingClaim + waitingConfirmation + waitingChallenge;\\n    }\\n\\n    function isConcerned(uint256 _index, address _user) public override view returns (bool) {\\n        return ((instance[_index].challenger == _user) || (instance[_index].claimer == _user));\\n    }\\n\\n    function getSubInstances(uint256 _index, address)\\n        public override view returns (address[] memory _addresses,\\n                            uint256[] memory _indices)\\n    {\\n        address[] memory a;\\n        uint256[] memory i;\\n        if (instance[_index].currentState == state.WaitingChallenge) {\\n            a = new address[](1);\\n            i = new uint256[](1);\\n            a[0] = address(vg);\\n            i[0] = instance[_index].vgInstance;\\n            return (a, i);\\n        }\\n        a = new address[](0);\\n        i = new uint256[](0);\\n        return (a, i);\\n    }\\n\\n    function getState(uint256 _index, address) public view returns\\n        ( address _challenger,\\n        address _claimer,\\n        uint256 _deadline,\\n        address _machine,\\n        bytes32 _initialHash,\\n        uint256 _finalTime,\\n        bytes32 _claimedFinalHash,\\n        bytes32 _currentState\\n        )\\n    {\\n        ComputeCtx memory i = instance[_index];\\n\\n        // we have to duplicate the code for getCurrentState because of\\n        // \\\"stack too deep\\\"\\n\\n        // this variables only matter on challenging state\\n        uint256 partitionSize = 1;\\n        uint256 partitionGameIndex = 1;\\n\\n        bytes32 currentState;\\n        if (i.currentState == state.WaitingClaim) {\\n            currentState = \\\"WaitingClaim\\\";\\n        }\\n        if (i.currentState == state.WaitingConfirmation) {\\n            currentState = \\\"WaitingConfirmation\\\";\\n        }\\n        if (i.currentState == state.ClaimerMissedDeadline) {\\n            currentState = \\\"ClaimerMissedDeadline\\\";\\n        }\\n        if (i.currentState == state.WaitingChallenge) {\\n            currentState = \\\"WaitingChallenge\\\";\\n            partitionSize = vg.getPartitionQuerySize(i.vgInstance);\\n            partitionGameIndex = vg.getPartitionGameIndex(i.vgInstance);\\n        }\\n        if (i.currentState == state.ChallengerWon) {\\n            currentState = \\\"ChallengerWon\\\";\\n        }\\n        if (i.currentState == state.ClaimerWon) {\\n            currentState = \\\"ClaimerWon\\\";\\n        }\\n        if (i.currentState == state.ConsensusResult) {\\n            currentState = \\\"ConsensusResult\\\";\\n        }\\n\\n        return (\\n            i.challenger,\\n            i.claimer,\\n            i.timeOfLastMove +  getMaxStateDuration(\\n                i.currentState,\\n                i.roundDuration,\\n                40, // time to start machine\\n                partitionSize,\\n                i.finalTime,\\n                500 // pico seconds to run insn\\n            ),\\n            i.machine,\\n            i.initialHash,\\n            i.finalTime,\\n            i.claimedFinalHash,\\n            currentState\\n        );\\n    }\\n\\n    function getCurrentState(uint256 _index) public override view\\n        onlyInstantiated(_index)\\n        returns (bytes32)\\n    {\\n        if (instance[_index].currentState == state.WaitingClaim) {\\n            return \\\"WaitingClaim\\\";\\n        }\\n        if (instance[_index].currentState == state.WaitingConfirmation) {\\n            return \\\"WaitingConfirmation\\\";\\n        }\\n        if (instance[_index].currentState == state.ClaimerMissedDeadline) {\\n            return \\\"ClaimerMissedDeadline\\\";\\n        }\\n        if (instance[_index].currentState == state.WaitingChallenge) {\\n            return \\\"WaitingChallenge\\\";\\n        }\\n        if (instance[_index].currentState == state.ChallengerWon) {\\n            return \\\"ChallengerWon\\\";\\n        }\\n        if (instance[_index].currentState == state.ClaimerWon) {\\n            return \\\"ClaimerWon\\\";\\n        }\\n        if (instance[_index].currentState == state.ConsensusResult) {\\n            return \\\"ConsensusResult\\\";\\n        }\\n        require(false, \\\"Unrecognized state\\\");\\n    }\\n\\n    // remove these functions and change tests accordingly\\n    function stateIsWaitingClaim(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.WaitingClaim; }\\n\\n    function stateIsWaitingConfirmation(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.WaitingConfirmation; }\\n\\n    function stateIsClaimerMissedDeadline(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.ClaimerMissedDeadline; }\\n\\n    function stateIsWaitingChallange(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.WaitingChallenge; }\\n\\n    function stateIsChallengerWon(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.ChallengerWon; }\\n\\n    function stateIsClaimerWon(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.ClaimerWon; }\\n\\n    function stateIsConsensusResult(uint256 _index) public view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    { return instance[_index].currentState == state.ConsensusResult; }\\n\\n    function clearInstance(uint256 _index) internal {\\n        delete instance[_index].challenger;\\n        delete instance[_index].claimer;\\n        delete instance[_index].roundDuration;\\n        delete instance[_index].timeOfLastMove;\\n        delete instance[_index].machine;\\n        delete instance[_index].initialHash;\\n        delete instance[_index].finalTime;\\n        // !!!!!!!!! should call clear in vgInstance !!!!!!!!!\\n        delete instance[_index].vgInstance;\\n        deactivate(_index);\\n    }\\n\\n    function challengerWins(uint256 _index) private\\n        onlyInstantiated(_index)\\n    {\\n        clearInstance(_index);\\n        instance[_index].currentState = state.ChallengerWon;\\n        emit ComputeFinished(_index, uint8(instance[_index].currentState));\\n    }\\n\\n    function claimerWins(uint256 _index) private\\n        onlyInstantiated(_index)\\n    {\\n        clearInstance(_index);\\n        instance[_index].currentState = state.ClaimerWon;\\n        emit ComputeFinished(_index, uint8(instance[_index].currentState));\\n    }\\n}\\n\",\"keccak256\":\"0xd6e2c7fdefe3a6cf10ec4d27127a78abf3b73c7997c1a84efca8c6e8383a2750\",\"license\":\"GPL-3.0-only\"},\"contracts/ComputeInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Interface for compute instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface ComputeInterface is Instantiator {\\n    enum state {\\n        WaitingClaim,\\n        WaitingConfirmation,\\n        ClaimerMissedDeadline,\\n        WaitingChallenge,\\n        ChallengerWon,\\n        ClaimerWon,\\n        ConsensusResult\\n    }\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        uint256 _roundDuration,\\n        address _machineAddress,\\n        bytes32 _initialHash,\\n        uint256 _finalTime\\n    ) external returns (uint256);\\n\\n    function submitClaim(uint256 _index, bytes32 _claimedFinalHash) external;\\n\\n    function confirm(uint256 _index) external;\\n\\n    function challenge(uint256 _index) external;\\n\\n    function winByVG(uint256 _index) external;\\n\\n    function claimVictoryByTime(uint256 _index) external;\\n}\\n\",\"keccak256\":\"0x481c569ec5f7c4e0e4842311e4c0d3676f79e707b88122eed3be06a8e4c34612\",\"license\":\"GPL-3.0-only\"},\"contracts/MMInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Interface for memory manager instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface MMInterface is Instantiator {\\n    enum state {WaitingProofs, WaitingReplay, FinishedReplay}\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _owner,\\n        address _provider,\\n        bytes32 _initialHash\\n    ) external returns (uint256);\\n\\n    function newHash(uint256 _index) external view returns (bytes32);\\n\\n    function finishProofPhase(uint256 _index) external;\\n\\n    function finishReplayPhase(uint256 _index) external;\\n\\n    function getRWArrays(\\n        uint256 _index\\n    )\\n    external\\n    view\\n    returns (\\n        uint64[] memory,\\n        bytes8[] memory,\\n        bool[] memory\\n    );\\n\\n    function stateIsWaitingProofs(uint256 _index) external view returns (bool);\\n\\n    function stateIsWaitingReplay(uint256 _index) external view returns (bool);\\n\\n    function stateIsFinishedReplay(uint256 _index) external view returns (bool);\\n\\n    function getCurrentStateDeadline(\\n        uint256 _index,\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine\\n    ) external view returns (uint256);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xc35a3addeda42b399d8995c1d3e8ea16746d1d95bb5214cd9709201bc9d702c0\",\"license\":\"GPL-3.0-only\"},\"contracts/MachineInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\n/// @title MachineInterface interface contract\\npragma solidity ^0.7.0;\\n\\n\\ninterface MachineInterface {\\n    event StepGiven(uint8 exitCode);\\n\\n    function step(\\n        uint64[] memory _rwPositions,\\n        bytes8[] memory _rwValues,\\n        bool[] memory _isRead\\n    ) external returns (uint8, uint256);\\n\\n    function getMemoryInteractor() external view returns (address);\\n}\\n\",\"keccak256\":\"0x227a51ac54bc8246aec29d73bc48701c6c2bcd0ad0b606105c079f31283526d7\",\"license\":\"GPL-3.0-only\"},\"contracts/PartitionInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Abstract interface for partition instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface PartitionInterface is Instantiator {\\n    enum state {\\n        WaitingQuery,\\n        WaitingHashes,\\n        ChallengerWon,\\n        ClaimerWon,\\n        DivergenceFound\\n    }\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime,\\n        uint256 _querySize,\\n        uint256 _roundDuration\\n    ) external returns (uint256);\\n\\n    function timeHash(uint256 _index, uint256 key)\\n        external\\n        view\\n        returns (bytes32);\\n\\n    function divergenceTime(uint256 _index) external view returns (uint256);\\n\\n    function stateIsWaitingQuery(uint256 _index) external view returns (bool);\\n\\n    function stateIsWaitingHashes(uint256 _index) external view returns (bool);\\n\\n    function stateIsChallengerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsClaimerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsDivergenceFound(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getQuerySize(uint256 _index) external view returns (uint256);\\n\\n    function getCurrentStateDeadline(uint _index) external view returns (uint time);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xc8c1bf7c3ecd4b7a14be8bf70c93aad06873180056a63af9aca10a7f0e267bf8\",\"license\":\"GPL-3.0-only\"},\"contracts/VGInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n// @title Verification game instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Decorated.sol\\\";\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\nimport \\\"./PartitionInterface.sol\\\";\\nimport \\\"./MMInterface.sol\\\";\\nimport \\\"./MachineInterface.sol\\\";\\n\\ninterface VGInterface is Instantiator {\\n    enum state {\\n        WaitPartition,\\n        WaitMemoryProveValues,\\n        FinishedClaimerWon,\\n        FinishedChallengerWon\\n    }\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        uint256 _roundDuration,\\n        address _machineAddress,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime\\n    ) external returns (uint256);\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function stateIsFinishedClaimerWon(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function stateIsFinishedChallengerWon(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function winByPartitionTimeout(uint256 _index) external;\\n\\n    function startMachineRunChallenge(uint256 _index) external;\\n\\n    function settleVerificationGame(uint256 _index) external;\\n\\n    function claimVictoryByTime(uint256 _index) external;\\n\\n    //function stateIsWaitPartition(uint256 _index) public view returns (bool);\\n    //function stateIsWaitMemoryProveValues(uint256 _index) public view\\n    //  returns (bool);\\n    //function clearInstance(uint256 _index) internal;\\n    //function challengerWins(uint256 _index) private;\\n    //function claimerWins(uint256 _index) private;\\n\\n    function getPartitionQuerySize(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x520380137623cac076f23ab845ed9f6611f56065cab174455fcf9815c81d5ba6\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x60806040526000805534801561001457600080fd5b50604051611fe0380380611fe08339818101604052602081101561003757600080fd5b5051600380546001600160a01b0319166001600160a01b03909216919091179055611f79806100676000396000f3fe608060405234801561001057600080fd5b50600436106101375760003560e01c8063a0c222b4116100b8578063c19e71c31161007c578063c19e71c3146103a0578063c526656c146103ea578063ce73b628146104af578063d0a068cf146104cc578063ded4df63146104e9578063e174b3bf1461050657610137565b8063a0c222b414610307578063a20d952b1461032c578063a2dc797314610349578063ab82d9a014610366578063ba0179b51461038357610137565b80635748c130116100ff5780635748c130146102055780636547429e146102225780636c092edd1461023f57806373df16121461025c57806382afd23b146102ea57610137565b806301ff62ab1461013c57806326987b601461017c578063370f31aa14610196578063388e43be146101cb5780633d46b819146101e8575b600080fd5b6101686004803603604081101561015257600080fd5b50803590602001356001600160a01b0316610523565b604080519115158252519081900360200190f35b61018461056e565b60408051918252519081900360200190f35b610184600480360360a08110156101ac57600080fd5b5080359060208101359060408101359060608101359060800135610574565b610168600480360360208110156101e157600080fd5b50356105bc565b610184600480360360208110156101fe57600080fd5b5035610630565b6101846004803603602081101561021b57600080fd5b50356106d6565b6101686004803603602081101561023857600080fd5b503561092c565b6101686004803603602081101561025557600080fd5b503561097a565b6102886004803603604081101561027257600080fd5b50803590602001356001600160a01b03166109c8565b60405180896001600160a01b03168152602001886001600160a01b03168152602001878152602001866001600160a01b031681526020018581526020018481526020018381526020018281526020019850505050505050505060405180910390f35b6101686004803603602081101561030057600080fd5b5035610d30565b61032a6004803603604081101561031d57600080fd5b5080359060200135610d45565b005b6101686004803603602081101561034257600080fd5b5035610ee3565b61032a6004803603602081101561035f57600080fd5b5035610f31565b61032a6004803603602081101561037c57600080fd5b5035611199565b61032a6004803603602081101561039957600080fd5b50356113f0565b610184600480360360c08110156103b657600080fd5b506001600160a01b038135811691602081013582169160408201359160608101359091169060808101359060a00135611570565b6104166004803603604081101561040057600080fd5b50803590602001356001600160a01b03166116d8565b604051808060200180602001838103835285818151815260200191508051906020019060200280838360005b8381101561045a578181015183820152602001610442565b50505050905001838103825284818151815260200191508051906020019060200280838360005b83811015610499578181015183820152602001610481565b5050505090500194505050505060405180910390f35b610168600480360360208110156104c557600080fd5b50356117cd565b610168600480360360208110156104e257600080fd5b503561181b565b61032a600480360360208110156104ff57600080fd5b5035611869565b6101686004803603602081101561051c57600080fd5b5035611a90565b6000828152600460205260408120546001600160a01b038381169116148061056757506000838152600460205260409020600101546001600160a01b038381169116145b9392505050565b60005481565b60008061058660008888888888611ade565b9050600061059960018989898989611ade565b905060006105ac60038a8a8a8a8a611ade565b9190920101979650505050505050565b6000818060005411610603576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60015b60008481526004602052604090206009015460ff16600681111561062657fe5b1491505b50919050565b6000818060005411610677576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b61068081610d30565b6106c2576040805162461bcd60e51b815260206004820152600e60248201526d496e64657820696e61637469766560901b604482015290519081900360640190fd5b505060009081526002602052604090205490565b600081806000541161071d576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008381526004602052604081206009015460ff16600681111561073d57fe5b141561075a576b57616974696e67436c61696d60a01b915061062a565b600160008481526004602052604090206009015460ff16600681111561077c57fe5b14156107a057722bb0b4ba34b733a1b7b73334b936b0ba34b7b760691b915061062a565b600260008481526004602052604090206009015460ff1660068111156107c257fe5b14156107e85774436c61696d65724d6973736564446561646c696e6560581b915061062a565b600360008481526004602052604090206009015460ff16600681111561080a57fe5b141561082b576f57616974696e674368616c6c656e676560801b915061062a565b600460008481526004602052604090206009015460ff16600681111561084d57fe5b141561086b576c21b430b63632b733b2b92bb7b760991b915061062a565b600560008481526004602052604090206009015460ff16600681111561088d57fe5b14156108a8576921b630b4b6b2b92bb7b760b11b915061062a565b600660008481526004602052604090206009015460ff1660068111156108ca57fe5b14156108ea576e10dbdb9cd95b9cdd5cd4995cdd5b1d608a1b915061062a565b6040805162461bcd60e51b8152602060048201526012602482015271556e7265636f676e697a656420737461746560701b604482015290519081900360640190fd5b6000818060005411610973576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6004610606565b60008180600054116109c1576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6002610606565b6000806000806000806000806109dc611e01565b60008b81526004602081815260409283902083516101408101855281546001600160a01b03908116825260018301548116938201939093526002820154948101949094526003810154606085015291820154166080830152600581015460a083015260068082015460c0840152600782015460e08401526008820154610100840152600982015461012084019160ff90911690811115610a7857fe5b6006811115610a8357fe5b90525090506001806000808461012001516006811115610a9f57fe5b1415610ab757506b57616974696e67436c61696d60a01b5b60018461012001516006811115610aca57fe5b1415610ae95750722bb0b4ba34b733a1b7b73334b936b0ba34b7b760691b5b60028461012001516006811115610afc57fe5b1415610b1d575074436c61696d65724d6973736564446561646c696e6560581b5b60038461012001516006811115610b3057fe5b1415610c49575060035461010084015160408051630c91927b60e01b81526004810192909252516f57616974696e674368616c6c656e676560801b926001600160a01b031691630c91927b916024808301926020929190829003018186803b158015610b9b57600080fd5b505afa158015610baf573d6000803e3d6000fd5b505050506040513d6020811015610bc557600080fd5b505160035461010086015160408051622231c360e11b81526004810192909252519295506001600160a01b03909116916244638691602480820192602092909190829003018186803b158015610c1a57600080fd5b505afa158015610c2e573d6000803e3d6000fd5b505050506040513d6020811015610c4457600080fd5b505191505b60048461012001516006811115610c5c57fe5b1415610c7557506c21b430b63632b733b2b92bb7b760991b5b60058461012001516006811115610c8857fe5b1415610c9e57506921b630b4b6b2b92bb7b760b11b5b60068461012001516006811115610cb157fe5b1415610ccc57506e10dbdb9cd95b9cdd5cd4995cdd5b1d608a1b5b83600001518460200151610cf486610120015187604001516028888a60c001516101f4611ade565b86606001510186608001518760a001518860c001518960e00151879b509b509b509b509b509b509b509b50505050509295985092959890939650565b60009081526001602052604090205460ff1690565b818060005411610d8a576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000838152600460205260409020600101546001600160a01b0316338114610df4576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600084815260026020526040812080546001019055849060008681526004602052604090206009015460ff166006811115610e2b57fe5b14610e7d576040805162461bcd60e51b815260206004820152601c60248201527f53746174652073686f756c642062652057616974696e67436c61696d00000000604482015290519081900360640190fd5b60008581526004602090815260409182902060078101879055600901805460ff19166001179055815187815290810186905281517f1e9358f673ff367487ce56f136412ae5b69bf2c06e223aad2756d748c2a9b52a929181900390910190a15050505050565b6000818060005411610f2a576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000610606565b808060005411610f76576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008281526002602081815260408084208054600190810190915560049092528320600981015492810154600690910154869493610fc19360ff9091169291602891906101f4611ade565b6000858152600460205260409020600301540142119050806110145760405162461bcd60e51b815260040180806020018281038252602c815260200180611e77602c913960400191505060405180910390fd5b6000848152600460205260409020546001600160a01b031633148015611057575060008481526004602052604081206009015460ff16600681111561105557fe5b145b156110ed57600084815260046020526040902060090180546002919060ff19166001835b021790555061108984611c39565b6000848152600460205260409020600901547fce5d57dc06bffee515dc9f8ca3a267203dbbe503f6bfad687a7120d00756913e90859060ff1660068111156110cd57fe5b6040805192835260ff90911660208301528051918290030190a150611194565b6000848152600460205260409020600101546001600160a01b0316331480156111355750600160008581526004602052604090206009015460ff16600681111561113357fe5b145b1561115d57600084815260046020526040902060090180546006919060ff191660018361107b565b60405162461bcd60e51b815260040180806020018281038252602f815260200180611ef5602f913960400191505060405180910390fd5b505050565b8080600054116111de576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000828152600460205260409020546001600160a01b0316338114611245576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600083815260026020526040902080546001908101909155839060008581526004602052604090206009015460ff16600681111561127f57fe5b146112bb5760405162461bcd60e51b8152600401808060200182810382526023815260200180611e546023913960400191505060405180910390fd5b60035460008581526004602081815260408084208054600182015460028301548387015460058501546007860154600690960154875163020b738760e41b81526001600160a01b039687169a81019a909a5293851660248a0152604489019290925283166064880152608487015260a486019290925260c485019190915290519416936320b738709360e4808501948390030190829087803b15801561136057600080fd5b505af1158015611374573d6000803e3d6000fd5b505050506040513d602081101561138a57600080fd5b50516000858152600460205260409020600881019190915560090180546003919060ff191660018302179055506040805185815290517fa895da4b794aeba8d8082db237265459db7b7ffdb5aa7c2332a7c5eafbfae7359181900360200190a150505050565b808060005411611435576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000828152600460205260409020546001600160a01b031633811461149c576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600083815260026020526040902080546001908101909155839060008581526004602052604090206009015460ff1660068111156114d657fe5b146115125760405162461bcd60e51b8152600401808060200182810382526023815260200180611e546023913960400191505060405180910390fd5b6000848152600460205260409020600901805460ff1916600617905561153784611c5c565b6040805185815290517fa832892b4543448b594422a93bf38c889d54ae5938a065c6ec5f4636161f522a9181900360200190a150505050565b6000856001600160a01b0316876001600160a01b031614156115c35760405162461bcd60e51b8152600401808060200182810382526025815260200180611ed06025913960400191505060405180910390fd5b600080548152600460208190526040822080546001600160a01b03808c166001600160a01b0319928316178355600180840180548d8416908516179055600284018b90559383018054918a16919092161790556005810186905560068101859055600981018054919392909160ff191690830217905550426003820155600054604080519182526001600160a01b03808b166020840152808a1683830152606083018990528716608083015260a0820186905260c08201859052517f9f53c9493351536908d5efd56da31dfb5a53a510ac3e216afe64af077b558d509181900360e00190a150506000805481526001602081905260408220805460ff19168217905581549081019091555b9695505050505050565b6060808080600360008781526004602052604090206009015460ff1660068111156116ff57fe5b14156117a95760408051600180825281830190925290602080830190803683375050604080516001808252818301909252929450905060208083019080368337505060035484519293506001600160a01b03169184915060009061175f57fe5b6001600160a01b0390921660209283029190910182015260008781526004909152604081206008015482519091839161179457fe5b602090810291909101015290925090506117c6565b505060408051600080825260208201908152818301909252925090505b9250929050565b6000818060005411611814576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6003610606565b6000818060005411611862576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6005610606565b8080600054116118ae576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008281526002602052604090208054600101905581600360008481526004602052604090206009015460ff1660068111156118e657fe5b146119225760405162461bcd60e51b815260040180806020018281038252602d815260200180611ea3602d913960400191505060405180910390fd5b60008381526004602081815260409283902060080154600354845163b6b5c31960e01b8152938401829052935190936001600160a01b03169263b6b5c319926024808301939192829003018186803b15801561197d57600080fd5b505afa158015611991573d6000803e3d6000fd5b505050506040513d60208110156119a757600080fd5b5051156119bd576119b784611cbd565b50611194565b60035460408051633664f8bf60e11b81526004810184905290516001600160a01b0390921691636cc9f17e91602480820192602092909190829003018186803b158015611a0957600080fd5b505afa158015611a1d573d6000803e3d6000fd5b505050506040513d6020811015611a3357600080fd5b505115611a43576119b784611d90565b6040805162461bcd60e51b815260206004820152601860248201527f5374617465206f66205647206973206e6f742066696e616c0000000000000000604482015290519081900360640190fd5b6000818060005411611ad7576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6006610606565b600080876006811115611aed57fe5b1415611b09578564e8d4a510008484025b0486010190506116ce565b6001876006811115611b1757fe5b1415611b2c578564e8d4a51000848402611afe565b6003876006811115611b3a57fe5b1415611bdb5760035460408051631b8798d560e11b81526004810189905260248101889052604481018790526064810186905260848101859052905188926001600160a01b03169163370f31aa9160a4808301926020929190829003018186803b158015611ba757600080fd5b505afa158015611bbb573d6000803e3d6000fd5b505050506040513d6020811015611bd157600080fd5b50510190506116ce565b6005876006811115611be957fe5b1480611c0057506004876006811115611bfe57fe5b145b80611c1657506002876006811115611c1457fe5b145b80611c2c57506006876006811115611c2a57fe5b145b156116ce575060006116ce565b6000908152600160209081526040808320805460ff191690556002909152812055565b6000818152600460208190526040822080546001600160a01b031990811682556001820180548216905560028201849055600382018490559181018054909216909155600581018290556006810182905560080155611cba81611c39565b50565b808060005411611d02576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b611d0b82611c5c565b6000828152600460208190526040909120600901805460ff19166001835b02179055506000828152600460205260409020600901547fce5d57dc06bffee515dc9f8ca3a267203dbbe503f6bfad687a7120d00756913e90839060ff166006811115611d7257fe5b6040805192835260ff90911660208301528051918290030190a15050565b808060005411611dd5576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b611dde82611c5c565b600082815260046020526040902060090180546005919060ff1916600183611d29565b6040805161014081018252600080825260208201819052918101829052606081018290526080810182905260a0810182905260c0810182905260e081018290526101008101829052906101208201529056fe53746174652073686f756c642062652057616974696e67436f6e6669726d6174696f6e446561646c696e65206973206e6f74206f76657220666f7220746869732073706563696669632073746174655374617465206973206e6f742057616974696e674368616c6c656e67652c2063616e6e6f742077696e427956474368616c6c656e67657220616e6420436c61696d6572206e65656420746f206469666665724661696c20746f20436c61696d566963746f7279427954696d6520696e2063757272656e7420636f6e646974696f6e496e646578206e6f7420696e7374616e74696174656400000000000000000000a26469706673582212203fcba7868bcd1ad10e523b5fb225fd029d795d1e2d7ef79023a277abc5b5406664736f6c63430007040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106101375760003560e01c8063a0c222b4116100b8578063c19e71c31161007c578063c19e71c3146103a0578063c526656c146103ea578063ce73b628146104af578063d0a068cf146104cc578063ded4df63146104e9578063e174b3bf1461050657610137565b8063a0c222b414610307578063a20d952b1461032c578063a2dc797314610349578063ab82d9a014610366578063ba0179b51461038357610137565b80635748c130116100ff5780635748c130146102055780636547429e146102225780636c092edd1461023f57806373df16121461025c57806382afd23b146102ea57610137565b806301ff62ab1461013c57806326987b601461017c578063370f31aa14610196578063388e43be146101cb5780633d46b819146101e8575b600080fd5b6101686004803603604081101561015257600080fd5b50803590602001356001600160a01b0316610523565b604080519115158252519081900360200190f35b61018461056e565b60408051918252519081900360200190f35b610184600480360360a08110156101ac57600080fd5b5080359060208101359060408101359060608101359060800135610574565b610168600480360360208110156101e157600080fd5b50356105bc565b610184600480360360208110156101fe57600080fd5b5035610630565b6101846004803603602081101561021b57600080fd5b50356106d6565b6101686004803603602081101561023857600080fd5b503561092c565b6101686004803603602081101561025557600080fd5b503561097a565b6102886004803603604081101561027257600080fd5b50803590602001356001600160a01b03166109c8565b60405180896001600160a01b03168152602001886001600160a01b03168152602001878152602001866001600160a01b031681526020018581526020018481526020018381526020018281526020019850505050505050505060405180910390f35b6101686004803603602081101561030057600080fd5b5035610d30565b61032a6004803603604081101561031d57600080fd5b5080359060200135610d45565b005b6101686004803603602081101561034257600080fd5b5035610ee3565b61032a6004803603602081101561035f57600080fd5b5035610f31565b61032a6004803603602081101561037c57600080fd5b5035611199565b61032a6004803603602081101561039957600080fd5b50356113f0565b610184600480360360c08110156103b657600080fd5b506001600160a01b038135811691602081013582169160408201359160608101359091169060808101359060a00135611570565b6104166004803603604081101561040057600080fd5b50803590602001356001600160a01b03166116d8565b604051808060200180602001838103835285818151815260200191508051906020019060200280838360005b8381101561045a578181015183820152602001610442565b50505050905001838103825284818151815260200191508051906020019060200280838360005b83811015610499578181015183820152602001610481565b5050505090500194505050505060405180910390f35b610168600480360360208110156104c557600080fd5b50356117cd565b610168600480360360208110156104e257600080fd5b503561181b565b61032a600480360360208110156104ff57600080fd5b5035611869565b6101686004803603602081101561051c57600080fd5b5035611a90565b6000828152600460205260408120546001600160a01b038381169116148061056757506000838152600460205260409020600101546001600160a01b038381169116145b9392505050565b60005481565b60008061058660008888888888611ade565b9050600061059960018989898989611ade565b905060006105ac60038a8a8a8a8a611ade565b9190920101979650505050505050565b6000818060005411610603576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60015b60008481526004602052604090206009015460ff16600681111561062657fe5b1491505b50919050565b6000818060005411610677576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b61068081610d30565b6106c2576040805162461bcd60e51b815260206004820152600e60248201526d496e64657820696e61637469766560901b604482015290519081900360640190fd5b505060009081526002602052604090205490565b600081806000541161071d576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008381526004602052604081206009015460ff16600681111561073d57fe5b141561075a576b57616974696e67436c61696d60a01b915061062a565b600160008481526004602052604090206009015460ff16600681111561077c57fe5b14156107a057722bb0b4ba34b733a1b7b73334b936b0ba34b7b760691b915061062a565b600260008481526004602052604090206009015460ff1660068111156107c257fe5b14156107e85774436c61696d65724d6973736564446561646c696e6560581b915061062a565b600360008481526004602052604090206009015460ff16600681111561080a57fe5b141561082b576f57616974696e674368616c6c656e676560801b915061062a565b600460008481526004602052604090206009015460ff16600681111561084d57fe5b141561086b576c21b430b63632b733b2b92bb7b760991b915061062a565b600560008481526004602052604090206009015460ff16600681111561088d57fe5b14156108a8576921b630b4b6b2b92bb7b760b11b915061062a565b600660008481526004602052604090206009015460ff1660068111156108ca57fe5b14156108ea576e10dbdb9cd95b9cdd5cd4995cdd5b1d608a1b915061062a565b6040805162461bcd60e51b8152602060048201526012602482015271556e7265636f676e697a656420737461746560701b604482015290519081900360640190fd5b6000818060005411610973576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6004610606565b60008180600054116109c1576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6002610606565b6000806000806000806000806109dc611e01565b60008b81526004602081815260409283902083516101408101855281546001600160a01b03908116825260018301548116938201939093526002820154948101949094526003810154606085015291820154166080830152600581015460a083015260068082015460c0840152600782015460e08401526008820154610100840152600982015461012084019160ff90911690811115610a7857fe5b6006811115610a8357fe5b90525090506001806000808461012001516006811115610a9f57fe5b1415610ab757506b57616974696e67436c61696d60a01b5b60018461012001516006811115610aca57fe5b1415610ae95750722bb0b4ba34b733a1b7b73334b936b0ba34b7b760691b5b60028461012001516006811115610afc57fe5b1415610b1d575074436c61696d65724d6973736564446561646c696e6560581b5b60038461012001516006811115610b3057fe5b1415610c49575060035461010084015160408051630c91927b60e01b81526004810192909252516f57616974696e674368616c6c656e676560801b926001600160a01b031691630c91927b916024808301926020929190829003018186803b158015610b9b57600080fd5b505afa158015610baf573d6000803e3d6000fd5b505050506040513d6020811015610bc557600080fd5b505160035461010086015160408051622231c360e11b81526004810192909252519295506001600160a01b03909116916244638691602480820192602092909190829003018186803b158015610c1a57600080fd5b505afa158015610c2e573d6000803e3d6000fd5b505050506040513d6020811015610c4457600080fd5b505191505b60048461012001516006811115610c5c57fe5b1415610c7557506c21b430b63632b733b2b92bb7b760991b5b60058461012001516006811115610c8857fe5b1415610c9e57506921b630b4b6b2b92bb7b760b11b5b60068461012001516006811115610cb157fe5b1415610ccc57506e10dbdb9cd95b9cdd5cd4995cdd5b1d608a1b5b83600001518460200151610cf486610120015187604001516028888a60c001516101f4611ade565b86606001510186608001518760a001518860c001518960e00151879b509b509b509b509b509b509b509b50505050509295985092959890939650565b60009081526001602052604090205460ff1690565b818060005411610d8a576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000838152600460205260409020600101546001600160a01b0316338114610df4576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600084815260026020526040812080546001019055849060008681526004602052604090206009015460ff166006811115610e2b57fe5b14610e7d576040805162461bcd60e51b815260206004820152601c60248201527f53746174652073686f756c642062652057616974696e67436c61696d00000000604482015290519081900360640190fd5b60008581526004602090815260409182902060078101879055600901805460ff19166001179055815187815290810186905281517f1e9358f673ff367487ce56f136412ae5b69bf2c06e223aad2756d748c2a9b52a929181900390910190a15050505050565b6000818060005411610f2a576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000610606565b808060005411610f76576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008281526002602081815260408084208054600190810190915560049092528320600981015492810154600690910154869493610fc19360ff9091169291602891906101f4611ade565b6000858152600460205260409020600301540142119050806110145760405162461bcd60e51b815260040180806020018281038252602c815260200180611e77602c913960400191505060405180910390fd5b6000848152600460205260409020546001600160a01b031633148015611057575060008481526004602052604081206009015460ff16600681111561105557fe5b145b156110ed57600084815260046020526040902060090180546002919060ff19166001835b021790555061108984611c39565b6000848152600460205260409020600901547fce5d57dc06bffee515dc9f8ca3a267203dbbe503f6bfad687a7120d00756913e90859060ff1660068111156110cd57fe5b6040805192835260ff90911660208301528051918290030190a150611194565b6000848152600460205260409020600101546001600160a01b0316331480156111355750600160008581526004602052604090206009015460ff16600681111561113357fe5b145b1561115d57600084815260046020526040902060090180546006919060ff191660018361107b565b60405162461bcd60e51b815260040180806020018281038252602f815260200180611ef5602f913960400191505060405180910390fd5b505050565b8080600054116111de576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000828152600460205260409020546001600160a01b0316338114611245576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600083815260026020526040902080546001908101909155839060008581526004602052604090206009015460ff16600681111561127f57fe5b146112bb5760405162461bcd60e51b8152600401808060200182810382526023815260200180611e546023913960400191505060405180910390fd5b60035460008581526004602081815260408084208054600182015460028301548387015460058501546007860154600690960154875163020b738760e41b81526001600160a01b039687169a81019a909a5293851660248a0152604489019290925283166064880152608487015260a486019290925260c485019190915290519416936320b738709360e4808501948390030190829087803b15801561136057600080fd5b505af1158015611374573d6000803e3d6000fd5b505050506040513d602081101561138a57600080fd5b50516000858152600460205260409020600881019190915560090180546003919060ff191660018302179055506040805185815290517fa895da4b794aeba8d8082db237265459db7b7ffdb5aa7c2332a7c5eafbfae7359181900360200190a150505050565b808060005411611435576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6000828152600460205260409020546001600160a01b031633811461149c576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b600083815260026020526040902080546001908101909155839060008581526004602052604090206009015460ff1660068111156114d657fe5b146115125760405162461bcd60e51b8152600401808060200182810382526023815260200180611e546023913960400191505060405180910390fd5b6000848152600460205260409020600901805460ff1916600617905561153784611c5c565b6040805185815290517fa832892b4543448b594422a93bf38c889d54ae5938a065c6ec5f4636161f522a9181900360200190a150505050565b6000856001600160a01b0316876001600160a01b031614156115c35760405162461bcd60e51b8152600401808060200182810382526025815260200180611ed06025913960400191505060405180910390fd5b600080548152600460208190526040822080546001600160a01b03808c166001600160a01b0319928316178355600180840180548d8416908516179055600284018b90559383018054918a16919092161790556005810186905560068101859055600981018054919392909160ff191690830217905550426003820155600054604080519182526001600160a01b03808b166020840152808a1683830152606083018990528716608083015260a0820186905260c08201859052517f9f53c9493351536908d5efd56da31dfb5a53a510ac3e216afe64af077b558d509181900360e00190a150506000805481526001602081905260408220805460ff19168217905581549081019091555b9695505050505050565b6060808080600360008781526004602052604090206009015460ff1660068111156116ff57fe5b14156117a95760408051600180825281830190925290602080830190803683375050604080516001808252818301909252929450905060208083019080368337505060035484519293506001600160a01b03169184915060009061175f57fe5b6001600160a01b0390921660209283029190910182015260008781526004909152604081206008015482519091839161179457fe5b602090810291909101015290925090506117c6565b505060408051600080825260208201908152818301909252925090505b9250929050565b6000818060005411611814576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6003610606565b6000818060005411611862576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6005610606565b8080600054116118ae576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b60008281526002602052604090208054600101905581600360008481526004602052604090206009015460ff1660068111156118e657fe5b146119225760405162461bcd60e51b815260040180806020018281038252602d815260200180611ea3602d913960400191505060405180910390fd5b60008381526004602081815260409283902060080154600354845163b6b5c31960e01b8152938401829052935190936001600160a01b03169263b6b5c319926024808301939192829003018186803b15801561197d57600080fd5b505afa158015611991573d6000803e3d6000fd5b505050506040513d60208110156119a757600080fd5b5051156119bd576119b784611cbd565b50611194565b60035460408051633664f8bf60e11b81526004810184905290516001600160a01b0390921691636cc9f17e91602480820192602092909190829003018186803b158015611a0957600080fd5b505afa158015611a1d573d6000803e3d6000fd5b505050506040513d6020811015611a3357600080fd5b505115611a43576119b784611d90565b6040805162461bcd60e51b815260206004820152601860248201527f5374617465206f66205647206973206e6f742066696e616c0000000000000000604482015290519081900360640190fd5b6000818060005411611ad7576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b6006610606565b600080876006811115611aed57fe5b1415611b09578564e8d4a510008484025b0486010190506116ce565b6001876006811115611b1757fe5b1415611b2c578564e8d4a51000848402611afe565b6003876006811115611b3a57fe5b1415611bdb5760035460408051631b8798d560e11b81526004810189905260248101889052604481018790526064810186905260848101859052905188926001600160a01b03169163370f31aa9160a4808301926020929190829003018186803b158015611ba757600080fd5b505afa158015611bbb573d6000803e3d6000fd5b505050506040513d6020811015611bd157600080fd5b50510190506116ce565b6005876006811115611be957fe5b1480611c0057506004876006811115611bfe57fe5b145b80611c1657506002876006811115611c1457fe5b145b80611c2c57506006876006811115611c2a57fe5b145b156116ce575060006116ce565b6000908152600160209081526040808320805460ff191690556002909152812055565b6000818152600460208190526040822080546001600160a01b031990811682556001820180548216905560028201849055600382018490559181018054909216909155600581018290556006810182905560080155611cba81611c39565b50565b808060005411611d02576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b611d0b82611c5c565b6000828152600460208190526040909120600901805460ff19166001835b02179055506000828152600460205260409020600901547fce5d57dc06bffee515dc9f8ca3a267203dbbe503f6bfad687a7120d00756913e90839060ff166006811115611d7257fe5b6040805192835260ff90911660208301528051918290030190a15050565b808060005411611dd5576040805162461bcd60e51b81526020600482015260166024820152600080516020611f24833981519152604482015290519081900360640190fd5b611dde82611c5c565b600082815260046020526040902060090180546005919060ff1916600183611d29565b6040805161014081018252600080825260208201819052918101829052606081018290526080810182905260a0810182905260c0810182905260e081018290526101008101829052906101208201529056fe53746174652073686f756c642062652057616974696e67436f6e6669726d6174696f6e446561646c696e65206973206e6f74206f76657220666f7220746869732073706563696669632073746174655374617465206973206e6f742057616974696e674368616c6c656e67652c2063616e6e6f742077696e427956474368616c6c656e67657220616e6420436c61696d6572206e65656420746f206469666665724661696c20746f20436c61696d566963746f7279427954696d6520696e2063757272656e7420636f6e646974696f6e496e646578206e6f7420696e7374616e74696174656400000000000000000000a26469706673582212203fcba7868bcd1ad10e523b5fb225fd029d795d1e2d7ef79023a277abc5b5406664736f6c63430007040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "challenge(uint256)": {
+        "params": {
+          "_index": "Index of compute instance which challenger is starting the VG."
+        }
+      },
+      "confirm(uint256)": {
+        "params": {
+          "_index": "Index of compute instance that the challenger is confirming the claim."
+        }
+      },
+      "getMaxInstanceDuration(uint256,uint256,uint256,uint256,uint256)": {
+        "params": {
+          "_maxCycle": "number of instructions until the machine is forcibly halted",
+          "_picoSecondsToRunInsn": "time the offchain will take to run one instruction"
+        }
+      },
+      "instantiate(address,address,uint256,address,bytes32,uint256)": {
+        "params": {
+          "_challenger": "address of the challenger.",
+          "_claimer": "address of the claimer.",
+          "_finalTime": "max cycle of the machine for that computation",
+          "_initialHash": "hash in which both claimer and challenger agree on",
+          "_machineAddress": "address of the machine that will run the instruction",
+          "_roundDuration": "duration of the round (security param)"
+        },
+        "returns": {
+          "_0": "Compute index."
+        }
+      },
+      "submitClaim(uint256,bytes32)": {
+        "params": {
+          "_claimedFinalHash": "hash of the machine after computation is completed.",
+          "_index": "Index of instance that the claimer is interacting with"
+        }
+      },
+      "winByVG(uint256)": {
+        "params": {
+          "_index": "Index of compute instance which challenger is starting the VG."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "challenge(uint256)": {
+        "notice": "Challenger disputes the claim, starting a verification game."
+      },
+      "claimVictoryByTime(uint256)": {
+        "notice": "Claim victory for opponent timeout."
+      },
+      "confirm(uint256)": {
+        "notice": "Challenger accepts claim."
+      },
+      "instantiate(address,address,uint256,address,bytes32,uint256)": {
+        "notice": "Instantiates a compute instance."
+      },
+      "submitClaim(uint256,bytes32)": {
+        "notice": "Claimer claims the hash of the result of a computation"
+      },
+      "winByVG(uint256)": {
+        "notice": "In case one of the parties wins the verification game, then he or she can call this function to claim victory in this contract as well."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 89,
+        "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+        "label": "currentIndex",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 93,
+        "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+        "label": "active",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_uint256,t_bool)"
+      },
+      {
+        "astId": 97,
+        "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+        "label": "nonce",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      },
+      {
+        "astId": 581,
+        "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+        "label": "vg",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_contract(VGInterface)6410"
+      },
+      {
+        "astId": 606,
+        "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+        "label": "instance",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_mapping(t_uint256,t_struct(ComputeCtx)602_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(VGInterface)6410": {
+        "encoding": "inplace",
+        "label": "contract VGInterface",
+        "numberOfBytes": "20"
+      },
+      "t_enum(state)1935": {
+        "encoding": "inplace",
+        "label": "enum ComputeInterface.state",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_struct(ComputeCtx)602_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct ComputeInstantiator.ComputeCtx)",
+        "numberOfBytes": "32",
+        "value": "t_struct(ComputeCtx)602_storage"
+      },
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(ComputeCtx)602_storage": {
+        "encoding": "inplace",
+        "label": "struct ComputeInstantiator.ComputeCtx",
+        "members": [
+          {
+            "astId": 583,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "challenger",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 585,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "claimer",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 587,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "roundDuration",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 589,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "timeOfLastMove",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 591,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "machine",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_address"
+          },
+          {
+            "astId": 593,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "initialHash",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 595,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "finalTime",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 597,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "claimedFinalHash",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_bytes32"
+          },
+          {
+            "astId": 599,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "vgInstance",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 601,
+            "contract": "contracts/ComputeInstantiator.sol:ComputeInstantiator",
+            "label": "currentState",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_enum(state)1935"
+          }
+        ],
+        "numberOfBytes": "320"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
