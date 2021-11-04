@@ -27,3 +27,4 @@ ipfs_interface/src/*.rs
 scripts/coverage/*
 machines/*
 !machines/.gitkeep
+.DS_Store

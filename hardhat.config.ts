@@ -61,6 +61,11 @@ const config: HardhatUserConfig = {
             chainId: 0xa869,
             accounts: mnemonic ? { mnemonic } : undefined,
         },
+        arbitrum_rinkeby: {
+            url: "https://rinkeby.arbitrum.io/rpc",
+            chainId: 421611,
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
     },
     solidity: {
         version: "0.7.4",
