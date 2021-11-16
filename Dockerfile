@@ -9,13 +9,6 @@ RUN \
 # install wagyu utility for mnemonic handling
 RUN cargo install wagyu --locked
 
-WORKDIR $BASE/descartes
-
-# Compile dependencies
-COPY ./descartes/Cargo_cache.toml ./Cargo.toml
-RUN mkdir -p ./src && echo "fn main() { }" > ./src/main.rs
-RUN cargo build -j $(nproc) --release
-
 WORKDIR $BASE
 
 COPY ./arbitration-dlib/ $BASE/arbitration-dlib
@@ -39,7 +32,7 @@ RUN apk add --no-cache \
     build-base \
     git \
     openssl \
-    python \
+    python3 \
     py-pip
 
 WORKDIR /opt/cartesi

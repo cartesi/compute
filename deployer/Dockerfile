@@ -5,7 +5,7 @@ RUN apk add --no-cache \
     build-base \
     git \
     openssl \
-    python \
+    python3 \
 #     python-dev \
     py-pip
 
