@@ -37,9 +37,9 @@ use super::{
     build_machine_id, get_logger_response, Role,
 };
 use compute::{
-    build_session_proof_key, build_session_read_key, build_session_run_key,
-    build_session_write_key, cartesi_machine, get_run_result,
-    EndSessionRequest, NewSessionRequest, NewSessionResponse,
+    build_session_end_key, build_session_proof_key, build_session_read_key,
+    build_session_run_key, build_session_write_key, cartesi_machine,
+    get_run_result, EndSessionRequest, NewSessionRequest, NewSessionResponse,
     SessionGetProofRequest, SessionGetProofResponse, SessionReadMemoryRequest,
     SessionReadMemoryResponse, SessionRunRequest, SessionRunResult,
     SessionWriteMemoryRequest, EMULATOR_METHOD_END, EMULATOR_METHOD_NEW,
@@ -258,7 +258,7 @@ impl DApp<()> for Descartes {
                 // send terminateSession request to the emulator service
                 let _processed_response = archive.get_response(
                     EMULATOR_SERVICE_NAME.to_string(),
-                    machine_id.clone(),
+                    build_session_end_key(machine_id.clone()),
                     EMULATOR_METHOD_END.to_string(),
                     request.into(),
                 )?;
@@ -724,7 +724,7 @@ fn react_by_machine_output(
 
             let _processed_response = archive.get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
-                archive_key.clone(),
+                archive_key,
                 EMULATOR_METHOD_WRITE.to_string(),
                 request.into(),
             )?;
@@ -794,7 +794,7 @@ fn react_by_machine_output(
 
             let _ = archive.get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
-                archive_key.clone(),
+                archive_key,
                 EMULATOR_METHOD_WRITE.to_string(),
                 request.into(),
             )?;
@@ -820,7 +820,7 @@ fn react_by_machine_output(
             let processed_response: SessionGetProofResponse = archive
                 .get_response(
                     EMULATOR_SERVICE_NAME.to_string(),
-                    archive_key.clone(),
+                    archive_key,
                     EMULATOR_METHOD_PROOF.to_string(),
                     request.into(),
                 )?
@@ -884,7 +884,7 @@ fn react_by_machine_output(
         let processed_response: SessionReadMemoryResponse = archive
             .get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
-                archive_key.clone(),
+                archive_key,
                 EMULATOR_METHOD_READ.to_string(),
                 request.into(),
             )?
@@ -916,7 +916,7 @@ fn react_by_machine_output(
         let processed_response: SessionGetProofResponse = archive
             .get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
-                archive_key.clone(),
+                archive_key,
                 EMULATOR_METHOD_PROOF.to_string(),
                 request.into(),
             )?
