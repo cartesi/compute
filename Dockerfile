@@ -1,4 +1,4 @@
-FROM rust:1.44 as build
+FROM rust:1.56 as build
 
 ENV BASE /opt/cartesi
 RUN \
