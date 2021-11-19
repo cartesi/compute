@@ -50,7 +50,7 @@ RUN yarn install --ignore-scripts
 
 
 # Runtime image
-FROM debian:buster-slim as runtime
+FROM debian:bullseye-slim as runtime
 
 ENV BASE /opt/cartesi
 
