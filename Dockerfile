@@ -39,7 +39,7 @@ RUN apk add --no-cache \
     build-base \
     git \
     openssl \
-    python \
+    python3 \
     py-pip
 
 WORKDIR /opt/cartesi
