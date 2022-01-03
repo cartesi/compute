@@ -1,6 +1,6 @@
 [submodule "arbitration-dlib"]
 	path = arbitration-dlib
-	url = ../arbitration-dlib.git
+	url = https://github.com/cartesi/arbitration-dlib.git
 [submodule "logger-dlib"]
 	path = logger-dlib
-	url = ../logger-dlib.git
+	url = https://github.com/cartesi//logger-dlib.git
