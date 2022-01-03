@@ -1,4 +1,4 @@
-FROM rust:1.44 as build
+FROM rust:1.57 as build
 
 ENV BASE /opt/cartesi
 RUN \
@@ -33,7 +33,7 @@ RUN apk add --no-cache \
     git \
     openssl \
     python3 \
-    py-pip
+    py3-pip
 
 WORKDIR /opt/cartesi
 COPY yarn.lock .
