@@ -1195,7 +1195,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     modifier onlyByParty(uint256 _index) {
         DescartesCtx storage i = instance[_index];
         require(
-            i.parties[msg.sender].isParty,
+            i.parties[msg.sender].isParty || i.partiesArray.length == 1,
             "The sender is not party to this instance"
         );
         _;
