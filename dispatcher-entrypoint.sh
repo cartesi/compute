@@ -39,7 +39,7 @@ dockerize \
     -timeout ${ETHEREUM_TIMEOUT}
 
 
-if [ -z "${CONCERN_SEMAPHORE}" ] && [ -z "${MNEMONIC}" ]; then
+if [ -z "${CONCERN_SEMAPHORE}" ] && [ -z "${MNEMONIC}" && [ -z "${ACCOUNT_ADDRESS}"] ]; then
     echo "No mnemonic or file set, using external signer"
     export ACCOUNT_ADDRESS=$(curl -X POST --data '{"jsonrpc":"2.0","method":"eth_accounts","params":[],"id":1}' http://${ETHEREUM_HOST}:${ETHEREUM_PORT} | jq -r '.result[0]')
 fi
