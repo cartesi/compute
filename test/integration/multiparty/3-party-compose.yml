@@ -48,7 +48,7 @@ services:
       - "3001:3001"
 
   logger_0:
-    image: cartesi/logger-server:0.6.2
+    image: cartesi/logger-server:0.7.3
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
@@ -118,7 +118,7 @@ services:
       - "3002:3001"
 
   logger_1:
-    image: cartesi/logger-server:0.6.2
+    image: cartesi/logger-server:0.7.3
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
@@ -188,7 +188,7 @@ services:
       - "3003:3001"
 
   logger_2:
-    image: cartesi/logger-server:0.6.2
+    image: cartesi/logger-server:0.7.3
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
