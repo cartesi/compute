@@ -77,7 +77,7 @@ services:
         - "50051:50051"
 
   machine_manager_0:
-    image: cartesi/machine-manager:0.5.0
+    image: cartesicorp/machine-manager:0.6.0-rc1
     volumes:
       - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
       - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
@@ -147,7 +147,7 @@ services:
         - "50052:50051"
 
   machine_manager_1:
-    image: cartesicorp/machine-manager:0.5.0-rc1
+    image: cartesicorp/machine-manager:0.6.0-rc1
     volumes:
       - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
       - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
@@ -217,7 +217,7 @@ services:
         - "50053:50051"
 
   machine_manager_2:
-    image: cartesi/machine-manager:0.5.0
+    image: cartesicorp/machine-manager:0.6.0-rc1
     command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
     volumes:
       - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
