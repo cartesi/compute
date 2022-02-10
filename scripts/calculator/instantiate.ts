@@ -55,7 +55,7 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0xa278371ed8d52efa6aba9f825ba8130d2604b363b3ceb51c1bd3a210f400fd8a",
+        "0x838e3ee2307ceda86e8c9275bcb57378de61d785e5fc6e377dacf00f389c3adb",
         // output position
         "0xa000000000000000",
         // output log2 size
