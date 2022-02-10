@@ -14,12 +14,12 @@ jobs:
       - name: Install Ubuntu dependencies
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y python3-pip 
+          sudo apt-get install -y python3-pip
           sudo pip3 install jinja2-cli
 
       - run: echo "TAG=${GITHUB_REF:11}" >> $GITHUB_ENV
         if: startsWith(github.ref, 'refs/tags/v')
-    
+
       - name: Login to Docker Hub
         run: echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
         env:
@@ -37,24 +37,24 @@ jobs:
           docker build . --target runtime --cache-from cartesi/descartes:build --cache-from cartesi/descartes:latest -t cartesi/descartes:${TAG} --build-arg TAG=${TAG} --build-arg NPM_TOKEN=${NPM_TOKEN}
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      
+
       - name: Push to Docker Hub
         run: |
           docker push cartesi/descartes:build
           docker push cartesi/descartes:${TAG}
         if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
 
-      - name: Integration tests        
+      - name: Integration tests
         timeout-minutes: 35
         run: |
           yarn install
           DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
-          
+
       - name: Compress logs
         if:  ${{ always() }}
         run: |
           gzip -9 logs.txt
-      
+
       - name: Upload integration logs
         uses: actions/upload-artifact@v2
         if:  ${{ always() }}
