@@ -55,6 +55,10 @@ async function main() {
 
             switch (parsedState) {
                 case "ConsensusResult":
+                    console.log(`====================== execution result ====================`);
+                    const result = await descartes.getResult(instance)
+                    console.log(ethers.utils.toUtf8String(result[3]))
+                    console.log(`============================================================`);
                     activeInstances.splice(i, 1);
                     break;
                 case "ChallengerWon":
