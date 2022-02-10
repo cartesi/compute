@@ -57,7 +57,7 @@
     "homepage": "https://github.com/cartesi/descartes#readme",
     "dependencies": {
         "@cartesi/arbitration": "^0.7.0-rc2",
-        "@cartesi/logger": "^0.7.3",
+        "@cartesi/logger": "^0.7.4",
         "@cartesi/machine-solidity-step": "^0.8.0-rc1",
         "@cartesi/util": "^2.0.1"
     },

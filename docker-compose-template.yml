@@ -61,7 +61,7 @@ services:
       - "{{ 3001 + i }}:3001"
 
   logger_{{ i }}:
-    image: cartesi/logger-server:0.7.3
+    image: cartesi/logger-server:0.7.4
 {% if network == "localhost" %}
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
 {% else %}    
