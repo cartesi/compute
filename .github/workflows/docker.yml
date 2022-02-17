@@ -48,7 +48,7 @@ jobs:
         timeout-minutes: 35
         run: |
           yarn install
-          DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
+          RUST_LOG=debug DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
 
       - name: Compress logs
         if:  ${{ always() }}
