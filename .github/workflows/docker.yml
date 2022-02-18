@@ -48,7 +48,12 @@ jobs:
         timeout-minutes: 35
         run: |
           yarn install
-          RUST_LOG=debug DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
+          DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
+
+      - name: Kernel log
+        if:  ${{ always() }}
+        run: |
+          sudo dmesg
 
       - name: Compress logs
         if:  ${{ always() }}
