@@ -29,7 +29,7 @@ echo "Executing helloworld test"
 ./scripts/helloworld/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
 
-# testing Calculator
+# # testing Calculator
 echo "Executing calculator test"
 ./scripts/calculator/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
@@ -42,14 +42,14 @@ export PROVIDER=0x0000000000000000000000000000000000000000
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 unset PROVIDER
 
-echo "Executing calculator test with provider"
+# echo "Executing calculator test with provider"
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
-./scripts/ipfs/run.sh
-./scripts/ipfs/run-large-1M.sh
-./scripts/ipfs/run-logger-fallback.sh
-./scripts/ipfs/run-no-provider.sh
+ ./scripts/ipfs/run.sh
+ ./scripts/ipfs/run-large-1M.sh
+ ./scripts/ipfs/run-logger-fallback.sh
+ ./scripts/ipfs/run-no-provider.sh
 
 # waiting for resuls
 npx hardhat run --network localhost --no-compile ./test/integration/wait-results.ts
