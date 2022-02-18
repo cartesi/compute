@@ -30,7 +30,7 @@ services:
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
-      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
       WEB3_PROVIDER_URI: {{ config.provider() }}
       DEPLOYMENT_SEMAPHORE: {{ config.semaphore() }}
       ETHEREUM_HOST: {{ config.host() }}
@@ -101,6 +101,8 @@ services:
     volumes:
       - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+    environment:
+      RUST_LOG: debug,machine_manager_server=debug,h2::codec=info
     networks:
       ethereum: {}
       node_{{ i }}:
