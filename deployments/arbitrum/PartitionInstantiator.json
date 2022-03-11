@@ -1,0 +1,988 @@
+{
+  "address": "0xb1da3E533fc3fB1fd9Cd74B525968B3Be8AD6135",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "_state",
+          "type": "uint8"
+        }
+      ],
+      "name": "ChallengeEnded",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_timeOfDivergence",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "_hashAtDivergenceTime",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes32",
+          "name": "_hashRigthAfterDivergenceTime",
+          "type": "bytes32"
+        }
+      ],
+      "name": "DivergenceFound",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "HashesPosted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "PartitionCreated",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "QueryPosted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "claimVictoryByTime",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "divergenceTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCurrentState",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getCurrentStateDeadline",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "time",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_timeToStartMachine",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_partitionSize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxCycle",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_picoSecondsToRunInsn",
+          "type": "uint256"
+        }
+      ],
+      "name": "getMaxInstanceDuration",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getNonce",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "currentNonce",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPartitionGameIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getQuerySize",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getState",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_queryArray",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bool[]",
+          "name": "_submittedArray",
+          "type": "bool[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "_hashArray",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_currentState",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_uintValues",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "getSubInstances",
+      "outputs": [
+        {
+          "internalType": "address[]",
+          "name": "",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_challenger",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_claimer",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_claimerFinalHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_finalTime",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_querySize",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_roundDuration",
+          "type": "uint256"
+        }
+      ],
+      "name": "instantiate",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "isActive",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_user",
+          "type": "address"
+        }
+      ],
+      "name": "isConcerned",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "x",
+          "type": "uint256"
+        }
+      ],
+      "name": "log2OverTwo",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "y",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "queryPiece",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "leftPoint",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rightPoint",
+          "type": "uint256"
+        }
+      ],
+      "name": "makeQuery",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_divergenceTime",
+          "type": "uint256"
+        }
+      ],
+      "name": "presentDivergence",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "i",
+          "type": "uint256"
+        }
+      ],
+      "name": "queryArray",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "postedTimes",
+          "type": "uint256[]"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "postedHashes",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "replyQuery",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsChallengerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsClaimerWon",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsDivergenceFound",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsWaitingHashes",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "stateIsWaitingQuery",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "key",
+          "type": "uint256"
+        }
+      ],
+      "name": "timeHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "key",
+          "type": "uint256"
+        }
+      ],
+      "name": "timeSubmitted",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xe5f77ef23f2ee6bc9981badba67448033d5a19f8b683dc03838813b1a1c7ba2c",
+  "receipt": {
+    "to": null,
+    "from": "0x8358d9d6A0AED2a5041df67643405ef502634855",
+    "contractAddress": "0xb1da3E533fc3fB1fd9Cd74B525968B3Be8AD6135",
+    "transactionIndex": 0,
+    "gasUsed": "35803821",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x2461c9cdc5e9bf44473994b4c026c8f7c80f6632f23c06c5b2b790d6effbdb29",
+    "transactionHash": "0xe5f77ef23f2ee6bc9981badba67448033d5a19f8b683dc03838813b1a1c7ba2c",
+    "logs": [],
+    "blockNumber": 7732704,
+    "cumulativeGasUsed": "16602041",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"_state\",\"type\":\"uint8\"}],\"name\":\"ChallengeEnded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_timeOfDivergence\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_hashAtDivergenceTime\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"_hashRigthAfterDivergenceTime\",\"type\":\"bytes32\"}],\"name\":\"DivergenceFound\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"HashesPosted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"PartitionCreated\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"QueryPosted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"claimVictoryByTime\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"divergenceTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getCurrentState\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getCurrentStateDeadline\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"time\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_timeToStartMachine\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_partitionSize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_maxCycle\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_picoSecondsToRunInsn\",\"type\":\"uint256\"}],\"name\":\"getMaxInstanceDuration\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getNonce\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"currentNonce\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getPartitionGameIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getQuerySize\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getState\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"internalType\":\"uint256[]\",\"name\":\"_queryArray\",\"type\":\"uint256[]\"},{\"internalType\":\"bool[]\",\"name\":\"_submittedArray\",\"type\":\"bool[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"_hashArray\",\"type\":\"bytes32[]\"},{\"internalType\":\"bytes32\",\"name\":\"_currentState\",\"type\":\"bytes32\"},{\"internalType\":\"uint256[]\",\"name\":\"_uintValues\",\"type\":\"uint256[]\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"getSubInstances\",\"outputs\":[{\"internalType\":\"address[]\",\"name\":\"\",\"type\":\"address[]\"},{\"internalType\":\"uint256[]\",\"name\":\"\",\"type\":\"uint256[]\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_challenger\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_claimer\",\"type\":\"address\"},{\"internalType\":\"bytes32\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32\",\"name\":\"_claimerFinalHash\",\"type\":\"bytes32\"},{\"internalType\":\"uint256\",\"name\":\"_finalTime\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_querySize\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_roundDuration\",\"type\":\"uint256\"}],\"name\":\"instantiate\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"isActive\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"address\",\"name\":\"_user\",\"type\":\"address\"}],\"name\":\"isConcerned\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"x\",\"type\":\"uint256\"}],\"name\":\"log2OverTwo\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"y\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"queryPiece\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"leftPoint\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"rightPoint\",\"type\":\"uint256\"}],\"name\":\"makeQuery\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"_divergenceTime\",\"type\":\"uint256\"}],\"name\":\"presentDivergence\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"i\",\"type\":\"uint256\"}],\"name\":\"queryArray\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256[]\",\"name\":\"postedTimes\",\"type\":\"uint256[]\"},{\"internalType\":\"bytes32[]\",\"name\":\"postedHashes\",\"type\":\"bytes32[]\"}],\"name\":\"replyQuery\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsChallengerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsClaimerWon\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsDivergenceFound\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsWaitingHashes\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"stateIsWaitingQuery\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"}],\"name\":\"timeHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"key\",\"type\":\"uint256\"}],\"name\":\"timeSubmitted\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"getMaxInstanceDuration(uint256,uint256,uint256,uint256,uint256)\":{\"params\":{\"_maxCycle\":\"number of instructions until the machine is forcibly halted\",\"_picoSecondsToRunInsn\":\"time the offchain will take to run one instruction\"}},\"instantiate(address,address,bytes32,bytes32,uint256,uint256,uint256)\":{\"params\":{\"_challenger\":\"address of the challenger.\",\"_claimer\":\"address of the claimer.\",\"_claimerFinalHash\":\"final hash claimed by claimer\",\"_finalTime\":\"max cycle of the machine for that computation\",\"_initialHash\":\"hash in which both claimer and challenger agree on\",\"_querySize\":\"size of postedHashes and postedTimes\",\"_roundDuration\":\"duration of the round (security param)\"},\"returns\":{\"_0\":\"Partition index.\"}},\"makeQuery(uint256,uint256,uint256,uint256)\":{\"params\":{\"leftPoint\":\"confirmation of the leftPoint of the interval to be split. Should be an aggreement point.\",\"queryPiece\":\"is the index of queryArray corresponding to the left limit of the next interval to be queried.\",\"rightPoint\":\"confirmation of the rightPoint of the interval to be split. Should be a disagreement point.\"}},\"presentDivergence(uint256,uint256)\":{\"params\":{\"_divergenceTime\":\"The time when the divergence happended. It should be a point of aggreement, while _divergenceTime + 1 should be a point of disagreement (both queried).\"}},\"replyQuery(uint256,uint256[],bytes32[])\":{\"params\":{\"postedHashes\":\"An array (of size querySize) with the hashes corresponding to the queried times\",\"postedTimes\":\"An array (of size querySize) with the times that have been queried.\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"claimVictoryByTime(uint256)\":{\"notice\":\"Claim victory for opponent timeout.\"},\"instantiate(address,address,bytes32,bytes32,uint256,uint256,uint256)\":{\"notice\":\"Instantiate a partition instance.\"},\"makeQuery(uint256,uint256,uint256,uint256)\":{\"notice\":\"Makes a query (only challenger can call it).\"},\"presentDivergence(uint256,uint256)\":{\"notice\":\"Present a precise time of divergence (can only be called by challenger).\"},\"replyQuery(uint256,uint256[],bytes32[])\":{\"notice\":\"Answer the query (only claimer can call it).\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/PartitionInstantiator.sol\":\"PartitionInstantiator\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@cartesi/util/contracts/Decorated.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\n\\ncontract Decorated {\\n    // This contract defines several modifiers but does not use\\n    // them - they will be used in derived contracts.\\n    modifier onlyBy(address user) {\\n        require(msg.sender == user, \\\"Cannot be called by user\\\");\\n        _;\\n    }\\n\\n    modifier onlyAfter(uint256 time) {\\n        require(block.timestamp > time, \\\"Cannot be called now\\\");\\n        _;\\n    }\\n}\\n\",\"keccak256\":\"0xdbba019b8f7f93b212a5bbae402ee988321c4fa82ed2b4c9e55b4d7ddf35dcc3\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/Instantiator.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n\\npragma solidity ^0.7.0;\\n\\n\\ninterface Instantiator {\\n\\n    modifier onlyInstantiated(uint256 _index) virtual;\\n\\n    modifier onlyActive(uint256 _index) virtual;\\n\\n    modifier increasesNonce(uint256 _index) virtual;\\n\\n    function isActive(uint256 _index) external view returns (bool);\\n\\n    function getNonce(uint256 _index) external view returns (uint256);\\n\\n    function isConcerned(uint256 _index, address _user) external view returns (bool);\\n\\n    function getSubInstances(uint256 _index, address) external view returns (address[] memory _addresses, uint256[] memory _indices);\\n}\\n\",\"keccak256\":\"0x416e612dc09b10765de32ec06cf0a7ee4e050e16db8bf3b8ad832a6082b7dfd6\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/InstantiatorImpl.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\nimport \\\"./Instantiator.sol\\\";\\n\\nabstract contract InstantiatorImpl is Instantiator {\\n    uint256 public currentIndex = 0;\\n\\n    mapping(uint256 => bool) internal active;\\n    mapping(uint256 => uint256) internal nonce;\\n\\n    modifier onlyInstantiated(uint256 _index) override {\\n        require(currentIndex > _index, \\\"Index not instantiated\\\");\\n        _;\\n    }\\n\\n    modifier onlyActive(uint256 _index) override {\\n        require(currentIndex > _index, \\\"Index not instantiated\\\");\\n        require(isActive(_index), \\\"Index inactive\\\");\\n        _;\\n    }\\n\\n    modifier increasesNonce(uint256 _index) override {\\n        nonce[_index]++;\\n        _;\\n    }\\n\\n    function isActive(uint256 _index) public override view returns (bool) {\\n        return (active[_index]);\\n    }\\n\\n    function getNonce(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyActive(_index)\\n        returns (uint256 currentNonce)\\n    {\\n        return nonce[_index];\\n    }\\n\\n    function deactivate(uint256 _index) internal {\\n        active[_index] = false;\\n        nonce[_index] = 0;\\n    }\\n}\\n\",\"keccak256\":\"0x8f8e29b807e5c55198206a370b4d8751cbd98a663e3f89faff274e2f9d7cae75\",\"license\":\"Apache-2.0\"},\"contracts/PartitionInstantiator.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Partition instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/InstantiatorImpl.sol\\\";\\nimport \\\"@cartesi/util/contracts/Decorated.sol\\\";\\nimport \\\"./PartitionInterface.sol\\\";\\n\\ncontract PartitionInstantiator is\\n    InstantiatorImpl,\\n    Decorated,\\n    PartitionInterface\\n{\\n    uint256 constant MAX_QUERY_SIZE = 20;\\n\\n    // IMPLEMENT GARBAGE COLLECTOR AFTER AN INSTACE IS FINISHED!\\n    struct PartitionCtx {\\n        address challenger;\\n        address claimer;\\n        uint256 finalTime; // hashes provided between 0 and finalTime (inclusive)\\n        mapping(uint256 => bool) timeSubmitted; // marks a time as submitted\\n        mapping(uint256 => bytes32) timeHash; // hashes are signed by claimer\\n        uint256 querySize;\\n        uint256[] queryArray;\\n        uint256 timeOfLastMove;\\n        uint256 roundDuration;\\n        uint256 partitionGameIndex; // number of interactions that already happened in the partition interaction\\n        state currentState;\\n        uint256 divergenceTime;\\n    }\\n\\n    //Swap internal/private when done with testing\\n    mapping(uint256 => PartitionCtx) internal instance;\\n\\n    // These are the possible states and transitions of the contract.\\n    //\\n    //          +---+\\n    //          |   |\\n    //          +---+\\n    //            |\\n    //            | instantiate\\n    //            v\\n    //          +---------------+  claimVictoryByTimeout  +---------------+\\n    //          | WaitingHashes |------------------------>| ChallengerWon |\\n    //          +---------------+                         +---------------+\\n    //            |  ^\\n    // replyQuery |  | makeQuery\\n    //            v  |\\n    //          +--------------+   claimVictoryByTimeout  +------------+\\n    //          | WaitingQuery |------------------------->| ClaimerWon |\\n    //          +--------------+                          +------------+\\n    //            |\\n    //            | presentDivergence\\n    //            v\\n    //          +-----------------+\\n    //          | DivergenceFound |\\n    //          +-----------------+\\n    //\\n\\n    event PartitionCreated(uint256 _index);\\n    event QueryPosted(uint256 _index);\\n    event HashesPosted(uint256 _index);\\n    event ChallengeEnded(uint256 _index, uint8 _state);\\n    event DivergenceFound(\\n        uint256 _index,\\n        uint256 _timeOfDivergence,\\n        bytes32 _hashAtDivergenceTime,\\n        bytes32 _hashRigthAfterDivergenceTime\\n    );\\n\\n    /// @notice Instantiate a partition instance.\\n    /// @param _challenger address of the challenger.\\n    /// @param _claimer address of the claimer.\\n    /// @param _initialHash hash in which both claimer and challenger agree on\\n    /// @param _claimerFinalHash final hash claimed by claimer\\n    /// @param _finalTime max cycle of the machine for that computation\\n    /// @param _querySize size of postedHashes and postedTimes\\n    /// @param _roundDuration duration of the round (security param)\\n    /// @return Partition index.\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime,\\n        uint256 _querySize,\\n        uint256 _roundDuration\\n    ) public override returns (uint256) {\\n        require(\\n            _challenger != _claimer,\\n            \\\"Challenger and claimer have the same address\\\"\\n        );\\n        require(_finalTime > 0, \\\"Final Time has to be bigger than zero\\\");\\n        require(_querySize > 2, \\\"Query Size must be bigger than 2\\\");\\n        require(\\n            _querySize < MAX_QUERY_SIZE,\\n            \\\"Query Size must be less than max\\\"\\n        );\\n        require(\\n            _roundDuration > 50,\\n            \\\"Round Duration has to be greater than 50 seconds\\\"\\n        );\\n        instance[currentIndex].challenger = _challenger;\\n        instance[currentIndex].claimer = _claimer;\\n        instance[currentIndex].finalTime = _finalTime;\\n        instance[currentIndex].timeSubmitted[0] = true;\\n        instance[currentIndex].timeSubmitted[_finalTime] = true;\\n        instance[currentIndex].timeHash[0] = _initialHash;\\n        instance[currentIndex].timeHash[_finalTime] = _claimerFinalHash;\\n        instance[currentIndex].querySize = _querySize;\\n        // Creates queryArray with the correct size\\n        instance[currentIndex].queryArray = new uint256[](\\n            instance[currentIndex].querySize\\n        );\\n        // slice the interval, placing the separators in queryArray\\n        slice(currentIndex, 0, instance[currentIndex].finalTime);\\n        instance[currentIndex].roundDuration = _roundDuration;\\n        instance[currentIndex].timeOfLastMove = block.timestamp;\\n        instance[currentIndex].currentState = state.WaitingHashes;\\n        emit PartitionCreated(currentIndex);\\n        emit QueryPosted(currentIndex);\\n\\n        active[currentIndex] = true;\\n        return currentIndex++;\\n    }\\n\\n    /// @notice Answer the query (only claimer can call it).\\n    /// @param postedTimes An array (of size querySize) with the times that have\\n    /// been queried.\\n    /// @param postedHashes An array (of size querySize) with the hashes\\n    /// corresponding to the queried times\\n    function replyQuery(\\n        uint256 _index,\\n        uint256[] memory postedTimes,\\n        bytes32[] memory postedHashes\\n    )\\n        public\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].claimer)\\n        increasesNonce(_index)\\n    {\\n        require(\\n            instance[_index].currentState == state.WaitingHashes,\\n            \\\"CurrentState is not WaitingHashes, cannot replyQuery\\\"\\n        );\\n        require(\\n            postedTimes.length == instance[_index].querySize,\\n            \\\"postedTimes.length != querySize\\\"\\n        );\\n        require(\\n            postedHashes.length == instance[_index].querySize,\\n            \\\"postedHashes.length != querySize\\\"\\n        );\\n        for (uint256 i = 0; i < instance[_index].querySize; i++) {\\n            // make sure the claimer knows the current query\\n            require(\\n                postedTimes[i] == instance[_index].queryArray[i],\\n                \\\"postedTimes[i] != queryArray[i]\\\"\\n            );\\n            // cannot rewrite previous answer\\n            if (!instance[_index].timeSubmitted[postedTimes[i]]) {\\n                instance[_index].timeSubmitted[postedTimes[i]] = true;\\n                instance[_index].timeHash[postedTimes[i]] = postedHashes[i];\\n            }\\n        }\\n        instance[_index].currentState = state.WaitingQuery;\\n        instance[_index].timeOfLastMove = block.timestamp;\\n        instance[_index].partitionGameIndex++;\\n        emit HashesPosted(_index);\\n    }\\n\\n    /// @notice Makes a query (only challenger can call it).\\n    /// @param queryPiece is the index of queryArray corresponding to the left\\n    /// limit of the next interval to be queried.\\n    /// @param leftPoint confirmation of the leftPoint of the interval to be\\n    /// split. Should be an aggreement point.\\n    /// @param rightPoint confirmation of the rightPoint of the interval to be\\n    /// split. Should be a disagreement point.\\n    function makeQuery(\\n        uint256 _index,\\n        uint256 queryPiece,\\n        uint256 leftPoint,\\n        uint256 rightPoint\\n    )\\n        public\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].challenger)\\n        increasesNonce(_index)\\n    {\\n        require(\\n            instance[_index].currentState == state.WaitingQuery,\\n            \\\"CurrentState is not WaitingQuery, cannot makeQuery\\\"\\n        );\\n        require(\\n            queryPiece < instance[_index].querySize - 1,\\n            \\\"queryPiece is bigger than querySize - 1\\\"\\n        );\\n        // make sure the challenger knows the previous query\\n        require(\\n            leftPoint == instance[_index].queryArray[queryPiece],\\n            \\\"leftPoint != queryArray[queryPiece]\\\"\\n        );\\n        require(\\n            rightPoint == instance[_index].queryArray[queryPiece + 1],\\n            \\\"rightPoint != queryArray[queryPiece]\\\"\\n        );\\n        // no unitary queries. in unitary case, present divergence instead.\\n        // by avoiding unitary queries one forces the contest to end\\n        require(rightPoint - leftPoint > 1, \\\"Interval is less than one\\\");\\n        slice(_index, leftPoint, rightPoint);\\n        instance[_index].currentState = state.WaitingHashes;\\n        instance[_index].timeOfLastMove = block.timestamp;\\n        emit QueryPosted(_index);\\n    }\\n\\n    /// @notice Claim victory for opponent timeout.\\n    function claimVictoryByTime(uint256 _index)\\n        public\\n        onlyInstantiated(_index)\\n        increasesNonce(_index)\\n    {\\n        bool afterDeadline = (block.timestamp >\\n            instance[_index].timeOfLastMove +\\n                getMaxStateDuration(\\n                    instance[_index].currentState,\\n                    instance[_index].roundDuration,\\n                    40, // time to build machine for the first time\\n                    instance[_index].querySize,\\n                    instance[_index].partitionGameIndex,\\n                    instance[_index].finalTime,\\n                    500 // 500 pico seconds per instruction\\n                ));\\n\\n        if (\\n            (msg.sender == instance[_index].challenger) &&\\n            (instance[_index].currentState == state.WaitingHashes) &&\\n            afterDeadline\\n        ) {\\n            instance[_index].currentState = state.ChallengerWon;\\n            deactivate(_index);\\n            emit ChallengeEnded(_index, uint8(instance[_index].currentState));\\n            return;\\n        }\\n        if (\\n            (msg.sender == instance[_index].claimer) &&\\n            (instance[_index].currentState == state.WaitingQuery) &&\\n            afterDeadline\\n        ) {\\n            instance[_index].currentState = state.ClaimerWon;\\n            deactivate(_index);\\n            emit ChallengeEnded(_index, uint8(instance[_index].currentState));\\n            return;\\n        }\\n        revert(\\\"Fail to ClaimVictoryByTime in current condition\\\");\\n    }\\n\\n    /// @notice Present a precise time of divergence (can only be called by\\n    /// challenger).\\n    /// @param _divergenceTime The time when the divergence happended. It\\n    /// should be a point of aggreement, while _divergenceTime + 1 should be a\\n    /// point of disagreement (both queried).\\n    function presentDivergence(uint256 _index, uint256 _divergenceTime)\\n        public\\n        onlyInstantiated(_index)\\n        onlyBy(instance[_index].challenger)\\n        increasesNonce(_index)\\n    {\\n        require(\\n            _divergenceTime < instance[_index].finalTime,\\n            \\\"divergence time has to be less than finalTime\\\"\\n        );\\n        require(\\n            instance[_index].timeSubmitted[_divergenceTime],\\n            \\\"divergenceTime has to have been submitted\\\"\\n        );\\n        require(\\n            instance[_index].timeSubmitted[_divergenceTime + 1],\\n            \\\"divergenceTime + 1 has to have been submitted\\\"\\n        );\\n\\n        instance[_index].divergenceTime = _divergenceTime;\\n        instance[_index].currentState = state.DivergenceFound;\\n        deactivate(_index);\\n        emit ChallengeEnded(_index, uint8(instance[_index].currentState));\\n        emit DivergenceFound(\\n            _index,\\n            instance[_index].divergenceTime,\\n            instance[_index].timeHash[instance[_index].divergenceTime],\\n            instance[_index].timeHash[instance[_index].divergenceTime + 1]\\n        );\\n    }\\n\\n    /// @notice Get the worst case scenario duration for a specific state\\n    /// @param _roundDuration security parameter, the max time an agent\\n    //          has to react and submit one simple transaction\\n    /// @param _timeToStartMachine time to build the machine for the first time\\n    /// @param _partitionSize size of partition, how many instructions the\\n    //          will run to reach the necessary hash\\n    /// @param _partitionGameIndex number of interactions that already happened\\n    //          in the partition interaction\\n    /// @param _maxCycle number of instructions until the machine is forcibly halted\\n    /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction\\n    function getMaxStateDuration(\\n        state _state,\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _partitionGameIndex,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) private pure returns (uint256) {\\n        // TO-DO: when we have DUMP then we can remove the partitionSize - 1 multiplier\\n        uint256 currentPartitionSize = _maxCycle /\\n            (_partitionSize**_partitionGameIndex);\\n\\n        if (_partitionGameIndex != 0) {\\n            currentPartitionSize = currentPartitionSize * (_partitionSize - 1);\\n        }\\n\\n        if (_state == state.WaitingQuery) {\\n            return\\n                _timeToStartMachine +\\n                ((currentPartitionSize * _picoSecondsToRunInsn) / 1e12) +\\n                _roundDuration;\\n        }\\n        if (_state == state.WaitingHashes) {\\n            return\\n                _timeToStartMachine +\\n                ((currentPartitionSize * _picoSecondsToRunInsn) / 1e12) +\\n                _roundDuration;\\n        }\\n        if (\\n            _state == state.ClaimerWon ||\\n            _state == state.ChallengerWon ||\\n            _state == state.DivergenceFound\\n        ) {\\n            return 0; // final state\\n        }\\n        require(false, \\\"Unrecognized state\\\");\\n    }\\n\\n    /// @notice Get the worst case scenario duration for an instance of this contract\\n    /// @param _roundDuration security parameter, the max time an agent\\n    //          has to react and submit one simple transaction\\n    /// @param _timeToStartMachine time to build the machine for the first time\\n    /// @param _partitionSize size of partition, how many instructions the\\n    //          will run to reach the necessary hash\\n    /// @param _maxCycle number of instructions until the machine is forcibly halted\\n    /// @param _picoSecondsToRunInsn time the offchain will take to run one instruction\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) public override pure returns (uint256) {\\n        uint256 waitingQueryDuration = getMaxStateDuration(\\n            state.WaitingQuery,\\n            _roundDuration,\\n            _timeToStartMachine,\\n            _partitionSize,\\n            0, //_partitionGameIndex \\\"worst case\\\" is zero\\n            _maxCycle,\\n            _picoSecondsToRunInsn\\n        );\\n\\n        uint256 waitingHashesDuration = getMaxStateDuration(\\n            state.WaitingHashes,\\n            _roundDuration,\\n            _timeToStartMachine,\\n            _partitionSize,\\n            0, //_partitionGameIndex \\\"worst case\\\" is zero\\n            _maxCycle,\\n            _picoSecondsToRunInsn\\n        );\\n\\n        // TO-DO: When we have DUMP this should be 2 should be 1 / (1 - 1/querySize)\\n        // also has to add the round duration for each state transition\\n        return\\n            (uint256(2) * waitingQueryDuration) +\\n            (uint256(2) * waitingHashesDuration) +\\n            (_roundDuration * log2OverTwo(_maxCycle));\\n    }\\n\\n    // Getters methods\\n\\n    function getCurrentStateDeadline(uint _index) public override view\\n        onlyInstantiated(_index)\\n        returns (uint time)\\n    {\\n        PartitionCtx storage i = instance[_index];\\n        time = i.timeOfLastMove +\\n            getMaxStateDuration(\\n                i.currentState,\\n                i.roundDuration,\\n                40,\\n                i.querySize,\\n                i.partitionGameIndex,\\n                i.finalTime,\\n                500\\n        ); //deadline (40 seconds to build machine, 500 pico seconds per insn\\n    }\\n\\n    function getState(uint256 _index, address)\\n        public\\n        view\\n        returns (\\n            //onlyInstantiated(_index)\\n            address _challenger,\\n            address _claimer,\\n            uint256[] memory _queryArray,\\n            bool[] memory _submittedArray,\\n            bytes32[] memory _hashArray,\\n            bytes32 _currentState,\\n            uint256[] memory _uintValues\\n        )\\n    {\\n        PartitionCtx storage i = instance[_index];\\n\\n        uint256[] memory uintValues = new uint256[](4);\\n        uintValues[0] = i.finalTime;\\n        uintValues[1] = i.querySize;\\n        uintValues[2] =\\n            i.timeOfLastMove +\\n            getMaxStateDuration(\\n                i.currentState,\\n                i.roundDuration,\\n                40,\\n                i.querySize,\\n                i.partitionGameIndex,\\n                i.finalTime,\\n                500\\n            ); //deadline (40 seconds to build machine, 500 pico seconds per insn\\n        uintValues[3] = i.divergenceTime;\\n\\n        bool[] memory submittedArray = new bool[](MAX_QUERY_SIZE);\\n        bytes32[] memory hashArray = new bytes32[](MAX_QUERY_SIZE);\\n\\n        for (uint256 j = 0; j < i.querySize; j++) {\\n            submittedArray[j] = instance[_index].timeSubmitted[i.queryArray[j]];\\n            hashArray[j] = instance[_index].timeHash[i.queryArray[j]];\\n        }\\n\\n        // we have to duplicate the code for getCurrentState because of\\n        // \\\"stack too deep\\\"\\n        bytes32 currentState;\\n        if (i.currentState == state.WaitingQuery) {\\n            currentState = \\\"WaitingQuery\\\";\\n        }\\n        if (i.currentState == state.WaitingHashes) {\\n            currentState = \\\"WaitingHashes\\\";\\n        }\\n        if (i.currentState == state.ChallengerWon) {\\n            currentState = \\\"ChallengerWon\\\";\\n        }\\n        if (i.currentState == state.ClaimerWon) {\\n            currentState = \\\"ClaimerWon\\\";\\n        }\\n        if (i.currentState == state.DivergenceFound) {\\n            currentState = \\\"DivergenceFound\\\";\\n        }\\n\\n        return (\\n            i.challenger,\\n            i.claimer,\\n            i.queryArray,\\n            submittedArray,\\n            hashArray,\\n            currentState,\\n            uintValues\\n        );\\n    }\\n\\n    /*\\n    function challenger(uint256 _index) public view returns (address) {\\n        return instance[_index].challenger;\\n    }\\n\\n    function claimer(uint256 _index) public view returns (address) {\\n        return instance[_index].claimer;\\n    }\\n\\n    function finalTime(uint256 _index) public view returns (uint) {\\n        return instance[_index].finalTime;\\n    }\\n\\n    function querySize(uint256 _index) public view returns (uint) {\\n        return instance[_index].querySize;\\n    }\\n\\n    function timeOfLastMove(uint256 _index) public view returns (uint) {\\n        return instance[_index].timeOfLastMove;\\n    }\\n\\n    function roundDuration(uint256 _index) public view returns (uint) {\\n        return instance[_index].roundDuration;\\n    }\\n    */\\n    function divergenceTime(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (uint256)\\n    {\\n        return instance[_index].divergenceTime;\\n    }\\n\\n    function timeSubmitted(uint256 _index, uint256 key)\\n        public\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].timeSubmitted[key];\\n    }\\n\\n    function timeHash(uint256 _index, uint256 key)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bytes32)\\n    {\\n        return instance[_index].timeHash[key];\\n    }\\n\\n    function queryArray(uint256 _index, uint256 i)\\n        public\\n        view\\n        onlyInstantiated(_index)\\n        returns (uint256)\\n    {\\n        return instance[_index].queryArray[i];\\n    }\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (uint256)\\n    {\\n        return instance[_index].partitionGameIndex;\\n    }\\n\\n    function getQuerySize(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (uint256)\\n    {\\n        return instance[_index].querySize;\\n    }\\n\\n    // state getters\\n\\n    function isConcerned(uint256 _index, address _user)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return ((instance[_index].challenger == _user) ||\\n            (instance[_index].claimer == _user));\\n    }\\n\\n    function getSubInstances(uint256, address)\\n        public\\n        override\\n        pure\\n        returns (address[] memory, uint256[] memory)\\n    {\\n        address[] memory a = new address[](0);\\n        uint256[] memory i = new uint256[](0);\\n        return (a, i);\\n    }\\n\\n    function getCurrentState(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bytes32)\\n    {\\n        if (instance[_index].currentState == state.WaitingQuery) {\\n            return \\\"WaitingQuery\\\";\\n        }\\n        if (instance[_index].currentState == state.WaitingHashes) {\\n            return \\\"WaitingHashes\\\";\\n        }\\n        if (instance[_index].currentState == state.ChallengerWon) {\\n            return \\\"ChallengerWon\\\";\\n        }\\n        if (instance[_index].currentState == state.ClaimerWon) {\\n            return \\\"ClaimerWon\\\";\\n        }\\n        if (instance[_index].currentState == state.DivergenceFound) {\\n            return \\\"DivergenceFound\\\";\\n        }\\n        require(false, \\\"Unrecognized state\\\");\\n    }\\n\\n    // remove these functions and change tests accordingly\\n    function stateIsWaitingQuery(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].currentState == state.WaitingQuery;\\n    }\\n\\n    function stateIsWaitingHashes(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].currentState == state.WaitingHashes;\\n    }\\n\\n    function stateIsChallengerWon(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].currentState == state.ChallengerWon;\\n    }\\n\\n    function stateIsClaimerWon(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].currentState == state.ClaimerWon;\\n    }\\n\\n    function stateIsDivergenceFound(uint256 _index)\\n        public\\n        override\\n        view\\n        onlyInstantiated(_index)\\n        returns (bool)\\n    {\\n        return instance[_index].currentState == state.DivergenceFound;\\n    }\\n\\n    // split an interval using (querySize) points (placed in queryArray)\\n    // leftPoint rightPoint are always the first and last points in queryArray.\\n    function slice(\\n        uint256 _index,\\n        uint256 leftPoint,\\n        uint256 rightPoint\\n    ) internal {\\n        require(\\n            rightPoint > leftPoint,\\n            \\\"rightPoint has to be bigger than leftPoint\\\"\\n        );\\n        uint256 i;\\n        uint256 intervalLength = rightPoint - leftPoint;\\n        uint256 queryLastIndex = instance[_index].querySize - 1;\\n        // if intervalLength is not big enough to allow us jump sizes larger then\\n        // one, we go step by step\\n        if (intervalLength < 2 * queryLastIndex) {\\n            for (i = 0; i < queryLastIndex; i++) {\\n                if (leftPoint + i < rightPoint) {\\n                    instance[_index].queryArray[i] = leftPoint + i;\\n                } else {\\n                    instance[_index].queryArray[i] = rightPoint;\\n                }\\n            }\\n        } else {\\n            // otherwise: intervalLength = (querySize - 1) * divisionLength + j\\n            // with divisionLength >= 1 and j in {0, ..., querySize - 2}. in this\\n            // case the size of maximum slice drops to a proportion of intervalLength\\n            uint256 divisionLength = intervalLength / queryLastIndex;\\n            for (i = 0; i < queryLastIndex; i++) {\\n                instance[_index].queryArray[i] = leftPoint + i * divisionLength;\\n            }\\n        }\\n        instance[_index].queryArray[queryLastIndex] = rightPoint;\\n    }\\n\\n    //TODO: It is supposed to be log10 * C, because we're using a partition of 10\\n    function log2OverTwo(uint256 x) public pure returns (uint256 y) {\\n        uint256 leading = 256;\\n\\n        while (x != 0) {\\n            x = x >> 1;\\n            leading--;\\n        }\\n        // plus one to do an approx ceiling\\n        return (255 - leading) / 2;\\n    }\\n}\\n\",\"keccak256\":\"0x9537384790450635e0d235eab083c335118476ff9135c9e6db707737788bd376\",\"license\":\"GPL-3.0-only\"},\"contracts/PartitionInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n/// @title Abstract interface for partition instantiator\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Instantiator.sol\\\";\\n\\ninterface PartitionInterface is Instantiator {\\n    enum state {\\n        WaitingQuery,\\n        WaitingHashes,\\n        ChallengerWon,\\n        ClaimerWon,\\n        DivergenceFound\\n    }\\n\\n    function getCurrentState(uint256 _index) external view returns (bytes32);\\n\\n    function instantiate(\\n        address _challenger,\\n        address _claimer,\\n        bytes32 _initialHash,\\n        bytes32 _claimerFinalHash,\\n        uint256 _finalTime,\\n        uint256 _querySize,\\n        uint256 _roundDuration\\n    ) external returns (uint256);\\n\\n    function timeHash(uint256 _index, uint256 key)\\n        external\\n        view\\n        returns (bytes32);\\n\\n    function divergenceTime(uint256 _index) external view returns (uint256);\\n\\n    function stateIsWaitingQuery(uint256 _index) external view returns (bool);\\n\\n    function stateIsWaitingHashes(uint256 _index) external view returns (bool);\\n\\n    function stateIsChallengerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsClaimerWon(uint256 _index) external view returns (bool);\\n\\n    function stateIsDivergenceFound(uint256 _index)\\n        external\\n        view\\n        returns (bool);\\n\\n    function getPartitionGameIndex(uint256 _index)\\n        external\\n        view\\n        returns (uint256);\\n\\n    function getQuerySize(uint256 _index) external view returns (uint256);\\n\\n    function getCurrentStateDeadline(uint _index) external view returns (uint time);\\n\\n    function getMaxInstanceDuration(\\n        uint256 _roundDuration,\\n        uint256 _timeToStartMachine,\\n        uint256 _partitionSize,\\n        uint256 _maxCycle,\\n        uint256 _picoSecondsToRunInsn\\n    ) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xc8c1bf7c3ecd4b7a14be8bf70c93aad06873180056a63af9aca10a7f0e267bf8\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x60806040526000805534801561001457600080fd5b506128a1806100246000396000f3fe608060405234801561001057600080fd5b506004361061018d5760003560e01c8063429fc018116100de57806382afd23b11610097578063a91565df11610071578063a91565df1461070f578063c526656c1461072c578063d0a068cf146107f1578063daaadf4e1461080e5761018d565b806382afd23b146106b2578063a2c58835146106cf578063a2dc7973146106f25761018d565b8063429fc018146104935780635748c130146104b057806360696f81146104cd5780636547429e146104f057806373df16121461050d578063823bb67c146106835761018d565b806326987b601161014b578063370f31aa11610125578063370f31aa146102f65780633d46b8191461032b578063402f02051461034857806341fde16f146104765761018d565b806326987b6014610283578063326ff2f51461028b5780633562820d146102a85761018d565b80624463861461019257806301ff62ab146101c15780630c0be5a6146102015780631d0cda78146102265780631d9f2d7714610243578063224de3ea14610260575b600080fd5b6101af600480360360208110156101a857600080fd5b503561082b565b60408051918252519081900360200190f35b6101ed600480360360408110156101d757600080fd5b50803590602001356001600160a01b031661088d565b604080519115158252519081900360200190f35b6102246004803603604081101561021757600080fd5b50803590602001356108d8565b005b6101ed6004803603602081101561023c57600080fd5b5035610ba3565b6101ed6004803603602081101561025957600080fd5b5035610c15565b6101ed6004803603604081101561027657600080fd5b5080359060200135610c63565b6101af610ccf565b6101af600480360360208110156102a157600080fd5b5035610cd5565b6101af600480360360e08110156102be57600080fd5b506001600160a01b03813581169160208101359091169060408101359060608101359060808101359060a08101359060c00135610d33565b6101af600480360360a081101561030c57600080fd5b50803590602081013590604081013590606081013590608001356110e8565b6101af6004803603602081101561034157600080fd5b5035611135565b6102246004803603606081101561035e57600080fd5b8135919081019060408101602082013564010000000081111561038057600080fd5b82018360208201111561039257600080fd5b803590602001918460208302840111640100000000831117156103b457600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929594936020810193503591505064010000000081111561040457600080fd5b82018360208201111561041657600080fd5b8035906020019184602083028401116401000000008311171561043857600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506111db945050505050565b6101af6004803603602081101561048c57600080fd5b50356115d2565b6101af600480360360208110156104a957600080fd5b5035611630565b6101af600480360360208110156104c657600080fd5b50356116c2565b6101af600480360360408110156104e357600080fd5b5080359060200135611887565b6101ed6004803603602081101561050657600080fd5b50356118f1565b6105396004803603604081101561052357600080fd5b50803590602001356001600160a01b031661193f565b60405180886001600160a01b03168152602001876001600160a01b031681526020018060200180602001806020018681526020018060200185810385528a818151815260200191508051906020019060200280838360005b838110156105a9578181015183820152602001610591565b50505050905001858103845289818151815260200191508051906020019060200280838360005b838110156105e85781810151838201526020016105d0565b50505050905001858103835288818151815260200191508051906020019060200280838360005b8381101561062757818101518382015260200161060f565b50505050905001858103825286818151815260200191508051906020019060200280838360005b8381101561066657818101518382015260200161064e565b505050509050019b50505050505050505050505060405180910390f35b6102246004803603608081101561069957600080fd5b5080359060208101359060408101359060600135611cbc565b6101ed600480360360208110156106c857600080fd5b5035611fbf565b6101af600480360360408110156106e557600080fd5b5080359060200135611fd4565b6102246004803603602081101561070857600080fd5b503561204c565b6101ed6004803603602081101561072557600080fd5b5035612283565b6107586004803603604081101561074257600080fd5b50803590602001356001600160a01b03166122d1565b604051808060200180602001838103835285818151815260200191508051906020019060200280838360005b8381101561079c578181015183820152602001610784565b50505050905001838103825284818151815260200191508051906020019060200280838360005b838110156107db5781810151838201526020016107c3565b5050505090500194505050505060405180910390f35b6101ed6004803603602081101561080757600080fd5b50356122ec565b6101af6004803603602081101561082457600080fd5b503561233a565b6000818060005411610872576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60008381526003602052604090206009015491505b50919050565b6000828152600360205260408120546001600160a01b03838116911614806108d157506000838152600360205260409020600101546001600160a01b038381169116145b9392505050565b81806000541161091d576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260409020546001600160a01b0316338114610984576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008481526002602081815260408084208054600101905560039091529091200154849084106109e55760405162461bcd60e51b815260040180806020018281038252602d81526020018061266c602d913960400191505060405180910390fd5b6000858152600360208181526040808420888552909201905290205460ff16610a3f5760405162461bcd60e51b81526004018080602001828103825260298152602001806127c26029913960400191505060405180910390fd5b6000858152600360208181526040808420600189018552909201905290205460ff16610a9c5760405162461bcd60e51b815260040180806020018281038252602d81526020018061271b602d913960400191505060405180910390fd5b6000858152600360205260409020600b8101859055600a01805460ff19166004179055610ac88561236b565b6000858152600360205260409020600a01547f60aa3f6370bfca526a425b273a4701c067bc6a9c65dd5e1f718093968caf49f390869060ff166004811115610b0c57fe5b6040805192835260ff90911660208301528051918290030190a16000858152600360209081526040808320600b8101548085526004909101835281842054600182018552938290205482518a81529384019190915282820193909352606082019290925290517f8197b77bb2176a2166b421dae05fdada3bfe369f4cadf7da2162160ef6978ab29181900360800190a15050505050565b6000818060005411610bea576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60005b6000848152600360205260409020600a015460ff166004811115610c0d57fe5b149392505050565b6000818060005411610c5c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6004610bed565b6000828060005411610caa576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b5050600091825260036020818152604080852093855292909101905290205460ff1690565b60005481565b6000818060005411610d1c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b50506000908152600360205260409020600b015490565b6000866001600160a01b0316886001600160a01b03161415610d865760405162461bcd60e51b815260040180806020018281038252602c81526020018061261b602c913960400191505060405180910390fd5b60008411610dc55760405162461bcd60e51b81526004018080602001828103825260258152602001806126476025913960400191505060405180910390fd5b60028311610e1a576040805162461bcd60e51b815260206004820181905260248201527f51756572792053697a65206d75737420626520626967676572207468616e2032604482015290519081900360640190fd5b60148310610e6f576040805162461bcd60e51b815260206004820181905260248201527f51756572792053697a65206d757374206265206c657373207468616e206d6178604482015290519081900360640190fd5b60328211610eae5760405162461bcd60e51b81526004018080602001828103825260308152602001806127486030913960400191505060405180910390fd5b60008054815260036020818152604080842080546001600160a01b03808f166001600160a01b0319928316179092558554865282862060019081018054938f1693909216929092179055845485528185206002018990558454855281852085805284018352818520805460ff199081168317909155855486528484528286208a8752850184528286208054909116909117905583548452828252808420848052600490810183528185208b905584548552838352818520898652018252808420899055835484529190528082206005908101869055825483529120015467ffffffffffffffff81118015610fa157600080fd5b50604051908082528060200260200182016040528015610fcb578160200160208202803683370190505b5060036000805481526020019081526020016000206006019080519060200190610ff69291906125ba565b506000805480825260036020526040822060020154611015929061238e565b600080548152600360209081526040808320600801859055825483528083204260079091015582548352808320600a01805460ff191660011790559154825190815291517f9bbb2706e0fa7fffe2a1c188dae1a32922e2be76d89d3b89d6677f3e5fe0c1f99281900390910190a160005460408051918252517f8aa2a1e24480c14317a6c2d823c81f4fef15130c883be64c185441531f7b96e89181900360200190a1506000805481526001602081905260408220805460ff19168217905581549081019091555b979650505050505050565b6000806110fc600088888860008989612504565b90506000611111600189898960008a8a612504565b905061111c8561233a565b8802816002028360020201019250505095945050505050565b600081806000541161117c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b61118581611fbf565b6111c7576040805162461bcd60e51b815260206004820152600e60248201526d496e64657820696e61637469766560901b604482015290519081900360640190fd5b505060009081526002602052604090205490565b828060005411611220576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000848152600360205260409020600101546001600160a01b031633811461128a576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008581526002602052604090208054600190810190915585906000878152600360205260409020600a015460ff1660048111156112c457fe5b146113005760405162461bcd60e51b81526004018080602001828103825260348152602001806126e76034913960400191505060405180910390fd5b600086815260036020526040902060050154855114611366576040805162461bcd60e51b815260206004820152601f60248201527f706f7374656454696d65732e6c656e67746820213d20717565727953697a6500604482015290519081900360640190fd5b6000868152600360205260409020600501548451146113cc576040805162461bcd60e51b815260206004820181905260248201527f706f737465644861736865732e6c656e67746820213d20717565727953697a65604482015290519081900360640190fd5b60005b60008781526003602052604090206005015481101561156a57600087815260036020526040902060060180548290811061140557fe5b906000526020600020015486828151811061141c57fe5b602002602001015114611476576040805162461bcd60e51b815260206004820152601f60248201527f706f7374656454696d65735b695d20213d20717565727941727261795b695d00604482015290519081900360640190fd5b60036000888152602001908152602001600020600301600087838151811061149a57fe5b60209081029190910181015182528101919091526040016000205460ff166115625760016003600089815260200190815260200160002060030160008884815181106114e257fe5b6020026020010151815260200190815260200160002060006101000a81548160ff02191690831515021790555084818151811061151b57fe5b602002602001015160036000898152602001908152602001600020600401600088848151811061154757fe5b60200260200101518152602001908152602001600020819055505b6001016113cf565b50600086815260036020908152604091829020600a8101805460ff1916905542600782015560090180546001019055815188815291517f9f48f0365c0924940e64ac12fca39f480beeada18cca76e8544a3ac295068bac9281900390910190a1505050505050565b6000818060005411611619576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b505060009081526003602052604090206005015490565b6000818060005411611677576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260409020600a81015460088201546005830154600984015460028501546116b49460ff16939260289290916101f4612504565b600790910154019392505050565b6000818060005411611709576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260408120600a015460ff16600481111561172957fe5b1415611746576b57616974696e67517565727960a01b9150610887565b60016000848152600360205260409020600a015460ff16600481111561176857fe5b1415611786576c57616974696e6748617368657360981b9150610887565b60026000848152600360205260409020600a015460ff1660048111156117a857fe5b14156117c6576c21b430b63632b733b2b92bb7b760991b9150610887565b60036000848152600360205260409020600a015460ff1660048111156117e857fe5b1415611803576921b630b4b6b2b92bb7b760b11b9150610887565b60046000848152600360205260409020600a015460ff16600481111561182557fe5b1415611845576e111a5d995c99d95b98d9519bdd5b99608a1b9150610887565b6040805162461bcd60e51b8152602060048201526012602482015271556e7265636f676e697a656420737461746560701b604482015290519081900360640190fd5b60008280600054116118ce576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b505060009182526003602090815260408084209284526004909201905290205490565b6000818060005411611938576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6002610bed565b60008281526003602090815260408083208151600480825260a0820190935284936060938493849387938593849291820160808036833701905050905081600201548160008151811061198e57fe5b6020026020010181815250508160050154816001815181106119ac57fe5b6020908102919091010152600a82015460088301546005840154600985015460028601546119e69460ff16939260289290916101f4612504565b826007015401816002815181106119f957fe5b60200260200101818152505081600b015481600381518110611a1757fe5b60209081029190910101526040805160148082526102a0820190925260609181602001602082028036833750506040805160148082526102a082019092529293506060929150602082016102808036833701905050905060005b8460050154811015611b4457600360008f81526020019081526020016000206003016000866006018381548110611aa457fe5b9060005260206000200154815260200190815260200160002060009054906101000a900460ff16838281518110611ad757fe5b91151560209283029190910182015260008f81526003909152604081206006870180546004909201929184908110611b0b57fe5b9060005260206000200154815260200190815260200160002054828281518110611b3157fe5b6020908102919091010152600101611a71565b50600080600a86015460ff166004811115611b5b57fe5b1415611b7357506b57616974696e67517565727960a01b5b6001600a86015460ff166004811115611b8857fe5b1415611ba157506c57616974696e6748617368657360981b5b6002600a86015460ff166004811115611bb657fe5b1415611bcf57506c21b430b63632b733b2b92bb7b760991b5b6003600a86015460ff166004811115611be457fe5b1415611bfa57506921b630b4b6b2b92bb7b760b11b5b6004600a86015460ff166004811115611c0f57fe5b1415611c2a57506e111a5d995c99d95b98d9519bdd5b99608a1b5b84546001860154600687018054604080516020808402820181019092528281526001600160a01b0395861695909416938892889288928c929091879190830182828015611c9657602002820191906000526020600020905b815481526020019060010190808311611c82575b505050505094509b509b509b509b509b509b509b50505050505092959891949750929550565b838060005411611d01576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000858152600360205260409020546001600160a01b0316338114611d68576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008681526002602052604081208054600101905586906000888152600360205260409020600a015460ff166004811115611d9f57fe5b14611ddb5760405162461bcd60e51b815260040180806020018281038252603281526020018061281a6032913960400191505060405180910390fd5b600087815260036020526040902060050154600019018610611e2e5760405162461bcd60e51b81526004018080602001828103825260278152602001806127786027913960400191505060405180910390fd5b6000878152600360205260409020600601805487908110611e4b57fe5b90600052602060002001548514611e935760405162461bcd60e51b815260040180806020018281038252602381526020018061279f6023913960400191505060405180910390fd5b6000878152600360205260409020600601805460018801908110611eb357fe5b90600052602060002001548414611efb5760405162461bcd60e51b81526004018080602001828103825260248152602001806126c36024913960400191505060405180910390fd5b600185850311611f52576040805162461bcd60e51b815260206004820152601960248201527f496e74657276616c206973206c657373207468616e206f6e6500000000000000604482015290519081900360640190fd5b611f5d87868661238e565b600087815260036020908152604091829020600a8101805460ff1916600117905542600790910155815189815291517f8aa2a1e24480c14317a6c2d823c81f4fef15130c883be64c185441531f7b96e89281900390910190a150505050505050565b60009081526001602052604090205460ff1690565b600082806000541161201b576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b600084815260036020526040902060060180548490811061203857fe5b906000526020600020015491505092915050565b808060005411612091576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60008281526002602081815260408084208054600101905560039091528220600a81015460088201546005830154600984015493909401548795946120e19460ff909416936028926101f4612504565b6000858152600360205260409020600781015490549101421191506001600160a01b031633148015612132575060016000858152600360205260409020600a015460ff16600481111561213057fe5b145b801561213b5750805b156121d1576000848152600360205260409020600a0180546002919060ff19166001835b021790555061216d8461236b565b6000848152600360205260409020600a01547f60aa3f6370bfca526a425b273a4701c067bc6a9c65dd5e1f718093968caf49f390859060ff1660048111156121b157fe5b6040805192835260ff90911660208301528051918290030190a15061227e565b6000848152600360205260409020600101546001600160a01b03163314801561221757506000848152600360205260408120600a015460ff16600481111561221557fe5b145b80156122205750805b15612247576000848152600360208190526040909120600a01805460ff191660018361215f565b60405162461bcd60e51b815260040180806020018281038252602f8152602001806127eb602f913960400191505060405180910390fd5b505050565b60008180600054116122ca576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6001610bed565b50506040805160008082526020820190815281830190925291565b6000818060005411612333576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6003610bed565b60006101005b82156123565760019290921c9160001901612340565b60028160ff038161236357fe5b049392505050565b6000908152600160209081526040808320805460ff191690556002909152812055565b8181116123cc5760405162461bcd60e51b815260040180806020018281038252602a815260200180612699602a913960400191505060405180910390fd5b60008381526003602052604081206005015483830390600019016002810282101561247857600092505b808310156124735783838601101561243b576000868152600360205260409020600601805486850191908590811061242a57fe5b600091825260209091200155612468565b600086815260036020526040902060060180548591908590811061245b57fe5b6000918252602090912001555b6001909201916123f6565b6124d0565b600081838161248357fe5b049050600093505b818410156124ce576000878152600360205260409020600601805485830288019190869081106124b757fe5b60009182526020909120015560019093019261248b565b505b60008681526003602052604090206006018054859190839081106124f057fe5b600091825260209091200155505050505050565b60008084860a848161251257fe5b0490508415612522576000198601025b600089600481111561253057fe5b141561254d578764e8d4a510008285025b048801019150506110dd565b600189600481111561255b57fe5b1415612570578764e8d4a51000828502612541565b600389600481111561257e57fe5b14806125955750600289600481111561259357fe5b145b806125ab575060048960048111156125a957fe5b145b156118455760009150506110dd565b8280548282559060005260206000209081019282156125f5579160200282015b828111156125f55782518255916020019190600101906125da565b50612601929150612605565b5090565b5b80821115612601576000815560010161260656fe4368616c6c656e67657220616e6420636c61696d65722068617665207468652073616d65206164647265737346696e616c2054696d652068617320746f20626520626967676572207468616e207a65726f646976657267656e63652074696d652068617320746f206265206c657373207468616e2066696e616c54696d657269676874506f696e742068617320746f20626520626967676572207468616e206c656674506f696e747269676874506f696e7420213d20717565727941727261795b717565727950696563655d43757272656e745374617465206973206e6f742057616974696e674861736865732c2063616e6e6f74207265706c795175657279646976657267656e636554696d65202b20312068617320746f2068617665206265656e207375626d6974746564526f756e64204475726174696f6e2068617320746f2062652067726561746572207468616e203530207365636f6e64737175657279506965636520697320626967676572207468616e20717565727953697a65202d20316c656674506f696e7420213d20717565727941727261795b717565727950696563655d646976657267656e636554696d652068617320746f2068617665206265656e207375626d69747465644661696c20746f20436c61696d566963746f7279427954696d6520696e2063757272656e7420636f6e646974696f6e43757272656e745374617465206973206e6f742057616974696e6751756572792c2063616e6e6f74206d616b655175657279496e646578206e6f7420696e7374616e74696174656400000000000000000000a2646970667358221220351d1b7b7afd9465d0fed925cff1efcf1fdd67a3ed84836391286542e50c1d9364736f6c63430007040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061018d5760003560e01c8063429fc018116100de57806382afd23b11610097578063a91565df11610071578063a91565df1461070f578063c526656c1461072c578063d0a068cf146107f1578063daaadf4e1461080e5761018d565b806382afd23b146106b2578063a2c58835146106cf578063a2dc7973146106f25761018d565b8063429fc018146104935780635748c130146104b057806360696f81146104cd5780636547429e146104f057806373df16121461050d578063823bb67c146106835761018d565b806326987b601161014b578063370f31aa11610125578063370f31aa146102f65780633d46b8191461032b578063402f02051461034857806341fde16f146104765761018d565b806326987b6014610283578063326ff2f51461028b5780633562820d146102a85761018d565b80624463861461019257806301ff62ab146101c15780630c0be5a6146102015780631d0cda78146102265780631d9f2d7714610243578063224de3ea14610260575b600080fd5b6101af600480360360208110156101a857600080fd5b503561082b565b60408051918252519081900360200190f35b6101ed600480360360408110156101d757600080fd5b50803590602001356001600160a01b031661088d565b604080519115158252519081900360200190f35b6102246004803603604081101561021757600080fd5b50803590602001356108d8565b005b6101ed6004803603602081101561023c57600080fd5b5035610ba3565b6101ed6004803603602081101561025957600080fd5b5035610c15565b6101ed6004803603604081101561027657600080fd5b5080359060200135610c63565b6101af610ccf565b6101af600480360360208110156102a157600080fd5b5035610cd5565b6101af600480360360e08110156102be57600080fd5b506001600160a01b03813581169160208101359091169060408101359060608101359060808101359060a08101359060c00135610d33565b6101af600480360360a081101561030c57600080fd5b50803590602081013590604081013590606081013590608001356110e8565b6101af6004803603602081101561034157600080fd5b5035611135565b6102246004803603606081101561035e57600080fd5b8135919081019060408101602082013564010000000081111561038057600080fd5b82018360208201111561039257600080fd5b803590602001918460208302840111640100000000831117156103b457600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929594936020810193503591505064010000000081111561040457600080fd5b82018360208201111561041657600080fd5b8035906020019184602083028401116401000000008311171561043857600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506111db945050505050565b6101af6004803603602081101561048c57600080fd5b50356115d2565b6101af600480360360208110156104a957600080fd5b5035611630565b6101af600480360360208110156104c657600080fd5b50356116c2565b6101af600480360360408110156104e357600080fd5b5080359060200135611887565b6101ed6004803603602081101561050657600080fd5b50356118f1565b6105396004803603604081101561052357600080fd5b50803590602001356001600160a01b031661193f565b60405180886001600160a01b03168152602001876001600160a01b031681526020018060200180602001806020018681526020018060200185810385528a818151815260200191508051906020019060200280838360005b838110156105a9578181015183820152602001610591565b50505050905001858103845289818151815260200191508051906020019060200280838360005b838110156105e85781810151838201526020016105d0565b50505050905001858103835288818151815260200191508051906020019060200280838360005b8381101561062757818101518382015260200161060f565b50505050905001858103825286818151815260200191508051906020019060200280838360005b8381101561066657818101518382015260200161064e565b505050509050019b50505050505050505050505060405180910390f35b6102246004803603608081101561069957600080fd5b5080359060208101359060408101359060600135611cbc565b6101ed600480360360208110156106c857600080fd5b5035611fbf565b6101af600480360360408110156106e557600080fd5b5080359060200135611fd4565b6102246004803603602081101561070857600080fd5b503561204c565b6101ed6004803603602081101561072557600080fd5b5035612283565b6107586004803603604081101561074257600080fd5b50803590602001356001600160a01b03166122d1565b604051808060200180602001838103835285818151815260200191508051906020019060200280838360005b8381101561079c578181015183820152602001610784565b50505050905001838103825284818151815260200191508051906020019060200280838360005b838110156107db5781810151838201526020016107c3565b5050505090500194505050505060405180910390f35b6101ed6004803603602081101561080757600080fd5b50356122ec565b6101af6004803603602081101561082457600080fd5b503561233a565b6000818060005411610872576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60008381526003602052604090206009015491505b50919050565b6000828152600360205260408120546001600160a01b03838116911614806108d157506000838152600360205260409020600101546001600160a01b038381169116145b9392505050565b81806000541161091d576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260409020546001600160a01b0316338114610984576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008481526002602081815260408084208054600101905560039091529091200154849084106109e55760405162461bcd60e51b815260040180806020018281038252602d81526020018061266c602d913960400191505060405180910390fd5b6000858152600360208181526040808420888552909201905290205460ff16610a3f5760405162461bcd60e51b81526004018080602001828103825260298152602001806127c26029913960400191505060405180910390fd5b6000858152600360208181526040808420600189018552909201905290205460ff16610a9c5760405162461bcd60e51b815260040180806020018281038252602d81526020018061271b602d913960400191505060405180910390fd5b6000858152600360205260409020600b8101859055600a01805460ff19166004179055610ac88561236b565b6000858152600360205260409020600a01547f60aa3f6370bfca526a425b273a4701c067bc6a9c65dd5e1f718093968caf49f390869060ff166004811115610b0c57fe5b6040805192835260ff90911660208301528051918290030190a16000858152600360209081526040808320600b8101548085526004909101835281842054600182018552938290205482518a81529384019190915282820193909352606082019290925290517f8197b77bb2176a2166b421dae05fdada3bfe369f4cadf7da2162160ef6978ab29181900360800190a15050505050565b6000818060005411610bea576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60005b6000848152600360205260409020600a015460ff166004811115610c0d57fe5b149392505050565b6000818060005411610c5c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6004610bed565b6000828060005411610caa576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b5050600091825260036020818152604080852093855292909101905290205460ff1690565b60005481565b6000818060005411610d1c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b50506000908152600360205260409020600b015490565b6000866001600160a01b0316886001600160a01b03161415610d865760405162461bcd60e51b815260040180806020018281038252602c81526020018061261b602c913960400191505060405180910390fd5b60008411610dc55760405162461bcd60e51b81526004018080602001828103825260258152602001806126476025913960400191505060405180910390fd5b60028311610e1a576040805162461bcd60e51b815260206004820181905260248201527f51756572792053697a65206d75737420626520626967676572207468616e2032604482015290519081900360640190fd5b60148310610e6f576040805162461bcd60e51b815260206004820181905260248201527f51756572792053697a65206d757374206265206c657373207468616e206d6178604482015290519081900360640190fd5b60328211610eae5760405162461bcd60e51b81526004018080602001828103825260308152602001806127486030913960400191505060405180910390fd5b60008054815260036020818152604080842080546001600160a01b03808f166001600160a01b0319928316179092558554865282862060019081018054938f1693909216929092179055845485528185206002018990558454855281852085805284018352818520805460ff199081168317909155855486528484528286208a8752850184528286208054909116909117905583548452828252808420848052600490810183528185208b905584548552838352818520898652018252808420899055835484529190528082206005908101869055825483529120015467ffffffffffffffff81118015610fa157600080fd5b50604051908082528060200260200182016040528015610fcb578160200160208202803683370190505b5060036000805481526020019081526020016000206006019080519060200190610ff69291906125ba565b506000805480825260036020526040822060020154611015929061238e565b600080548152600360209081526040808320600801859055825483528083204260079091015582548352808320600a01805460ff191660011790559154825190815291517f9bbb2706e0fa7fffe2a1c188dae1a32922e2be76d89d3b89d6677f3e5fe0c1f99281900390910190a160005460408051918252517f8aa2a1e24480c14317a6c2d823c81f4fef15130c883be64c185441531f7b96e89181900360200190a1506000805481526001602081905260408220805460ff19168217905581549081019091555b979650505050505050565b6000806110fc600088888860008989612504565b90506000611111600189898960008a8a612504565b905061111c8561233a565b8802816002028360020201019250505095945050505050565b600081806000541161117c576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b61118581611fbf565b6111c7576040805162461bcd60e51b815260206004820152600e60248201526d496e64657820696e61637469766560901b604482015290519081900360640190fd5b505060009081526002602052604090205490565b828060005411611220576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000848152600360205260409020600101546001600160a01b031633811461128a576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008581526002602052604090208054600190810190915585906000878152600360205260409020600a015460ff1660048111156112c457fe5b146113005760405162461bcd60e51b81526004018080602001828103825260348152602001806126e76034913960400191505060405180910390fd5b600086815260036020526040902060050154855114611366576040805162461bcd60e51b815260206004820152601f60248201527f706f7374656454696d65732e6c656e67746820213d20717565727953697a6500604482015290519081900360640190fd5b6000868152600360205260409020600501548451146113cc576040805162461bcd60e51b815260206004820181905260248201527f706f737465644861736865732e6c656e67746820213d20717565727953697a65604482015290519081900360640190fd5b60005b60008781526003602052604090206005015481101561156a57600087815260036020526040902060060180548290811061140557fe5b906000526020600020015486828151811061141c57fe5b602002602001015114611476576040805162461bcd60e51b815260206004820152601f60248201527f706f7374656454696d65735b695d20213d20717565727941727261795b695d00604482015290519081900360640190fd5b60036000888152602001908152602001600020600301600087838151811061149a57fe5b60209081029190910181015182528101919091526040016000205460ff166115625760016003600089815260200190815260200160002060030160008884815181106114e257fe5b6020026020010151815260200190815260200160002060006101000a81548160ff02191690831515021790555084818151811061151b57fe5b602002602001015160036000898152602001908152602001600020600401600088848151811061154757fe5b60200260200101518152602001908152602001600020819055505b6001016113cf565b50600086815260036020908152604091829020600a8101805460ff1916905542600782015560090180546001019055815188815291517f9f48f0365c0924940e64ac12fca39f480beeada18cca76e8544a3ac295068bac9281900390910190a1505050505050565b6000818060005411611619576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b505060009081526003602052604090206005015490565b6000818060005411611677576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260409020600a81015460088201546005830154600984015460028501546116b49460ff16939260289290916101f4612504565b600790910154019392505050565b6000818060005411611709576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000838152600360205260408120600a015460ff16600481111561172957fe5b1415611746576b57616974696e67517565727960a01b9150610887565b60016000848152600360205260409020600a015460ff16600481111561176857fe5b1415611786576c57616974696e6748617368657360981b9150610887565b60026000848152600360205260409020600a015460ff1660048111156117a857fe5b14156117c6576c21b430b63632b733b2b92bb7b760991b9150610887565b60036000848152600360205260409020600a015460ff1660048111156117e857fe5b1415611803576921b630b4b6b2b92bb7b760b11b9150610887565b60046000848152600360205260409020600a015460ff16600481111561182557fe5b1415611845576e111a5d995c99d95b98d9519bdd5b99608a1b9150610887565b6040805162461bcd60e51b8152602060048201526012602482015271556e7265636f676e697a656420737461746560701b604482015290519081900360640190fd5b60008280600054116118ce576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b505060009182526003602090815260408084209284526004909201905290205490565b6000818060005411611938576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6002610bed565b60008281526003602090815260408083208151600480825260a0820190935284936060938493849387938593849291820160808036833701905050905081600201548160008151811061198e57fe5b6020026020010181815250508160050154816001815181106119ac57fe5b6020908102919091010152600a82015460088301546005840154600985015460028601546119e69460ff16939260289290916101f4612504565b826007015401816002815181106119f957fe5b60200260200101818152505081600b015481600381518110611a1757fe5b60209081029190910101526040805160148082526102a0820190925260609181602001602082028036833750506040805160148082526102a082019092529293506060929150602082016102808036833701905050905060005b8460050154811015611b4457600360008f81526020019081526020016000206003016000866006018381548110611aa457fe5b9060005260206000200154815260200190815260200160002060009054906101000a900460ff16838281518110611ad757fe5b91151560209283029190910182015260008f81526003909152604081206006870180546004909201929184908110611b0b57fe5b9060005260206000200154815260200190815260200160002054828281518110611b3157fe5b6020908102919091010152600101611a71565b50600080600a86015460ff166004811115611b5b57fe5b1415611b7357506b57616974696e67517565727960a01b5b6001600a86015460ff166004811115611b8857fe5b1415611ba157506c57616974696e6748617368657360981b5b6002600a86015460ff166004811115611bb657fe5b1415611bcf57506c21b430b63632b733b2b92bb7b760991b5b6003600a86015460ff166004811115611be457fe5b1415611bfa57506921b630b4b6b2b92bb7b760b11b5b6004600a86015460ff166004811115611c0f57fe5b1415611c2a57506e111a5d995c99d95b98d9519bdd5b99608a1b5b84546001860154600687018054604080516020808402820181019092528281526001600160a01b0395861695909416938892889288928c929091879190830182828015611c9657602002820191906000526020600020905b815481526020019060010190808311611c82575b505050505094509b509b509b509b509b509b509b50505050505092959891949750929550565b838060005411611d01576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6000858152600360205260409020546001600160a01b0316338114611d68576040805162461bcd60e51b815260206004820152601860248201527721b0b73737ba1031329031b0b63632b210313c903ab9b2b960411b604482015290519081900360640190fd5b60008681526002602052604081208054600101905586906000888152600360205260409020600a015460ff166004811115611d9f57fe5b14611ddb5760405162461bcd60e51b815260040180806020018281038252603281526020018061281a6032913960400191505060405180910390fd5b600087815260036020526040902060050154600019018610611e2e5760405162461bcd60e51b81526004018080602001828103825260278152602001806127786027913960400191505060405180910390fd5b6000878152600360205260409020600601805487908110611e4b57fe5b90600052602060002001548514611e935760405162461bcd60e51b815260040180806020018281038252602381526020018061279f6023913960400191505060405180910390fd5b6000878152600360205260409020600601805460018801908110611eb357fe5b90600052602060002001548414611efb5760405162461bcd60e51b81526004018080602001828103825260248152602001806126c36024913960400191505060405180910390fd5b600185850311611f52576040805162461bcd60e51b815260206004820152601960248201527f496e74657276616c206973206c657373207468616e206f6e6500000000000000604482015290519081900360640190fd5b611f5d87868661238e565b600087815260036020908152604091829020600a8101805460ff1916600117905542600790910155815189815291517f8aa2a1e24480c14317a6c2d823c81f4fef15130c883be64c185441531f7b96e89281900390910190a150505050505050565b60009081526001602052604090205460ff1690565b600082806000541161201b576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b600084815260036020526040902060060180548490811061203857fe5b906000526020600020015491505092915050565b808060005411612091576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b60008281526002602081815260408084208054600101905560039091528220600a81015460088201546005830154600984015493909401548795946120e19460ff909416936028926101f4612504565b6000858152600360205260409020600781015490549101421191506001600160a01b031633148015612132575060016000858152600360205260409020600a015460ff16600481111561213057fe5b145b801561213b5750805b156121d1576000848152600360205260409020600a0180546002919060ff19166001835b021790555061216d8461236b565b6000848152600360205260409020600a01547f60aa3f6370bfca526a425b273a4701c067bc6a9c65dd5e1f718093968caf49f390859060ff1660048111156121b157fe5b6040805192835260ff90911660208301528051918290030190a15061227e565b6000848152600360205260409020600101546001600160a01b03163314801561221757506000848152600360205260408120600a015460ff16600481111561221557fe5b145b80156122205750805b15612247576000848152600360208190526040909120600a01805460ff191660018361215f565b60405162461bcd60e51b815260040180806020018281038252602f8152602001806127eb602f913960400191505060405180910390fd5b505050565b60008180600054116122ca576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6001610bed565b50506040805160008082526020820190815281830190925291565b6000818060005411612333576040805162461bcd60e51b8152602060048201526016602482015260008051602061284c833981519152604482015290519081900360640190fd5b6003610bed565b60006101005b82156123565760019290921c9160001901612340565b60028160ff038161236357fe5b049392505050565b6000908152600160209081526040808320805460ff191690556002909152812055565b8181116123cc5760405162461bcd60e51b815260040180806020018281038252602a815260200180612699602a913960400191505060405180910390fd5b60008381526003602052604081206005015483830390600019016002810282101561247857600092505b808310156124735783838601101561243b576000868152600360205260409020600601805486850191908590811061242a57fe5b600091825260209091200155612468565b600086815260036020526040902060060180548591908590811061245b57fe5b6000918252602090912001555b6001909201916123f6565b6124d0565b600081838161248357fe5b049050600093505b818410156124ce576000878152600360205260409020600601805485830288019190869081106124b757fe5b60009182526020909120015560019093019261248b565b505b60008681526003602052604090206006018054859190839081106124f057fe5b600091825260209091200155505050505050565b60008084860a848161251257fe5b0490508415612522576000198601025b600089600481111561253057fe5b141561254d578764e8d4a510008285025b048801019150506110dd565b600189600481111561255b57fe5b1415612570578764e8d4a51000828502612541565b600389600481111561257e57fe5b14806125955750600289600481111561259357fe5b145b806125ab575060048960048111156125a957fe5b145b156118455760009150506110dd565b8280548282559060005260206000209081019282156125f5579160200282015b828111156125f55782518255916020019190600101906125da565b50612601929150612605565b5090565b5b80821115612601576000815560010161260656fe4368616c6c656e67657220616e6420636c61696d65722068617665207468652073616d65206164647265737346696e616c2054696d652068617320746f20626520626967676572207468616e207a65726f646976657267656e63652074696d652068617320746f206265206c657373207468616e2066696e616c54696d657269676874506f696e742068617320746f20626520626967676572207468616e206c656674506f696e747269676874506f696e7420213d20717565727941727261795b717565727950696563655d43757272656e745374617465206973206e6f742057616974696e674861736865732c2063616e6e6f74207265706c795175657279646976657267656e636554696d65202b20312068617320746f2068617665206265656e207375626d6974746564526f756e64204475726174696f6e2068617320746f2062652067726561746572207468616e203530207365636f6e64737175657279506965636520697320626967676572207468616e20717565727953697a65202d20316c656674506f696e7420213d20717565727941727261795b717565727950696563655d646976657267656e636554696d652068617320746f2068617665206265656e207375626d69747465644661696c20746f20436c61696d566963746f7279427954696d6520696e2063757272656e7420636f6e646974696f6e43757272656e745374617465206973206e6f742057616974696e6751756572792c2063616e6e6f74206d616b655175657279496e646578206e6f7420696e7374616e74696174656400000000000000000000a2646970667358221220351d1b7b7afd9465d0fed925cff1efcf1fdd67a3ed84836391286542e50c1d9364736f6c63430007040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "getMaxInstanceDuration(uint256,uint256,uint256,uint256,uint256)": {
+        "params": {
+          "_maxCycle": "number of instructions until the machine is forcibly halted",
+          "_picoSecondsToRunInsn": "time the offchain will take to run one instruction"
+        }
+      },
+      "instantiate(address,address,bytes32,bytes32,uint256,uint256,uint256)": {
+        "params": {
+          "_challenger": "address of the challenger.",
+          "_claimer": "address of the claimer.",
+          "_claimerFinalHash": "final hash claimed by claimer",
+          "_finalTime": "max cycle of the machine for that computation",
+          "_initialHash": "hash in which both claimer and challenger agree on",
+          "_querySize": "size of postedHashes and postedTimes",
+          "_roundDuration": "duration of the round (security param)"
+        },
+        "returns": {
+          "_0": "Partition index."
+        }
+      },
+      "makeQuery(uint256,uint256,uint256,uint256)": {
+        "params": {
+          "leftPoint": "confirmation of the leftPoint of the interval to be split. Should be an aggreement point.",
+          "queryPiece": "is the index of queryArray corresponding to the left limit of the next interval to be queried.",
+          "rightPoint": "confirmation of the rightPoint of the interval to be split. Should be a disagreement point."
+        }
+      },
+      "presentDivergence(uint256,uint256)": {
+        "params": {
+          "_divergenceTime": "The time when the divergence happended. It should be a point of aggreement, while _divergenceTime + 1 should be a point of disagreement (both queried)."
+        }
+      },
+      "replyQuery(uint256,uint256[],bytes32[])": {
+        "params": {
+          "postedHashes": "An array (of size querySize) with the hashes corresponding to the queried times",
+          "postedTimes": "An array (of size querySize) with the times that have been queried."
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "claimVictoryByTime(uint256)": {
+        "notice": "Claim victory for opponent timeout."
+      },
+      "instantiate(address,address,bytes32,bytes32,uint256,uint256,uint256)": {
+        "notice": "Instantiate a partition instance."
+      },
+      "makeQuery(uint256,uint256,uint256,uint256)": {
+        "notice": "Makes a query (only challenger can call it)."
+      },
+      "presentDivergence(uint256,uint256)": {
+        "notice": "Present a precise time of divergence (can only be called by challenger)."
+      },
+      "replyQuery(uint256,uint256[],bytes32[])": {
+        "notice": "Answer the query (only claimer can call it)."
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 89,
+        "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+        "label": "currentIndex",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_uint256"
+      },
+      {
+        "astId": 93,
+        "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+        "label": "active",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_uint256,t_bool)"
+      },
+      {
+        "astId": 97,
+        "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+        "label": "nonce",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      },
+      {
+        "astId": 3040,
+        "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+        "label": "instance",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_mapping(t_uint256,t_struct(PartitionCtx)3036_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_array(t_uint256)dyn_storage": {
+        "base": "t_uint256",
+        "encoding": "dynamic_array",
+        "label": "uint256[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_enum(state)4711": {
+        "encoding": "inplace",
+        "label": "enum PartitionInterface.state",
+        "numberOfBytes": "1"
+      },
+      "t_mapping(t_uint256,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_uint256,t_bytes32)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bytes32)",
+        "numberOfBytes": "32",
+        "value": "t_bytes32"
+      },
+      "t_mapping(t_uint256,t_struct(PartitionCtx)3036_storage)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => struct PartitionInstantiator.PartitionCtx)",
+        "numberOfBytes": "32",
+        "value": "t_struct(PartitionCtx)3036_storage"
+      },
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_struct(PartitionCtx)3036_storage": {
+        "encoding": "inplace",
+        "label": "struct PartitionInstantiator.PartitionCtx",
+        "members": [
+          {
+            "astId": 3008,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "challenger",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 3010,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "claimer",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 3012,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "finalTime",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3016,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "timeSubmitted",
+            "offset": 0,
+            "slot": "3",
+            "type": "t_mapping(t_uint256,t_bool)"
+          },
+          {
+            "astId": 3020,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "timeHash",
+            "offset": 0,
+            "slot": "4",
+            "type": "t_mapping(t_uint256,t_bytes32)"
+          },
+          {
+            "astId": 3022,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "querySize",
+            "offset": 0,
+            "slot": "5",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3025,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "queryArray",
+            "offset": 0,
+            "slot": "6",
+            "type": "t_array(t_uint256)dyn_storage"
+          },
+          {
+            "astId": 3027,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "timeOfLastMove",
+            "offset": 0,
+            "slot": "7",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3029,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "roundDuration",
+            "offset": 0,
+            "slot": "8",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3031,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "partitionGameIndex",
+            "offset": 0,
+            "slot": "9",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 3033,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "currentState",
+            "offset": 0,
+            "slot": "10",
+            "type": "t_enum(state)4711"
+          },
+          {
+            "astId": 3035,
+            "contract": "contracts/PartitionInstantiator.sol:PartitionInstantiator",
+            "label": "divergenceTime",
+            "offset": 0,
+            "slot": "11",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "384"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}
