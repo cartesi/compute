@@ -66,6 +66,12 @@ const config: HardhatUserConfig = {
             chainId: 421611,
             accounts: mnemonic ? { mnemonic } : undefined,
         },
+        arbitrum: {
+            url: "https://arb1.arbitrum.io/rpc",
+            chainId: 42161,
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
+        mainnet: infuraNetwork("mainnet", 1, 6283185),
     },
     solidity: {
         version: "0.7.4",
