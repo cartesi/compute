@@ -3,25 +3,28 @@
 # exit when any command fails
 set -e
 
+if [ -z "${KEY_SERVER_HOST}" ]; then
+    if [ -n "${CONCERN_SEMAPHORE}" ]; then
+        # wait for key file and read from them
+        echo "Waiting for key signal at ${CONCERN_SEMAPHORE}"
+        dockerize -wait ${CONCERN_SEMAPHORE} -timeout ${ETHEREUM_TIMEOUT}
 
+        if [ -f "/opt/cartesi/etc/keys/private_key" ]; then
+            export CARTESI_CONCERN_KEY=$(cat /opt/cartesi/etc/keys/private_key)
+        fi
 
-if [ -n "${CONCERN_SEMAPHORE}" ]; then
-    # wait for key file and read from them
-    echo "Waiting for key signal at ${CONCERN_SEMAPHORE}"
-    dockerize -wait ${CONCERN_SEMAPHORE} -timeout ${ETHEREUM_TIMEOUT}
+        if [ -f "/opt/cartesi/etc/keys/account" ]; then
+            export ACCOUNT_ADDRESS=$(cat /opt/cartesi/etc/keys/account)
+        fi
 
-    if [ -f "/opt/cartesi/etc/keys/private_key" ]; then
-        export CARTESI_CONCERN_KEY=$(cat /opt/cartesi/etc/keys/private_key)
+    elif [ -n "${MNEMONIC}" ]; then
+        echo "Initializing key and account from MNEMONIC"
+        export CARTESI_CONCERN_KEY=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].private_key')
+        export ACCOUNT_ADDRESS=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].address')
     fi
-
-    if [ -f "/opt/cartesi/etc/keys/account" ]; then
-        export ACCOUNT_ADDRESS=$(cat /opt/cartesi/etc/keys/account)
-    fi
-
-elif [ -n "${MNEMONIC}" ]; then
-    echo "Initializing key and account from MNEMONIC"
-    export CARTESI_CONCERN_KEY=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].private_key')
-    export ACCOUNT_ADDRESS=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].address')
+else
+    export CARTESI_CONCERN_KEY=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=concern&type=secp256k1" | jq -r .info.secret)
+    export ACCOUNT_ADDRESS=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=wallet&type=secp256k1" | jq -r .info.address)
 fi
 
 # wait for deployment if env is set
