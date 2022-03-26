@@ -763,17 +763,18 @@ fn react_by_machine_output(
             };
 
             // TODO: rewrite with flash replacement call later
-            let data = std::fs::read(drive_path)?;
+            let stored_drive_path = drive_path.clone();
             let archive_key = build_session_write_key(
                 id.clone(),
                 time,
                 address,
-                data.clone(),
+                stored_drive_path.clone().into_bytes(),
             );
-
+            info!("Sent drive path: {:?}", stored_drive_path);
             let mut position = cartesi_machine::WriteMemoryRequest::new();
             position.set_address(address);
-            position.set_data(data);
+            position.set_data(stored_drive_path.clone().into_bytes());
+            position.set_is_path(true);
 
             let request = SessionWriteMemoryRequest {
                 session_id: id.clone(),
@@ -935,7 +936,7 @@ fn react_by_machine_output(
                     Token::Array(output_siblings),
                 ],
                 // TODO: change back to None after done testing
-                gas: Some(U256::from(628318)),
+                gas: None,
                 strategy: transaction::Strategy::Simplest,
             };
             return Ok(Reaction::Transaction(request));
