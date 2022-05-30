@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:14-alpine3.14
 
 # install dockerize, as we need to wait on ganache to be responding
 RUN apk add --no-cache \
@@ -24,7 +24,7 @@ COPY tsconfig.json .
 COPY contracts .
 COPY deploy .
 
-RUN yarn 
+RUN yarn install --production=false
 
 ENV ETHEREUM_HOST "hardhatnet"
 ENV ETHEREUM_PORT "8545"
@@ -34,6 +34,4 @@ ENV DOCKER true
 
 EXPOSE 8545  
 
-WORKDIR $BASE/share/blockchain
-
-CMD ["npx", "hardhat",  "node" ]
+CMD ["yarn", "hardhat",  "node" ]
