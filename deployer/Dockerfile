@@ -7,7 +7,7 @@ RUN apk add --no-cache \
     openssl \
     python3 \
 #     python-dev \
-    py-pip
+    py3-pip
 
 # ENV DOCKERIZE_VERSION v0.6.1
 # RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
