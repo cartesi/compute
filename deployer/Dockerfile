@@ -25,6 +25,7 @@ COPY contracts contracts
 COPY deploy deploy
 
 RUN yarn install --production=false
+RUN yarn add hardhat
 
 ENV ETHEREUM_HOST "hardhatnet"
 ENV ETHEREUM_PORT "8545"
