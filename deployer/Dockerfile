@@ -21,8 +21,8 @@ COPY yarn.lock .
 COPY package.json .
 COPY hardhat.config.ts .
 COPY tsconfig.json .
-COPY contracts .
-COPY deploy .
+COPY contracts contracts
+COPY deploy deploy
 
 RUN yarn install --production=false
 
