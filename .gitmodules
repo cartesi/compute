@@ -3,4 +3,4 @@
 	url = https://github.com/zippiehq/arbitration-dlib.git
 [submodule "logger-dlib"]
 	path = logger-dlib
-	url = https://github.com/cartesi//logger-dlib.git
+	url = https://github.com/zippiehq/logger-dlib.git
