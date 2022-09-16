@@ -71,6 +71,11 @@ const config: HardhatUserConfig = {
             chainId: 42161,
             accounts: mnemonic ? { mnemonic } : undefined,
         },
+        arbitrum_goerli: {
+            url: "https://goerli-rollup.arbitrum.io/rpc",
+            chainId: 421613,
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
         mainnet: infuraNetwork("mainnet", 1, 6283185),
     },
     solidity: {
