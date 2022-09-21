@@ -1,0 +1,254 @@
+{
+  "address": "0x28a83d02d720cD812DEB10c5f09AB2FbBE5c2E57",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerManager",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "dapp",
+          "type": "address"
+        }
+      ],
+      "name": "Authorization",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "worker",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "dapp",
+          "type": "address"
+        }
+      ],
+      "name": "Deauthorization",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_dappAddress",
+          "type": "address"
+        }
+      ],
+      "name": "authorize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_dappAddress",
+          "type": "address"
+        }
+      ],
+      "name": "deauthorize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        }
+      ],
+      "name": "getOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_workerAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_dappAddress",
+          "type": "address"
+        }
+      ],
+      "name": "isAuthorized",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x3b5396890b2d56005f06d78fb52e18a544a00921de804e534718f04877611c6f",
+  "receipt": {
+    "to": null,
+    "from": "0xD63A9d27E7A573e28889A363310443Cba076D546",
+    "contractAddress": "0x28a83d02d720cD812DEB10c5f09AB2FbBE5c2E57",
+    "transactionIndex": 1,
+    "gasUsed": "413820",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x2b23389efa4b1c61980e7275446b3516f1bb25ab3616a9c35bd1bd74cc9ae32b",
+    "transactionHash": "0x3b5396890b2d56005f06d78fb52e18a544a00921de804e534718f04877611c6f",
+    "logs": [],
+    "blockNumber": 310154,
+    "cumulativeGasUsed": "413820",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x5AB946652062360E92F3C7C3957a6463b09B6fAB"
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerManager\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"dapp\",\"type\":\"address\"}],\"name\":\"Authorization\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"worker\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"dapp\",\"type\":\"address\"}],\"name\":\"Deauthorization\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_dappAddress\",\"type\":\"address\"}],\"name\":\"authorize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_dappAddress\",\"type\":\"address\"}],\"name\":\"deauthorize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"}],\"name\":\"getOwner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_workerAddress\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_dappAddress\",\"type\":\"address\"}],\"name\":\"isAuthorized\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"authorize(address,address)\":{\"params\":{\"_dappAddress\":\"address of the dapp that permission will be given to\",\"_workerAddress\":\"address of the worker node to given permission\"}},\"isAuthorized(address,address)\":{\"params\":{\"_dappAddress\":\"address of the DApp\",\"_workerAddress\":\"address of the worker\"}}},\"stateVariables\":{\"permissions\":{\"details\":\"permissions keyed by hash(user, worker, dapp)\"}},\"version\":1},\"userdoc\":{\"events\":{\"Authorization(address,address,address)\":{\"notice\":\"A DApp has been authorized by a user for a worker\"},\"Deauthorization(address,address,address)\":{\"notice\":\"A DApp has been deauthorized by a user for a worker\"}},\"kind\":\"user\",\"methods\":{\"authorize(address,address)\":{\"notice\":\"Gives worker permission to act on a DApp\"},\"isAuthorized(address,address)\":{\"notice\":\"Returns is the dapp is authorized to be called by that worker\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/WorkerAuthManagerImpl.sol\":\"WorkerAuthManagerImpl\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/WorkerAuthManager.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n/// @title WorkerAuthManager\\n/// @author Danilo Tuler\\npragma solidity ^0.7.0;\\n\\ninterface WorkerAuthManager {\\n    /// @notice Gives worker permission to act on a DApp\\n    /// @param _workerAddress address of the worker node to given permission\\n    /// @param _dappAddress address of the dapp that permission will be given to\\n    function authorize(address _workerAddress, address _dappAddress) external;\\n\\n    /// @notice Removes worker's permission to act on a DApp\\n    /// @param _workerAddress address of the proxy that will lose permission\\n    /// @param _dappAddresses addresses of dapps that will lose permission\\n    function deauthorize(address _workerAddress, address _dappAddresses)\\n        external;\\n\\n    /// @notice Returns is the dapp is authorized to be called by that worker\\n    /// @param _workerAddress address of the worker\\n    /// @param _dappAddress address of the DApp\\n    function isAuthorized(address _workerAddress, address _dappAddress)\\n        external\\n        view\\n        returns (bool);\\n\\n    /// @notice Get the owner of the worker node\\n    /// @param workerAddress address of the worker node\\n    function getOwner(address workerAddress) external view returns (address);\\n\\n    /// @notice A DApp has been authorized by a user for a worker\\n    event Authorization(\\n        address indexed user,\\n        address indexed worker,\\n        address indexed dapp\\n    );\\n\\n    /// @notice A DApp has been deauthorized by a user for a worker\\n    event Deauthorization(\\n        address indexed user,\\n        address indexed worker,\\n        address indexed dapp\\n    );\\n}\\n\",\"keccak256\":\"0x90ce24f4e55dc98d22355f3929981a7b85ba39607becb7602f987d057c1d10b2\",\"license\":\"Apache-2.0\"},\"contracts/WorkerAuthManagerImpl.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n/// @title WorkerAuthManagerImpl\\n/// @author Danilo Tuler\\npragma solidity ^0.7.0;\\n\\nimport \\\"./WorkerManager.sol\\\";\\nimport \\\"./WorkerAuthManager.sol\\\";\\n\\ncontract WorkerAuthManagerImpl is WorkerAuthManager {\\n    WorkerManager workerManager;\\n\\n    /// @dev permissions keyed by hash(user, worker, dapp)\\n    mapping(bytes32 => bool) private permissions;\\n\\n    constructor(address _workerManager) {\\n        workerManager = WorkerManager(_workerManager);\\n    }\\n\\n    modifier onlyByOwner(address _workerAddress) {\\n        require(\\n            workerManager.getOwner(_workerAddress) == msg.sender,\\n            \\\"worker not hired by sender\\\"\\n        );\\n        _;\\n    }\\n\\n    function getAuthorizationKey(\\n        address _user,\\n        address _worker,\\n        address _dapp\\n    ) internal pure returns (bytes32) {\\n        return keccak256(abi.encodePacked(_user, _worker, _dapp));\\n    }\\n\\n    function authorize(address _workerAddress, address _dappAddress)\\n        public\\n        override\\n        onlyByOwner(_workerAddress)\\n    {\\n        bytes32 key = getAuthorizationKey(\\n            msg.sender,\\n            _workerAddress,\\n            _dappAddress\\n        );\\n        require(permissions[key] == false, \\\"dapp already authorized\\\");\\n\\n        // record authorization from that user\\n        permissions[key] = true;\\n\\n        // emit event\\n        emit Authorization(msg.sender, _workerAddress, _dappAddress);\\n    }\\n\\n    function deauthorize(address _workerAddress, address _dappAddress)\\n        public\\n        override\\n        onlyByOwner(_workerAddress)\\n    {\\n        bytes32 key = getAuthorizationKey(\\n            msg.sender,\\n            _workerAddress,\\n            _dappAddress\\n        );\\n        require(permissions[key] == true, \\\"dapp not authorized\\\");\\n\\n        // record deauthorization from that user\\n        permissions[key] = false;\\n\\n        // emit event\\n        emit Deauthorization(msg.sender, _workerAddress, _dappAddress);\\n    }\\n\\n    function isAuthorized(address _workerAddress, address _dappAddress)\\n        public\\n        override\\n        view\\n        returns (bool)\\n    {\\n        return\\n            permissions[getAuthorizationKey(\\n                workerManager.getOwner(_workerAddress),\\n                _workerAddress,\\n                _dappAddress\\n            )];\\n    }\\n\\n    function getOwner(address _workerAddress)\\n        public\\n        override\\n        view\\n        returns (address)\\n    {\\n        return workerManager.getOwner(_workerAddress);\\n    }\\n\\n    /*\\n    // XXX: we can't do this because the worker need to accept the job before receiving an authorization\\n    function hireAndAuthorize(\\n        address payable _workerAddress,\\n        address _dappAddress\\n    ) public override payable {\\n        workerManager.hire(_workerAddress);\\n        authorize(_workerAddress, _dappAddress);\\n    }\\n    */\\n}\\n\",\"keccak256\":\"0x563b4237304c440039cd4e68cbb9f79020b49eef835e9973c8e63c257660ec2c\",\"license\":\"Apache-2.0\"},\"contracts/WorkerManager.sol\":{\"content\":\"// Copyright 2010 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n/// @title WorkerManager\\n/// @author Danilo Tuler\\npragma solidity ^0.7.0;\\n\\ninterface WorkerManager {\\n    /// @notice Returns true if worker node is available\\n    /// @param workerAddress address of the worker node\\n    function isAvailable(address workerAddress) external view returns (bool);\\n\\n    /// @notice Returns true if worker node is pending\\n    /// @param workerAddress address of the worker node\\n    function isPending(address workerAddress) external view returns (bool);\\n\\n    /// @notice Get the owner of the worker node\\n    /// @param workerAddress address of the worker node\\n    function getOwner(address workerAddress) external view returns (address);\\n\\n    /// @notice Get the user of the worker node, which may not be the owner yet, or how was the previous owner of a retired node\\n    function getUser(address workerAddress) external view returns (address);\\n\\n    /// @notice Returns true if worker node is owned by some user\\n    function isOwned(address workerAddress) external view returns (bool);\\n\\n    /// @notice Asks the worker to work for the sender. Sender needs to pay something.\\n    /// @param workerAddress address of the worker\\n    function hire(address payable workerAddress) external payable;\\n\\n    /// @notice Called by the worker to accept the job\\n    function acceptJob() external;\\n\\n    /// @notice Called by the worker to reject a job offer\\n    function rejectJob() external payable;\\n\\n    /// @notice Called by the user to cancel a job offer\\n    /// @param workerAddress address of the worker node\\n    function cancelHire(address workerAddress) external;\\n\\n    /// @notice Called by the user to retire his worker.\\n    /// @param workerAddress address of the worker to be retired\\n    /// @dev this also removes all authorizations in place\\n    function retire(address payable workerAddress) external;\\n\\n    /// @notice Returns true if worker node was retired by its owner\\n    function isRetired(address workerAddress) external view returns (bool);\\n\\n    /// @notice Events signalling every state transition\\n    event JobOffer(address indexed worker, address indexed user);\\n    event JobAccepted(address indexed worker, address indexed user);\\n    event JobRejected(address indexed worker, address indexed user);\\n    event Retired(address indexed worker, address indexed user);\\n}\\n\",\"keccak256\":\"0x4125ae5b95704439e239db685d26aef470a341ae5b4668a01f31500ba352d72e\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161067e38038061067e8339818101604052602081101561003357600080fd5b5051600080546001600160a01b039092166001600160a01b0319909216919091179055610619806100656000396000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80632bef45951461005157806365e4ad9e146100815780636d892f7e146100c3578063fa544161146100f1575b600080fd5b61007f6004803603604081101561006757600080fd5b506001600160a01b0381358116916020013516610133565b005b6100af6004803603604081101561009757600080fd5b506001600160a01b03813581169160200135166102d5565b604080519115158252519081900360200190f35b61007f600480360360408110156100d957600080fd5b506001600160a01b0381358116916020013516610379565b6101176004803603602081101561010757600080fd5b50356001600160a01b0316610512565b604080516001600160a01b039092168252519081900360200190f35b6000546040805163fa54416160e01b81526001600160a01b038086166004830152915185933393169163fa544161916024808301926020929190829003018186803b15801561018157600080fd5b505afa158015610195573d6000803e3d6000fd5b505050506040513d60208110156101ab57600080fd5b50516001600160a01b031614610208576040805162461bcd60e51b815260206004820152601a60248201527f776f726b6572206e6f742068697265642062792073656e646572000000000000604482015290519081900360640190fd5b6000610215338585610592565b60008181526001602052604090205490915060ff161561027c576040805162461bcd60e51b815260206004820152601760248201527f6461707020616c726561647920617574686f72697a6564000000000000000000604482015290519081900360640190fd5b6000818152600160208190526040808320805460ff1916909217909155516001600160a01b03808616929087169133917fde756a416a233cdb16c23a1fa5dcb3113164968df8607e0a4eeca25974b96e0391a450505050565b600080546040805163fa54416160e01b81526001600160a01b0386811660048301529151600193859361035e9391169163fa54416191602480820192602092909190829003018186803b15801561032b57600080fd5b505afa15801561033f573d6000803e3d6000fd5b505050506040513d602081101561035557600080fd5b50518686610592565b815260208101919091526040016000205460ff169392505050565b6000546040805163fa54416160e01b81526001600160a01b038086166004830152915185933393169163fa544161916024808301926020929190829003018186803b1580156103c757600080fd5b505afa1580156103db573d6000803e3d6000fd5b505050506040513d60208110156103f157600080fd5b50516001600160a01b03161461044e576040805162461bcd60e51b815260206004820152601a60248201527f776f726b6572206e6f742068697265642062792073656e646572000000000000604482015290519081900360640190fd5b600061045b338585610592565b60008181526001602081905260409091205491925060ff9091161515146104bf576040805162461bcd60e51b815260206004820152601360248201527219185c1c081b9bdd08185d5d1a1bdc9a5e9959606a1b604482015290519081900360640190fd5b600081815260016020526040808220805460ff19169055516001600160a01b03808616929087169133917f4d2275ddb8a6d9c36c95476c2eaf9746c1785b4ab76a99719fd647b36da46cee91a450505050565b600080546040805163fa54416160e01b81526001600160a01b0385811660048301529151919092169163fa544161916024808301926020929190829003018186803b15801561056057600080fd5b505afa158015610574573d6000803e3d6000fd5b505050506040513d602081101561058a57600080fd5b505192915050565b604080516bffffffffffffffffffffffff19606095861b811660208084019190915294861b811660348301529290941b90911660488401528051603c818503018152605c909301905281519101209056fea2646970667358221220a7e3d1b25df315fcc0bbc1574ae1ca7f1e01ed983152dc88c68b6b57975f476d64736f6c63430007040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c80632bef45951461005157806365e4ad9e146100815780636d892f7e146100c3578063fa544161146100f1575b600080fd5b61007f6004803603604081101561006757600080fd5b506001600160a01b0381358116916020013516610133565b005b6100af6004803603604081101561009757600080fd5b506001600160a01b03813581169160200135166102d5565b604080519115158252519081900360200190f35b61007f600480360360408110156100d957600080fd5b506001600160a01b0381358116916020013516610379565b6101176004803603602081101561010757600080fd5b50356001600160a01b0316610512565b604080516001600160a01b039092168252519081900360200190f35b6000546040805163fa54416160e01b81526001600160a01b038086166004830152915185933393169163fa544161916024808301926020929190829003018186803b15801561018157600080fd5b505afa158015610195573d6000803e3d6000fd5b505050506040513d60208110156101ab57600080fd5b50516001600160a01b031614610208576040805162461bcd60e51b815260206004820152601a60248201527f776f726b6572206e6f742068697265642062792073656e646572000000000000604482015290519081900360640190fd5b6000610215338585610592565b60008181526001602052604090205490915060ff161561027c576040805162461bcd60e51b815260206004820152601760248201527f6461707020616c726561647920617574686f72697a6564000000000000000000604482015290519081900360640190fd5b6000818152600160208190526040808320805460ff1916909217909155516001600160a01b03808616929087169133917fde756a416a233cdb16c23a1fa5dcb3113164968df8607e0a4eeca25974b96e0391a450505050565b600080546040805163fa54416160e01b81526001600160a01b0386811660048301529151600193859361035e9391169163fa54416191602480820192602092909190829003018186803b15801561032b57600080fd5b505afa15801561033f573d6000803e3d6000fd5b505050506040513d602081101561035557600080fd5b50518686610592565b815260208101919091526040016000205460ff169392505050565b6000546040805163fa54416160e01b81526001600160a01b038086166004830152915185933393169163fa544161916024808301926020929190829003018186803b1580156103c757600080fd5b505afa1580156103db573d6000803e3d6000fd5b505050506040513d60208110156103f157600080fd5b50516001600160a01b03161461044e576040805162461bcd60e51b815260206004820152601a60248201527f776f726b6572206e6f742068697265642062792073656e646572000000000000604482015290519081900360640190fd5b600061045b338585610592565b60008181526001602081905260409091205491925060ff9091161515146104bf576040805162461bcd60e51b815260206004820152601360248201527219185c1c081b9bdd08185d5d1a1bdc9a5e9959606a1b604482015290519081900360640190fd5b600081815260016020526040808220805460ff19169055516001600160a01b03808616929087169133917f4d2275ddb8a6d9c36c95476c2eaf9746c1785b4ab76a99719fd647b36da46cee91a450505050565b600080546040805163fa54416160e01b81526001600160a01b0385811660048301529151919092169163fa544161916024808301926020929190829003018186803b15801561056057600080fd5b505afa158015610574573d6000803e3d6000fd5b505050506040513d602081101561058a57600080fd5b505192915050565b604080516bffffffffffffffffffffffff19606095861b811660208084019190915294861b811660348301529290941b90911660488401528051603c818503018152605c909301905281519101209056fea2646970667358221220a7e3d1b25df315fcc0bbc1574ae1ca7f1e01ed983152dc88c68b6b57975f476d64736f6c63430007040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "authorize(address,address)": {
+        "params": {
+          "_dappAddress": "address of the dapp that permission will be given to",
+          "_workerAddress": "address of the worker node to given permission"
+        }
+      },
+      "isAuthorized(address,address)": {
+        "params": {
+          "_dappAddress": "address of the DApp",
+          "_workerAddress": "address of the worker"
+        }
+      }
+    },
+    "stateVariables": {
+      "permissions": {
+        "details": "permissions keyed by hash(user, worker, dapp)"
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "Authorization(address,address,address)": {
+        "notice": "A DApp has been authorized by a user for a worker"
+      },
+      "Deauthorization(address,address,address)": {
+        "notice": "A DApp has been deauthorized by a user for a worker"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "authorize(address,address)": {
+        "notice": "Gives worker permission to act on a DApp"
+      },
+      "isAuthorized(address,address)": {
+        "notice": "Returns is the dapp is authorized to be called by that worker"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 62,
+        "contract": "contracts/WorkerAuthManagerImpl.sol:WorkerAuthManagerImpl",
+        "label": "workerManager",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_contract(WorkerManager)342"
+      },
+      {
+        "astId": 67,
+        "contract": "contracts/WorkerAuthManagerImpl.sol:WorkerAuthManagerImpl",
+        "label": "permissions",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      }
+    ],
+    "types": {
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(WorkerManager)342": {
+        "encoding": "inplace",
+        "label": "contract WorkerManager",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      }
+    }
+  }
+}

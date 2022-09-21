@@ -1,0 +1,359 @@
+{
+  "address": "0xe2D295681e4A350b685c3085A85539b878aa1dfD",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes8[]",
+          "name": "_data",
+          "type": "bytes8[]"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "_root",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "_log2Size",
+          "type": "uint64"
+        }
+      ],
+      "name": "MerkleRootCalculatedFromData",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256[]",
+          "name": "_indices",
+          "type": "uint256[]"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "_root",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "_log2Size",
+          "type": "uint64"
+        }
+      ],
+      "name": "MerkleRootCalculatedFromHistory",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_log2Size",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes8[]",
+          "name": "_data",
+          "type": "bytes8[]"
+        }
+      ],
+      "name": "calculateMerkleRootFromData",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_log2Size",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_indices",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "calculateMerkleRootFromHistory",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "currentIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_root",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getLogIndex",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_index",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLogRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_root",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_log2Size",
+          "type": "uint64"
+        }
+      ],
+      "name": "isLogAvailable",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x2845624075c01bd2d905c6f18d9bb7e7c1a16fa80e662d79a0a5c44382da5a32",
+  "receipt": {
+    "to": null,
+    "from": "0xD63A9d27E7A573e28889A363310443Cba076D546",
+    "contractAddress": "0xe2D295681e4A350b685c3085A85539b878aa1dfD",
+    "transactionIndex": 1,
+    "gasUsed": "851631",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xae151b73168953790871d3a44d97dcf7011ada45677ec5f4d48f82484583887b",
+    "transactionHash": "0x2845624075c01bd2d905c6f18d9bb7e7c1a16fa80e662d79a0a5c44382da5a32",
+    "logs": [],
+    "blockNumber": 310168,
+    "cumulativeGasUsed": "851631",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bytes8[]\",\"name\":\"_data\",\"type\":\"bytes8[]\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_root\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"_log2Size\",\"type\":\"uint64\"}],\"name\":\"MerkleRootCalculatedFromData\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256[]\",\"name\":\"_indices\",\"type\":\"uint256[]\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"_root\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"_log2Size\",\"type\":\"uint64\"}],\"name\":\"MerkleRootCalculatedFromHistory\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_log2Size\",\"type\":\"uint64\"},{\"internalType\":\"bytes8[]\",\"name\":\"_data\",\"type\":\"bytes8[]\"}],\"name\":\"calculateMerkleRootFromData\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_log2Size\",\"type\":\"uint64\"},{\"internalType\":\"uint256[]\",\"name\":\"_indices\",\"type\":\"uint256[]\"}],\"name\":\"calculateMerkleRootFromHistory\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"currentIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_root\",\"type\":\"bytes32\"}],\"name\":\"getLogIndex\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_index\",\"type\":\"uint256\"}],\"name\":\"getLogRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"_root\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"_log2Size\",\"type\":\"uint64\"}],\"name\":\"isLogAvailable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"Stephen Chen\",\"details\":\"This contract is not well-tested yet.\",\"kind\":\"dev\",\"methods\":{},\"title\":\"Logger\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"calculateMerkleRootFromData(uint64,bytes8[])\":{\"notice\":\"Calculate the Merkle tree and return the root hash\"},\"calculateMerkleRootFromHistory(uint64,uint256[])\":{\"notice\":\"Calculate the Merkle tree and return the root hash\"},\"getLogIndex(bytes32)\":{\"notice\":\"Getter function to get the index in the history for the given hash\"},\"getLogRoot(uint256)\":{\"notice\":\"Getter function to get the root in the history for the given index\"},\"isLogAvailable(bytes32,uint64)\":{\"notice\":\"Getter function to check if log has been submitted for the given hash\"}},\"notice\":\"A contract that offers data availability\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Logger.sol\":\"Logger\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@cartesi/util/contracts/Decorated.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\npragma solidity ^0.7.0;\\n\\n\\ncontract Decorated {\\n    // This contract defines several modifiers but does not use\\n    // them - they will be used in derived contracts.\\n    modifier onlyBy(address user) {\\n        require(msg.sender == user, \\\"Cannot be called by user\\\");\\n        _;\\n    }\\n\\n    modifier onlyAfter(uint256 time) {\\n        require(block.timestamp > time, \\\"Cannot be called now\\\");\\n        _;\\n    }\\n}\\n\",\"keccak256\":\"0xdbba019b8f7f93b212a5bbae402ee988321c4fa82ed2b4c9e55b4d7ddf35dcc3\",\"license\":\"Apache-2.0\"},\"@cartesi/util/contracts/Merkle.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n\\n/// @title Library for Merkle proofs\\npragma solidity ^0.7.0;\\n\\n\\nlibrary Merkle {\\n    function getPristineHash(uint8 _log2Size) public pure returns (bytes32) {\\n        require(_log2Size >= 3, \\\"Has to be at least one word\\\");\\n        require(_log2Size <= 64, \\\"Cannot be bigger than the machine itself\\\");\\n\\n        bytes8 value = 0;\\n        bytes32 runningHash = keccak256(abi.encodePacked(value));\\n\\n        for (uint256 i = 3; i < _log2Size; i++) {\\n            runningHash = keccak256(abi.encodePacked(runningHash, runningHash));\\n        }\\n\\n        return runningHash;\\n    }\\n\\n    function getRoot(uint64 _position, bytes8 _value, bytes32[] memory proof) public pure returns (bytes32) {\\n        bytes32 runningHash = keccak256(abi.encodePacked(_value));\\n\\n        return getRootWithDrive(\\n            _position,\\n            3,\\n            runningHash,\\n            proof\\n        );\\n    }\\n\\n    function getRootWithDrive(\\n        uint64 _position,\\n        uint8 _logOfSize,\\n        bytes32 _drive,\\n        bytes32[] memory siblings\\n    ) public pure returns (bytes32)\\n    {\\n        require(_logOfSize >= 3, \\\"Must be at least a word\\\");\\n        require(_logOfSize <= 64, \\\"Cannot be bigger than the machine itself\\\");\\n\\n        uint64 size = uint64(2) ** _logOfSize;\\n\\n        require(((size - 1) & _position) == 0, \\\"Position is not aligned\\\");\\n        require(siblings.length == 64 - _logOfSize, \\\"Proof length does not match\\\");\\n\\n        bytes32 drive = _drive;\\n\\n        for (uint64 i = 0; i < siblings.length; i++) {\\n            if ((_position & (size << i)) == 0) {\\n                drive = keccak256(abi.encodePacked(drive, siblings[i]));\\n            } else {\\n                drive = keccak256(abi.encodePacked(siblings[i], drive));\\n            }\\n        }\\n\\n        return drive;\\n    }\\n\\n    function getLog2Floor(uint256 number) public pure returns (uint8) {\\n\\n        uint8 result = 0;\\n\\n        uint256 checkNumber = number;\\n        checkNumber = checkNumber >> 1;\\n        while (checkNumber > 0) {\\n            ++result;\\n            checkNumber = checkNumber >> 1;\\n        }\\n\\n        return result;\\n    }\\n\\n    function isPowerOf2(uint256 number) public pure returns (bool) {\\n\\n        uint256 checkNumber = number;\\n        if (checkNumber == 0) {\\n            return false;\\n        }\\n\\n        while ((checkNumber & 1) == 0) {\\n            checkNumber = checkNumber >> 1;\\n        }\\n\\n        checkNumber = checkNumber >> 1;\\n\\n        if (checkNumber == 0) {\\n            return true;\\n        }\\n\\n        return false;\\n    }\\n\\n    /// @notice Calculate the root of Merkle tree from an array of power of 2 elements\\n    /// @param hashes The array containing power of 2 elements\\n    /// @return byte32 the root hash being calculated\\n    function calculateRootFromPowerOfTwo(bytes32[] memory hashes) public pure returns (bytes32) {\\n        // revert when the input is not of power of 2\\n        require(isPowerOf2(hashes.length), \\\"The input array must contain power of 2 elements\\\");\\n\\n        if (hashes.length == 1) {\\n            return hashes[0];\\n        }else {\\n            bytes32[] memory newHashes = new bytes32[](hashes.length >> 1);\\n\\n            for (uint256 i = 0; i < hashes.length; i += 2) {\\n                newHashes[i >> 1] = keccak256(abi.encodePacked(hashes[i], hashes[i + 1]));\\n            }\\n\\n            return calculateRootFromPowerOfTwo(newHashes);\\n        }\\n    }\\n\\n}\\n\",\"keccak256\":\"0xfab427885024176038f230531f5fbc87e80c38b22d7b5307a57a7a0b7cdfc6fe\",\"license\":\"Apache-2.0\"},\"contracts/Logger.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\npragma solidity ^0.7.0;\\n\\nimport \\\"@cartesi/util/contracts/Decorated.sol\\\";\\nimport \\\"@cartesi/util/contracts/Merkle.sol\\\";\\nimport \\\"./LoggerInterface.sol\\\";\\n\\n\\n/// @title Logger\\n/// @author Stephen Chen\\n/// @notice A contract that offers data availability\\n/// @dev This contract is not well-tested yet.\\ncontract Logger is Decorated, LoggerInterface {\\n  // the caller can either provide the full data to generate the Merkle tree root\\n  // or combine the existing hashes in the history to a deeper tree\\n\\n    struct DataEntry {\\n        uint64 log2Size;\\n        bytes32 root;\\n    }\\n\\n    mapping(bytes32 => bool) logSubmitted;\\n    mapping(bytes32 => uint256) logIndex;\\n    mapping(uint256 => bytes32) logRoot;\\n    DataEntry[] dataHistory;\\n\\n    uint256 public currentIndex = 0;\\n\\n    // TODO: get rid of the _data from event\\n    event MerkleRootCalculatedFromData(uint256 indexed _index, bytes8[] _data, bytes32 indexed _root, uint64 _log2Size);\\n    event MerkleRootCalculatedFromHistory(uint256 indexed _index, uint256[] _indices, bytes32 indexed _root, uint64 _log2Size);\\n\\n    /// @notice Calculate the Merkle tree and return the root hash\\n    // @param _hashes The array of words of the file\\n    function calculateMerkleRootFromData(uint64 _log2Size, bytes8[] memory _data) public override returns(bytes32) {\\n        require(_log2Size >= 3, \\\"Has to be at least one word\\\");\\n        require(_log2Size <= 64, \\\"Cannot be bigger than the machine itself\\\");\\n        require(_data.length > 0, \\\"The input array cannot be empty\\\");\\n\\n        bytes8[] memory data = _data;\\n        uint256 power2Length = uint64(2) ** (_log2Size - 3);\\n\\n        require(power2Length >= _data.length, \\\"The input array is bigger than declared log2 size\\\");\\n\\n        if (_data.length != power2Length) {\\n            // pad the list to length of power of 2\\n            bytes8[] memory paddedData = new bytes8[](power2Length);\\n\\n            for (uint256 i = 0; i < _data.length; ++i) {\\n                paddedData[i] = _data[i];\\n            }\\n            for (uint256 i = _data.length; i < paddedData.length; ++i) {\\n                paddedData[i] = 0;\\n            }\\n            data = paddedData;\\n        }\\n\\n        bytes32[] memory hashes = new bytes32[](data.length);\\n\\n        for (uint256 i = 0; i<data.length; ++i) {\\n            hashes[i] = keccak256(abi.encodePacked(data[i]));\\n        }\\n\\n        bytes32 root = Merkle.calculateRootFromPowerOfTwo(hashes);\\n        dataHistory.push(DataEntry(_log2Size, root));\\n        emit MerkleRootCalculatedFromData(\\n            currentIndex,\\n            _data,\\n            root,\\n            _log2Size);\\n        logSubmitted[root] = true;\\n        logIndex[root] = currentIndex;\\n        logRoot[currentIndex] = root;\\n        ++currentIndex;\\n        return root;\\n    }\\n\\n    /// @notice Calculate the Merkle tree and return the root hash\\n    // @param _indices The array of indices of the history\\n    function calculateMerkleRootFromHistory(uint64 _log2Size, uint256[] memory _indices) public returns(bytes32) {\\n        require(Merkle.isPowerOf2(_indices.length), \\\"The input array must contain power of 2 elements\\\");\\n\\n        // check indices exist and the value of log2Size matches\\n        for (uint256 i = 0; i<_indices.length; ++i) {\\n            require(currentIndex > _indices[i], \\\"The index of history doesn't exist yet\\\");\\n            require(_log2Size == dataHistory[_indices[i]].log2Size, \\\"The value of log2Size doesn't match in history\\\");\\n        }\\n\\n        bytes32[] memory hashes = new bytes32[](_indices.length);\\n        for (uint256 i = 0; i<_indices.length; ++i) {\\n            hashes[i] = dataHistory[_indices[i]].root;\\n        }\\n\\n        bytes32 root = Merkle.calculateRootFromPowerOfTwo(hashes);\\n\\n        uint64 log2Size = Merkle.getLog2Floor(_indices.length);\\n        dataHistory.push(DataEntry(log2Size + _log2Size, root));\\n        emit MerkleRootCalculatedFromHistory(\\n            currentIndex,\\n            _indices,\\n            root,\\n            log2Size + _log2Size);\\n        logSubmitted[root] = true;\\n        logIndex[root] = currentIndex;\\n        logRoot[currentIndex] = root;\\n        ++currentIndex;\\n        return root;\\n    }\\n\\n    /// @notice Getter function to check if log has been submitted for the given hash\\n    // @param _root The hash value to check in the logger history\\n    function isLogAvailable(bytes32 _root, uint64 _log2Size) public override view returns(bool) {\\n        if (logSubmitted[_root]) {\\n            return ((dataHistory[logIndex[_root]].log2Size) == _log2Size);\\n        }\\n        return false;\\n    }\\n\\n    /// @notice Getter function to get the index in the history for the given hash\\n    // @param _root The hash value to check in the logger history\\n    function getLogIndex(bytes32 _root) public view returns(uint256) {\\n        return logIndex[_root];\\n    }\\n\\n    /// @notice Getter function to get the root in the history for the given index\\n    // @param _index The index value to check in the logger history\\n    function getLogRoot(uint256 _index) public view returns(bytes32) {\\n        require(_index < currentIndex, \\\"The index doesn't exist in the history\\\");\\n        return logRoot[_index];\\n    }\\n}\\n\",\"keccak256\":\"0x05f4bdd4ae68df1272b4abcf459f6935fe61ae439813d231ecd7c5622cc7d652\",\"license\":\"GPL-3.0-only\"},\"contracts/LoggerInterface.sol\":{\"content\":\"// Copyright (C) 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: GPL-3.0-only\\n// This program is free software: you can redistribute it and/or modify it under\\n// the terms of the GNU General Public License as published by the Free Software\\n// Foundation, either version 3 of the License, or (at your option) any later\\n// version.\\n\\n// This program is distributed in the hope that it will be useful, but WITHOUT ANY\\n// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A\\n// PARTICULAR PURPOSE. See the GNU General Public License for more details.\\n\\n// You should have received a copy of the GNU General Public License\\n// along with this program.  If not, see <https://www.gnu.org/licenses/>.\\n\\n// Note: This component currently has dependencies that are licensed under the GNU\\n// GPL, version 3, and so you should treat this component as a whole as being under\\n// the GPL version 3. But all Cartesi-written code in this component is licensed\\n// under the Apache License, version 2, or a compatible permissive license, and can\\n// be used independently under the Apache v2 license. After this component is\\n// rewritten, the entire component will be released under the Apache v2 license.\\n\\n\\n/// @title Interface for logger test instantiator\\npragma solidity ^0.7.0;\\n\\n\\ninterface LoggerInterface {\\n    function isLogAvailable(bytes32 _root, uint64 _log2Size) external view returns(bool);\\n\\n    function calculateMerkleRootFromData(uint64 _log2Size, bytes8[] memory _data) external returns(bytes32);\\n}\\n\",\"keccak256\":\"0x529cc083d7bf62b13d083f10baf2b3d2b33b15612ea605fb84ec2da0c3b0e7a5\",\"license\":\"GPL-3.0-only\"}},\"version\":1}",
+  "bytecode": "0x6080604052600060045534801561001557600080fd5b50610e67806100256000396000f3fe608060405234801561001057600080fd5b50600436106100625760003560e01c806326987b60146100675780634891ea36146100815780636a22e5fd14610134578063833459bc14610151578063a1ddff261461016e578063adaea8dc14610221575b600080fd5b61006f610261565b60408051918252519081900360200190f35b61006f6004803603604081101561009757600080fd5b6001600160401b0382351691908101906040810160208201356401000000008111156100c257600080fd5b8201836020820111156100d457600080fd5b803590602001918460208302840111640100000000831117156100f657600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610267945050505050565b61006f6004803603602081101561014a57600080fd5b5035610773565b61006f6004803603602081101561016757600080fd5b50356107c8565b61006f6004803603604081101561018457600080fd5b6001600160401b0382351691908101906040810160208201356401000000008111156101af57600080fd5b8201836020820111156101c157600080fd5b803590602001918460208302840111640100000000831117156101e357600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506107da945050505050565b61024d6004803603604081101561023757600080fd5b50803590602001356001600160401b0316610cc5565b604080519115158252519081900360200190f35b60045481565b60006003836001600160401b031610156102c8576040805162461bcd60e51b815260206004820152601b60248201527f48617320746f206265206174206c65617374206f6e6520776f72640000000000604482015290519081900360640190fd5b6040836001600160401b031611156103115760405162461bcd60e51b8152600401808060200182810382526028815260200180610de46028913960400191505060405180910390fd5b6000825111610367576040805162461bcd60e51b815260206004820152601f60248201527f54686520696e7075742061727261792063616e6e6f7420626520656d70747900604482015290519081900360640190fd5b815182906001600160401b036002198601811660020a16908110156103bd5760405162461bcd60e51b8152600401808060200182810382526031815260200180610d2f6031913960400191505060405180910390fd5b8084511461049a576060816001600160401b03811180156103dd57600080fd5b50604051908082528060200260200182016040528015610407578160200160208202803683370190505b50905060005b85518110156104575785818151811061042257fe5b602002602001015182828151811061043657fe5b6001600160c01b03199092166020928302919091019091015260010161040d565b5084515b815181101561049657600060c01b82828151811061047557fe5b6001600160c01b03199092166020928302919091019091015260010161045b565b5091505b606082516001600160401b03811180156104b357600080fd5b506040519080825280602002602001820160405280156104dd578160200160208202803683370190505b50905060005b835181101561054f578381815181106104f857fe5b602002602001015160405160200180826001600160c01b03191681526008019150506040516020818303038152906040528051906020012082828151811061053c57fe5b60209081029190910101526001016104e3565b50600073A4f018E91B0e10384c684CE783EAc67785d3cB7b6382b0eab8836040518263ffffffff1660e01b81526004018080602001828103825283818151815260200191508051906020019060200280838360005b838110156105bc5781810151838201526020016105a4565b505050509050019250505060206040518083038186803b1580156105df57600080fd5b505af41580156105f3573d6000803e3d6000fd5b505050506040513d602081101561060957600080fd5b50516040805180820182526001600160401b038a8116808352602080840186815260038054600181018255600091825295517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b6002909702968701805467ffffffffffffffff19169190961617909455517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c909401939093556004548451808501929092528482528b51948201949094528a5194955085947f5fdb13b5e276437af6afb5d6bede9cf90cb8cd2f13c93048434bf9fcf7284622938c938e93928392606084019287820192909102908190849084905b838110156107165781810151838201526020016106fe565b50505050905001935050505060405180910390a3600081815260208181526040808320805460ff19166001908117909155600480548285528386208190558552600290935292208390558054909101905593505050505b92915050565b600060045482106107b55760405162461bcd60e51b8152600401808060200182810382526026815260200180610e0c6026913960400191505060405180910390fd5b5060009081526002602052604090205490565b60009081526001602052604090205490565b600073A4f018E91B0e10384c684CE783EAc67785d3cB7b63d82ae4b183516040518263ffffffff1660e01b81526004018082815260200191505060206040518083038186803b15801561082c57600080fd5b505af4158015610840573d6000803e3d6000fd5b505050506040513d602081101561085657600080fd5b50516108935760405162461bcd60e51b8152600401808060200182810382526030815260200180610d866030913960400191505060405180910390fd5b60005b8251811015610974578281815181106108ab57fe5b6020026020010151600454116108f25760405162461bcd60e51b8152600401808060200182810382526026815260200180610d606026913960400191505060405180910390fd5b600383828151811061090057fe5b60200260200101518154811061091257fe5b60009182526020909120600290910201546001600160401b0385811691161461096c5760405162461bcd60e51b815260040180806020018281038252602e815260200180610db6602e913960400191505060405180910390fd5b600101610896565b50606082516001600160401b038111801561098e57600080fd5b506040519080825280602002602001820160405280156109b8578160200160208202803683370190505b50905060005b8351811015610a185760038482815181106109d557fe5b6020026020010151815481106109e757fe5b906000526020600020906002020160010154828281518110610a0557fe5b60209081029190910101526001016109be565b50600073A4f018E91B0e10384c684CE783EAc67785d3cB7b6382b0eab8836040518263ffffffff1660e01b81526004018080602001828103825283818151815260200191508051906020019060200280838360005b83811015610a85578181015183820152602001610a6d565b505050509050019250505060206040518083038186803b158015610aa857600080fd5b505af4158015610abc573d6000803e3d6000fd5b505050506040513d6020811015610ad257600080fd5b50518451604080516306c8e54b60e01b815260048101929092525191925060009173A4f018E91B0e10384c684CE783EAc67785d3cB7b916306c8e54b916024808301926020929190829003018186803b158015610b2e57600080fd5b505af4158015610b42573d6000803e3d6000fd5b505050506040513d6020811015610b5857600080fd5b505160408051808201825260ff9092168881016001600160401b03818116808652602080870189815260038054600181018255600091825298517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b6002909a02998a01805467ffffffffffffffff19169190961617909455517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c909701969096556004548551808801929092528582528b51958201959095528a5193965087957f89cefba87d8a8fa0db60ec3681079c7740b90465999c62cd7c00d65d3c9e57a9948c949383926060840192878201929102908190849084905b83811015610c6a578181015183820152602001610c52565b50505050905001935050505060405180910390a350600081815260208181526040808320805460ff19166001908117909155600480548285528386208190558552600290935292208390558054909101905591505092915050565b60008281526020819052604081205460ff1615610d2557600083815260016020526040902054600380546001600160401b03851692908110610d0357fe5b60009182526020909120600290910201546001600160401b031614905061076d565b5060009291505056fe54686520696e70757420617272617920697320626967676572207468616e206465636c61726564206c6f67322073697a6554686520696e646578206f6620686973746f727920646f65736e27742065786973742079657454686520696e707574206172726179206d75737420636f6e7461696e20706f776572206f66203220656c656d656e74735468652076616c7565206f66206c6f673253697a6520646f65736e2774206d6174636820696e20686973746f727943616e6e6f7420626520626967676572207468616e20746865206d616368696e6520697473656c6654686520696e64657820646f65736e277420657869737420696e2074686520686973746f7279a26469706673582212200d8e6b39637d32a688a53738636551fb05c545bad85c626415b4bfe225f871fa64736f6c63430007040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100625760003560e01c806326987b60146100675780634891ea36146100815780636a22e5fd14610134578063833459bc14610151578063a1ddff261461016e578063adaea8dc14610221575b600080fd5b61006f610261565b60408051918252519081900360200190f35b61006f6004803603604081101561009757600080fd5b6001600160401b0382351691908101906040810160208201356401000000008111156100c257600080fd5b8201836020820111156100d457600080fd5b803590602001918460208302840111640100000000831117156100f657600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610267945050505050565b61006f6004803603602081101561014a57600080fd5b5035610773565b61006f6004803603602081101561016757600080fd5b50356107c8565b61006f6004803603604081101561018457600080fd5b6001600160401b0382351691908101906040810160208201356401000000008111156101af57600080fd5b8201836020820111156101c157600080fd5b803590602001918460208302840111640100000000831117156101e357600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506107da945050505050565b61024d6004803603604081101561023757600080fd5b50803590602001356001600160401b0316610cc5565b604080519115158252519081900360200190f35b60045481565b60006003836001600160401b031610156102c8576040805162461bcd60e51b815260206004820152601b60248201527f48617320746f206265206174206c65617374206f6e6520776f72640000000000604482015290519081900360640190fd5b6040836001600160401b031611156103115760405162461bcd60e51b8152600401808060200182810382526028815260200180610de46028913960400191505060405180910390fd5b6000825111610367576040805162461bcd60e51b815260206004820152601f60248201527f54686520696e7075742061727261792063616e6e6f7420626520656d70747900604482015290519081900360640190fd5b815182906001600160401b036002198601811660020a16908110156103bd5760405162461bcd60e51b8152600401808060200182810382526031815260200180610d2f6031913960400191505060405180910390fd5b8084511461049a576060816001600160401b03811180156103dd57600080fd5b50604051908082528060200260200182016040528015610407578160200160208202803683370190505b50905060005b85518110156104575785818151811061042257fe5b602002602001015182828151811061043657fe5b6001600160c01b03199092166020928302919091019091015260010161040d565b5084515b815181101561049657600060c01b82828151811061047557fe5b6001600160c01b03199092166020928302919091019091015260010161045b565b5091505b606082516001600160401b03811180156104b357600080fd5b506040519080825280602002602001820160405280156104dd578160200160208202803683370190505b50905060005b835181101561054f578381815181106104f857fe5b602002602001015160405160200180826001600160c01b03191681526008019150506040516020818303038152906040528051906020012082828151811061053c57fe5b60209081029190910101526001016104e3565b50600073__$c7dbd794b8c7b5c2028db781007df1176e$__6382b0eab8836040518263ffffffff1660e01b81526004018080602001828103825283818151815260200191508051906020019060200280838360005b838110156105bc5781810151838201526020016105a4565b505050509050019250505060206040518083038186803b1580156105df57600080fd5b505af41580156105f3573d6000803e3d6000fd5b505050506040513d602081101561060957600080fd5b50516040805180820182526001600160401b038a8116808352602080840186815260038054600181018255600091825295517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b6002909702968701805467ffffffffffffffff19169190961617909455517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c909401939093556004548451808501929092528482528b51948201949094528a5194955085947f5fdb13b5e276437af6afb5d6bede9cf90cb8cd2f13c93048434bf9fcf7284622938c938e93928392606084019287820192909102908190849084905b838110156107165781810151838201526020016106fe565b50505050905001935050505060405180910390a3600081815260208181526040808320805460ff19166001908117909155600480548285528386208190558552600290935292208390558054909101905593505050505b92915050565b600060045482106107b55760405162461bcd60e51b8152600401808060200182810382526026815260200180610e0c6026913960400191505060405180910390fd5b5060009081526002602052604090205490565b60009081526001602052604090205490565b600073__$c7dbd794b8c7b5c2028db781007df1176e$__63d82ae4b183516040518263ffffffff1660e01b81526004018082815260200191505060206040518083038186803b15801561082c57600080fd5b505af4158015610840573d6000803e3d6000fd5b505050506040513d602081101561085657600080fd5b50516108935760405162461bcd60e51b8152600401808060200182810382526030815260200180610d866030913960400191505060405180910390fd5b60005b8251811015610974578281815181106108ab57fe5b6020026020010151600454116108f25760405162461bcd60e51b8152600401808060200182810382526026815260200180610d606026913960400191505060405180910390fd5b600383828151811061090057fe5b60200260200101518154811061091257fe5b60009182526020909120600290910201546001600160401b0385811691161461096c5760405162461bcd60e51b815260040180806020018281038252602e815260200180610db6602e913960400191505060405180910390fd5b600101610896565b50606082516001600160401b038111801561098e57600080fd5b506040519080825280602002602001820160405280156109b8578160200160208202803683370190505b50905060005b8351811015610a185760038482815181106109d557fe5b6020026020010151815481106109e757fe5b906000526020600020906002020160010154828281518110610a0557fe5b60209081029190910101526001016109be565b50600073__$c7dbd794b8c7b5c2028db781007df1176e$__6382b0eab8836040518263ffffffff1660e01b81526004018080602001828103825283818151815260200191508051906020019060200280838360005b83811015610a85578181015183820152602001610a6d565b505050509050019250505060206040518083038186803b158015610aa857600080fd5b505af4158015610abc573d6000803e3d6000fd5b505050506040513d6020811015610ad257600080fd5b50518451604080516306c8e54b60e01b815260048101929092525191925060009173__$c7dbd794b8c7b5c2028db781007df1176e$__916306c8e54b916024808301926020929190829003018186803b158015610b2e57600080fd5b505af4158015610b42573d6000803e3d6000fd5b505050506040513d6020811015610b5857600080fd5b505160408051808201825260ff9092168881016001600160401b03818116808652602080870189815260038054600181018255600091825298517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85b6002909a02998a01805467ffffffffffffffff19169190961617909455517fc2575a0e9e593c00f959f8c92f12db2869c3395a3b0502d05e2516446f71f85c909701969096556004548551808801929092528582528b51958201959095528a5193965087957f89cefba87d8a8fa0db60ec3681079c7740b90465999c62cd7c00d65d3c9e57a9948c949383926060840192878201929102908190849084905b83811015610c6a578181015183820152602001610c52565b50505050905001935050505060405180910390a350600081815260208181526040808320805460ff19166001908117909155600480548285528386208190558552600290935292208390558054909101905591505092915050565b60008281526020819052604081205460ff1615610d2557600083815260016020526040902054600380546001600160401b03851692908110610d0357fe5b60009182526020909120600290910201546001600160401b031614905061076d565b5060009291505056fe54686520696e70757420617272617920697320626967676572207468616e206465636c61726564206c6f67322073697a6554686520696e646578206f6620686973746f727920646f65736e27742065786973742079657454686520696e707574206172726179206d75737420636f6e7461696e20706f776572206f66203220656c656d656e74735468652076616c7565206f66206c6f673253697a6520646f65736e2774206d6174636820696e20686973746f727943616e6e6f7420626520626967676572207468616e20746865206d616368696e6520697473656c6654686520696e64657820646f65736e277420657869737420696e2074686520686973746f7279a26469706673582212200d8e6b39637d32a688a53738636551fb05c545bad85c626415b4bfe225f871fa64736f6c63430007040033",
+  "libraries": {
+    "Merkle": "0xA4f018E91B0e10384c684CE783EAc67785d3cB7b"
+  },
+  "devdoc": {
+    "author": "Stephen Chen",
+    "details": "This contract is not well-tested yet.",
+    "kind": "dev",
+    "methods": {},
+    "title": "Logger",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "calculateMerkleRootFromData(uint64,bytes8[])": {
+        "notice": "Calculate the Merkle tree and return the root hash"
+      },
+      "calculateMerkleRootFromHistory(uint64,uint256[])": {
+        "notice": "Calculate the Merkle tree and return the root hash"
+      },
+      "getLogIndex(bytes32)": {
+        "notice": "Getter function to get the index in the history for the given hash"
+      },
+      "getLogRoot(uint256)": {
+        "notice": "Getter function to get the root in the history for the given index"
+      },
+      "isLogAvailable(bytes32,uint64)": {
+        "notice": "Getter function to check if log has been submitted for the given hash"
+      }
+    },
+    "notice": "A contract that offers data availability",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 586,
+        "contract": "contracts/Logger.sol:Logger",
+        "label": "logSubmitted",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_bool)"
+      },
+      {
+        "astId": 590,
+        "contract": "contracts/Logger.sol:Logger",
+        "label": "logIndex",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_bytes32,t_uint256)"
+      },
+      {
+        "astId": 594,
+        "contract": "contracts/Logger.sol:Logger",
+        "label": "logRoot",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_mapping(t_uint256,t_bytes32)"
+      },
+      {
+        "astId": 597,
+        "contract": "contracts/Logger.sol:Logger",
+        "label": "dataHistory",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_array(t_struct(DataEntry)582_storage)dyn_storage"
+      },
+      {
+        "astId": 600,
+        "contract": "contracts/Logger.sol:Logger",
+        "label": "currentIndex",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_uint256"
+      }
+    ],
+    "types": {
+      "t_array(t_struct(DataEntry)582_storage)dyn_storage": {
+        "base": "t_struct(DataEntry)582_storage",
+        "encoding": "dynamic_array",
+        "label": "struct Logger.DataEntry[]",
+        "numberOfBytes": "32"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_bytes32,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_bytes32,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_mapping(t_uint256,t_bytes32)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => bytes32)",
+        "numberOfBytes": "32",
+        "value": "t_bytes32"
+      },
+      "t_struct(DataEntry)582_storage": {
+        "encoding": "inplace",
+        "label": "struct Logger.DataEntry",
+        "members": [
+          {
+            "astId": 579,
+            "contract": "contracts/Logger.sol:Logger",
+            "label": "log2Size",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint64"
+          },
+          {
+            "astId": 581,
+            "contract": "contracts/Logger.sol:Logger",
+            "label": "root",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  }
+}

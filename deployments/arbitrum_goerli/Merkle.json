@@ -1,0 +1,191 @@
+{
+  "address": "0xA4f018E91B0e10384c684CE783EAc67785d3cB7b",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32[]",
+          "name": "hashes",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "calculateRootFromPowerOfTwo",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "number",
+          "type": "uint256"
+        }
+      ],
+      "name": "getLog2Floor",
+      "outputs": [
+        {
+          "internalType": "uint8",
+          "name": "",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint8",
+          "name": "_log2Size",
+          "type": "uint8"
+        }
+      ],
+      "name": "getPristineHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_position",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes8",
+          "name": "_value",
+          "type": "bytes8"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "proof",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "getRoot",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "_position",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint8",
+          "name": "_logOfSize",
+          "type": "uint8"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_drive",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "siblings",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "getRootWithDrive",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "number",
+          "type": "uint256"
+        }
+      ],
+      "name": "isPowerOf2",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xcf7b5646723b8451bc288bbc3c3ac49bc3001afef46496362b0d43bf3a7d5048",
+  "receipt": {
+    "to": null,
+    "from": "0xD63A9d27E7A573e28889A363310443Cba076D546",
+    "contractAddress": "0xA4f018E91B0e10384c684CE783EAc67785d3cB7b",
+    "transactionIndex": 1,
+    "gasUsed": "553584",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xad177ad54f7d25819f987d07f51af46a1041bb03a46daa4193a29df3d0b18fc9",
+    "transactionHash": "0xcf7b5646723b8451bc288bbc3c3ac49bc3001afef46496362b0d43bf3a7d5048",
+    "logs": [],
+    "blockNumber": 310152,
+    "cumulativeGasUsed": "553584",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "metadata": "{\"compiler\":{\"version\":\"0.7.4+commit.3f05b770\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes32[]\",\"name\":\"hashes\",\"type\":\"bytes32[]\"}],\"name\":\"calculateRootFromPowerOfTwo\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"name\":\"getLog2Floor\",\"outputs\":[{\"internalType\":\"uint8\",\"name\":\"\",\"type\":\"uint8\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint8\",\"name\":\"_log2Size\",\"type\":\"uint8\"}],\"name\":\"getPristineHash\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_position\",\"type\":\"uint64\"},{\"internalType\":\"bytes8\",\"name\":\"_value\",\"type\":\"bytes8\"},{\"internalType\":\"bytes32[]\",\"name\":\"proof\",\"type\":\"bytes32[]\"}],\"name\":\"getRoot\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint64\",\"name\":\"_position\",\"type\":\"uint64\"},{\"internalType\":\"uint8\",\"name\":\"_logOfSize\",\"type\":\"uint8\"},{\"internalType\":\"bytes32\",\"name\":\"_drive\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"siblings\",\"type\":\"bytes32[]\"}],\"name\":\"getRootWithDrive\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"pure\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"number\",\"type\":\"uint256\"}],\"name\":\"isPowerOf2\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"calculateRootFromPowerOfTwo(bytes32[])\":{\"params\":{\"hashes\":\"The array containing power of 2 elements\"},\"returns\":{\"_0\":\"byte32 the root hash being calculated\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"calculateRootFromPowerOfTwo(bytes32[])\":{\"notice\":\"Calculate the root of Merkle tree from an array of power of 2 elements\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/Merkle.sol\":\"Merkle\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/Merkle.sol\":{\"content\":\"// Copyright 2020 Cartesi Pte. Ltd.\\n\\n// SPDX-License-Identifier: Apache-2.0\\n// Licensed under the Apache License, Version 2.0 (the \\\"License\\\"); you may not use\\n// this file except in compliance with the License. You may obtain a copy of the\\n// License at http://www.apache.org/licenses/LICENSE-2.0\\n\\n// Unless required by applicable law or agreed to in writing, software distributed\\n// under the License is distributed on an \\\"AS IS\\\" BASIS, WITHOUT WARRANTIES OR\\n// CONDITIONS OF ANY KIND, either express or implied. See the License for the\\n// specific language governing permissions and limitations under the License.\\n\\n\\n/// @title Library for Merkle proofs\\npragma solidity ^0.7.0;\\n\\n\\nlibrary Merkle {\\n    function getPristineHash(uint8 _log2Size) public pure returns (bytes32) {\\n        require(_log2Size >= 3, \\\"Has to be at least one word\\\");\\n        require(_log2Size <= 64, \\\"Cannot be bigger than the machine itself\\\");\\n\\n        bytes8 value = 0;\\n        bytes32 runningHash = keccak256(abi.encodePacked(value));\\n\\n        for (uint256 i = 3; i < _log2Size; i++) {\\n            runningHash = keccak256(abi.encodePacked(runningHash, runningHash));\\n        }\\n\\n        return runningHash;\\n    }\\n\\n    function getRoot(uint64 _position, bytes8 _value, bytes32[] memory proof) public pure returns (bytes32) {\\n        bytes32 runningHash = keccak256(abi.encodePacked(_value));\\n\\n        return getRootWithDrive(\\n            _position,\\n            3,\\n            runningHash,\\n            proof\\n        );\\n    }\\n\\n    function getRootWithDrive(\\n        uint64 _position,\\n        uint8 _logOfSize,\\n        bytes32 _drive,\\n        bytes32[] memory siblings\\n    ) public pure returns (bytes32)\\n    {\\n        require(_logOfSize >= 3, \\\"Must be at least a word\\\");\\n        require(_logOfSize <= 64, \\\"Cannot be bigger than the machine itself\\\");\\n\\n        uint64 size = uint64(2) ** _logOfSize;\\n\\n        require(((size - 1) & _position) == 0, \\\"Position is not aligned\\\");\\n        require(siblings.length == 64 - _logOfSize, \\\"Proof length does not match\\\");\\n\\n        bytes32 drive = _drive;\\n\\n        for (uint64 i = 0; i < siblings.length; i++) {\\n            if ((_position & (size << i)) == 0) {\\n                drive = keccak256(abi.encodePacked(drive, siblings[i]));\\n            } else {\\n                drive = keccak256(abi.encodePacked(siblings[i], drive));\\n            }\\n        }\\n\\n        return drive;\\n    }\\n\\n    function getLog2Floor(uint256 number) public pure returns (uint8) {\\n\\n        uint8 result = 0;\\n\\n        uint256 checkNumber = number;\\n        checkNumber = checkNumber >> 1;\\n        while (checkNumber > 0) {\\n            ++result;\\n            checkNumber = checkNumber >> 1;\\n        }\\n\\n        return result;\\n    }\\n\\n    function isPowerOf2(uint256 number) public pure returns (bool) {\\n\\n        uint256 checkNumber = number;\\n        if (checkNumber == 0) {\\n            return false;\\n        }\\n\\n        while ((checkNumber & 1) == 0) {\\n            checkNumber = checkNumber >> 1;\\n        }\\n\\n        checkNumber = checkNumber >> 1;\\n\\n        if (checkNumber == 0) {\\n            return true;\\n        }\\n\\n        return false;\\n    }\\n\\n    /// @notice Calculate the root of Merkle tree from an array of power of 2 elements\\n    /// @param hashes The array containing power of 2 elements\\n    /// @return byte32 the root hash being calculated\\n    function calculateRootFromPowerOfTwo(bytes32[] memory hashes) public pure returns (bytes32) {\\n        // revert when the input is not of power of 2\\n        require(isPowerOf2(hashes.length), \\\"The input array must contain power of 2 elements\\\");\\n\\n        if (hashes.length == 1) {\\n            return hashes[0];\\n        }else {\\n            bytes32[] memory newHashes = new bytes32[](hashes.length >> 1);\\n\\n            for (uint256 i = 0; i < hashes.length; i += 2) {\\n                newHashes[i >> 1] = keccak256(abi.encodePacked(hashes[i], hashes[i + 1]));\\n            }\\n\\n            return calculateRootFromPowerOfTwo(newHashes);\\n        }\\n    }\\n\\n}\\n\",\"keccak256\":\"0xfab427885024176038f230531f5fbc87e80c38b22d7b5307a57a7a0b7cdfc6fe\",\"license\":\"Apache-2.0\"}},\"version\":1}",
+  "bytecode": "0x61090f610026600b82828239805160001a60731461001957fe5b30600052607381538281f3fe730000000000000000000000000000000000000000301460806040526004361061006c5760003560e01c806306c8e54b1461007157806382b0eab8146100a45780638492d93b14610159578063a73426881461021c578063d7304dd91461023c578063d82ae4b1146102ff575b600080fd5b61008e6004803603602081101561008757600080fd5b5035610330565b6040805160ff9092168252519081900360200190f35b610147600480360360208110156100ba57600080fd5b8101906020810181356401000000008111156100d557600080fd5b8201836020820111156100e757600080fd5b8035906020019184602083028401116401000000008311171561010957600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610354945050505050565b60408051918252519081900360200190f35b6101476004803603606081101561016f57600080fd5b67ffffffffffffffff823516916001600160c01b0319602082013516918101906060810160408201356401000000008111156101aa57600080fd5b8201836020820111156101bc57600080fd5b803590602001918460208302840111640100000000831117156101de57600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506104a5945050505050565b6101476004803603602081101561023257600080fd5b503560ff166104ed565b6101476004803603608081101561025257600080fd5b67ffffffffffffffff8235169160ff602082013516916040820135919081019060808101606082013564010000000081111561028d57600080fd5b82018360208201111561029f57600080fd5b803590602001918460208302840111640100000000831117156102c157600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506105fd945050505050565b61031c6004803603602081101561031557600080fd5b5035610843565b604080519115158252519081900360200190f35b600080600183901c5b801561034b576001918201911c610339565b5090505b919050565b60006103608251610843565b61039b5760405162461bcd60e51b81526004018080602001828103825260308152602001806108826030913960400191505060405180910390fd5b8151600114156103c157816000815181106103b257fe5b6020026020010151905061034f565b606060018351901c67ffffffffffffffff811180156103df57600080fd5b50604051908082528060200260200182016040528015610409578160200160208202803683370190505b50905060005b83518110156104935783818151811061042457fe5b602002602001015184826001018151811061043b57fe5b602002602001015160405160200180838152602001828152602001925050506040516020818303038152906040528051906020012082600183901c8151811061048057fe5b602090810291909101015260020161040f565b5061049d81610354565b91505061034f565b604080516001600160c01b0319841660208083019190915282518083036008018152602890920190925280519101206000906104e485600383866105fd565b95945050505050565b600060038260ff161015610548576040805162461bcd60e51b815260206004820152601b60248201527f48617320746f206265206174206c65617374206f6e6520776f72640000000000604482015290519081900360640190fd5b60408260ff16111561058b5760405162461bcd60e51b81526004018080602001828103825260288152602001806108b26028913960400191505060405180910390fd5b60408051600060208083018290528351808403600801815260289093019093528151919092012060035b8460ff168110156105f5576040805160208082018590528183019490945281518082038301815260609091019091528051920191909120906001016105b5565b509392505050565b600060038460ff161015610658576040805162461bcd60e51b815260206004820152601760248201527f4d757374206265206174206c65617374206120776f7264000000000000000000604482015290519081900360640190fd5b60408460ff16111561069b5760405162461bcd60e51b81526004018080602001828103825260288152602001806108b26028913960400191505060405180910390fd5b60ff841660020a6000198101861667ffffffffffffffff1615610705576040805162461bcd60e51b815260206004820152601760248201527f506f736974696f6e206973206e6f7420616c69676e6564000000000000000000604482015290519081900360640190fd5b8460400360ff16835114610760576040805162461bcd60e51b815260206004820152601b60248201527f50726f6f66206c656e67746820646f6573206e6f74206d617463680000000000604482015290519081900360640190fd5b8360005b84518167ffffffffffffffff1610156108385767ffffffffffffffff8381168183161b8916166107e15781858267ffffffffffffffff16815181106107a557fe5b60200260200101516040516020018083815260200182815260200192505050604051602081830303815290604052805190602001209150610830565b848167ffffffffffffffff16815181106107f757fe5b60200260200101518260405160200180838152602001828152602001925050506040516020818303038152906040528051906020012091505b600101610764565b509695505050505050565b6000818061085557600091505061034f565b5b600181166108665760011c610856565b60011c8061087857600191505061034f565b5060009291505056fe54686520696e707574206172726179206d75737420636f6e7461696e20706f776572206f66203220656c656d656e747343616e6e6f7420626520626967676572207468616e20746865206d616368696e6520697473656c66a2646970667358221220005811500cfbf87b08ed31aef1644373a572a73834ea5d7920d772b6e5220ea964736f6c63430007040033",
+  "deployedBytecode": "0x730000000000000000000000000000000000000000301460806040526004361061006c5760003560e01c806306c8e54b1461007157806382b0eab8146100a45780638492d93b14610159578063a73426881461021c578063d7304dd91461023c578063d82ae4b1146102ff575b600080fd5b61008e6004803603602081101561008757600080fd5b5035610330565b6040805160ff9092168252519081900360200190f35b610147600480360360208110156100ba57600080fd5b8101906020810181356401000000008111156100d557600080fd5b8201836020820111156100e757600080fd5b8035906020019184602083028401116401000000008311171561010957600080fd5b919080806020026020016040519081016040528093929190818152602001838360200280828437600092019190915250929550610354945050505050565b60408051918252519081900360200190f35b6101476004803603606081101561016f57600080fd5b67ffffffffffffffff823516916001600160c01b0319602082013516918101906060810160408201356401000000008111156101aa57600080fd5b8201836020820111156101bc57600080fd5b803590602001918460208302840111640100000000831117156101de57600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506104a5945050505050565b6101476004803603602081101561023257600080fd5b503560ff166104ed565b6101476004803603608081101561025257600080fd5b67ffffffffffffffff8235169160ff602082013516916040820135919081019060808101606082013564010000000081111561028d57600080fd5b82018360208201111561029f57600080fd5b803590602001918460208302840111640100000000831117156102c157600080fd5b9190808060200260200160405190810160405280939291908181526020018383602002808284376000920191909152509295506105fd945050505050565b61031c6004803603602081101561031557600080fd5b5035610843565b604080519115158252519081900360200190f35b600080600183901c5b801561034b576001918201911c610339565b5090505b919050565b60006103608251610843565b61039b5760405162461bcd60e51b81526004018080602001828103825260308152602001806108826030913960400191505060405180910390fd5b8151600114156103c157816000815181106103b257fe5b6020026020010151905061034f565b606060018351901c67ffffffffffffffff811180156103df57600080fd5b50604051908082528060200260200182016040528015610409578160200160208202803683370190505b50905060005b83518110156104935783818151811061042457fe5b602002602001015184826001018151811061043b57fe5b602002602001015160405160200180838152602001828152602001925050506040516020818303038152906040528051906020012082600183901c8151811061048057fe5b602090810291909101015260020161040f565b5061049d81610354565b91505061034f565b604080516001600160c01b0319841660208083019190915282518083036008018152602890920190925280519101206000906104e485600383866105fd565b95945050505050565b600060038260ff161015610548576040805162461bcd60e51b815260206004820152601b60248201527f48617320746f206265206174206c65617374206f6e6520776f72640000000000604482015290519081900360640190fd5b60408260ff16111561058b5760405162461bcd60e51b81526004018080602001828103825260288152602001806108b26028913960400191505060405180910390fd5b60408051600060208083018290528351808403600801815260289093019093528151919092012060035b8460ff168110156105f5576040805160208082018590528183019490945281518082038301815260609091019091528051920191909120906001016105b5565b509392505050565b600060038460ff161015610658576040805162461bcd60e51b815260206004820152601760248201527f4d757374206265206174206c65617374206120776f7264000000000000000000604482015290519081900360640190fd5b60408460ff16111561069b5760405162461bcd60e51b81526004018080602001828103825260288152602001806108b26028913960400191505060405180910390fd5b60ff841660020a6000198101861667ffffffffffffffff1615610705576040805162461bcd60e51b815260206004820152601760248201527f506f736974696f6e206973206e6f7420616c69676e6564000000000000000000604482015290519081900360640190fd5b8460400360ff16835114610760576040805162461bcd60e51b815260206004820152601b60248201527f50726f6f66206c656e67746820646f6573206e6f74206d617463680000000000604482015290519081900360640190fd5b8360005b84518167ffffffffffffffff1610156108385767ffffffffffffffff8381168183161b8916166107e15781858267ffffffffffffffff16815181106107a557fe5b60200260200101516040516020018083815260200182815260200192505050604051602081830303815290604052805190602001209150610830565b848167ffffffffffffffff16815181106107f757fe5b60200260200101518260405160200180838152602001828152602001925050506040516020818303038152906040528051906020012091505b600101610764565b509695505050505050565b6000818061085557600091505061034f565b5b600181166108665760011c610856565b60011c8061087857600191505061034f565b5060009291505056fe54686520696e707574206172726179206d75737420636f6e7461696e20706f776572206f66203220656c656d656e747343616e6e6f7420626520626967676572207468616e20746865206d616368696e6520697473656c66a2646970667358221220005811500cfbf87b08ed31aef1644373a572a73834ea5d7920d772b6e5220ea964736f6c63430007040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {
+      "calculateRootFromPowerOfTwo(bytes32[])": {
+        "params": {
+          "hashes": "The array containing power of 2 elements"
+        },
+        "returns": {
+          "_0": "byte32 the root hash being calculated"
+        }
+      }
+    },
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "calculateRootFromPowerOfTwo(bytes32[])": {
+        "notice": "Calculate the root of Merkle tree from an array of power of 2 elements"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

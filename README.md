@@ -21,6 +21,11 @@ or using the http address:
 git clone --recurse-submodules https://github.com/cartesi/descartes.git
 ```
 
+### Deploying
+```
+npx hardhat deploy —network $network
+```
+
 ### Running
 
 To run execute:
