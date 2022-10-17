@@ -1,11 +1,14 @@
-FROM rust:1.57 as build
+FROM rust:1.64 as build
 
 ENV BASE /opt/cartesi
 RUN \
     apt-get update && \
-    apt-get install --no-install-recommends -y cmake protobuf-compiler && \
+    apt-get install --no-install-recommends -y cmake && \
     rm -rf /var/lib/apt/lists/*
-
+RUN export ARCH=$(uname -m | sed 's/aarch64/aarch_64/') && \
+   curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.20.1/protoc-3.20.1-linux-$ARCH.zip && \
+   unzip protoc-3.20.1-linux-$ARCH.zip -d $HOME/.local
+   
 # install wagyu utility for mnemonic handling
 RUN cargo install wagyu --locked
 
@@ -22,7 +25,7 @@ COPY ./descartes/Cargo.toml ./
 COPY ./descartes/Cargo.lock ./
 COPY ./descartes/src ./src
 
-RUN cargo install -j $(nproc) --locked --path .
+RUN PATH="$PATH:$HOME/.local/bin" cargo install -j $(nproc) --locked --path .
 
 
 # Onchain image to retrieve deployment info from NPM dependencies
