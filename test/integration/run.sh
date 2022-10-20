@@ -1,13 +1,13 @@
 #!/bin/bash -x
 
 FULL_PATH=$(dirname $(realpath $0))
-DESCARTES_DIR=$(dirname $(dirname $FULL_PATH))
+CARTESI_COMPUTE_DIR=$(dirname $(dirname $FULL_PATH))
 
 # ensure flashdrive directories are created by the user and not a Docker's root user
-mkdir -p $DESCARTES_DIR/dapp_data_0/flashdrive
-mkdir -p $DESCARTES_DIR/dapp_data_1/flashdrive
+mkdir -p $CARTESI_COMPUTE_DIR/dapp_data_0/flashdrive
+mkdir -p $CARTESI_COMPUTE_DIR/dapp_data_1/flashdrive
 
-cd $DESCARTES_DIR;
+cd $CARTESI_COMPUTE_DIR;
 
 wait-for-url() {
     echo "wait-for-url $1"

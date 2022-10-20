@@ -21,8 +21,8 @@ async function main() {
     const { ethers, getNamedAccounts } = hre;
     const { alice, bob } = await getNamedAccounts();
 
-    // retrieves Descartes and Logger deployed contracts
-    const descartes = await ethers.getContract("Descartes");
+    // retrieves Cartesi Compute and Logger deployed contracts
+    const cartesi_compute = await ethers.getContract("CartesiCompute");
     const logger = await ethers.getContract("Logger");
 
     let data = "2^71 + 36^12";
@@ -68,8 +68,8 @@ async function main() {
         provider: provider,
     };
 
-    // instantiates descartes computation
-    const tx = await descartes.instantiate(
+    // instantiates cartesi_compute computation
+    const tx = await cartesi_compute.instantiate(
         // final time
         config.finalTime,
         // template hash
@@ -86,7 +86,7 @@ async function main() {
 
     // retrieves created computation's index
     const index = await new Promise((resolve) => {
-        descartes.on("DescartesCreated", (index) => resolve(index));
+        cartesi_compute.on("CartesiComputeCreated", (index) => resolve(index));
     });
 
     console.log(

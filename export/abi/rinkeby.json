@@ -2,7 +2,7 @@
   "name": "rinkeby",
   "chainId": "4",
   "contracts": {
-    "Descartes": {
+    "CartesiCompute": {
       "address": "0x78c6c4db4B7Ba199858F4190C9443950604DA262",
       "abi": [
         {
@@ -87,7 +87,7 @@
               "type": "uint256"
             }
           ],
-          "name": "DescartesCreated",
+          "name": "CartesiComputeCreated",
           "type": "event"
         },
         {
@@ -106,7 +106,7 @@
               "type": "bytes32"
             }
           ],
-          "name": "DescartesFinished",
+          "name": "CartesiComputeFinished",
           "type": "event"
         },
         {
@@ -162,7 +162,7 @@
                 }
               ],
               "indexed": false,
-              "internalType": "struct DescartesInterface.Drive",
+              "internalType": "struct CartesiComputeInterface.Drive",
               "name": "_drive",
               "type": "tuple"
             }
@@ -432,7 +432,7 @@
                   "type": "bool"
                 }
               ],
-              "internalType": "struct DescartesInterface.Drive[]",
+              "internalType": "struct CartesiComputeInterface.Drive[]",
               "name": "",
               "type": "tuple[]"
             },
@@ -459,7 +459,7 @@
                   "type": "uint64"
                 }
               ],
-              "internalType": "struct DescartesInterface.Party",
+              "internalType": "struct CartesiComputeInterface.Party",
               "name": "user",
               "type": "tuple"
             }
@@ -571,7 +571,7 @@
                   "type": "bool"
                 }
               ],
-              "internalType": "struct DescartesInterface.Drive[]",
+              "internalType": "struct CartesiComputeInterface.Drive[]",
               "name": "_inputDrives",
               "type": "tuple[]"
             }

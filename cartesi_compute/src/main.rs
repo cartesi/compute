@@ -25,12 +25,12 @@
 #![recursion_limit = "1024"]
 #![warn(unused_extern_crates)]
 
-extern crate descartes;
+extern crate cartesi_compute;
 extern crate dispatcher;
 extern crate env_logger;
 extern crate utils;
 
-use descartes::Descartes;
+use cartesi_compute::CartesiCompute;
 use dispatcher::Dispatcher;
 use utils::print_error;
 
@@ -45,5 +45,5 @@ fn main() {
         }
     };
 
-    dispatcher.run::<Descartes>();
+    dispatcher.run::<CartesiCompute>();
 }

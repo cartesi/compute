@@ -8,5 +8,5 @@
         "esModuleInterop": true,
         "outDir": "dist"
     },
-    "exclude": ["logger-dlib", "arbitration-dlib", "descartes", "dist"]
+    "exclude": ["logger-dlib", "arbitration-dlib", "cartesi_compute", "dist"]
 }

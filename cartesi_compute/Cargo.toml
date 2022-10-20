@@ -1,9 +1,9 @@
-[package]
-description = "Cartesi Descartes SDK"
-homepage = "https://cartesi.io"
-name = "descartes"
-version = "0.1.0"
-authors = ["Cartesi Team"]
+[package]	
+description = "Cartesi Compute SDK"	
+homepage = "https://cartesi.io"	
+name = "cartesi_compute"	
+version = "0.1.0"	
+authors = ["Cartesi Team"]	
 
 [dependencies]
 log = "0.4"

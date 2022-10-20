@@ -23,7 +23,7 @@ services:
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "0"
-      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,cartesi_compute=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
@@ -37,7 +37,7 @@ services:
       RUST_BACKTRACE: 1
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_0:
@@ -49,10 +49,10 @@ services:
 
   logger_0:
     image: cartesi/logger-server:0.7.4
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "0"
@@ -67,7 +67,7 @@ services:
   ipfs_0:
     image: cartesi/ipfs-server:0.2.0
     volumes:
-      - ./dapp_data_0:/opt/cartesi/srv/descartes
+      - ./dapp_data_0:/opt/cartesi/srv/cartesi_compute
     networks:
       ipfs: {}
       node_0:
@@ -79,8 +79,8 @@ services:
   machine_manager_0:
     image: cartesicorp/machine-manager:0.6.0-rc1
     volumes:
-      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
-      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
+      - ./dapp_data_0/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_0:
@@ -93,7 +93,7 @@ services:
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "1"
-      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,cartesi_compute=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
@@ -107,7 +107,7 @@ services:
       RUST_BACKTRACE: 1
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_1:
@@ -119,10 +119,10 @@ services:
 
   logger_1:
     image: cartesi/logger-server:0.7.4
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "1"
@@ -137,7 +137,7 @@ services:
   ipfs_1:
     image: cartesi/ipfs-server:0.2.0
     volumes:
-      - ./dapp_data_1:/opt/cartesi/srv/descartes
+      - ./dapp_data_1:/opt/cartesi/srv/cartesi_compute
     networks:
       ipfs: {}
       node_1:
@@ -149,8 +149,8 @@ services:
   machine_manager_1:
     image: cartesicorp/machine-manager:0.6.0-rc1
     volumes:
-      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
-      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
+      - ./dapp_data_1/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_1:
@@ -163,7 +163,7 @@ services:
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "2"
-      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,descartes=trace
+      RUST_LOG: dispatcher=info,transaction=info,configuration=trace,utils=trace,state=info,cartesi_compute=trace
       WEB3_PROVIDER_URI: http://hardhatnet:8545
       DEPLOYMENT_SEMAPHORE: http://hardhatnet:8545
       QUERY_PORT: 3001
@@ -177,7 +177,7 @@ services:
       RUST_BACKTRACE: 1
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_2:
@@ -189,10 +189,10 @@ services:
 
   logger_2:
     image: cartesi/logger-server:0.7.4
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
-      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
       ACCOUNT_INDEX: "2"
@@ -207,7 +207,7 @@ services:
   ipfs_2:
     image: cartesi/ipfs-server:0.2.0
     volumes:
-      - ./dapp_data_2:/opt/cartesi/srv/descartes
+      - ./dapp_data_2:/opt/cartesi/srv/cartesi_compute
     networks:
       ipfs: {}
       node_2:
@@ -220,8 +220,8 @@ services:
     image: cartesicorp/machine-manager:0.6.0-rc1
     command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
     volumes:
-      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
-      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
+      - ./dapp_data_2/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_2:

@@ -25,12 +25,12 @@ services:
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: {{ image |default("cartesi/descartes:local", true) }}
+    image: {{ image |default("cartesi/cartesi_compute:local", true) }}
     restart: always
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
-      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,descartes=trace
+      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,cartesi_compute=trace
       WEB3_PROVIDER_URI: {{ config.provider() }}
       DEPLOYMENT_SEMAPHORE: {{ config.semaphore() }}
       ETHEREUM_HOST: {{ config.host() }}
@@ -50,7 +50,7 @@ services:
       # remove deployments mapping to use supported testnets' deployment info
       - ./deployments:/opt/cartesi/share/blockchain/deployments:ro
 {% endif %}    
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     networks:
       ethereum: {}
       node_{{ i }}:
@@ -63,16 +63,16 @@ services:
   logger_{{ i }}:
     image: cartesi/logger-server:0.7.4
 {% if network == "localhost" %}
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
 {% else %}    
-    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/deployments/{{ network }}/Logger.json", "-d", "/opt/cartesi/srv/descartes/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/deployments/{{ network }}/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
 {% endif %}    
     volumes:
 {% if network == "localhost" %}
       # remove deployments mapping to use supported testnets' deployment info
       - ./deployments:/opt/cartesi/share/blockchain/deployments:ro
 {% endif %}    
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
@@ -87,7 +87,7 @@ services:
   ipfs_{{ i }}:
     image: cartesi/ipfs-server:0.2.0
     volumes:
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/descartes
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/cartesi_compute
     networks:
       ipfs: {}
       node_{{ i }}:
@@ -99,8 +99,8 @@ services:
   machine_manager_{{ i }}:
     image: cartesicorp/machine-manager:rust
     volumes:
-      - ./machines:/opt/cartesi/srv/descartes/cartesi-machine
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/descartes/flashdrive
+      - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
     environment:
       RUST_LOG: debug,machine_manager_server=debug,h2::codec=debug
     networks:

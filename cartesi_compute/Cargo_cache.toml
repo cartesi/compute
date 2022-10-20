@@ -1,7 +1,7 @@
 [package]
-description = "Cartesi Descartes SDK (Cache)"
+description = "Cartesi Compute SDK (Cache)"
 homepage = "https://cartesi.io"
-name = "descartes"
+name = "cartesi_compute"
 version = "0.1.0"
 authors = ["Cartesi Team"]
 

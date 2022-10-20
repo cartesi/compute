@@ -23,14 +23,14 @@ async function main() {
     }
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
-    // retrieves deployed Descartes instance based on its address
-    const descartes = await ethers.getContract("Descartes");
+    // retrieves deployed Cartesi Compute instance based on its address
+    const cartesi_compute = await ethers.getContract("CartesiCompute");
 
     console.log("");
     console.log(`Instantiating "HelloWorld" with ${peers.length} peers...\n`);
 
-    // instantiates descartes computation
-    const tx = await descartes.instantiate(
+    // instantiates cartesi_compute computation
+    const tx = await cartesi_compute.instantiate(
         // final time
         config.finalTime,
         // template hash
@@ -47,7 +47,7 @@ async function main() {
 
     // retrieves created computation's index
     const index = await new Promise((resolve) => {
-        descartes.on("DescartesCreated", (index) => resolve(index));
+        cartesi_compute.on("CartesiComputeCreated", (index) => resolve(index));
     });
 
     console.log(

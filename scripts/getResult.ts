@@ -1,22 +1,22 @@
 /**
- * getResult: returns the Descartes result for a given index (default index = 0)
+ * getResult: returns the Cartesi Compute result for a given index (default index = 0)
  *
  * Basic usage
  * - npx hardhat run --network localhost --no-compile getResult.ts
  *
  * Parametrization (setting env variables)
- * - "index": controls which Descartes computation to query (default is 0)
+ * - "index": controls which Cartesi Compute computation to query (default is 0)
  */
 import hre from "hardhat";
 
 async function main() {
     const { ethers } = hre;
-    const { Descartes } = await hre.deployments.all();
+    const { CartesiCompute } = await hre.deployments.all();
 
-    // retrieves deployed Descartes instance based on its address
-    const descartes = await ethers.getContractAt(
-        "Descartes",
-        Descartes.address
+    // retrieves deployed Cartesi Compute instance based on its address
+    const cartesi_compute = await ethers.getContractAt(
+        "CartesiCompute",
+        CartesiCompute.address
     );
 
     let index = "0";
@@ -26,7 +26,7 @@ async function main() {
     console.log("");
     console.log("Getting result using index '" + index + "'\n");
 
-    const ret = await descartes.getResult(index);
+    const ret = await cartesi_compute.getResult(index);
     console.log("Full result: " + JSON.stringify(ret));
     if (ret["3"]) {
         console.log(

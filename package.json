@@ -1,7 +1,7 @@
 {
-    "name": "@cartesi/descartes-sdk",
+    "name": "@cartesi/compute-sdk",
     "version": "1.3.0",
-    "description": "Cartesi Descartes SDK",
+    "description": "Cartesi Compute SDK",
     "scripts": {
         "build": "hardhat compile && tsc",
         "copy-dts": "copyfiles -u 1 \"src/**/*.d.ts\" dist/src",
@@ -14,13 +14,11 @@
         "deploy": "run-s deploy:development",
         "deploy:testnet": "run-s deploy:rinkeby deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet deploy:avax_testnet",
         "deploy:development": "hardhat deploy --network localhost --export export/abi/localhost.json",
-        "deploy:rinkeby": "hardhat deploy --network rinkeby --export export/abi/rinkeby.json",
         "deploy:kovan": "hardhat deploy --network kovan --export export/abi/kovan.json",
         "deploy:goerli": "hardhat deploy --network goerli --export export/abi/goerli.json",
         "deploy:matic_testnet": "hardhat deploy --network matic_testnet --export export/abi/matic_testnet.json",
         "deploy:bsc_testnet": "hardhat deploy --network bsc_testnet --export export/abi/bsc_testnet.json",
         "deploy:avax_testnet": "hardhat deploy --network avax_testnet --export export/abi/avax_testnet.json",
-        "prepack": "run-s deploy:testnet",
         "start": "hardhat node"
     },
     "scripts-info": {
@@ -33,7 +31,6 @@
         "deploy": "Deploy contracts to local ganache. Requires ganache running on localhost:8545",
         "deploy:testnet": "Deploy contracts to all supported testnets. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:development": "Deploy contracts to local ganache. Requires ganache running on localhost:8545",
-        "deploy:rinkeby": "Deploy contracts to rinkeby. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:kovan": "Deploy contracts to kovan. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:goerli": "Deploy contracts to goerli. Requires two environment variables: PROJECT_ID and MNEMONIC.",
         "deploy:matic_testnet": "Deploy contracts to matic_testnet. Requires two environment variables: PROJECT_ID and MNEMONIC.",

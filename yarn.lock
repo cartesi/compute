@@ -2,6 +2,13 @@
 # yarn lockfile v1
 
 
+"@cartesi/arbitration@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@cartesi/arbitration/-/arbitration-0.6.0.tgz#47e20d194142a0a9d558b3e327298fe5cbb90bdb"
+  integrity sha512-2FJr9YM6KoqTrqK6Lyt3g1g7UIIXojCtEpHdgnwJneYheu6gSeU15CJzZvnU/Js5+4lNTJ+2WV46ICKV05hOzg==
+  dependencies:
+    "@cartesi/util" "^2.0.1"
+
 "@cartesi/arbitration@^0.7.0-rc2":
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/@cartesi/arbitration/-/arbitration-0.7.0.tgz#8e1003d7e6eb4933f10b1a566482de1f31e867ac"
@@ -9,19 +16,19 @@
   dependencies:
     "@cartesi/util" "^2.0.1"
 
-"@cartesi/logger@^0.7.3":
-  version "0.7.3"
-  resolved "https://registry.yarnpkg.com/@cartesi/logger/-/logger-0.7.3.tgz#846acd43ac67ad27874b2c4e7dc236c0efe5d050"
-  integrity sha512-NtoTB/V8ORlJRczG+dS0JSPS7zNW9iqZp4ihFUdmJeaGd77EpF8eU3NZhh5WR14WhoRgvmqRfsRaH6pLxfp9Rg==
+"@cartesi/logger@^0.7.4":
+  version "0.7.4"
+  resolved "https://registry.yarnpkg.com/@cartesi/logger/-/logger-0.7.4.tgz#1538cc9b977ac0def7516f327b02e7b64002ccbd"
+  integrity sha512-+F2KNlPmeiGCMVPKf+Q02D+NkUphl4dY+F50w0kygAHkY9AXILImLjf5tWgKuQE1TbWtQ7aT47G4HJdgFz1zRw==
   dependencies:
     "@cartesi/util" "^2.0.1"
 
-"@cartesi/machine-solidity-step@^0.8.0-rc1":
-  version "0.8.0-rc1"
-  resolved "https://registry.yarnpkg.com/@cartesi/machine-solidity-step/-/machine-solidity-step-0.8.0-rc1.tgz#6012c3da17424d02db2fc2798d702d1aa895a9fb"
-  integrity sha512-I+moEpVlYXNrapidYCG+lVSpICl+Wgx0kMLhqYTuDk1/jauJjJJOWx2mmbSL+R9BxYYPKZcBZMUI72t/BSHkfQ==
+"@cartesi/machine-solidity-step@^0.8.0-rc2":
+  version "0.8.0-rc2"
+  resolved "https://registry.yarnpkg.com/@cartesi/machine-solidity-step/-/machine-solidity-step-0.8.0-rc2.tgz#c873ee1aa52118a1e2a2a4f616f6770546845d78"
+  integrity sha512-mq2Kqrlbgsm92siGEF44IoR7Ep7L6WV+xQbQ7QB0nmVsHdRKdyEAWLX1ibbjGryBgdW1wqU84nvfuYgZIwnTEw==
   dependencies:
-    "@cartesi/arbitration" "^0.7.0-rc2"
+    "@cartesi/arbitration" "^0.6.0"
     "@cartesi/util" "^2.0.1"
 
 "@cartesi/util@^2.0.1":

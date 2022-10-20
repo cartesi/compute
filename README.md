@@ -1,4 +1,4 @@
-# Descartes
+# Cartesi Compute
 
 ## Getting Started
 
@@ -25,7 +25,7 @@ git clone --recurse-submodules https://github.com/cartesi/descartes.git
 
 To run execute:
 ```
-% docker build . -t cartesi/descartes:local
+% docker build . -t cartesi/cartesi_compute:local
 % yarn
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - up --build
 ```
@@ -35,7 +35,7 @@ To shutdown:
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - down -v
 ```
 
-To run using one of the [supported networks](https://cartesi.io/en/docs/descartes/supported-networks/), you should:
+To run using one of the [supported networks](https://cartesi.io/en/docs/cartesi_compute/supported-networks/), you should:
 - Define a `MNEMONIC` environment variable
 - If using Infura, define a `PROJECT_ID` environment variable
 - Specify the argument `"-D network=<name>"`, where `name` should be one of the following supported networks: `rinkeby`, `kovan`, `goerli`, `matic_testnet`, `bsc_testnet` or `avax_testnet`
@@ -56,7 +56,7 @@ The instance could be retrieved by the command:
 % docker ps --format {{.Names}}
 ```
 
-This will run an environment connected to a private net (ganache or geth), with descartes already deployed.
+This will run an environment connected to a private net (ganache or geth), with cartesi compute already deployed.
 
 There are a number of sample computations available within the `scripts` directory. To execute one of these computations on the environment, you need to first store the corresponding machine template in the `machines` directory (as configured in the docker-compose template). As such, for the `helloworld` application, execute the following commands:
 ```

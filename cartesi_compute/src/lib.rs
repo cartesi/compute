@@ -22,7 +22,7 @@
 // Apache v2 license.
 
 #![warn(unused_extern_crates)]
-pub mod descartes;
+pub mod cartesi_compute;
 pub mod ipfs_service;
 
 extern crate error;
@@ -42,7 +42,7 @@ extern crate ipfs_interface;
 extern crate logger_service;
 extern crate transaction;
 
-pub use descartes::{Descartes, DescartesCtx, DescartesCtxParsed};
+pub use cartesi_compute::{CartesiCompute, CartesiComputeCtx, CartesiComputeCtxParsed};
 
 pub use logger_service::{
     DownloadFileRequest, DownloadFileResponse, SubmitFileRequest,
@@ -130,10 +130,10 @@ pub fn get_logger_response(
 }
 
 pub fn build_machine_id(
-    descartes_index: U256,
+    cartesi_compute_index: U256,
     player_address: &Address,
 ) -> String {
-    return format!("{:x}:{}", player_address, descartes_index);
+    return format!("{:x}:{}", player_address, cartesi_compute_index);
 }
 
 pub fn build_logger_submit_key(root_hash: H256) -> String {

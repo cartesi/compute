@@ -18,12 +18,12 @@ COPY ./arbitration-dlib/ $BASE/arbitration-dlib
 COPY ./logger-dlib/ $BASE/logger-dlib
 COPY ./ipfs_interface/ $BASE/ipfs_interface
 
-WORKDIR $BASE/descartes
+WORKDIR $BASE/cartesi_compute
 
-# Compile descartes
-COPY ./descartes/Cargo.toml ./
-COPY ./descartes/Cargo.lock ./
-COPY ./descartes/src ./src
+# Compile cartesi_compute
+COPY ./cartesi_compute/Cargo.toml ./
+COPY ./cartesi_compute/Cargo.lock ./
+COPY ./cartesi_compute/src ./src
 
 RUN PATH="$PATH:$HOME/.local/bin" cargo install -j $(nproc) --locked --path .
 
@@ -63,13 +63,13 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSI
 WORKDIR /opt/cartesi
 
 # Copy the build artifacts from the build stage
-COPY --from=build /usr/local/cargo/bin/descartes $BASE/bin/descartes
+COPY --from=build /usr/local/cargo/bin/cartesi_compute $BASE/bin/cartesi_compute
 COPY --from=build /usr/local/cargo/bin/wagyu /usr/local/bin
 
 # Copy dispatcher scripts
 COPY ./dispatcher-entrypoint.sh $BASE/bin/
-COPY ./config-template.yaml $BASE/etc/descartes/
-RUN mkdir -p $BASE/srv/descartes
+COPY ./config-template.yaml $BASE/etc/cartesi_compute/
+RUN mkdir -p $BASE/srv/cartesi_compute
 
 # Copy deployments info
 COPY ./deployments $BASE/share/blockchain/deployments
