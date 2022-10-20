@@ -10,7 +10,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const Logger = await get("Logger");
     const VGInstantiator = await get("VGInstantiator");
     const Step = await get("Step");
-    await deploy("Descartes", {
+    await deploy("CartesiCompute", {
         from: deployer,
         log: true,
         libraries: {
@@ -21,4 +21,4 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 };
 
 export default func;
-export const tags = ["Descartes"];
+export const tags = ["CartesiCompute"];

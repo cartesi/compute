@@ -190,7 +190,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-/// @title Descartes
+/// @title CartesiCompute
 /// @author Stephen Chen
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
@@ -204,14 +204,14 @@ import "@cartesi/util/contracts/Decorated.sol";
 import "@cartesi/util/contracts/InstantiatorImpl.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
-import "./DescartesInterface.sol";
+import "./CartesiComputeInterface.sol";
 
-contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
+contract CartesiCompute is InstantiatorImpl, Decorated, CartesiComputeInterface {
     address machine; // machine which will run the challenge
     LoggerInterface li;
     VGInterface vg;
 
-    struct DescartesCtx {
+    struct CartesiComputeCtx {
         address owner; // the one who has power to shutdown the instance
         uint256 revealDrivesPointer; // the pointer to the current reveal drive
         uint256 providerDrivesPointer; // the pointer to the current provider drive
@@ -238,7 +238,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         Drive[] inputDrives;
     }
 
-    mapping(uint256 => DescartesCtx) internal instance;
+    mapping(uint256 => CartesiComputeCtx) internal instance;
 
     // These are the possible states and transitions of the contract.
 
@@ -287,10 +287,10 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     //                                     +---------------+  left; go back to
     //
 
-    event DescartesCreated(uint256 _index);
+    event CartesiComputeCreated(uint256 _index);
     event ClaimSubmitted(uint256 _index, bytes32 _claimedFinalHash);
     event ChallengeStarted(uint256 _index);
-    event DescartesFinished(uint256 _index, bytes32 _state);
+    event CartesiComputeFinished(uint256 _index, bytes32 _state);
     event DriveInserted(uint256 _index, Drive _drive);
     event Confirmed(uint256 _index, address _confirmParty);
 
@@ -304,13 +304,13 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         li = LoggerInterface(_liAddress);
     }
 
-    /// @notice Instantiate a Descartes SDK instance.
+    /// @notice Instantiate a Cartesi Compute SDK instance.
     /// @param _finalTime max cycle of the machine for that computation
     /// @param _templateHash hash of the machine with all drives empty
     /// @param _outputPosition position of the output drive
     /// @param _roundDuration duration of the round (security param)
     /// @param _inputDrives an array of drive which assemble the machine
-    /// @return uint256, Descartes index
+    /// @return uint256, Cartesi Compute index
     function instantiate(
         uint256 _finalTime,
         bytes32 _templateHash,
@@ -324,7 +324,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             _roundDuration >= 50,
             "round duration has to be at least 50 seconds"
         );
-        DescartesCtx storage i = instance[currentIndex];
+        CartesiComputeCtx storage i = instance[currentIndex];
 
         for (uint64 j = 0; j < parties.length; j++) {
             require(
@@ -435,13 +435,13 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.currentState = State.WaitingClaim;
         }
 
-        emit DescartesCreated(currentIndex);
+        emit CartesiComputeCreated(currentIndex);
         active[currentIndex] = true;
         return currentIndex++;
     }
 
     /// @notice Challenger disputes the claim, starting a verification game.
-    /// @param _index index of Descartes instance which challenger is starting the VG.
+    /// @param _index index of Cartesi Compute instance which challenger is starting the VG.
     function challenge(uint256 _index)
         public
         onlyActive(_index)
@@ -449,7 +449,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         onlyNoVotes(_index)
         increasesNonce(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingConfirmationDeadline,
             "State should be WaitingConfirmationDeadline"
@@ -475,7 +475,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Party confirms the claim
-    /// @param _index index of Descartes instance which claimer being confirmed
+    /// @param _index index of Cartesi Compute instance which claimer being confirmed
     function confirm(uint256 _index)
         public
         onlyActive(_index)
@@ -483,7 +483,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         onlyNoVotes(_index)
         increasesNonce(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingConfirmationDeadline,
             "State should be WaitingConfirmationDeadline"
@@ -499,20 +499,20 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         if (i.votesCounter == i.partiesArray.length) {
             i.currentState = State.ConsensusResult;
-            emit DescartesFinished(_index, getCurrentState(_index));
+            emit CartesiComputeFinished(_index, getCurrentState(_index));
         }
 
         return;
     }
 
     /// @notice User requesting content of all drives to be revealed.
-    /// @param _index index of Descartes instance which is requested for the drives
+    /// @param _index index of Cartesi Compute instance which is requested for the drives
     function challengeDrives(uint256 _index)
         public
         onlyActive(_index)
         increasesNonce(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingChallengeDrives,
             "State should be WaitingChallengeDrives"
@@ -541,7 +541,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         bytes memory _output,
         bytes32[] memory _outputSiblings
     ) public onlyActive(_index) onlyByClaimer(_index) increasesNonce(_index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         bool deadlinePassed = block.timestamp >
             i.timeOfLastMove + getMaxStateDuration(_index);
         require(
@@ -609,7 +609,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         onlyInstantiated(_index)
         returns (bool)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         return i.parties[_user].isParty;
     }
 
@@ -643,7 +643,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             Party memory user
         )
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
 
         user = i.parties[_user];
 
@@ -778,14 +778,14 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Provide the content of a direct drive (only drive provider can call it).
-    /// @param _index index of Descartes instance the drive belongs to.
+    /// @param _index index of Cartesi Compute instance the drive belongs to.
     /// @param _value bytes value of the direct drive
     function provideDirectDrive(uint256 _index, bytes memory _value)
         public
         onlyActive(_index)
         requirementsForProviderDrive(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         uint256 driveIndex = i.providerDrives[i.providerDrivesPointer];
         Drive storage drive = i.inputDrives[driveIndex];
 
@@ -824,14 +824,14 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Provide the root hash of a logger drive (only drive provider can call it).
-    /// @param _index index of Descartes instance the drive belongs to
+    /// @param _index index of CartesiCompute instance the drive belongs to
     /// @param _root root hash of the logger drive
     function provideLoggerDrive(uint256 _index, bytes32 _root)
         public
         onlyActive(_index)
         requirementsForProviderDrive(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         uint256 driveIndex = i.providerDrives[i.providerDrivesPointer];
         Drive storage drive = i.inputDrives[driveIndex];
 
@@ -854,9 +854,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Reveal the content of a logger drive (only drive provider can call it).
-    /// @param _index index of Descartes instance the drive belongs to
+    /// @param _index index of Cartesi Compute instance the drive belongs to
     function revealLoggerDrive(uint256 _index) public onlyActive(_index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingReveals,
             "The state is not WaitingReveals"
@@ -884,13 +884,13 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     /// @notice In case one of the parties wins the verification game,
     ///         then he or she can call this function to claim victory in
     ///         this contract as well.
-    /// @param _index index of Descartes instance to win
+    /// @param _index index of Cartesi Compute instance to win
     function winByVG(uint256 _index)
         public
         onlyActive(_index)
         increasesNonce(_index)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingChallengeResult,
             "State is not WaitingChallengeResult, cannot winByVG"
@@ -911,7 +911,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ChallengerWon;
-                emit DescartesFinished(_index, getCurrentState(_index));
+                emit CartesiComputeFinished(_index, getCurrentState(_index));
                 return;
             }
             i.currentState = State.WaitingClaim;
@@ -924,7 +924,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             i.parties[i.partiesArray[i.currentChallenger]].hasCheated = true;
             if (i.votesCounter == i.partiesArray.length) {
                 i.currentState = State.ClaimerWon;
-                emit DescartesFinished(_index, getCurrentState(_index));
+                emit CartesiComputeFinished(_index, getCurrentState(_index));
                 return;
             }
             i.currentState = State.WaitingConfirmationDeadline;
@@ -934,15 +934,15 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
         require(false, "State of VG is not final");
     }
 
-    /// @notice Deactivate a Descartes SDK instance.
-    /// @param _index index of Descartes instance to deactivate
+    /// @notice Deactivate a Cartesi Compute SDK instance.
+    /// @param _index index of Cartesi Compute instance to deactivate
     function destruct(uint256 _index)
         public
         override
         onlyActive(_index)
         onlyBy(instance[_index].owner)
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.ProviderMissedDeadline ||
                 i.currentState == State.ClaimerMissedDeadline ||
@@ -960,9 +960,9 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Abort the instance by missing deadline.
-    /// @param _index index of Descartes instance to abort
+    /// @param _index index of Cartesi Compute instance to abort
     function abortByDeadline(uint256 _index) public onlyActive(_index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         bool afterDeadline = block.timestamp >
             (i.timeOfLastMove + getMaxStateDuration(_index));
 
@@ -970,22 +970,22 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
         if (i.currentState == State.WaitingProviders) {
             i.currentState = State.ProviderMissedDeadline;
-            emit DescartesFinished(_index, getCurrentState(_index));
+            emit CartesiComputeFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingReveals) {
             i.currentState = State.ProviderMissedDeadline;
-            emit DescartesFinished(_index, getCurrentState(_index));
+            emit CartesiComputeFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingClaim) {
             i.currentState = State.ClaimerMissedDeadline;
-            emit DescartesFinished(_index, getCurrentState(_index));
+            emit CartesiComputeFinished(_index, getCurrentState(_index));
             return;
         }
         if (i.currentState == State.WaitingConfirmationDeadline) {
             i.currentState = State.ConsensusResult;
-            emit DescartesFinished(_index, getCurrentState(_index));
+            emit CartesiComputeFinished(_index, getCurrentState(_index));
             return;
         }
 
@@ -993,7 +993,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     /// @notice Get result of a finished instance.
-    /// @param _index index of Descartes instance to get result
+    /// @param _index index of Cartesi Compute instance to get result
     /// @return bool, indicates the result is ready
     /// @return bool, indicates the sdk is still running
     /// @return address, the user to blame for the abnormal stop of the sdk
@@ -1010,7 +1010,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
             bytes memory
         )
     {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         if (i.currentState == State.ConsensusResult) {
             return (true, false, address(0), i.claimedOutput);
         }
@@ -1167,7 +1167,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
     /// @notice several require statements for a drive
     modifier requirementsForProviderDrive(uint256 _index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingProviders,
             "The state is not WaitingProviders"
@@ -1193,7 +1193,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
     /// @notice checks whether or not it's a party to this instance
     modifier onlyByParty(uint256 _index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.parties[msg.sender].isParty,
             "The sender is not party to this instance"
@@ -1202,7 +1202,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
     }
 
     modifier onlyByClaimer(uint256 _index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             i.partiesArray[i.claimer] == msg.sender,
             "The sender is not Claimer at this instance"
@@ -1212,7 +1212,7 @@ contract Descartes is InstantiatorImpl, Decorated, DescartesInterface {
 
     /// @notice checks whether or not it's a party to this instance
     modifier onlyNoVotes(uint256 _index) {
-        DescartesCtx storage i = instance[_index];
+        CartesiComputeCtx storage i = instance[_index];
         require(
             !i.parties[msg.sender].hasVoted,
             "Sender has already challenged or claimed"

@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 -   Support for input drives with no assigned provider (a.k.a. "off-chain drives")
--   Docker Compose template supporting known networks, which allows testing Descartes with local nodes pointing at those networks
+-   Docker Compose template supporting known networks, which allows testing Cartesi Compute with local nodes pointing at those networks
 
 ### Changed
 
@@ -56,7 +56,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--   Fixed handling of WaitingReveals state in Descartes.getResult
+-   Fixed handling of WaitingReveals state in CartesiCompute.getResult
 
 ## [1.0.0] - 2021-01-20
 
@@ -64,7 +64,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
--   Multi-party support: now any number of peers can be specified for a Descartes computation, although it is still strongly recommended to be just a few to avoid risking long periods of time for disputes (e.g., around 6-8 peers, reviously only 2 peers were allowed, claimer and challenger).
+-   Multi-party support: now any number of peers can be specified for a Cartesi Compute computation, although it is still strongly recommended to be just a few to avoid risking long periods of time for disputes (e.g., around 6-8 peers, reviously only 2 peers were allowed, claimer and challenger).
 -   IPFS drives: if parties cooperate, larger volumes of data can now be uploaded only to IPFS (i.e., it is no longer required that data must always be posted on-chain). The drive provider will still need to post the data to the Logger if there is disagreement on the IPFS data.
 
 ### Changed

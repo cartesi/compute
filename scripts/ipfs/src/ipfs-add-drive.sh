@@ -14,9 +14,9 @@ fi
 output=$(docker run \
   --network=$IPFS_COMPOSE_NETWORK \
   --entrypoint "/opt/cartesi/bin/test_client" \
-  -v `pwd`:/opt/cartesi/srv/descartes \
+  -v `pwd`:/opt/cartesi/srv/cartesi_compute \
   --rm  $CARTESI_IPFS_DOCKER \
-  -address $IPFS_SERVICE_ADDRESS -mode add -argument /opt/cartesi/srv/descartes/flashdrive/$INPUT_DRIVE_FILENAME 2>&1)
+  -address $IPFS_SERVICE_ADDRESS -mode add -argument /opt/cartesi/srv/cartesi_compute/flashdrive/$INPUT_DRIVE_FILENAME 2>&1)
 
 # searches for string 'ipfs_path:"', after which comes the desired value
 output=${output#*\ipfs_path:\"}

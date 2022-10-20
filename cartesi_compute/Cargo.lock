@@ -404,6 +404,34 @@ dependencies = [
 ]
 
 [[package]]
+name = "cartesi_compute"
+version = "0.1.0"
+dependencies = [
+ "bytes",
+ "compute",
+ "configuration",
+ "dispatcher",
+ "env_logger",
+ "error",
+ "ethabi",
+ "ethereum-types 0.9.2",
+ "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
+ "hex 0.3.2",
+ "ipfs_interface",
+ "log 0.4.8",
+ "logger_service",
+ "protobuf",
+ "serde",
+ "serde_derive",
+ "serde_json",
+ "state",
+ "syn 1.0.57",
+ "transaction",
+ "uint 0.8.3",
+ "utils",
+]
+
+[[package]]
 name = "cc"
 version = "1.0.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -718,34 +746,6 @@ dependencies = [
  "proc-macro2 1.0.24",
  "quote 1.0.2",
  "syn 1.0.57",
-]
-
-[[package]]
-name = "descartes"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "compute",
- "configuration",
- "dispatcher",
- "env_logger",
- "error",
- "ethabi",
- "ethereum-types 0.9.2",
- "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
- "hex 0.3.2",
- "ipfs_interface",
- "log 0.4.8",
- "logger_service",
- "protobuf",
- "serde",
- "serde_derive",
- "serde_json",
- "state",
- "syn 1.0.57",
- "transaction",
- "uint 0.8.3",
- "utils",
 ]
 
 [[package]]

@@ -15,7 +15,7 @@ async function sleep(seconds: number): Promise<any> {
 async function main() {
     const failedTests: string[] = [];
     const { ethers, getNamedAccounts } = hre;
-    const { Descartes } = await hre.deployments.all();
+    const { CartesiCompute } = await hre.deployments.all();
 
     const { alice, bob, charlie, dave } = await getNamedAccounts();
 
@@ -25,20 +25,20 @@ async function main() {
     }
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
-    // retrieves deployed Descartes instance based on its address
-    const descartes = await ethers.getContractAt(
-        "Descartes",
-        Descartes.address
+    // retrieves deployed Cartesi Compute instance based on its address
+    const cartesi_compute = await ethers.getContractAt(
+        "CartesiCompute",
+        CartesiCompute.address
     );
 
     console.log("");
-    console.log(`Grabbing information on deployed Descartes\n`);
+    console.log(`Grabbing information on deployed Cartesi Compute\n`);
 
-    const filter = descartes.filters.DescartesCreated();
+    const filter = cartesi_compute.filters.CartesiComputeCreated();
 
-    const events = await descartes.queryFilter(filter, 0, "latest");
+    const events = await cartesi_compute.queryFilter(filter, 0, "latest");
 
-    console.log(`Found ${events.length} Descartes instances running`);
+    console.log(`Found ${events.length} Cartesi Compute instances running`);
     const activeInstances: number[] = [];
     events.forEach((e) => {
         const arg = e.args || { _index: 0 };
@@ -49,14 +49,14 @@ async function main() {
         let i = 0;
         while (i < activeInstances.length) {
             const instance = activeInstances[i];
-            const state = await descartes.getCurrentState(instance);
+            const state = await cartesi_compute.getCurrentState(instance);
             const parsedState = ethers.utils.parseBytes32String(state);
             console.log(`Instance ${instance} is at state ${parsedState}`);
 
             switch (parsedState) {
                 case "ConsensusResult":
                     console.log(`====================== execution result ====================`);
-                    const result = await descartes.getResult(instance)
+                    const result = await cartesi_compute.getResult(instance)
                     console.log(ethers.utils.toUtf8String(result[3]))
                     console.log(`============================================================`);
                     activeInstances.splice(i, 1);
@@ -64,25 +64,25 @@ async function main() {
                 case "ChallengerWon":
                     activeInstances.splice(i, 1);
                     failedTests.push(
-                        `Descartes test at index ${instance} has failed. Finished at ${parsedState} state.`
+                        `Cartesi Compute test at index ${instance} has failed. Finished at ${parsedState} state.`
                     );
                     break;
                 case "ClaimerWon":
                     activeInstances.splice(i, 1);
                     failedTests.push(
-                        `Descartes test at index ${instance} has failed. Finished at ${parsedState} state.`
+                        `Cartesi Compute test at index ${instance} has failed. Finished at ${parsedState} state.`
                     );
                     break;
                 case "ProviderMissedDeadline":
                     activeInstances.splice(i, 1);
                     failedTests.push(
-                        `Descartes test at index ${instance} has failed. Finished at ${parsedState} state.`
+                        `Cartesi Compute test at index ${instance} has failed. Finished at ${parsedState} state.`
                     );
                     break;
                 case "ClaimerMissedDeadline":
                     activeInstances.splice(i, 1);
                     failedTests.push(
-                        `Descartes test at index ${instance} has failed. Finished at ${parsedState} state.`
+                        `Cartesi Compute test at index ${instance} has failed. Finished at ${parsedState} state.`
                     );
                     break;
                 default:

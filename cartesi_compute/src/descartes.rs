@@ -57,7 +57,7 @@ use logger_service::{
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
-pub struct Descartes();
+pub struct CartesiCompute();
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
@@ -163,7 +163,7 @@ impl From<PartyParsed> for Party {
 // obtained from a simple derive
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #[derive(Serialize, Deserialize)]
-pub struct DescartesCtxParsed(
+pub struct CartesiComputeCtxParsed(
     U256Array,    // finalTime, deadline, outputPosition, outputLog2Size
     AddressArray, // challenger, claimer
     Bytes32Array, // templateHash, initialHash, claimedFinalHash, currentState
@@ -173,7 +173,7 @@ pub struct DescartesCtxParsed(
 );
 
 #[derive(Serialize, Debug)]
-pub struct DescartesCtx {
+pub struct CartesiComputeCtx {
     pub template_hash: H256,
     pub initial_hash: H256,
     pub claimed_final_hash: H256,
@@ -189,9 +189,9 @@ pub struct DescartesCtx {
     pub partyState: Party,
 }
 
-impl From<DescartesCtxParsed> for DescartesCtx {
-    fn from(parsed: DescartesCtxParsed) -> DescartesCtx {
-        DescartesCtx {
+impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
+    fn from(parsed: CartesiComputeCtxParsed) -> CartesiComputeCtx {
+        CartesiComputeCtx {
             final_time: parsed.0.value[0],
             deadline: parsed.0.value[1],
             output_position: parsed.0.value[2],
@@ -218,8 +218,8 @@ impl From<DescartesCtxParsed> for DescartesCtx {
     }
 }
 
-impl DApp<()> for Descartes {
-    /// React to the descartes contract, submitting drives,
+impl DApp<()> for CartesiCompute {
+    /// React to the cartesi compute contract, submitting drives,
     /// submitting result, confirming or challenging result
     /// when appropriate
     fn react(
@@ -228,16 +228,16 @@ impl DApp<()> for Descartes {
         _post_payload: &Option<String>,
         _: &(),
     ) -> Result<Reaction> {
-        // get context (state) of the Descartes instance
-        let parsed: DescartesCtxParsed =
+        // get context (state) of the CartesiCompute instance
+        let parsed: CartesiComputeCtxParsed =
             serde_json::from_str(&instance.json_data).chain_err(|| {
                 format!(
-                    "Could not parse descartes instance json_data: {}",
+                    "Could not parse cartesi compute instance json_data: {}",
                     &instance.json_data
                 )
             })?;
-        let ctx: DescartesCtx = parsed.into();
-        trace!("Context for descartes (index {}) {:?}", instance.index, ctx);
+        let ctx: CartesiComputeCtx = parsed.into();
+        trace!("Context for cartesi compute (index {}) {:?}", instance.index, ctx);
 
         let machine_id =
             build_machine_id(instance.index, &instance.concern.user_address);
@@ -356,7 +356,7 @@ impl DApp<()> for Descartes {
                 let processed_response: SubmitFileResponse =
                     get_logger_response(
                         archive,
-                        "Descartes".into(),
+                        "CartesiCompute".into(),
                         build_logger_submit_key(root.clone()),
                         LOGGER_METHOD_SUBMIT.to_string(),
                         request.into(),
@@ -446,9 +446,9 @@ impl DApp<()> for Descartes {
 
                     match vg_ctx.current_state.as_ref() {
                         "FinishedClaimerWon" => {
-                            // claim victory in descartes contract
+                            // claim victory in cartesi compute contract
                             info!(
-                                "Claiming victory for Descartes (index: {})",
+                                "Claiming victory for Cartesi Compute (index: {})",
                                 instance.index
                             );
                             let request = TransactionRequest {
@@ -548,9 +548,9 @@ impl DApp<()> for Descartes {
 
                     match vg_ctx.current_state.as_ref() {
                         "FinishedChallengerWon" => {
-                            // claim victory in descartes contract
+                            // claim victory in cartesi compute contract
                             info!(
-                                "Claiming victory for Descartes (index: {})",
+                                "Claiming victory for Cartesi Compute (index: {})",
                                 instance.index
                             );
                             let request = TransactionRequest {
@@ -593,15 +593,15 @@ impl DApp<()> for Descartes {
         archive: &Archive,
         _: &(),
     ) -> Result<state::Instance> {
-        // get context (state) of the descartes instance
-        let parsed: DescartesCtxParsed =
+        // get context (state) of the cartesi compute instance
+        let parsed: CartesiComputeCtxParsed =
             serde_json::from_str(&instance.json_data).chain_err(|| {
                 format!(
-                    "Could not parse descartes instance json_data: {}",
+                    "Could not parse cartesi compute instance json_data: {}",
                     &instance.json_data
                 )
             })?;
-        let ctx: DescartesCtx = parsed.into();
+        let ctx: CartesiComputeCtx = parsed.into();
         let json_data = serde_json::to_string(&ctx).unwrap();
 
         // get context (state) of the sub instances
@@ -617,10 +617,10 @@ impl DApp<()> for Descartes {
         }
 
         let pretty_instance = state::Instance {
-            name: "Descartes".to_string(),
+            name: "CartesiCompute".to_string(),
             concern: instance.concern.clone(),
             index: instance.index,
-            service_status: archive.get_service("Descartes".into()),
+            service_status: archive.get_service("CartesiCompute".into()),
             json_data: json_data,
             sub_instances: pretty_sub_instances,
         };
@@ -674,7 +674,7 @@ fn react_by_machine_output(
     // create machine and fill in all the drives
     let mut machine = cartesi_machine::MachineRequest::new();
     machine.set_directory(format!(
-        "/opt/cartesi/srv/descartes/cartesi-machine/{:x}",
+        "/opt/cartesi/srv/cartesi_compute/cartesi-machine/{:x}",
         template_hash
     ));
 
@@ -751,7 +751,7 @@ fn react_by_machine_output(
                             let processed_response: DownloadFileResponse =
                                 get_logger_response(
                                     archive,
-                                    "Descartes".into(),
+                                    "CartesiCompute".into(),
                                     build_logger_download_key(
                                         drive.root_hash.clone(),
                                     ),
@@ -857,7 +857,7 @@ fn react_by_machine_output(
 
     let processed_result: SessionRunResult = get_run_result(
         archive,
-        "Descartes".to_string(),
+        "CartesiCompute".to_string(),
         archive_key,
         request.into(),
     )?;
@@ -1011,7 +1011,7 @@ fn get_ipfs_drive(
         ipfs_path,
         log2_size,
         output_path: format!(
-            "/opt/cartesi/srv/descartes/flashdrive/{:x}",
+            "/opt/cartesi/srv/cartesi_compute/flashdrive/{:x}",
             root_hash
         ),
         // TODO: come up with better timeout
@@ -1035,7 +1035,7 @@ fn get_ipfs_drive(
                         key,
                         IPFS_METHOD_GET.into(),
                         request.into(),
-                        "Descartes".into(),
+                        "CartesiCompute".into(),
                         1,
                         p.progress,
                         "IPFS still getting".to_string(),

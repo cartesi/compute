@@ -26,8 +26,8 @@ async function main() {
     }
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
-    // retrieves Descartes deployed contract
-    const descartes = await ethers.getContract("Descartes");
+    // retrieves Cartesi Compute deployed contract
+    const cartesi_compute = await ethers.getContract("CartesiCompute");
 
     let data = "2^71 + 36^12";
     if (process.env.data) {
@@ -50,8 +50,8 @@ async function main() {
         provider: alice,
     };
 
-    // instantiates descartes computation
-    const tx = await descartes.instantiate(
+    // instantiates cartesi_compute computation
+    const tx = await cartesi_compute.instantiate(
         // final time
         config.finalTime,
         // template hash
@@ -68,7 +68,7 @@ async function main() {
 
     // retrieves created computation's index
     const index = await new Promise((resolve) => {
-        descartes.on("DescartesCreated", (index) => resolve(index));
+        cartesi_compute.on("CartesiComputeCreated", (index) => resolve(index));
     });
 
     console.log(
@@ -76,12 +76,12 @@ async function main() {
     );
 
     // sends provider drive's data
-    const txDrive = await descartes.provideDirectDrive(
+    const txDrive = await cartesi_compute.provideDirectDrive(
         index,
         ethers.utils.toUtf8Bytes(data)
     );
     const drive = await new Promise((resolve) => {
-        descartes.on("DriveInserted", (index, drive) => resolve(drive));
+        cartesi_compute.on("DriveInserted", (index, drive) => resolve(drive));
     });
     console.log(
         `Inserted provider drive '${JSON.stringify(drive)}' (tx: ${

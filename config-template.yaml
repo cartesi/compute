@@ -6,7 +6,7 @@ concerns:
   - abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/VGInstantiator.json"
     user_address: "${ACCOUNT_ADDRESS}"
 main_concern:
-  abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/Descartes.json"
+  abi: "/opt/cartesi/share/blockchain/deployments/${ETHEREUM_NETWORK}/CartesiCompute.json"
   user_address: "${ACCOUNT_ADDRESS}"
 confirmations: 12
 max_delay: 500

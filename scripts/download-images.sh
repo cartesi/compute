@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # general definitions
-DESCARTES_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )"/.. &> /dev/null && pwd )
-SCRIPT_DIR=$DESCARTES_DIR/scripts
-MACHINE_IMAGES_DIR=$DESCARTES_DIR/images
+CARTESI_COMPUTE_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )"/.. &> /dev/null && pwd )
+SCRIPT_DIR=$CARTESI_COMPUTE_DIR/scripts
+MACHINE_IMAGES_DIR=$CARTESI_COMPUTE_DIR/images
 
 # set machine images directory to specified path if provided
 if [ ! -z "$1" ]; then

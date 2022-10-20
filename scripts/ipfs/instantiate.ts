@@ -37,8 +37,8 @@ async function main() {
         provider = alice;
     }
 
-    // retrieves Descartes deployed contract
-    const descartes = await ethers.getContract("Descartes");
+    // retrieves CartesiCompute deployed contract
+    const cartesi_compute = await ethers.getContract("CartesiCompute");
 
     // creates drive
     const aDrive = {
@@ -60,7 +60,7 @@ async function main() {
     console.log("");
     console.log(`Instantiating "IPFS" with ${peers.length} peers...\n`);
 
-    const tx = await descartes.instantiate(
+    const tx = await cartesi_compute.instantiate(
         // final time
         config.finalTime,
         // template hash
@@ -77,7 +77,7 @@ async function main() {
 
     // retrieves created computation's index
     const index = await new Promise((resolve) => {
-        descartes.on("DescartesCreated", (index) => resolve(index));
+        cartesi_compute.on("CartesiComputeCreated", (index) => resolve(index));
     });
 
     console.log(

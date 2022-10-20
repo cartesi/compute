@@ -28,27 +28,27 @@ jobs:
 
       - name: Pull images for caching
         run: |
-          docker pull cartesi/descartes:build || true
-          docker pull cartesi/descartes:latest || true
+          docker pull cartesi/cartesi_compute:build || true
+          docker pull cartesi/cartesi_compute:latest || true
 
       - name: Build
         run: |
-          docker build . --target build --cache-from cartesi/descartes:build -t cartesi/descartes:build --build-arg TAG=${TAG} --build-arg NPM_TOKEN=${NPM_TOKEN}
-          docker build . --target runtime --cache-from cartesi/descartes:build --cache-from cartesi/descartes:latest -t cartesi/descartes:${TAG} --build-arg TAG=${TAG} --build-arg NPM_TOKEN=${NPM_TOKEN}
+          docker build . --target build --cache-from cartesi/cartesi_compute:build -t cartesi/cartesi_compute:build --build-arg TAG=${TAG} --build-arg NPM_TOKEN=${NPM_TOKEN}
+          docker build . --target runtime --cache-from cartesi/cartesi_compute:build --cache-from cartesi/cartesi_compute:latest -t cartesi/cartesi_compute:${TAG} --build-arg TAG=${TAG} --build-arg NPM_TOKEN=${NPM_TOKEN}
         env:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Push to Docker Hub
         run: |
-          docker push cartesi/descartes:build
-          docker push cartesi/descartes:${TAG}
+          docker push cartesi/cartesi_compute:build
+          docker push cartesi/cartesi_compute:${TAG}
         if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
 
       - name: Integration tests
         timeout-minutes: 35
         run: |
           yarn install
-          DOCKERIMAGE=cartesi/descartes:${TAG} yarn test:integration
+          DOCKERIMAGE=cartesi/cartesi_compute:${TAG} yarn test:integration
 
       - name: Kernel log
         if:  ${{ always() }}

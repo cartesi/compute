@@ -2,7 +2,7 @@ import * as e from "ethers";
 import { ethers, waffle, deployments } from "hardhat";
 import { expect } from "chai";
 import { MockContract } from "@ethereum-waffle/mock-contract";
-import { Descartes } from "../src/types/Descartes";
+import { CartesiCompute } from "../src/types/CartesiCompute";
 
 const { deployMockContract } = waffle;
 
@@ -13,7 +13,7 @@ const {
   getBlockTimestampByHash,
 } = require("./utils");
 
-const deployDescartes = async ({
+const deployCartesiCompute = async ({
   logger,
   vg,
   step,
@@ -21,14 +21,14 @@ const deployDescartes = async ({
   logger?: string;
   vg?: string;
   step?: string;
-} = {}): Promise<Descartes> => {
-  const DescartesFactory = await ethers.getContractFactory("Descartes");
-  const descartes = await DescartesFactory.deploy(logger, vg, step);
-  await descartes.deployed();
-  return descartes as unknown as Descartes;
+} = {}): Promise<CartesiCompute> => {
+  const CartesiComputeFactory = await ethers.getContractFactory("CartesiCompute");
+  const cartesi_compute = await CartesiComputeFactory.deploy(logger, vg, step);
+  await cartesi_compute.deployed();
+  return cartesi_compute as unknown as CartesiCompute;
 };
 
-describe("Descartes tests", () => {
+describe("Cartesi Compute tests", () => {
   let mainSigner: e.Signer;
   let mainSignerAddress: string;
   let claimer: e.Signer;
@@ -52,7 +52,7 @@ describe("Descartes tests", () => {
     needsLogger: false,
     provider: "",
   };
-  let descartes: Descartes;
+  let cartesi_compute: CartesiCompute;
   let takeSnapshot: Function;
   let mockVG: MockContract;
   let mockLogger: MockContract;
@@ -69,19 +69,19 @@ describe("Descartes tests", () => {
     challengerAddress = await challenger.getAddress();
     mockVG = await deployMockContract(mainSigner, VGInstantiator.abi);
     mockLogger = await deployMockContract(mainSigner, Logger.abi);
-    descartes = await deployDescartes({
+    cartesi_compute = await deployCartesiCompute({
       vg: mockVG.address,
       logger: mockLogger.address,
       step: Step.address,
     });
   });
 
-  describe("Descartes Straight Pass", () => {
+  describe("Cartesi Compute Straight Pass", () => {
     it("Should instantiate correctly", async () => {
       /* Instantiate and provides all the necessary information to end this
       // transaction in "WaitingClaim"
       */
-      const tx = descartes.instantiate(
+      const tx = cartesi_compute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -90,7 +90,7 @@ describe("Descartes tests", () => {
         [claimerAddress, challengerAddress],
         [aDrive]
       );
-      await expect(tx).to.emit(descartes, "DescartesCreated").withArgs(0);
+      await expect(tx).to.emit(cartesi_compute, "CartesiComputeCreated").withArgs(0);
       // save 'now' used in other pieces of the contract
       const timestamp = await getBlockTimestampByHash(
         mainSigner.provider,
@@ -98,7 +98,7 @@ describe("Descartes tests", () => {
       );
       instantiateTimestamp = timestamp;
 
-      const tx2 = await descartes.getState(0, mainSignerAddress);
+      const tx2 = await cartesi_compute.getState(0, mainSignerAddress);
       expect(tx2[0][0]).to.equal(finalTime);
       expect(tx2[0][1]).to.equal(timestamp + 40 + roundDuration); // lastMoveTime  = now + timeToStartMachine(40)
       expect(tx2[0][2]).to.equal(outputPosition);
@@ -121,16 +121,16 @@ describe("Descartes tests", () => {
     });
 
     it("Should respond isConcerned correctly", async () => {
-      let res = await descartes.isConcerned(0, claimerAddress);
+      let res = await cartesi_compute.isConcerned(0, claimerAddress);
       expect(res).to.equal(true);
 
-      res = await descartes.isConcerned(0, challengerAddress);
+      res = await cartesi_compute.isConcerned(0, challengerAddress);
       expect(res).to.equal(true);
 
-      res = await descartes.isConcerned(0, mainSignerAddress);
+      res = await cartesi_compute.isConcerned(0, mainSignerAddress);
       expect(res).to.equal(false);
 
-      await expect(descartes.isConcerned(1, claimerAddress)).to.be.revertedWith(
+      await expect(cartesi_compute.isConcerned(1, claimerAddress)).to.be.revertedWith(
         "Index not instantiated"
       );
     });
@@ -138,8 +138,8 @@ describe("Descartes tests", () => {
     it("Should succeed to abortByDeadline -ClaimerMissedDeadline-", async () => {
       let revertSnapshot = await takeSnapshot();
       await advanceTime(mainSigner.provider, finalTime);
-      await descartes.abortByDeadline(0);
-      const tx = await descartes.getCurrentState(0);
+      await cartesi_compute.abortByDeadline(0);
+      const tx = await cartesi_compute.getCurrentState(0);
       expect(tx).to.be.equal(
         ethers.utils.formatBytes32String("ClaimerMissedDeadline")
       );
@@ -147,7 +147,7 @@ describe("Descartes tests", () => {
     });
 
     it("Should transition on submit claim", async () => {
-      let tx = descartes.submitClaim(
+      let tx = cartesi_compute.submitClaim(
         0,
         ethers.constants.HashZero,
         [[ethers.constants.HashZero]],
@@ -156,7 +156,7 @@ describe("Descartes tests", () => {
       );
       await expect(tx).to.be.revertedWith("The sender is not Claimer at this instance");
 
-      tx = descartes
+      tx = cartesi_compute
         .connect(claimer)
         .submitClaim(
           0,
@@ -169,7 +169,7 @@ describe("Descartes tests", () => {
         "Claimed drive number should match claimed siblings number"
       );
 
-      tx = descartes
+      tx = cartesi_compute
         .connect(claimer)
         .submitClaim(
           0,
@@ -182,7 +182,7 @@ describe("Descartes tests", () => {
         "Output length doesn't match output log2 size"
       );
 
-      tx = descartes.connect(claimer).submitClaim(
+      tx = cartesi_compute.connect(claimer).submitClaim(
         0,
         "0xa00d9e556b6a50ea387769f51017057482fae0e7ed2e117a2056d4b3e6031430", // a wrong claimed final hash
         [[ethers.constants.HashZero]],
@@ -193,7 +193,7 @@ describe("Descartes tests", () => {
         "Output is not contained in the final hash"
       );
 
-      tx = descartes
+      tx = cartesi_compute
         .connect(claimer)
         .submitClaim(
           0,
@@ -204,10 +204,10 @@ describe("Descartes tests", () => {
         );
 
       await expect(tx)
-        .to.emit(descartes, "ClaimSubmitted")
+        .to.emit(cartesi_compute, "ClaimSubmitted")
         .withArgs(0, ethers.constants.HashZero);
 
-      const tx2 = await descartes.getState(0, mainSignerAddress);
+      const tx2 = await cartesi_compute.getState(0, mainSignerAddress);
       expect(tx2[0][2]).to.equal(outputPosition);
       expect(tx2).to.include.deep.members([
         [ethers.constants.AddressZero, claimerAddress],
@@ -224,17 +224,17 @@ describe("Descartes tests", () => {
     it("Should transition to ConsensusResult after confirm", async () => {
       const revertSnapshot = await takeSnapshot();
 
-      let tx = descartes
+      let tx = cartesi_compute
         .connect(challenger)
         .confirm(0);
 
       await expect(tx)
-        .to.emit(descartes, "Confirmed")
+        .to.emit(cartesi_compute, "Confirmed")
         .withArgs(0, challengerAddress)
-        .to.emit(descartes, "DescartesFinished")
+        .to.emit(cartesi_compute, "CartesiComputeFinished")
         .withArgs(0, ethers.utils.formatBytes32String("ConsensusResult"));
 
-      const tx2 = await descartes.getCurrentState(0);
+      const tx2 = await cartesi_compute.getCurrentState(0);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("ConsensusResult")
       );
@@ -243,7 +243,7 @@ describe("Descartes tests", () => {
     });
 
     it("Should abortByDeadline correctly", async () => {
-      let tx = descartes.abortByDeadline(0);
+      let tx = cartesi_compute.abortByDeadline(0);
       await expect(tx).to.be.revertedWith(
         "Deadline is not over for this specific state"
       );
@@ -251,15 +251,15 @@ describe("Descartes tests", () => {
       const revertSnapshot = await takeSnapshot();
       await advanceTime(mainSigner.provider, finalTime);
 
-      tx = descartes.abortByDeadline(0);
+      tx = cartesi_compute.abortByDeadline(0);
       await expect(tx).not.to.be.reverted;
 
-      const tx2 = await descartes.getCurrentState(0);
+      const tx2 = await cartesi_compute.getCurrentState(0);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("ConsensusResult")
       );
 
-      const tx3 = await descartes.getResult(0);
+      const tx3 = await cartesi_compute.getResult(0);
       expect(tx3).to.have.length(4);
       const [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
       expect(resultReady).to.be.true;
@@ -271,33 +271,33 @@ describe("Descartes tests", () => {
     });
 
     it("Should get empty getSubInstances", async () => {
-      let tx = await descartes.getSubInstances(0, mainSignerAddress);
+      let tx = await cartesi_compute.getSubInstances(0, mainSignerAddress);
       expect(tx).to.have.length(2);
       expect(tx._addresses).to.be.empty;
       expect(tx._indices).to.be.empty;
     });
 
     it("Should challenge", async () => {
-      let tx = descartes.challenge(0);
+      let tx = cartesi_compute.challenge(0);
       await expect(tx).to.be.revertedWith("The sender is not party to this instance");
 
       await mockVG.mock.instantiate.returns(123);
-      tx = descartes.connect(challenger).challenge(0);
-      await expect(tx).to.emit(descartes, "ChallengeStarted").withArgs(0);
+      tx = cartesi_compute.connect(challenger).challenge(0);
+      await expect(tx).to.emit(cartesi_compute, "ChallengeStarted").withArgs(0);
 
       const lastMoveTS = await getBlockTimestampByHash(
         mainSigner.provider,
         (await tx).blockHash
       );
 
-      const tx2 = await descartes.getCurrentState(0);
+      const tx2 = await cartesi_compute.getCurrentState(0);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("WaitingChallengeResult")
       );
 
       const getMaxInstanceDuration = 222;
       await mockVG.mock.getMaxInstanceDuration.returns(getMaxInstanceDuration);
-      const tx3 = await descartes.getState(0, claimerAddress);
+      const tx3 = await cartesi_compute.getState(0, claimerAddress);
       expect(tx3).to.have.length(6);
       expect(tx3[0]).to.have.length(4);
       expect(tx3[0][1]).to.be.equal(lastMoveTS + getMaxInstanceDuration + roundDuration);
@@ -305,7 +305,7 @@ describe("Descartes tests", () => {
       expect(tx3[5]).to.have.deep.property("hasVoted", true);
       expect(tx3[5]).to.have.deep.property("hasCheated", false);
 
-      const tx4 = await descartes.getResult(0);
+      const tx4 = await cartesi_compute.getResult(0);
       expect(tx4).to.have.length(4);
       const [resultReady, sdkRunning, blameUser, result] = Object.values(tx4);
       expect(resultReady).to.be.false;
@@ -315,7 +315,7 @@ describe("Descartes tests", () => {
     });
 
     it("Should get vg at getSubInstances", async () => {
-      let tx = await descartes.getSubInstances(0, mainSignerAddress);
+      let tx = await cartesi_compute.getSubInstances(0, mainSignerAddress);
       expect(tx).to.have.length(2);
       expect(tx._addresses).to.be.deep.equal([mockVG.address]);
       expect(tx._indices).to.have.length(1);
@@ -329,17 +329,17 @@ describe("Descartes tests", () => {
       await mockVG.mock.stateIsFinishedChallengerWon.returns(true);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
 
-      const tx = await descartes.winByVG(0);
+      const tx = await cartesi_compute.winByVG(0);
 
       await expect(tx)
-        .to.emit(descartes, "DescartesFinished")
+        .to.emit(cartesi_compute, "CartesiComputeFinished")
         .withArgs(0, ethers.utils.formatBytes32String("ChallengerWon"));
 
-      const tx2 = await descartes.getCurrentState(0);
+      const tx2 = await cartesi_compute.getCurrentState(0);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("ChallengerWon")
       );
-      const tx3 = await descartes.getResult(0);
+      const tx3 = await cartesi_compute.getResult(0);
       expect(tx3).to.have.length(4);
       let [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
       expect(resultReady).to.be.false;
@@ -353,15 +353,15 @@ describe("Descartes tests", () => {
       await mockVG.mock.stateIsFinishedChallengerWon.returns(false);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(true);
 
-      const winByVGTx = await descartes.winByVG(0);
+      const winByVGTx = await cartesi_compute.winByVG(0);
 
       await expect(winByVGTx)
-        .to.emit(descartes, "DescartesFinished")
+        .to.emit(cartesi_compute, "CartesiComputeFinished")
         .withArgs(0, ethers.utils.formatBytes32String("ClaimerWon"));
 
-      const tx4 = await descartes.getCurrentState(0);
+      const tx4 = await cartesi_compute.getCurrentState(0);
       expect(tx4).to.be.equal(ethers.utils.formatBytes32String("ClaimerWon"));
-      const tx5 = await descartes.getResult(0);
+      const tx5 = await cartesi_compute.getResult(0);
       expect(tx5).to.have.length(4);
       [resultReady, sdkRunning, blameUser, result] = Object.values(tx5);
       expect(resultReady).to.be.false;
@@ -374,7 +374,7 @@ describe("Descartes tests", () => {
         winByVGTx.blockHash
       );
 
-      const tx6 = await descartes.getState(0, mainSignerAddress);
+      const tx6 = await cartesi_compute.getState(0, mainSignerAddress);
       expect(tx6).to.have.length(6);
       expect(tx6[0][1]).to.equal(lastMoveTS + 0);
 
@@ -383,14 +383,14 @@ describe("Descartes tests", () => {
       // ---- VG is not finished
       await mockVG.mock.stateIsFinishedChallengerWon.returns(false);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
-      await expect(descartes.winByVG(0)).to.be.revertedWith(
+      await expect(cartesi_compute.winByVG(0)).to.be.revertedWith(
         "State of VG is not final"
       );
     });
   });
 
-  describe("Descartes with Providing steps", () => {
-    let descartesIdx = 1;
+  describe("Cartesi Compute with Providing steps", () => {
+    let cartesi_computeIdx = 1;
     it("Should instantiate with different types of drives", async () => {
       const drives = [
         { ...aDrive, directValue: "0x" + "00".repeat(7) },
@@ -399,7 +399,7 @@ describe("Descartes tests", () => {
         { ...aDrive, needsLogger: true, waitsProvider: false }, // a reveal drive
       ];
       await mockLogger.mock.isLogAvailable.returns(false);
-      const tx = descartes.instantiate(
+      const tx = cartesi_compute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -410,10 +410,10 @@ describe("Descartes tests", () => {
       );
       const transaction = await tx;
       const txResult = await transaction.wait();
-      descartesIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
+      cartesi_computeIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
       await expect(tx)
-        .to.emit(descartes, "DescartesCreated")
-        .withArgs(descartesIdx);
+        .to.emit(cartesi_compute, "CartesiComputeCreated")
+        .withArgs(cartesi_computeIdx);
 
       // save 'now' used in other pieces of the contract
       const timestamp = await getBlockTimestampByHash(
@@ -422,7 +422,7 @@ describe("Descartes tests", () => {
       );
       instantiateTimestamp = timestamp;
 
-      const tx2 = await descartes.getState(descartesIdx, mainSignerAddress);
+      const tx2 = await cartesi_compute.getState(cartesi_computeIdx, mainSignerAddress);
       expect(tx2[0][0]).to.equal(finalTime);
       // lastMoveTime  = now + roundDuration
       expect(tx2[0][1]).to.equal(timestamp + roundDuration);
@@ -446,12 +446,12 @@ describe("Descartes tests", () => {
       //timeToStartMachine(40) + maxLoggerUploadTime(40 * 60) + 1// so it's more than
       await advanceTime(mainSigner.provider, 41 + 40 * 60);
 
-      await descartes.abortByDeadline(descartesIdx);
-      const tx = await descartes.getCurrentState(descartesIdx);
+      await cartesi_compute.abortByDeadline(cartesi_computeIdx);
+      const tx = await cartesi_compute.getCurrentState(cartesi_computeIdx);
       expect(tx).to.be.equal(
         ethers.utils.formatBytes32String("ProviderMissedDeadline")
       );
-      const tx2 = await descartes.getResult(descartesIdx);
+      const tx2 = await cartesi_compute.getResult(cartesi_computeIdx);
       expect(tx2).to.have.length(4);
       const [resultReady, sdkRunning, blameUser, result] = Object.values(tx2);
       expect(resultReady).to.be.false;
@@ -462,40 +462,40 @@ describe("Descartes tests", () => {
     });
 
     it("Should fail to revealLoggerDrive", async () => {
-      let tx = descartes.revealLoggerDrive(descartesIdx);
+      let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith("The state is not WaitingReveals");
     });
 
     it("Should provide(Direct/Logger)Drive correctly", async () => {
       let data = "0x" + "12".repeat(10);
-      let tx = descartes.provideDirectDrive(descartesIdx, data);
+      let tx = cartesi_compute.provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx).to.be.revertedWith("The sender is not provider");
-      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
+      tx = cartesi_compute.connect(claimer).provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx).to.be.revertedWith(
         "Input bytes length exceeds the claimed log2 size"
       );
 
       data = "0x" + "12".repeat(7);
-      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
+      tx = cartesi_compute.connect(claimer).provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx).to.not.be.reverted;
 
-      tx = descartes.connect(claimer).provideDirectDrive(descartesIdx, data);
+      tx = cartesi_compute.connect(claimer).provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx).to.be.revertedWith(
         "Invalid drive to claim for direct value"
       );
 
       data = "0x" + "12".repeat(32);
-      tx = descartes.connect(claimer).provideLoggerDrive(descartesIdx, data);
+      tx = cartesi_compute.connect(claimer).provideLoggerDrive(cartesi_computeIdx, data);
       await expect(tx).to.not.be.reverted;
 
-      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+      expect(await cartesi_compute.getCurrentState(cartesi_computeIdx)).to.be.equal(
         ethers.utils.formatBytes32String("WaitingChallengeDrives")
       );
 
-      tx = descartes.connect(claimer).challengeDrives(descartesIdx);
+      tx = cartesi_compute.connect(claimer).challengeDrives(cartesi_computeIdx);
       await expect(tx).to.not.be.reverted;
 
-      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+      expect(await cartesi_compute.getCurrentState(cartesi_computeIdx)).to.be.equal(
         ethers.utils.formatBytes32String("WaitingReveals")
       );
     });
@@ -504,16 +504,16 @@ describe("Descartes tests", () => {
       const revertSnapshot = await takeSnapshot();
       await advanceTime(mainSigner.provider, finalTime + 40 * 60); //40*60 time to react
 
-      const tx = descartes.abortByDeadline(descartesIdx);
+      const tx = cartesi_compute.abortByDeadline(cartesi_computeIdx);
       // await expect(tx).to.be.revertedWith('a');
       await expect(tx).not.to.be.reverted;
 
-      const tx2 = await descartes.getCurrentState(descartesIdx);
+      const tx2 = await cartesi_compute.getCurrentState(cartesi_computeIdx);
       expect(tx2).to.be.equal(
         ethers.utils.formatBytes32String("ProviderMissedDeadline")
       );
 
-      const tx3 = await descartes.getResult(descartesIdx);
+      const tx3 = await cartesi_compute.getResult(cartesi_computeIdx);
       expect(tx3).to.have.length(4);
       const [resultReady, sdkRunning, blameUser, result] = Object.values(tx3);
       expect(resultReady).to.be.false;
@@ -526,17 +526,17 @@ describe("Descartes tests", () => {
 
     it("Should revealLoggerDrive", async () => {
       await mockLogger.mock.isLogAvailable.returns(false);
-      let tx = descartes.revealLoggerDrive(descartesIdx);
+      let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
         "Hash is not available on logger yet"
       );
 
       await mockLogger.mock.isLogAvailable.returns(true);
-      tx = descartes.revealLoggerDrive(descartesIdx);
+      tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).not.to.be.reverted;
 
       await mockLogger.mock.isLogAvailable.returns(true);
-      tx = descartes.revealLoggerDrive(descartesIdx);
+      tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
         "The state is not WaitingReveals"
       );
@@ -545,7 +545,7 @@ describe("Descartes tests", () => {
     it("Should call provideDirectDrive and transition to WaitingClaim", async () => {
       const drives = [{ ...aDrive, waitsProvider: true }];
       const data = "0x" + "12".repeat(5); // 5 so we exercise the ability to fill/pad zeroes
-      const tx = descartes.instantiate(
+      const tx = cartesi_compute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -555,13 +555,13 @@ describe("Descartes tests", () => {
         drives
       );
       const txResult = await (await tx).wait();
-      descartesIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
-      const tx2 = descartes
+      cartesi_computeIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
+      const tx2 = cartesi_compute
         .connect(claimer)
-        .provideDirectDrive(descartesIdx, data);
+        .provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx2).to.not.be.reverted;
 
-      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+      expect(await cartesi_compute.getCurrentState(cartesi_computeIdx)).to.be.equal(
         ethers.utils.formatBytes32String("WaitingClaim")
       );
     });
@@ -570,7 +570,7 @@ describe("Descartes tests", () => {
       const drives = [{ ...aDrive, needsLogger: true, provider: ethers.constants.AddressZero }];
       const data = "0x" + "12".repeat(5); // 5 so we exercise the ability to fill/pad zeroes
       await mockLogger.mock.isLogAvailable.returns(false);
-      const tx = descartes.instantiate(
+      const tx = cartesi_compute.instantiate(
         finalTime,
         templateHash,
         outputPosition,
@@ -580,9 +580,9 @@ describe("Descartes tests", () => {
         drives
       );
       const txResult = await (await tx).wait();
-      descartesIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
+      cartesi_computeIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
 
-      expect(await descartes.getCurrentState(descartesIdx)).to.be.equal(
+      expect(await cartesi_compute.getCurrentState(cartesi_computeIdx)).to.be.equal(
         ethers.utils.formatBytes32String("WaitingClaim")
       );
     });

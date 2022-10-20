@@ -190,7 +190,7 @@
 //    See the License for the specific language governing permissions and
 //    limitations under the License.
 
-/// @title DescartesInterface
+/// @title CartesiComputeInterface
 /// @author Stephen Chen
 pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
@@ -198,7 +198,7 @@ pragma experimental ABIEncoderV2;
 import "@cartesi/util/contracts/Instantiator.sol";
 
 
-interface DescartesInterface is Instantiator {
+interface CarttesiComputeInterface is Instantiator {
 
     enum State {
         WaitingProviders,
@@ -252,13 +252,13 @@ interface DescartesInterface is Instantiator {
         uint64 arrayIdx;
     }
 
-    /// @notice Instantiate a Descartes SDK instance.
+    /// @notice Instantiate a Cartesi Compute SDK instance.
     /// @param _finalTime max cycle of the machine for that computation
     /// @param _templateHash hash of the machine with all drives empty
     /// @param _outputPosition position of the output drive
     /// @param _roundDuration duration of the round (security param)
     /// @param _inputDrives an array of drive which assemble the machine
-    /// @return uint256, Descartes index
+    /// @return uint256, CartesiCompute index
     function instantiate(
         uint256 _finalTime,
         bytes32 _templateHash,
@@ -269,7 +269,7 @@ interface DescartesInterface is Instantiator {
         Drive[] memory _inputDrives) external returns (uint256);
 
     /// @notice Get result of a finished instance.
-    /// @param _index index of Descartes instance to get result
+    /// @param _index index of Cartesi Compute instance to get result
     /// @return bool, indicates the result is ready
     /// @return bool, indicates the sdk is still running
     /// @return address, the user to blame for the abnormal stop of the sdk
@@ -280,7 +280,7 @@ interface DescartesInterface is Instantiator {
         address,
         bytes memory);
 
-    /// @notice Deactivate a Descartes SDK instance.
-    /// @param _index index of Descartes instance to deactivate
+    /// @notice Deactivate a Cartesi Compute SDK instance.
+    /// @param _index index of Cartesi Compute instance to deactivate
     function destruct(uint256 _index) external;
 }
