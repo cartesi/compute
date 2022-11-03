@@ -1,4 +1,4 @@
-FROM rust:1.64 as build
+FROM rust:1.57-buster as build
 
 ENV BASE /opt/cartesi
 RUN \
