@@ -18,7 +18,7 @@ wait-for-url() {
     echo "OK!"
 }
 
-jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - up --build --no-color &> logs.txt&
+jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - up --build --no-color &
 wait-for-url http://localhost:8545
 
 # downloading cartesi machine binaries
