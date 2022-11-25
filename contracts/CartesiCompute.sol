@@ -204,9 +204,17 @@ import "@cartesi/util/contracts/Decorated.sol";
 import "@cartesi/util/contracts/InstantiatorImpl.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Pausable.sol";
 import "./CartesiComputeInterface.sol";
 
-contract CartesiCompute is InstantiatorImpl, Decorated, CartesiComputeInterface {
+contract CartesiCompute is
+    InstantiatorImpl,
+    Decorated,
+    CartesiComputeInterface,
+    Ownable,
+    Pausable
+{
     address machine; // machine which will run the challenge
     LoggerInterface li;
     VGInterface vg;
@@ -319,7 +327,7 @@ contract CartesiCompute is InstantiatorImpl, Decorated, CartesiComputeInterface 
         uint256 _roundDuration,
         address[] memory parties,
         Drive[] memory _inputDrives
-    ) public override returns (uint256) {
+    ) public override whenNotPaused returns (uint256) {
         require(
             _roundDuration >= 50,
             "round duration has to be at least 50 seconds"
@@ -992,6 +1000,14 @@ contract CartesiCompute is InstantiatorImpl, Decorated, CartesiComputeInterface 
         revert("Cannot abort current state");
     }
 
+    function pause() public onlyOwner {
+        _pause();
+    }
+
+    function unpause() public onlyOwner {
+        _unpause();
+    }
+
     /// @notice Get result of a finished instance.
     /// @param _index index of Cartesi Compute instance to get result
     /// @return bool, indicates the result is ready
@@ -1032,16 +1048,16 @@ contract CartesiCompute is InstantiatorImpl, Decorated, CartesiComputeInterface 
                 instance[_index].providerDrives.length
             ) {
                 userToBlame = i
-                .inputDrives[i.providerDrives[i.providerDrivesPointer]]
-                .provider;
+                    .inputDrives[i.providerDrives[i.providerDrivesPointer]]
+                    .provider;
                 // check if resulted from the WaitingReveals phase
             } else if (
                 instance[_index].revealDrivesPointer <
                 instance[_index].revealDrives.length
             ) {
                 userToBlame = i
-                .inputDrives[i.revealDrives[i.revealDrivesPointer]]
-                .provider;
+                    .inputDrives[i.revealDrives[i.revealDrivesPointer]]
+                    .provider;
             }
             return (false, false, userToBlame, "");
         }
