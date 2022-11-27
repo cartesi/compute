@@ -244,6 +244,7 @@ contract CartesiCompute is
         uint256[] providerDrives; // indices of the provider drives
         bytes32[] driveHash; // root hash of the drives
         Drive[] inputDrives;
+        bool noChallengeDrive; // if data is available and content cannot be challenged
     }
 
     mapping(uint256 => CartesiComputeCtx) internal instance;
@@ -318,6 +319,7 @@ contract CartesiCompute is
     /// @param _outputPosition position of the output drive
     /// @param _roundDuration duration of the round (security param)
     /// @param _inputDrives an array of drive which assemble the machine
+    /// @param _noChallengeDrive bool indicating if content is challengeable
     /// @return uint256, Cartesi Compute index
     function instantiate(
         uint256 _finalTime,
@@ -326,7 +328,8 @@ contract CartesiCompute is
         uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
-        Drive[] memory _inputDrives
+        Drive[] memory _inputDrives,
+        bool _noChallengeDrive
     ) public override whenNotPaused returns (uint256) {
         require(
             _roundDuration >= 50,
@@ -347,6 +350,8 @@ contract CartesiCompute is
         bool needsProviderPhase = false;
         uint256 drivesLength = _inputDrives.length;
         i.driveHash = new bytes32[](drivesLength);
+        i.noChallengeDrive = _noChallengeDrive;
+
         for (uint256 j = 0; j < drivesLength; j++) {
             Drive memory drive = _inputDrives[j];
 
@@ -521,6 +526,7 @@ contract CartesiCompute is
         increasesNonce(_index)
     {
         CartesiComputeCtx storage i = instance[_index];
+        require(!i.noChallengeDrive, "Ctx is marked as no challenge drive");
         require(
             i.currentState == State.WaitingChallengeDrives,
             "State should be WaitingChallengeDrives"

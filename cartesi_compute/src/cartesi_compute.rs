@@ -170,6 +170,7 @@ pub struct CartesiComputeCtxParsed(
     BytesField,   // claimedOutput
     DriveArray,
     PartyType,
+    bool,
 );
 
 #[derive(Serialize, Debug)]
@@ -187,6 +188,7 @@ pub struct CartesiComputeCtx {
     pub current_state: String,
     pub input_drives: Vec<Drive>,
     pub partyState: Party,
+    pub noChallengeDrive: bool,
 }
 
 impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
@@ -214,6 +216,7 @@ impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
             partyState: parsed.5.value.into(),
+            noChallengeDrive: parsed.6,
         }
     }
 }
@@ -303,6 +306,9 @@ impl DApp<()> for CartesiCompute {
                             drive.log2_size.as_u64() as u32,
                             drive.root_hash,
                         ) {
+                            if ctx.noChallengeDrive {
+                                return Err(e);
+                            }
                             match e.kind() {
                                 ErrorKind::ResponseInvalidError(
                                     _service,
@@ -405,6 +411,7 @@ impl DApp<()> for CartesiCompute {
                         ctx.output_position,
                         ctx.output_log2_size,
                         machine_id,
+                        ctx.noChallengeDrive,
                     );
                 }
                 "WaitingChallengeDrives" => {
@@ -422,6 +429,7 @@ impl DApp<()> for CartesiCompute {
                             ctx.output_position,
                             ctx.output_log2_size,
                             machine_id,
+                            ctx.noChallengeDrive,
                         );
                     }
                     return Ok(Reaction::Idle);
@@ -520,6 +528,7 @@ impl DApp<()> for CartesiCompute {
                         ctx.output_position,
                         ctx.output_log2_size,
                         machine_id,
+                        ctx.noChallengeDrive,
                     );
                 }
                 _ => {
@@ -670,6 +679,7 @@ fn react_by_machine_output(
     output_position: U256,
     output_log2_size: U256,
     machine_id: String,
+    noChallengeDrive: bool,
 ) -> Result<Reaction> {
     // create machine and fill in all the drives
     let mut machine = cartesi_machine::MachineRequest::new();
@@ -738,6 +748,9 @@ fn react_by_machine_output(
                 // try to get drive from Ipfs first
                 Ok(output_path) => output_path,
                 Err(e) => {
+                    if noChallengeDrive {
+                        return Err(e);
+                    }
                     match e.kind() {
                         ErrorKind::ResponseInvalidError(_service, _key, _m) => {
                             // fall back to logger if drive not found in ipfs
