@@ -420,7 +420,8 @@ contract CartesiCompute is
                     drive.loggerRootHash,
                     drive.provider,
                     drive.waitsProvider,
-                    drive.needsLogger
+                    drive.needsLogger,
+                    drive.downloadAsCAR
                 )
             );
         }

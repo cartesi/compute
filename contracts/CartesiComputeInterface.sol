@@ -241,6 +241,8 @@ interface CartesiComputeInterface is Instantiator {
         bool waitsProvider;
         // indicates the content of the drive must be retrieved from logger
         bool needsLogger;
+        // use CAR file for download
+        bool downloadAsCAR;
     }
 
     struct Party {
