@@ -204,16 +204,12 @@ import "@cartesi/util/contracts/Decorated.sol";
 import "@cartesi/util/contracts/InstantiatorImpl.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
 import "./CartesiComputeInterface.sol";
 
 contract CartesiCompute is
     InstantiatorImpl,
     Decorated,
-    CartesiComputeInterface,
-    Ownable,
-    Pausable
+    CartesiComputeInterface
 {
     address machine; // machine which will run the challenge
     LoggerInterface li;
@@ -330,7 +326,7 @@ contract CartesiCompute is
         address[] memory parties,
         Drive[] memory _inputDrives,
         bool _noChallengeDrive
-    ) public override whenNotPaused returns (uint256) {
+    ) public override returns (uint256) {
         require(
             _roundDuration >= 50,
             "round duration has to be at least 50 seconds"
@@ -1005,14 +1001,6 @@ contract CartesiCompute is
         }
 
         revert("Cannot abort current state");
-    }
-
-    function pause() public onlyOwner {
-        _pause();
-    }
-
-    function unpause() public onlyOwner {
-        _unpause();
     }
 
     /// @notice Get result of a finished instance.
