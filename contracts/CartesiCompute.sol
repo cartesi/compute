@@ -327,16 +327,13 @@ contract CartesiCompute is
         Drive[] memory _inputDrives,
         bool _noChallengeDrive
     ) public override returns (uint256) {
-        require(
-            _roundDuration >= 50,
-            "round duration has to be at least 50 seconds"
-        );
+        require(_roundDuration >= 50, "round duration must be 50+ seconds");
         CartesiComputeCtx storage i = instance[currentIndex];
 
         for (uint64 j = 0; j < parties.length; j++) {
             require(
                 i.parties[parties[j]].isParty == false,
-                "Repetition of parties' addresses is not allowed"
+                "Repetition of parties' addresses isn't allowed"
             );
             i.parties[parties[j]].isParty = true;
             i.parties[parties[j]].arrayIdx = j;
@@ -362,7 +359,7 @@ contract CartesiCompute is
                     // direct drive provided at instantiation
                     require(
                         drive.directValue.length <= 2**drive.driveLog2Size,
-                        "Input bytes length exceeds the claimed log2 size"
+                        "Input bytes length exceeds claimed log2 size"
                     );
 
                     // pad zero to the directValue if it's not exact power of 2
@@ -523,7 +520,7 @@ contract CartesiCompute is
         increasesNonce(_index)
     {
         CartesiComputeCtx storage i = instance[_index];
-        require(!i.noChallengeDrive, "Ctx is marked as no challenge drive");
+        require(!i.noChallengeDrive, "Ctx marked as no challenge drive");
         require(
             i.currentState == State.WaitingChallengeDrives,
             "State should be WaitingChallengeDrives"
@@ -559,7 +556,7 @@ contract CartesiCompute is
             i.currentState == State.WaitingClaim ||
                 (i.currentState == State.WaitingChallengeDrives &&
                     deadlinePassed),
-            "State should be WaitingClaim, or WaitingChallengeDrives with deadline passed"
+            "State must be WaitingClaim or WaitingChallengeDrives, w/ deadline passed"
         );
         require(
             i.inputDrives.length == _drivesSiblings.length,
@@ -578,7 +575,7 @@ contract CartesiCompute is
                 Merkle.calculateRootFromPowerOfTwo(data),
                 _outputSiblings
             ) == _claimedFinalHash,
-            "Output is not contained in the final hash"
+            "Output isn't contained in final hash"
         );
 
         uint256 drivesLength = i.inputDrives.length;
@@ -803,7 +800,7 @@ contract CartesiCompute is
         require(!drive.needsLogger, "Invalid drive to claim for direct value");
         require(
             _value.length <= 2**drive.driveLog2Size,
-            "Input bytes length exceeds the claimed log2 size"
+            "Input bytes length exceeds claimed log2 size"
         );
 
         // pad zero to the directValue if it's not exact power of 2
@@ -870,7 +867,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingReveals,
-            "The state is not WaitingReveals"
+            "The state isn't WaitingReveals"
         );
 
         uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
@@ -881,7 +878,7 @@ contract CartesiCompute is
         require(drive.needsLogger, "needsLogger should be true");
         require(
             li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size),
-            "Hash is not available on logger yet"
+            "Hash isn't available on logger yet"
         );
 
         i.revealDrivesPointer++;
@@ -904,7 +901,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingChallengeResult,
-            "State is not WaitingChallengeResult, cannot winByVG"
+            "State isn't WaitingChallengeResult, cannot winByVG"
         );
         i.timeOfLastMove = block.timestamp;
         uint256 vgIndex = i.vgInstance;
@@ -942,7 +939,7 @@ contract CartesiCompute is
             i.currentChallenger = 0;
             return;
         }
-        require(false, "State of VG is not final");
+        require(false, "State of VG isn't final");
     }
 
     /// @notice Deactivate a Cartesi Compute SDK instance.
@@ -977,7 +974,7 @@ contract CartesiCompute is
         bool afterDeadline = block.timestamp >
             (i.timeOfLastMove + getMaxStateDuration(_index));
 
-        require(afterDeadline, "Deadline is not over for this specific state");
+        require(afterDeadline, "Deadline isn't over for this specific state");
 
         if (i.currentState == State.WaitingProviders) {
             i.currentState = State.ProviderMissedDeadline;
@@ -1181,7 +1178,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingProviders,
-            "The state is not WaitingProviders"
+            "The state isn't WaitingProviders"
         );
         require(
             i.providerDrivesPointer < i.providerDrives.length,
@@ -1194,10 +1191,10 @@ contract CartesiCompute is
         Drive memory drive = i.inputDrives[driveIndex];
         require(
             i.driveHash[driveIndex] == bytes32(0),
-            "The drive hash shouldn't be filled"
+            "Drive hash shouldn't be filled"
         );
         require(drive.waitsProvider, "waitProvider should be true");
-        require(drive.provider == msg.sender, "The sender is not provider");
+        require(drive.provider == msg.sender, "Sender isn't provider");
 
         _;
     }
@@ -1207,7 +1204,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.parties[msg.sender].isParty,
-            "The sender is not party to this instance"
+            "Sender isn't party to this instance"
         );
         _;
     }
@@ -1216,7 +1213,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.partiesArray[i.claimer] == msg.sender,
-            "The sender is not Claimer at this instance"
+            "Sender isn't Claimer at this instance"
         );
         _;
     }

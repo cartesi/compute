@@ -19,10 +19,10 @@ contract CartesiComputeHarnass is Ownable, Pausable {
         uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
-        Drive[] memory _inputDrives,
+        CartesiComputeInterface.Drive[] memory _inputDrives,
         bool _noChallengeDrive
-    ) public override whenNotPaused returns (uint256) {
-        CartesiComputeInterface.instantiate(
+    ) public whenNotPaused returns (uint256) {
+        cc.instantiate(
             _finalTime,
             _templateHash,
             _outputPosition,
