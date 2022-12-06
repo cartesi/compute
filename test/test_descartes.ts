@@ -51,6 +51,7 @@ describe("Cartesi Compute tests", () => {
     waitsProvider: false,
     needsLogger: false,
     provider: "",
+    downloadAsCAR: false,
   };
   let cartesi_compute: CartesiCompute;
   let takeSnapshot: Function;
@@ -88,7 +89,8 @@ describe("Cartesi Compute tests", () => {
         outputLog2Size,
         roundDuration,
         [claimerAddress, challengerAddress],
-        [aDrive]
+        [aDrive],
+        false,
       );
       await expect(tx).to.emit(cartesi_compute, "CartesiComputeCreated").withArgs(0);
       // save 'now' used in other pieces of the contract
@@ -406,7 +408,8 @@ describe("Cartesi Compute tests", () => {
         outputLog2Size,
         roundDuration,
         [claimerAddress, challengerAddress],
-        drives
+        drives,
+        false,
       );
       const transaction = await tx;
       const txResult = await transaction.wait();
@@ -552,7 +555,8 @@ describe("Cartesi Compute tests", () => {
         outputLog2Size,
         roundDuration,
         [claimerAddress, challengerAddress],
-        drives
+        drives,
+        false
       );
       const txResult = await (await tx).wait();
       cartesi_computeIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
@@ -577,7 +581,8 @@ describe("Cartesi Compute tests", () => {
         outputLog2Size,
         roundDuration,
         [claimerAddress, challengerAddress],
-        drives
+        drives,
+        false
       );
       const txResult = await (await tx).wait();
       cartesi_computeIdx = ethers.BigNumber.from(txResult.logs[0].data).toNumber();
