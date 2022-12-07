@@ -24,7 +24,7 @@
 use super::compute::vg::{VGCtx, VGCtxParsed, VG};
 use super::configuration::Concern;
 use super::dispatcher::DApp;
-use super::dispatcher::{AddressArray, Bytes32Array, BytesField, U256Array};
+use super::dispatcher::{AddressArray, Bytes32Array, BytesField, U256Array, BoolField};
 use super::dispatcher::{Archive, Reaction};
 use super::error::*;
 use super::ethabi::Token;
@@ -61,7 +61,7 @@ pub struct CartesiCompute();
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(uint64,uint8,bytes,bytes,bytes32,address,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint8,bytes,bytes,bytes32,address,bool,bool,bool)[]")]
     DriveArrayTuple,
     #[serde(rename = "(bool,bool,bool,uint64)")]
     PartyTypeTuple,
@@ -77,6 +77,7 @@ pub struct DriveParsed(
     Address, // provider
     bool,    // needsProvider
     bool,    // needsLogger
+    bool,    // downloadAsCAR
 );
 
 #[derive(Serialize, Deserialize)]
@@ -97,6 +98,7 @@ pub struct Drive {
     provider: Address,
     waits_provider: bool,
     needs_logger: bool,
+    download_as_car: bool,
 }
 
 impl From<&DriveParsed> for Drive {
@@ -119,6 +121,7 @@ impl From<&DriveParsed> for Drive {
             provider: parsed.5,
             waits_provider: parsed.6,
             needs_logger: parsed.7,
+            download_as_car: parsed.8
         }
     }
 }
@@ -170,7 +173,7 @@ pub struct CartesiComputeCtxParsed(
     BytesField,   // claimedOutput
     DriveArray,
     PartyType,
-    bool,
+    BoolField
 );
 
 #[derive(Serialize, Debug)]
@@ -216,7 +219,7 @@ impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
             partyState: parsed.5.value.into(),
-            noChallengeDrive: parsed.6,
+            noChallengeDrive: parsed.6.value.into()
         }
     }
 }

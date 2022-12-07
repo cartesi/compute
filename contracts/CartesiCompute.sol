@@ -333,7 +333,7 @@ contract CartesiCompute is
         for (uint64 j = 0; j < parties.length; j++) {
             require(
                 i.parties[parties[j]].isParty == false,
-                "Repetition of parties' addresses isn't allowed"
+                "Repetition of parties' addresses ! allowed"
             );
             i.parties[parties[j]].isParty = true;
             i.parties[parties[j]].arrayIdx = j;
@@ -575,7 +575,7 @@ contract CartesiCompute is
                 Merkle.calculateRootFromPowerOfTwo(data),
                 _outputSiblings
             ) == _claimedFinalHash,
-            "Output isn't contained in final hash"
+            "Output ! contained in final hash"
         );
 
         uint256 drivesLength = i.inputDrives.length;
@@ -648,7 +648,8 @@ contract CartesiCompute is
             bytes32[] memory,
             bytes memory,
             Drive[] memory,
-            Party memory user
+            Party memory user,
+            bool noChallengeDrive
         )
     {
         CartesiComputeCtx storage i = instance[_index];
@@ -683,7 +684,8 @@ contract CartesiCompute is
                 bytes32Values,
                 i.claimedOutput,
                 drives,
-                user
+                user,
+                i.noChallengeDrive
             );
         } else if (i.currentState == State.WaitingReveals) {
             Drive[] memory drives = new Drive[](1);
@@ -694,7 +696,8 @@ contract CartesiCompute is
                 bytes32Values,
                 i.claimedOutput,
                 drives,
-                user
+                user,
+                i.noChallengeDrive
             );
         } else if (i.currentState == State.ProviderMissedDeadline) {
             Drive[] memory drives = new Drive[](0);
@@ -704,7 +707,8 @@ contract CartesiCompute is
                 bytes32Values,
                 i.claimedOutput,
                 drives,
-                user
+                user,
+		i.noChallengeDrive
             );
         } else {
             return (
@@ -713,7 +717,8 @@ contract CartesiCompute is
                 bytes32Values,
                 i.claimedOutput,
                 i.inputDrives,
-                user
+                user,
+		i.noChallengeDrive
             );
         }
     }
@@ -867,7 +872,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingReveals,
-            "The state isn't WaitingReveals"
+            "The state ! WaitingReveals"
         );
 
         uint256 driveIndex = i.revealDrives[i.revealDrivesPointer];
@@ -878,7 +883,7 @@ contract CartesiCompute is
         require(drive.needsLogger, "needsLogger should be true");
         require(
             li.isLogAvailable(drive.loggerRootHash, drive.driveLog2Size),
-            "Hash isn't available on logger yet"
+            "Hash ! available on logger yet"
         );
 
         i.revealDrivesPointer++;
@@ -901,7 +906,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingChallengeResult,
-            "State isn't WaitingChallengeResult, cannot winByVG"
+            "State ! WaitingChallengeResult, cannot winByVG"
         );
         i.timeOfLastMove = block.timestamp;
         uint256 vgIndex = i.vgInstance;
@@ -939,7 +944,7 @@ contract CartesiCompute is
             i.currentChallenger = 0;
             return;
         }
-        require(false, "State of VG isn't final");
+        require(false, "State of VG ! final");
     }
 
     /// @notice Deactivate a Cartesi Compute SDK instance.
@@ -974,7 +979,7 @@ contract CartesiCompute is
         bool afterDeadline = block.timestamp >
             (i.timeOfLastMove + getMaxStateDuration(_index));
 
-        require(afterDeadline, "Deadline isn't over for this specific state");
+        require(afterDeadline, "Deadline ! over for this specific state");
 
         if (i.currentState == State.WaitingProviders) {
             i.currentState = State.ProviderMissedDeadline;
@@ -1178,7 +1183,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.currentState == State.WaitingProviders,
-            "The state isn't WaitingProviders"
+            "The state ! WaitingProviders"
         );
         require(
             i.providerDrivesPointer < i.providerDrives.length,
@@ -1194,7 +1199,7 @@ contract CartesiCompute is
             "Drive hash shouldn't be filled"
         );
         require(drive.waitsProvider, "waitProvider should be true");
-        require(drive.provider == msg.sender, "Sender isn't provider");
+        require(drive.provider == msg.sender, "Sender != provider");
 
         _;
     }
@@ -1204,7 +1209,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.parties[msg.sender].isParty,
-            "Sender isn't party to this instance"
+            "Sender !party to this instance"
         );
         _;
     }
@@ -1213,7 +1218,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             i.partiesArray[i.claimer] == msg.sender,
-            "Sender isn't Claimer at this instance"
+            "Sender !Claimer at this instance"
         );
         _;
     }
@@ -1223,7 +1228,7 @@ contract CartesiCompute is
         CartesiComputeCtx storage i = instance[_index];
         require(
             !i.parties[msg.sender].hasVoted,
-            "Sender has already challenged or claimed"
+            "Sender has challenged or claimed"
         );
         _;
     }
