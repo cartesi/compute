@@ -38,12 +38,14 @@ use super::{
 };
 use compute::{
     build_session_end_key, build_session_proof_key, build_session_read_key,
-    build_session_run_key, build_session_write_key, cartesi_machine,
+    build_session_run_key, build_session_write_key, build_session_replace_key,
+    cartesi_machine,
     get_run_result, EndSessionRequest, NewSessionRequest, NewSessionResponse,
     SessionGetProofRequest, SessionGetProofResponse, SessionReadMemoryRequest,
     SessionReadMemoryResponse, SessionRunRequest, SessionRunResult,
-    SessionWriteMemoryRequest, EMULATOR_METHOD_END, EMULATOR_METHOD_NEW,
+    SessionWriteMemoryRequest, SessionReplaceMemoryRangeRequest, EMULATOR_METHOD_END, EMULATOR_METHOD_NEW,
     EMULATOR_METHOD_PROOF, EMULATOR_METHOD_READ, EMULATOR_METHOD_WRITE,
+    EMULATOR_METHOD_REPLACE,
     EMULATOR_SERVICE_NAME,
 };
 use ipfs_service::{
@@ -789,29 +791,31 @@ fn react_by_machine_output(
                 }
             };
 
-            // TODO: rewrite with flash replacement call later
-            let data = std::fs::read(drive_path)?;
-            let archive_key = build_session_write_key(
+            let data_len = std::fs::metadata(drive_path.clone())?.len();
+            let archive_key = build_session_replace_key(
                 machine_id.clone(),
                 time,
                 address,
-                data.clone(),
+                drive_path.clone(),
             );
 
-            let mut position = cartesi_machine::WriteMemoryRequest::new();
-            position.set_address(address);
-            position.set_data(data);
+            let mut mrc = cartesi_machine::MemoryRangeConfig::new();
+            
+            mrc.set_start(address);
+            mrc.set_length(1 << (drive.log2_size.as_u64() as u32));
+            mrc.set_image_filename(drive_path.clone());
+            mrc.set_shared(false);
 
-            let request = SessionWriteMemoryRequest {
+            let request = SessionReplaceMemoryRangeRequest {
                 session_id: machine_id.clone(),
                 time: time,
-                position: position,
+                range: mrc,
             };
 
             let _ = archive.get_response(
                 EMULATOR_SERVICE_NAME.to_string(),
                 archive_key,
-                EMULATOR_METHOD_WRITE.to_string(),
+                EMULATOR_METHOD_REPLACE.to_string(),
                 request.into(),
             )?;
         }
@@ -1058,6 +1062,7 @@ fn get_ipfs_drive(
                 }
                 GetFileResponseOneOf::GetResult(r) => {
                     if r.root_hash != root_hash {
+                        info!("Root hash mismatch");
                         Err(invalid_error)
                     } else {
                         Ok(r.output_path)
