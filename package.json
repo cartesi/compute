@@ -1,6 +1,6 @@
 {
     "name": "@cartesi/compute-sdk",
-    "version": "1.3.0",
+    "version": "1.3.4",
     "description": "Cartesi Compute SDK",
     "scripts": {
         "build": "hardhat compile && tsc",
@@ -19,6 +19,7 @@
         "deploy:matic_testnet": "hardhat deploy --network matic_testnet --export export/abi/matic_testnet.json",
         "deploy:bsc_testnet": "hardhat deploy --network bsc_testnet --export export/abi/bsc_testnet.json",
         "deploy:avax_testnet": "hardhat deploy --network avax_testnet --export export/abi/avax_testnet.json",
+        "prepack": "run-s deploy:testnet",
         "start": "hardhat node"
     },
     "scripts-info": {
