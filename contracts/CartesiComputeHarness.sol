@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "./CartesiComputeInterface.sol";
 
-contract CartesiComputeHarnass is Ownable, Pausable {
+contract CartesiComputeHarness is Ownable, Pausable {
     CartesiComputeInterface cc;
 
     constructor(address _cartesiCompute) {
