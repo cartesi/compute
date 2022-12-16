@@ -1,6 +1,6 @@
 {
     "name": "@cartesi/compute-sdk",
-    "version": "1.3.4",
+    "version": "1.3.5",
     "description": "Cartesi Compute SDK",
     "scripts": {
         "build": "hardhat compile && tsc",
@@ -12,7 +12,7 @@
         "test:integration": "./test/integration/run.sh",
         "clean": "rimraf artifacts && rimraf cache && rimraf deployments/localhost && rimraf deployments/coverage && rimraf src/types/* && rimraf dist",
         "deploy": "run-s deploy:development",
-        "deploy:testnet": "run-s deploy:rinkeby deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet deploy:avax_testnet",
+        "deploy:testnet": "run-s deploy:kovan deploy:goerli deploy:matic_testnet deploy:bsc_testnet deploy:avax_testnet",
         "deploy:development": "hardhat deploy --network localhost --export export/abi/localhost.json",
         "deploy:kovan": "hardhat deploy --network kovan --export export/abi/kovan.json",
         "deploy:goerli": "hardhat deploy --network goerli --export export/abi/goerli.json",

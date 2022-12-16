@@ -156,7 +156,7 @@ describe("Cartesi Compute tests", () => {
         ethers.constants.HashZero,
         [ethers.constants.HashZero]
       );
-      await expect(tx).to.be.revertedWith("The sender is not Claimer at this instance");
+      await expect(tx).to.be.revertedWith("Sender !Claimer at this instance");
 
       tx = cartesi_compute
         .connect(claimer)
@@ -192,7 +192,7 @@ describe("Cartesi Compute tests", () => {
         [ethers.constants.HashZero]
       );
       await expect(tx).to.be.revertedWith(
-        "Output is not contained in the final hash"
+        "Output ! contained in final hash"
       );
 
       tx = cartesi_compute
@@ -247,7 +247,7 @@ describe("Cartesi Compute tests", () => {
     it("Should abortByDeadline correctly", async () => {
       let tx = cartesi_compute.abortByDeadline(0);
       await expect(tx).to.be.revertedWith(
-        "Deadline is not over for this specific state"
+        ""
       );
 
       const revertSnapshot = await takeSnapshot();
@@ -281,7 +281,7 @@ describe("Cartesi Compute tests", () => {
 
     it("Should challenge", async () => {
       let tx = cartesi_compute.challenge(0);
-      await expect(tx).to.be.revertedWith("The sender is not party to this instance");
+      await expect(tx).to.be.revertedWith("Sender !party to this instance");
 
       await mockVG.mock.instantiate.returns(123);
       tx = cartesi_compute.connect(challenger).challenge(0);
@@ -300,7 +300,7 @@ describe("Cartesi Compute tests", () => {
       const getMaxInstanceDuration = 222;
       await mockVG.mock.getMaxInstanceDuration.returns(getMaxInstanceDuration);
       const tx3 = await cartesi_compute.getState(0, claimerAddress);
-      expect(tx3).to.have.length(6);
+      expect(tx3).to.have.length(7);
       expect(tx3[0]).to.have.length(4);
       expect(tx3[0][1]).to.be.equal(lastMoveTS + getMaxInstanceDuration + roundDuration);
       expect(tx3[5]).to.have.deep.property("isParty", true);
@@ -377,7 +377,7 @@ describe("Cartesi Compute tests", () => {
       );
 
       const tx6 = await cartesi_compute.getState(0, mainSignerAddress);
-      expect(tx6).to.have.length(6);
+      expect(tx6).to.have.length(7);
       expect(tx6[0][1]).to.equal(lastMoveTS + 0);
 
       await revertSnapshot();
@@ -386,7 +386,7 @@ describe("Cartesi Compute tests", () => {
       await mockVG.mock.stateIsFinishedChallengerWon.returns(false);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
       await expect(cartesi_compute.winByVG(0)).to.be.revertedWith(
-        "State of VG is not final"
+        "State of VG ! final"
       );
     });
   });
@@ -466,16 +466,16 @@ describe("Cartesi Compute tests", () => {
 
     it("Should fail to revealLoggerDrive", async () => {
       let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
-      await expect(tx).to.be.revertedWith("The state is not WaitingReveals");
+      await expect(tx).to.be.revertedWith("The state ! WaitingReveals");
     });
 
     it("Should provide(Direct/Logger)Drive correctly", async () => {
       let data = "0x" + "12".repeat(10);
       let tx = cartesi_compute.provideDirectDrive(cartesi_computeIdx, data);
-      await expect(tx).to.be.revertedWith("The sender is not provider");
+      await expect(tx).to.be.revertedWith("Sender != provider");
       tx = cartesi_compute.connect(claimer).provideDirectDrive(cartesi_computeIdx, data);
       await expect(tx).to.be.revertedWith(
-        "Input bytes length exceeds the claimed log2 size"
+        "Input bytes length exceeds claimed log2 size"
       );
 
       data = "0x" + "12".repeat(7);
@@ -531,7 +531,7 @@ describe("Cartesi Compute tests", () => {
       await mockLogger.mock.isLogAvailable.returns(false);
       let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
-        "Hash is not available on logger yet"
+        "Hash ! available on logger yet"
       );
 
       await mockLogger.mock.isLogAvailable.returns(true);
@@ -541,7 +541,7 @@ describe("Cartesi Compute tests", () => {
       await mockLogger.mock.isLogAvailable.returns(true);
       tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
-        "The state is not WaitingReveals"
+        "The state ! WaitingReveals"
       );
     });
 
