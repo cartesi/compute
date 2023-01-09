@@ -20,7 +20,7 @@ fi
 . $FULL_PATH/src/build-flash-drive.sh $CARTESI_COMPUTE_DIR
 
 # Add the drive to IPFS
-. $FULL_PATH/src/ipfs-add-infura.sh
+. $FULL_PATH/src/ipfs-add-kubo.sh
 
 # Sets provider to address 0 (if IPFS fails there will be no Logger fallback)
 export PROVIDER=0x0000000000000000000000000000000000000000

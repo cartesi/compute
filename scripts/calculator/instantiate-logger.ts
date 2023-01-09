@@ -37,7 +37,7 @@ async function main() {
     // submits data to the logger
     const dataUint8Array = ethers.utils.toUtf8Bytes(data);
     // TEMP: always using "2^71 + 36^12" in hex form for testing
-    const txLogger = await logger.calculateMerkleRootFromData(5, [
+    const txLogger = await logger.calculateMerkleRootFromData(12, [
         "0x325E3731202B2033",
         "0x365E313200000000",
     ]);
@@ -59,7 +59,7 @@ async function main() {
     }
     const input = {
         position: "0x9000000000000000",
-        driveLog2Size: 5,
+        driveLog2Size: 12,
         directValue: ethers.utils.formatBytes32String(""),
         loggerIpfsPath: ethers.utils.formatBytes32String(""),
         loggerRootHash: logRoot,
@@ -73,7 +73,7 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0x838e3ee2307ceda86e8c9275bcb57378de61d785e5fc6e377dacf00f389c3adb",
+        "0x5e8c88016207474dc93b265c3ed220eb0f1886ea48533836f18d4c0e177e829b",
         // output position
         "0xa000000000000000",
         // output log2 size
@@ -81,7 +81,8 @@ async function main() {
         // round duration
         config.roundDuration,
         [alice, bob],
-        [input]
+        [input],
+        false
     );
 
     // retrieves created computation's index

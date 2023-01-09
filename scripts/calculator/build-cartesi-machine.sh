@@ -3,7 +3,7 @@
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_cartesi_machine
-MACHINE_MANAGER_IMAGE=cartesicorp/machine-manager:0.6.0-rc1
+MACHINE_MANAGER_IMAGE=cartesicorp/machine-manager:zippie2
 MACHINE_IMAGES_DIR=./images
 CONTAINER_NAME=cartesi-machine-builder
 
@@ -55,3 +55,4 @@ MACHINE_TEMPLATE_HASH=$(docker run --rm \
 
 # moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
 mv $MACHINE_TEMP_DIR $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
+ls -alR $MACHINES_DIR

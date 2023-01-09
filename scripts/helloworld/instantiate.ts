@@ -34,7 +34,7 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0x484fb5b99904e19471b8e4218ff2cd4dbf2d74fca2fbc14ebac8c14b2632a1fe",
+        "0x02a51f8e39e399ab3aa4a4f808e42076d04b77f27a6f10338946e54539985163",
         // output position
         "0x9000000000000000",
         // output log2 size
@@ -42,7 +42,8 @@ async function main() {
         // round duration
         config.roundDuration,
         peers,
-        []
+        [],
+        false
     );
 
     // retrieves created computation's index

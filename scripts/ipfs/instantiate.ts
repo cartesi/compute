@@ -55,6 +55,7 @@ async function main() {
         waitsProvider: false,
         needsLogger: true,
         provider: provider,
+        downloadAsCAR: false,
     };
 
     console.log("");
@@ -72,7 +73,8 @@ async function main() {
         // round duration
         config.roundDuration,
         peers,
-        [aDrive]
+        [aDrive],
+        false
     );
 
     // retrieves created computation's index

@@ -18,8 +18,11 @@ wait-for-url() {
     echo "OK!"
 }
 
-jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - up --build --no-color &
+jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - up --build --no-color 2>&1 | tee logs.txt &
+
 wait-for-url http://localhost:8545
+
+docker image ls
 
 # downloading cartesi machine binaries
 ./scripts/download-images.sh ./images
@@ -29,7 +32,7 @@ echo "Executing helloworld test"
 ./scripts/helloworld/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
 
-# # testing Calculator
+# testing Calculator
 echo "Executing calculator test"
 ./scripts/calculator/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
@@ -42,19 +45,26 @@ export PROVIDER=0x0000000000000000000000000000000000000000
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 unset PROVIDER
 
-# echo "Executing calculator test with provider"
+#echo "Executing calculator test with provider"
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
- ./scripts/ipfs/run.sh
- ./scripts/ipfs/run-large-1M.sh
- ./scripts/ipfs/run-logger-fallback.sh
- ./scripts/ipfs/run-no-provider.sh
+echo "Testing IPFS"
+./scripts/ipfs/run.sh
+echo "Testing IPFS large 1m"
+./scripts/ipfs/run-large-1M.sh
+echo "Testing IPFS logger fallback"
+./scripts/ipfs/run-logger-fallback.sh
+echo "Testing direct IPFS node injection"
+./scripts/ipfs/run-no-provider.sh
 
 # waiting for resuls
+echo "Waiting for results"
 npx hardhat run --network localhost --no-compile ./test/integration/wait-results.ts
 exitStatus=$?
 
-jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml | docker-compose -f - down -v
+echo "Done, turning off container"
+
+jinja2 -D num_players=2 -D image=$DOCKERIMAGE docker-compose-template.yml < /dev/null | docker-compose -f - down -v
 
 exit $exitStatus

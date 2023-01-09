@@ -48,7 +48,7 @@ services:
       - "3001:3001"
 
   logger_0:
-    image: cartesi/logger-server:0.7.4
+    image: cartesi/logger-server:develop
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
@@ -65,7 +65,7 @@ services:
           - logger
 
   ipfs_0:
-    image: cartesi/ipfs-server:0.2.0
+    image: cartesi/ipfs-server:develop
     volumes:
       - ./dapp_data_0:/opt/cartesi/srv/cartesi_compute
     networks:
@@ -77,7 +77,7 @@ services:
         - "50051:50051"
 
   machine_manager_0:
-    image: cartesicorp/machine-manager:0.6.0-rc1
+    image: cartesicorp/machine-manager:develop
     volumes:
       - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
       - ./dapp_data_0/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
@@ -118,7 +118,7 @@ services:
       - "3002:3001"
 
   logger_1:
-    image: cartesi/logger-server:0.7.4
+    image: cartesi/logger-server:develop
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
@@ -135,7 +135,7 @@ services:
           - logger
 
   ipfs_1:
-    image: cartesi/ipfs-server:0.2.0
+    image: cartesi/ipfs-server:develop
     volumes:
       - ./dapp_data_1:/opt/cartesi/srv/cartesi_compute
     networks:
@@ -147,7 +147,7 @@ services:
         - "50052:50051"
 
   machine_manager_1:
-    image: cartesicorp/machine-manager:0.6.0-rc1
+    image: cartesicorp/machine-manager:develop
     volumes:
       - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
       - ./dapp_data_1/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
@@ -188,7 +188,7 @@ services:
       - "3003:3001"
 
   logger_2:
-    image: cartesi/logger-server:0.7.4
+    image: cartesi/logger-server:develop
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
     volumes:
       - ./:/opt/cartesi/share/blockchain:ro
@@ -205,7 +205,7 @@ services:
           - logger
 
   ipfs_2:
-    image: cartesi/ipfs-server:0.2.0
+    image: cartesi/ipfs-server:develop
     volumes:
       - ./dapp_data_2:/opt/cartesi/srv/cartesi_compute
     networks:
@@ -217,7 +217,7 @@ services:
         - "50053:50051"
 
   machine_manager_2:
-    image: cartesicorp/machine-manager:0.6.0-rc1
+    image: cartesicorp/machine-manager:develop
     command: ["./bin/machine-manager", "-a", "0.0.0.0", "-d"]
     volumes:
       - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine

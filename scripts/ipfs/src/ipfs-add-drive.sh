@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # general definitions
-CARTESI_IPFS_DOCKER=cartesi/ipfs-server:0.2.0
+CARTESI_IPFS_DOCKER=cartesicorp/ipfs-server:0.2.0
 IPFS_COMPOSE_NETWORK=ipfs
 IPFS_SERVICE_ADDRESS="ipfs_0:50051"  # 0 is alice
 INPUT_DRIVE_FILENAME=$LOGGER_ROOT_HASH
@@ -23,6 +23,7 @@ output=${output#*\ipfs_path:\"}
 
 # IPFS path is retrieved by selecting the next 52 characters: "/ipfs/<46-char-hash>"
 IPFS_PATH=${output:0:52}
+IPFS_PATH=$(echo -n $IPFS_PATH | sed 's/\"}//g')
 echo "New IPFS Path: $IPFS_PATH"
 
 export IPFS_PATH

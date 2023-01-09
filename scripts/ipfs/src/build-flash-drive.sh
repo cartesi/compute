@@ -16,7 +16,8 @@ if [ $2 ]; then
   FLASHDRIVE_PATH=$2
 fi
 
-echo -e -n "#!/usr/bin/lua\nprint(math.sin(1))" > input_drive
+RANDOM=$(date +%s%N)
+echo -e -n "#!/usr/bin/lua\nprint(math.sin($RANDOM))" > input_drive
 
 size=$(echo "2^$DRIVE_LOG2_SIZE" | bc)
 truncate -s $size input_drive

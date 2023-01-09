@@ -5,6 +5,11 @@
 {% import "config/"~network~".j2" as config %}
 
 version: '3'
+{% if network == "localhost" %}
+secrets:
+  ipfs_swarm_key:
+    file: swarm.key
+{% endif %}
 services:
 {% if network == "localhost" %}
   hardhatnet:
@@ -18,14 +23,14 @@ services:
     ports:
       - {{ config.port() }}:{{ config.port() }}
     volumes:
-      - ./:/opt/cartesi/share/blockchain
+      - ./deployments/:/opt/cartesi/share/blockchain/deployments
     networks:
       - ethereum
 {% endif %}
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: {{ image |default("cartesi/cartesi_compute:local", true) }}
+    image: {{ image |default("cartesicorp/descartes:zippie", true) }}
     restart: always
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
@@ -57,11 +62,11 @@ services:
         
         aliases:
           - dispatcher
-    ports:
-      - "{{ 3001 + i }}:3001"
+    #ports:
+    #  - "{{ 3001 + i }}:3001"
 
   logger_{{ i }}:
-    image: cartesi/logger-server:0.7.4
+    image: cartesicorp/logger-server:zippie3
 {% if network == "localhost" %}
     command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
 {% else %}    
@@ -85,7 +90,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: cartesi/ipfs-server:0.2.0
+    image: cartesicorp/ipfs-server:develop
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/cartesi_compute
     networks:
@@ -93,14 +98,43 @@ services:
       node_{{ i }}:
         aliases:
           - ipfs
-    ports:
-        - "{{ 50051 + i }}:50051"
+    #ports:
+    #    - "{{ 50051 + i }}:50051"
+    command: ["-g", "http://kubo_{{ i }}:5001"]
+
+  kubo_{{ i }}:
+    image: ipfs/kubo:v0.14.0
+    command:
+      [
+        "daemon",
+        "--migrate=true",
+        "--enable-pubsub-experiment",
+        "--enable-gc",
+        "--routing=dhtclient"
+      ]
+{% if network == "localhost" %}
+    secrets:
+      - ipfs_swarm_key
+{% endif %}
+    environment:
+{% if network == "localhost" %}
+      IPFS_SWARM_KEY_FILE: /run/secrets/ipfs_swarm_key
+{% else %}
+      IPFS_PROFILE: "server"
+{% endif %}
+    networks:
+      ipfs:
+        aliases:
+          - kubo
+
 
   machine_manager_{{ i }}:
-    image: cartesicorp/machine-manager:rust
+    image: cartesicorp/machine-manager:zippie2
     volumes:
       - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
+    command: [ "./bin/machine-manager", "--address", "0.0.0.0", "--port", "50051","--port-checkin","50052"]
+
     environment:
       RUST_LOG: debug,machine_manager_server=debug,h2::codec=debug
     networks:

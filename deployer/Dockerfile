@@ -16,7 +16,7 @@ RUN apk add --no-cache \
 
 ENV BASE /opt/cartesi
 
-WORKDIR $BASE/deployer
+WORKDIR $BASE/share/blockchain
 COPY yarn.lock .
 COPY package.json .
 COPY hardhat.config.ts .

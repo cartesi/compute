@@ -20,7 +20,7 @@ fi
 . $FULL_PATH/src/build-flash-drive.sh $CARTESI_COMPUTE_DIR
 
 # Add the drive to IPFS
-. $FULL_PATH/src/ipfs-add-infura.sh
+. $FULL_PATH/src/ipfs-add-drive.sh
 
 # Instantiate cartesi compute and start the process
 npx hardhat run $FULL_PATH/instantiate.ts --no-compile --network localhost

@@ -27,7 +27,7 @@ async function main() {
     const peers = [alice, bob, charlie, dave].slice(0, num_peers);
 
     // retrieves Cartesi Compute deployed contract
-    const cartesi_compute = await ethers.getContract("CartesisCompute");
+    const cartesi_compute = await ethers.getContract("CartesiCompute");
 
     let data = "2^71 + 36^12";
     if (process.env.data) {
@@ -41,7 +41,7 @@ async function main() {
     // defines input drive
     const input = {
         position: "0x9000000000000000",
-        driveLog2Size: 5,
+        driveLog2Size: 12,
         directValue: ethers.utils.toUtf8Bytes(data),
         loggerIpfsPath: ethers.utils.formatBytes32String(""),
         loggerRootHash: ethers.utils.formatBytes32String(""),
@@ -55,7 +55,7 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0x838e3ee2307ceda86e8c9275bcb57378de61d785e5fc6e377dacf00f389c3adb",
+        "0x5e8c88016207474dc93b265c3ed220eb0f1886ea48533836f18d4c0e177e829b",
         // output position
         "0xa000000000000000",
         // output log2 size
@@ -63,7 +63,8 @@ async function main() {
         // round duration
         config.roundDuration,
         peers,
-        [input]
+        [input],
+        false
     );
 
     // retrieves created computation's index
