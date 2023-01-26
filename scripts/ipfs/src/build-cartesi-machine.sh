@@ -3,7 +3,7 @@
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_cartesi_machine
-MACHINE_MANAGER_IMAGE=cartesicorp/machine-manager:zippie2
+MACHINE_MANAGER_IMAGE=cartesi/machine-manager:0.6.0-rc3
 MACHINE_IMAGES_DIR=./images
 CONTAINER_NAME=cartesi-machine-builder
 

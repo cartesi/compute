@@ -90,7 +90,7 @@ services:
           - logger
 
   ipfs_{{ i }}:
-    image: cartesicorp/ipfs-server:develop
+    image: cartesi/ipfs-server:0.3.0
     volumes:
       - ./dapp_data_{{ i }}:/opt/cartesi/srv/cartesi_compute
     networks:
@@ -129,7 +129,7 @@ services:
 
 
   machine_manager_{{ i }}:
-    image: cartesicorp/machine-manager:zippie2
+    image: cartesi/machine-manager:0.6.0-rc3
     volumes:
       - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive

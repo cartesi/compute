@@ -3,7 +3,7 @@
 # general definitions
 FLASHDRIVE_BASE_DIR=.
 FLASHDRIVE_PATH=dapp_data_0/flashdrive
-CARTESI_IPFS_DOCKER=cartesi/ipfs-server:0.2.0
+CARTESI_IPFS_DOCKER=cartesi/ipfs-server:0.3.0
 
 
 # set flashdrive base directory to specified path if provided

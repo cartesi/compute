@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # general definitions
-CARTESI_IPFS_DOCKER=cartesicorp/ipfs-server:0.2.0
+CARTESI_IPFS_DOCKER=cartesi/ipfs-server:0.3.0
 IPFS_COMPOSE_NETWORK=ipfs
 IPFS_SERVICE_ADDRESS="ipfs_0:50051"  # 0 is alice
 INPUT_DRIVE_FILENAME=$LOGGER_ROOT_HASH
