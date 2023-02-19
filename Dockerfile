@@ -68,7 +68,7 @@ COPY --from=build /usr/local/cargo/bin/wagyu /usr/local/bin
 
 # Copy dispatcher scripts
 COPY ./dispatcher-entrypoint.sh $BASE/bin/
-COPY ./config-template.yaml $BASE/etc/cartesi_compute/
+COPY ./config-template.yaml $BASE/etc/compute/
 RUN mkdir -p $BASE/srv/cartesi_compute
 
 # Copy deployments info
