@@ -53,6 +53,8 @@ echo "Testing IPFS"
 ./scripts/ipfs/run.sh
 echo "Testing IPFS large 1m"
 ./scripts/ipfs/run-large-1M.sh
+echo "Testing IPFS large 8m"
+./scripts/ipfs/run-large-8M.sh
 echo "Testing IPFS logger fallback"
 ./scripts/ipfs/run-logger-fallback.sh
 echo "Testing direct IPFS node injection"
