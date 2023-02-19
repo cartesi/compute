@@ -689,7 +689,7 @@ fn react_by_machine_output(
     // create machine and fill in all the drives
     let mut machine = cartesi_machine::MachineRequest::new();
     machine.set_directory(format!(
-        "/opt/cartesi/srv/cartesi_compute/cartesi-machine/{:x}",
+        "/opt/cartesi/srv/compute/cartesi-machine/{:x}",
         template_hash
     ));
 
@@ -1030,7 +1030,7 @@ fn get_ipfs_drive(
         ipfs_path,
         log2_size,
         output_path: format!(
-            "/opt/cartesi/srv/cartesi_compute/flashdrive/{:x}",
+            "/opt/cartesi/srv/compute/flashdrive/{:x}",
             root_hash
         ),
         // TODO: come up with better timeout

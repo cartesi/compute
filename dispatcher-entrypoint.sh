@@ -47,9 +47,9 @@ if [ -z "${CONCERN_SEMAPHORE}" ] && [ -z "${MNEMONIC}" && [ -z "${ACCOUNT_ADDRES
     export ACCOUNT_ADDRESS=$(curl -X POST --data '{"jsonrpc":"2.0","method":"eth_accounts","params":[],"id":1}' http://${ETHEREUM_HOST}:${ETHEREUM_PORT} | jq -r '.result[0]')
 fi
 
-echo "Creating configuration file at /opt/cartesi/etc/cartesi_compute/config.yaml with account ${ACCOUNT_ADDRESS}"
-envsubst < /opt/cartesi/etc/cartesi_compute/config-template.yaml > /opt/cartesi/etc/cartesi_compute/config.yaml
-cat /opt/cartesi/etc/cartesi_compute/config.yaml
+echo "Creating configuration file at /opt/cartesi/etc/compute/config.yaml with account ${ACCOUNT_ADDRESS}"
+envsubst < /opt/cartesi/etc/compute/config-template.yaml > /opt/cartesi/etc/compute/config.yaml
+cat /opt/cartesi/etc/compute/config.yaml
 
 echo "Starting dispatcher"
-/opt/cartesi/bin/cartesi_compute --config_path /opt/cartesi/etc/cartesi_compute/config.yaml --working_path /opt/cartesi/srv/cartesi_compute
+/opt/cartesi/bin/cartesi_compute --config_path /opt/cartesi/etc/compute/config.yaml --working_path /opt/cartesi/srv/compute

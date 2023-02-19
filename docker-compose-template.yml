@@ -55,7 +55,7 @@ services:
       # remove deployments mapping to use supported testnets' deployment info
       - ./deployments:/opt/cartesi/share/blockchain/deployments:ro
 {% endif %}    
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/compute/flashdrive
     networks:
       ethereum: {}
       node_{{ i }}:
@@ -68,16 +68,16 @@ services:
   logger_{{ i }}:
     image: cartesi/logger-server:0.8.0
 {% if network == "localhost" %}
-    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/deployments/localhost/Logger.json", "-d", "/opt/cartesi/srv/compute/flashdrive"]
 {% else %}    
-    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/deployments/{{ network }}/Logger.json", "-d", "/opt/cartesi/srv/cartesi_compute/flashdrive"]
+    command: [ "-c", "/opt/cartesi/share/blockchain/node_modules/@cartesi/logger/deployments/{{ network }}/Logger.json", "-d", "/opt/cartesi/srv/compute/flashdrive"]
 {% endif %}    
     volumes:
 {% if network == "localhost" %}
       # remove deployments mapping to use supported testnets' deployment info
       - ./deployments:/opt/cartesi/share/blockchain/deployments:ro
 {% endif %}    
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/compute/flashdrive
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
@@ -92,7 +92,7 @@ services:
   ipfs_{{ i }}:
     image: cartesi/ipfs-server:0.3.0
     volumes:
-      - ./dapp_data_{{ i }}:/opt/cartesi/srv/cartesi_compute
+      - ./dapp_data_{{ i }}:/opt/cartesi/srv/compute
     networks:
       ipfs: {}
       node_{{ i }}:
@@ -131,8 +131,8 @@ services:
   machine_manager_{{ i }}:
     image: cartesi/machine-manager:0.6.0-rc3
     volumes:
-      - ./machines:/opt/cartesi/srv/cartesi_compute/cartesi-machine
-      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/cartesi_compute/flashdrive
+      - ./machines:/opt/cartesi/srv/compute/cartesi-machine
+      - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/compute/flashdrive
     command: [ "./bin/machine-manager", "--address", "0.0.0.0", "--port", "50051","--port-checkin","50052"]
 
     environment:
