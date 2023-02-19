@@ -156,7 +156,7 @@ describe("Cartesi Compute tests", () => {
         ethers.constants.HashZero,
         [ethers.constants.HashZero]
       );
-      await expect(tx).to.be.revertedWith("Sender !Claimer at this instance");
+      await expect(tx).to.be.revertedWith("Sender must be a claimer");
 
       tx = cartesi_compute
         .connect(claimer)
@@ -192,7 +192,7 @@ describe("Cartesi Compute tests", () => {
         [ethers.constants.HashZero]
       );
       await expect(tx).to.be.revertedWith(
-        "Output ! contained in final hash"
+        "Output not in final hash"
       );
 
       tx = cartesi_compute
@@ -281,7 +281,7 @@ describe("Cartesi Compute tests", () => {
 
     it("Should challenge", async () => {
       let tx = cartesi_compute.challenge(0);
-      await expect(tx).to.be.revertedWith("Sender !party to this instance");
+      await expect(tx).to.be.revertedWith("Sender must be a party");
 
       await mockVG.mock.instantiate.returns(123);
       tx = cartesi_compute.connect(challenger).challenge(0);
@@ -386,7 +386,7 @@ describe("Cartesi Compute tests", () => {
       await mockVG.mock.stateIsFinishedChallengerWon.returns(false);
       await mockVG.mock.stateIsFinishedClaimerWon.returns(false);
       await expect(cartesi_compute.winByVG(0)).to.be.revertedWith(
-        "State of VG ! final"
+        "VG state not final"
       );
     });
   });
@@ -466,7 +466,7 @@ describe("Cartesi Compute tests", () => {
 
     it("Should fail to revealLoggerDrive", async () => {
       let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
-      await expect(tx).to.be.revertedWith("The state ! WaitingReveals");
+      await expect(tx).to.be.revertedWith("State != WaitingReveals");
     });
 
     it("Should provide(Direct/Logger)Drive correctly", async () => {
@@ -531,7 +531,7 @@ describe("Cartesi Compute tests", () => {
       await mockLogger.mock.isLogAvailable.returns(false);
       let tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
-        "Hash ! available on logger yet"
+        "Logger drive not available"
       );
 
       await mockLogger.mock.isLogAvailable.returns(true);
@@ -541,7 +541,7 @@ describe("Cartesi Compute tests", () => {
       await mockLogger.mock.isLogAvailable.returns(true);
       tx = cartesi_compute.revealLoggerDrive(cartesi_computeIdx);
       await expect(tx).to.be.revertedWith(
-        "The state ! WaitingReveals"
+        "State != WaitingReveals"
       );
     });
 
