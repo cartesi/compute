@@ -25,7 +25,7 @@ COPY ./cartesi_compute/Cargo.toml ./
 COPY ./cartesi_compute/Cargo.lock ./
 COPY ./cartesi_compute/src ./src
 
-RUN PATH="$PATH:$HOME/.local/bin" cargo install -j $(nproc) --locked --debug --path .
+RUN PATH="$PATH:$HOME/.local/bin" cargo install -j $(nproc) --locked --path .
 
 
 # Onchain image to retrieve deployment info from NPM dependencies
