@@ -59,4 +59,3 @@ export MACHINE_TEMPLATE_HASH
 rm -rf $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
 # moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
 mv $MACHINE_TEMP_DIR $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
-ls -lR $MACHINES_DIR
