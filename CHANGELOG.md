@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 -   Support for external key server
 -   8mb IPFS file test
 ### Changed
-
+-   Project renamed to Cartesi Compute
 -   Updated arbitration-dlib
 -   Updated machine-solidity-step
 -   Updated logger
