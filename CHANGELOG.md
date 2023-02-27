@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ## [1.3.0] - 2022-02-04
+### Added
 
+-   Opt-in proxy contract with pausable and ownable functionality
+-   Support for external key server
+-   8mb IPFS file test
 ### Changed
 
 -   Updated arbitration-dlib
