@@ -35,7 +35,7 @@ To shutdown:
 % jinja2 -D num_players=2 docker-compose-template.yml | docker-compose -f - down -v
 ```
 
-To run using one of the [supported networks](https://cartesi.io/en/docs/cartesi_compute/supported-networks/), you should:
+To run using one of the [supported networks](https://docs.cartesi.io/compute/supported-networks/), you should:
 - Define a `MNEMONIC` environment variable
 - If using Infura, define a `PROJECT_ID` environment variable
 - Specify the argument `"-D network=<name>"`, where `name` should be one of the following supported networks: `rinkeby`, `kovan`, `goerli`, `matic_testnet`, `bsc_testnet` or `avax_testnet`
