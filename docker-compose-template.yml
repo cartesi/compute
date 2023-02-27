@@ -35,7 +35,7 @@ services:
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
       ACCOUNT_INDEX: "{{ i }}"
-      RUST_LOG: dispatcher=trace,transaction=info,configuration=trace,utils=trace,state=trace,cartesi_compute=trace
+      RUST_LOG: dispatcher=info,transaction=info,configuration=info,utils=info,state=info,cartesi_compute=info
       WEB3_PROVIDER_URI: {{ config.provider() }}
       DEPLOYMENT_SEMAPHORE: {{ config.semaphore() }}
       ETHEREUM_HOST: {{ config.host() }}
