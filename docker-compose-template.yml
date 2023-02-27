@@ -136,7 +136,7 @@ services:
     command: [ "./bin/machine-manager", "--address", "0.0.0.0", "--port", "50051","--port-checkin","50052"]
 
     environment:
-      RUST_LOG: machine_manager_server=debug
+      RUST_LOG: machine_manager_server=info
     networks:
       ethereum: {}
       node_{{ i }}:
