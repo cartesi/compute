@@ -30,7 +30,7 @@ services:
   
 {% for i in range(players) %}
   dispatcher_{{ i }}:
-    image: {{ image |default("cartesicorp/compute:local", true) }}
+    image: {{ image |default("cartesi/compute:local", true) }}
     restart: always
     environment:
       MNEMONIC: "{{ config.mnemonic() }}"
