@@ -55,4 +55,3 @@ MACHINE_TEMPLATE_HASH=$(docker run --rm \
 # moves stored machine to a folder within $MACHINES_DIR named after the machine's hash
 mv $MACHINE_TEMP_DIR $MACHINES_DIR/$MACHINE_TEMPLATE_HASH
 
-ls -alR $MACHINES_DIR
