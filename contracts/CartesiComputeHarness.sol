@@ -199,6 +199,10 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Pausable.sol";
 import "./CartesiComputeInterface.sol";
 
+// This harness contract sits in between a dapp and the factual Cartesi Compute
+// deployment, to assist in pausing the ability to instantiate new
+// computations, in case of security issues being found by the Cartesi team
+
 contract CartesiComputeHarness is Ownable, Pausable {
     CartesiComputeInterface cc;
 
