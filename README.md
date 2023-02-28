@@ -61,7 +61,8 @@ This will run an environment connected to a private net (ganache or geth), with 
 There are a number of sample computations available within the `scripts` directory. To execute one of these computations on the environment, you need to first store the corresponding machine template in the `machines` directory (as configured in the docker-compose template). As such, for the `helloworld` application, execute the following commands:
 ```
 % cd scripts
-% ./helloworld/build-cartesi-machine.sh ../machines
+% ./download-images
+% ./helloworld/build-cartesi-machine.sh ../images ../machines
 ```
 
 Then, instantiate the computation using `hardhat`:
