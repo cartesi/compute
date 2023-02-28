@@ -7,18 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.3.0] - 2022-02-04
+## [1.3.0] - 2023-02-27
+
 ### Added
 
 -   Opt-in proxy contract with pausable and ownable functionality
 -   Support for external key server
 -   8mb IPFS file test
+
 ### Changed
 -   Project renamed to Cartesi Compute
+-   Updated Rust to 1.57
 -   Updated arbitration-dlib
 -   Updated machine-solidity-step
 -   Updated logger
--   Updated machine-manager image
+-   Updated machine-manager image to support 2023 Cartesi Machine
+-   Use replacing memory range facility to insert IPFS drives
+-   Resolve some race conditions in the integration tests
+-   Use exact memory range log2 sizes in samples (requirement with new Cartesi Machine
+-   Use kubo (previously go-ipfs) as a dedicated IPFS node & use ipfs-server that speaks to this over HTTP API
+-   Use a private IPFS swarm for localhost tests
 
 ## [1.2.2] - 2021-09-29
 
