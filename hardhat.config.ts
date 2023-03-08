@@ -47,8 +47,6 @@ const config: HardhatUserConfig = {
             gas: 0xfffffffffff, // <-- Use this high gas value
             gasPrice: 0x01, // <-- Use this low gas price
         },
-        rinkeby: infuraNetwork("rinkeby", 4, 6283185),
-        kovan: infuraNetwork("kovan", 42, 6283185),
         goerli: infuraNetwork("goerli", 5, 6283185),
         matic_testnet: infuraNetwork("polygon-mumbai", 80001),
         bsc_testnet: {
@@ -98,18 +96,6 @@ const config: HardhatUserConfig = {
             },
         ],
         deployments: {
-            rinkeby: [
-                "node_modules/@cartesi/util/deployments/rinkeby",
-                "node_modules/@cartesi/arbitration/deployments/rinkeby",
-                "node_modules/@cartesi/logger/deployments/rinkeby",
-                "node_modules/@cartesi/machine-solidity-step/deployments/rinkeby",
-            ],
-            kovan: [
-                "node_modules/@cartesi/util/deployments/kovan",
-                "node_modules/@cartesi/arbitration/deployments/kovan",
-                "node_modules/@cartesi/logger/deployments/kovan",
-                "node_modules/@cartesi/machine-solidity-step/deployments/kovan",
-            ],
             goerli: [
                 "node_modules/@cartesi/util/deployments/goerli",
                 "node_modules/@cartesi/arbitration/deployments/goerli",

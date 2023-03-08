@@ -38,7 +38,7 @@ To shutdown:
 To run using one of the [supported networks](https://docs.cartesi.io/compute/supported-networks/), you should:
 - Define a `MNEMONIC` environment variable
 - If using Infura, define a `PROJECT_ID` environment variable
-- Specify the argument `"-D network=<name>"`, where `name` should be one of the following supported networks: `rinkeby`, `kovan`, `goerli`, `matic_testnet`, `bsc_testnet` or `avax_testnet`
+- Specify the argument `"-D network=<name>"`, where `name` should be one of the following supported networks: `goerli`, `matic_testnet`, `bsc_testnet` or `avax_testnet`
 
 For instance, for using the Goerli testnet using Infura, run:
 ```
