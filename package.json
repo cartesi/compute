@@ -1,6 +1,6 @@
 {
     "name": "@cartesi/compute-sdk",
-    "version": "1.3.5",
+    "version": "1.3.0",
     "description": "Cartesi Compute SDK",
     "scripts": {
         "build": "hardhat compile && tsc",
