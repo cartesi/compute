@@ -23,8 +23,8 @@ if [ -z "${KEY_SERVER_HOST}" ]; then
         export ACCOUNT_ADDRESS=$(wagyu ethereum import-hd --mnemonic "${MNEMONIC}" --derivation "m/44'/60'/0'/0/${ACCOUNT_INDEX}" --json | jq -r '.[0].address')
     fi
 else
-    export CARTESI_CONCERN_KEY=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=descartes&type=secp256k1" | jq -r .info.privateKey)
-    export ACCOUNT_ADDRESS=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=descartes&type=secp256k1" | jq -r .info.address)
+    export CARTESI_CONCERN_KEY=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=compute&type=secp256k1" | jq -r .info.privateKey)
+    export ACCOUNT_ADDRESS=$(curl -s "http://${KEY_SERVER_HOST}:4000/get-key-info?id=compute&type=secp256k1" | jq -r .info.address)
 fi
 
 # wait for deployment if env is set

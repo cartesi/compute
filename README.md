@@ -14,11 +14,11 @@
 
 Make sure to include the submodules:
 ```
-git clone --recurse-submodules ssh://github.com/cartesi/descartes.git
+git clone --recurse-submodules ssh://github.com/cartesi/compute.git
 ```
 or using the http address:
 ```
-git clone --recurse-submodules https://github.com/cartesi/descartes.git
+git clone --recurse-submodules https://github.com/cartesi/compute.git
 ```
 
 ### Running

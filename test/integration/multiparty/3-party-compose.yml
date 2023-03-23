@@ -18,7 +18,7 @@ services:
   
 
   dispatcher_0:
-    image: cartesi/descartes:local
+    image: cartesi/compute:local
     restart: always
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
@@ -88,7 +88,7 @@ services:
           - machine-manager
 
   dispatcher_1:
-    image: cartesi/descartes:local
+    image: cartesi/compute:local
     restart: always
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"
@@ -158,7 +158,7 @@ services:
           - machine-manager
 
   dispatcher_2:
-    image: cartesi/descartes:local
+    image: cartesi/compute:local
     restart: always
     environment:
       MNEMONIC: "donor rather all fix tongue poverty camera oxygen have length thumb beach"

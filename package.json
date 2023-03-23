@@ -38,7 +38,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/cartesi/descartes.git"
+        "url": "git+https://github.com/cartesi/compute.git"
     },
     "keywords": [
         "cartesi"
@@ -48,9 +48,9 @@
     "main": "./dist/src/types/index.js",
     "types": "./dist/src/types/index.d.ts",
     "bugs": {
-        "url": "https://github.com/cartesi/descartes/issues"
+        "url": "https://github.com/cartesi/compute/issues"
     },
-    "homepage": "https://github.com/cartesi/descartes#readme",
+    "homepage": "https://github.com/cartesi/compute#readme",
     "dependencies": {
         "@cartesi/arbitration": "^0.7.0-rc2",
         "@cartesi/logger": "^0.7.4",
