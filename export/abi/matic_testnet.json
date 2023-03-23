@@ -3,7 +3,7 @@
   "chainId": "80001",
   "contracts": {
     "CartesiCompute": {
-      "address": "0xC137b4c2a6019C8c4Af2615219a59A0Bd1afD5DA",
+      "address": "0xF76e67f8b90AC7B0D03BeA04fF9429D7016BE936",
       "abi": [
         {
           "inputs": [
@@ -25,6 +25,38 @@
           ],
           "stateMutability": "nonpayable",
           "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            }
+          ],
+          "name": "CartesiComputeCreated",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_index",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "_state",
+              "type": "bytes32"
+            }
+          ],
+          "name": "CartesiComputeFinished",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -85,38 +117,6 @@
               "internalType": "uint256",
               "name": "_index",
               "type": "uint256"
-            }
-          ],
-          "name": "CartesiComputeCreated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "bytes32",
-              "name": "_state",
-              "type": "bytes32"
-            }
-          ],
-          "name": "CartesiComputeFinished",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "_index",
-              "type": "uint256"
             },
             {
               "components": [
@@ -158,6 +158,11 @@
                 {
                   "internalType": "bool",
                   "name": "needsLogger",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "downloadAsCAR",
                   "type": "bool"
                 }
               ],
@@ -430,6 +435,11 @@
                   "internalType": "bool",
                   "name": "needsLogger",
                   "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "downloadAsCAR",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct CartesiComputeInterface.Drive[]",
@@ -462,6 +472,11 @@
               "internalType": "struct CartesiComputeInterface.Party",
               "name": "user",
               "type": "tuple"
+            },
+            {
+              "internalType": "bool",
+              "name": "noChallengeDrive",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -569,11 +584,21 @@
                   "internalType": "bool",
                   "name": "needsLogger",
                   "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "downloadAsCAR",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct CartesiComputeInterface.Drive[]",
               "name": "_inputDrives",
               "type": "tuple[]"
+            },
+            {
+              "internalType": "bool",
+              "name": "_noChallengeDrive",
+              "type": "bool"
             }
           ],
           "name": "instantiate",
@@ -4928,23 +4953,23 @@
       ]
     },
     "ArithmeticImmediateInstructions": {
-      "address": "0xbF0b2b6b549A5E7b8675007eB7428a4a5b74B4C7",
+      "address": "0x998d972B0c886639505328aB9E407F1A0A8bbC33",
       "abi": []
     },
     "ArithmeticInstructions": {
-      "address": "0xBab7212529959019D32Fd1483b1B395c94aE7102",
+      "address": "0x7DFD05d6A19012236bAaeEe75F9e6005E6A64A42",
       "abi": []
     },
     "AtomicInstructions": {
-      "address": "0xfaF200FEa349cb800eb5Cd6691eBBBE1538797dD",
+      "address": "0x3FE29723652b1AA435Ad6534AAEcb4bAc25caCC8",
       "abi": []
     },
     "BranchInstructions": {
-      "address": "0x8565dA0483fAF73d3a12459b57a1a6CF2eCabBE4",
+      "address": "0x36C77EE55D00C25f58e502560Ece0ca9494aF363",
       "abi": []
     },
     "CLINT": {
-      "address": "0x75E1C57EAb29ff136AAEDfF974B3288ba3f16ED6",
+      "address": "0xCD3eFaE1f8CcECb938b8c632b25A7fBab2297d34",
       "abi": [
         {
           "inputs": [],
@@ -4962,23 +4987,23 @@
       ]
     },
     "CSR": {
-      "address": "0x4e09B2d9436e768c914F394cF9f129E3be178A30",
+      "address": "0xC783c229B3BF2138c431Fc35dAA2f0F3D795C799",
       "abi": []
     },
     "CSRExecute": {
-      "address": "0x19A8FB7d7C4D53713327cEb6ba1293d1F364c502",
+      "address": "0x56a6C52AAF8B8f8Cd67BAB18b2bf0a1f0D4F3322",
       "abi": []
     },
     "CSRReads": {
-      "address": "0x0e38b65ad9f28209BF646f876E83afa2038187e3",
+      "address": "0x677572F5Fc0e991285EAA7b1A9466F4B4Fbf75bF",
       "abi": []
     },
     "EnvTrapIntInstructions": {
-      "address": "0x8992D4bE3A1FeAe33520Ec214A6b41356e107e01",
+      "address": "0x355E9F53821D2E9a0Ed91acbbdbbd012D55d75d1",
       "abi": []
     },
     "Exceptions": {
-      "address": "0xaA6eA2fcf257e911510456FA63384ef6Af67f381",
+      "address": "0x30D58DA6e75FAA3F5E408170e9b2599eef0f56E6",
       "abi": [
         {
           "inputs": [],
@@ -5152,19 +5177,45 @@
       ]
     },
     "Execute": {
-      "address": "0x98C9109C6c1a9bA2Ec0fb69D7413825267036B3D",
+      "address": "0xfa315B3E3B9D5Fe150e22c98534A658eBdB944b2",
       "abi": []
     },
     "Fetch": {
-      "address": "0x488ABaBA7eA0273D4779E22724db5bC58E253021",
+      "address": "0xebd366c1ba67aa943f90fb29476E08F12608f3EE",
       "abi": []
     },
     "HTIF": {
-      "address": "0x5Ce4E0f4Ca70DDC4f0B8cc6924077cD8d40fe359",
+      "address": "0x3FB0A99919b80a9E0ADAB11673d0f21845Eeb263",
       "abi": [
         {
           "inputs": [],
           "name": "getHtifFromHostAddr",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getHtifIConsoleAddr",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getHtifIHaltAddr",
           "outputs": [
             {
               "internalType": "uint64",
@@ -5204,7 +5255,7 @@
       ]
     },
     "Interrupts": {
-      "address": "0xa1B9f1827E1db4A2F381d288A2f05328D778E4B6",
+      "address": "0xB934EF6130E70515d63Ec880933b09030337a5a0",
       "abi": [
         {
           "inputs": [
@@ -5228,7 +5279,7 @@
       ]
     },
     "MemoryInteractor": {
-      "address": "0xA3355eAff2feE04FB4E3dE9a90e469784F1dDAFe",
+      "address": "0x6F1265B9c637241FAB063aC308467d26E49E2F88",
       "abi": [
         {
           "inputs": [],
@@ -5331,6 +5382,32 @@
         },
         {
           "inputs": [],
+          "name": "readHtifIConsole",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "readHtifIHalt",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "readHtifIYield",
           "outputs": [
             {
@@ -5384,6 +5461,19 @@
         {
           "inputs": [],
           "name": "readIflagsPrv",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "readIflagsX",
           "outputs": [
             {
               "internalType": "uint64",
@@ -5818,11 +5908,11 @@
           "inputs": [
             {
               "internalType": "bool",
-              "name": "idle",
+              "name": "isAutomaticYield",
               "type": "bool"
             }
           ],
-          "name": "setIflagsI",
+          "name": "setIflagsX",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -5831,7 +5921,7 @@
           "inputs": [
             {
               "internalType": "bool",
-              "name": "isYield",
+              "name": "isManualYield",
               "type": "bool"
             }
           ],
@@ -6248,7 +6338,7 @@
       ]
     },
     "PMA": {
-      "address": "0x05b57bC1d6410C70213FDFc01947bF8e0e07e7ba",
+      "address": "0x2A182fa433682fAbfceaA933bEedCaA3b9af9a6E",
       "abi": [
         {
           "inputs": [
@@ -6386,7 +6476,7 @@
       ]
     },
     "RealTimeClock": {
-      "address": "0x5a4c3AbBd7391A2F060b05564567FE4D13F38aFB",
+      "address": "0xc353f5d3C6Eb753b36F8FBd3Dd06F9F185fFED9e",
       "abi": [
         {
           "inputs": [
@@ -6402,6 +6492,25 @@
               "internalType": "uint64",
               "name": "",
               "type": "uint64"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint64",
+              "name": "cycle",
+              "type": "uint64"
+            }
+          ],
+          "name": "rtcIsTick",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "pure",
@@ -6429,7 +6538,7 @@
       ]
     },
     "RiscVConstants": {
-      "address": "0xf3DF831E4ca49e5CeD14220F6Aab25B30736283e",
+      "address": "0xA41fa98448A22491d1aDDc6D20e4404214e1CB2E",
       "abi": [
         {
           "inputs": [],
@@ -6459,32 +6568,6 @@
         },
         {
           "inputs": [],
-          "name": "getIflagsIMask",
-          "outputs": [
-            {
-              "internalType": "uint64",
-              "name": "",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getIflagsIShift",
-          "outputs": [
-            {
-              "internalType": "uint64",
-              "name": "",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "getIflagsPrvMask",
           "outputs": [
             {
@@ -6499,6 +6582,32 @@
         {
           "inputs": [],
           "name": "getIflagsPrvShift",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getIflagsXMask",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getIflagsXShift",
           "outputs": [
             {
               "internalType": "uint64",
@@ -8115,7 +8224,7 @@
       ]
     },
     "S_Instructions": {
-      "address": "0x7D4B014eEd39b5f4253b46B9f7Cc145A903E66e2",
+      "address": "0xc0e3fe39bd7997Dd14E47Ab8334A11F6cfA2Ff83",
       "abi": []
     },
     "ShadowAddresses": {
@@ -8475,11 +8584,11 @@
       ]
     },
     "StandAloneInstructions": {
-      "address": "0x13aFB26C65b707AA7819eC0C169Df628754813c4",
+      "address": "0x40B86ac8EB148284B55E9e24c948dc5974F35233",
       "abi": []
     },
     "Step": {
-      "address": "0x4a452a5bc03D2dDa1BFD65abD85F4dA8d5f5411A",
+      "address": "0xC474d6dE15875D48e7A7E4d109006ABaDBa416C4",
       "abi": [
         {
           "inputs": [
@@ -8574,7 +8683,7 @@
       ]
     },
     "VirtualMemory": {
-      "address": "0xb51b711b885CdFc7a6A525e39AF9Db17736400C8",
+      "address": "0x40B412c808F462dbe9b2A4d6Aa819085b123b329",
       "abi": []
     }
   }
