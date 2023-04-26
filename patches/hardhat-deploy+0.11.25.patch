@@ -1,0 +1,12 @@
+diff --git a/node_modules/hardhat-deploy/dist/src/helpers.js b/node_modules/hardhat-deploy/dist/src/helpers.js
+index 1d5e907..7a338c9 100644
+--- a/node_modules/hardhat-deploy/dist/src/helpers.js
++++ b/node_modules/hardhat-deploy/dist/src/helpers.js
+@@ -1732,6 +1732,7 @@ Note that in this case, the contract deployment will not behave the same if depl
+         }
+     }
+     async function deploy(name, options) {
++        options.deterministicDeployment = options.deterministicDeployment === undefined ? true : options.deterministicDeployment;
+         options = Object.assign({}, options); // ensure no change
+         await init();
+         if (!options.proxy) {
