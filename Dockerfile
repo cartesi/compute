@@ -43,7 +43,7 @@ COPY yarn.lock .
 COPY package.json .
 
 RUN yarn install --ignore-scripts
-
+RUN yarn postinstall
 
 # Runtime image
 FROM debian:buster-slim as runtime
