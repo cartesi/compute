@@ -58,7 +58,7 @@ async function main() {
         provider = alice;
     }
     const input = {
-        position: "0x9000000000000000",
+        position: "0x90000000000000",
         driveLog2Size: 12,
         directValue: ethers.utils.formatBytes32String(""),
         loggerIpfsPath: ethers.utils.formatBytes32String(""),
@@ -73,9 +73,9 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0x5e8c88016207474dc93b265c3ed220eb0f1886ea48533836f18d4c0e177e829b",
+        "0xa3b304cd520dc7ffb3ae9f7f46200b1a2c474235c12209c05753a7e5170c3449",
         // output position
-        "0xa000000000000000",
+        "0xa0000000000000",
         // output log2 size
         10,
         // round duration

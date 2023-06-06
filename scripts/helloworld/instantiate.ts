@@ -34,9 +34,9 @@ async function main() {
         // final time
         config.finalTime,
         // template hash
-        "0x02a51f8e39e399ab3aa4a4f808e42076d04b77f27a6f10338946e54539985163",
+        "0xde7d607a6489e4ab55df472e3774e0d5e0543122d3f157c67b1933ca3e98cf21",
         // output position
-        "0x9000000000000000",
+        "0x90000000000000",
         // output log2 size
         5,
         // round duration

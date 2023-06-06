@@ -3,7 +3,7 @@
 # general definitions
 MACHINES_DIR=.
 MACHINE_TEMP_DIR=__temp_cartesi_machine
-MACHINE_MANAGER_IMAGE=cartesi/machine-manager:0.6.0-rc3
+MACHINE_MANAGER_IMAGE=cartesi/machine-manager:master
 MACHINE_IMAGES_DIR=./images
 CONTAINER_NAME=cartesi-machine-builder
 
@@ -37,6 +37,7 @@ docker run -v $MACHINE_IMAGES_DIR:/opt/cartesi/share/images \
   --name $CONTAINER_NAME $MACHINE_MANAGER_IMAGE \
   cartesi-machine \
     --max-mcycle=0 \
+    --append-rom-bootargs="single=yes" \
     --initial-hash \
     --store="/tmp/$MACHINE_TEMP_DIR" \
     --flash-drive="label:input,length:1<<12" \

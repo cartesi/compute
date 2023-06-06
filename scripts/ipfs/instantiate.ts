@@ -42,7 +42,7 @@ async function main() {
 
     // creates drive
     const aDrive = {
-        position: "0x9000000000000000",
+        position: "0x90000000000000",
         driveLog2Size: config.driveLog2Size,
         // bytes of print(math.sin(1))
         directValue: ethers.utils.formatBytes32String(""),
@@ -67,7 +67,7 @@ async function main() {
         // template hash
         `0x${config.machineTemplateHash}`,
         // output position
-        "0xa000000000000000",
+        "0xa0000000000000",
         // output log2 size
         5,
         // round duration

@@ -18,4 +18,6 @@ fi
 echo "Downloading cartesi-machine rom, kernel and rootfs..."
 wget -q -nc -i $SCRIPT_DIR/dependencies -P $MACHINE_IMAGES_DIR
 pushd $MACHINE_IMAGES_DIR &> /dev/null && shasum -c $SCRIPT_DIR/shasumfile && popd &> /dev/null
-ln -s linux-5.5.19-ctsi-3.bin $MACHINE_IMAGES_DIR/linux.bin
+ln -s linux-5.15.63-ctsi-2.bin $MACHINE_IMAGES_DIR/linux.bin
+ln -s rom-v0.16.0.bin $MACHINE_IMAGES_DIR/rom.bin
+ln -s rootfs-v0.17.0.ext2 $MACHINE_IMAGES_DIR/rootfs.ext2
