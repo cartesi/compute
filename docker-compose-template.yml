@@ -129,7 +129,7 @@ services:
 
 
   machine_manager_{{ i }}:
-    image: cartesi/machine-manager:0.6.0-rc3
+    image: cartesi/machine-manager:master
     volumes:
       - ./machines:/opt/cartesi/srv/compute/cartesi-machine
       - ./dapp_data_{{ i }}/flashdrive:/opt/cartesi/srv/compute/flashdrive

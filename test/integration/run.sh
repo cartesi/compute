@@ -45,7 +45,7 @@ export PROVIDER=0x0000000000000000000000000000000000000000
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 unset PROVIDER
 
-#echo "Executing calculator test with provider"
+echo "Executing calculator test with provider"
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
