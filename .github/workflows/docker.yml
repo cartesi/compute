@@ -38,7 +38,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-        if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+        if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v')
 
       - name: Build Ubuntu based docker image (no push)
         id: ubuntu_docker_build
@@ -63,7 +63,7 @@ jobs:
       - name: Push Ubuntu based docker image
         id: ubuntu_docker_push
         uses: docker/build-push-action@v4
-        if: ${{ github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v') }}
+        if: ${{ github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v') }}
         with:
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.ubuntu_docker_image_tags.outputs.tags }}
