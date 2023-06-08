@@ -47,6 +47,7 @@ const config: HardhatUserConfig = {
             gas: 0xfffffffffff, // <-- Use this high gas value
             gasPrice: 0x01, // <-- Use this low gas price
         },
+        mainnet: infuraNetwork("mainnet", 1, 6283185),
         goerli: infuraNetwork("goerli", 5, 6283185),
         matic_testnet: infuraNetwork("polygon-mumbai", 80001),
         bsc_testnet: {
