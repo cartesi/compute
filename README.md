@@ -81,13 +81,36 @@ Among the sample computations, there is an example of usage of drive distributio
 ```
 % ./scripts/ipfs/run.sh
 ```
-  
+
+## Mainnet usage (WARNING)
+
+Given that the deployment of the Cartesi Compute contracts is deterministic, anyone can potentially deploy functional contracts with bytecode that matches the Cartesi Compute contracts on Ethereum Mainnet or Arbitrum Mainnet.
+
+Please note, however, these contracts and deployments haven't undergone a security audit. We view them as 'Mainnet Alpha', meaning they're in an early development stage and not recommended for your usage.
+
+If you still choose to utilize these contracts despite the potential risks, we advise you to include a mechanism to suspend your usage of the Cartesi Compute contracts deployed on the mainnet within your smart contract. Furthermore, you should also have the ability to modify the Cartesi Compute contract addresses you're using.
+
+Should you decide to proceed under these conditions, here are the steps to access the deterministically generated deployment files:
+
+
+Mainnet:
+
+- Get an infura.io account and create an Ethereum mainnet project and get project ID from it, henceforth <MY_PROJECT_ID>
+- Check out the compute repository and check out the branch release/v1.3.x
+
+```
+% yarn
+% MNEMONIC="test test test test test test test test test test test junk" PROJECT_ID=<MY_PROJECT_ID> npx hardhat deploy --network mainnet
+```
+
+You'll now see a set of smart contract deployment files in deployments/mainnet which you can add inside your Compute SDK or link within your smart contract build process.
 
 ## Contributing
 
 Thank you for your interest in Cartesi! Head over to our [Contributing Guidelines](CONTRIBUTING.md) for instructions on how to sign our Contributors Agreement and get started with Cartesi!
 
 Please note we have a [Code of Conduct](CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
+
 
 ## License
 
