@@ -48,6 +48,10 @@ const config: HardhatUserConfig = {
             gasPrice: 0x01, // <-- Use this low gas price
         },
         mainnet: infuraNetwork("mainnet", 1, 6283185),
+        arbitrum_one: {
+            url: process.env.RPC_URL || "https://arb1.arbitrum.io/rpc",
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
         goerli: infuraNetwork("goerli", 5, 6283185),
         matic_testnet: infuraNetwork("polygon-mumbai", 80001),
         bsc_testnet: {

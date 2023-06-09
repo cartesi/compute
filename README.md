@@ -84,7 +84,7 @@ Among the sample computations, there is an example of usage of drive distributio
 
 ## Mainnet usage (WARNING)
 
-Given that the deployment of the Cartesi Compute contracts is deterministic, anyone can potentially deploy functional contracts with bytecode that matches the Cartesi Compute contracts on Ethereum Mainnet or Arbitrum Mainnet.
+Given that the deployment of the Cartesi Compute contracts is deterministic, anyone can potentially deploy functional contracts with bytecode and correct addresses that matches the correct compilation of the Cartesi Compute contracts on Ethereum Mainnet or Arbitrum Mainnet.
 
 Please note, however, these contracts and deployments haven't undergone a security audit. We view them as 'Mainnet Alpha', meaning they're in an early development stage and not recommended for your usage.
 
@@ -96,14 +96,23 @@ Should you decide to proceed under these conditions, here are the steps to acces
 Mainnet:
 
 - Get an infura.io account and create an Ethereum mainnet project and get project ID from it, henceforth <MY_PROJECT_ID>
-- Check out the compute repository and check out the branch release/v1.3.x
+- Clone the compute repository and check out the branch release/v1.3.x
 
 ```
 % yarn
 % MNEMONIC="test test test test test test test test test test test junk" PROJECT_ID=<MY_PROJECT_ID> npx hardhat deploy --network mainnet
 ```
 
-You'll now see a set of smart contract deployment files in deployments/mainnet which you can add inside your Compute SDK or link within your smart contract build process.
+Arbitrum One:
+
+- Clone the compute repository and check out the branch release/v1.3.x
+
+```
+% yarn
+% MNEMONIC="test test test test test test test test test test test junk" npx hardhat deploy --network arbitrum_one 
+```
+
+You'll now see a set of smart contract deployment files in deployments/mainnet and deployments/arbitrum_one which you can add inside your Compute SDK or link within your smart contract build process.
 
 ## Contributing
 
