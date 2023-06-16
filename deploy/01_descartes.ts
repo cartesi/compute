@@ -7,7 +7,6 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     const { deployer } = await getNamedAccounts();
 
     const Merkle = await get("Merkle");
-    const Logger = await get("Logger");
     const VGInstantiator = await get("VGInstantiator");
     const Step = await get("Step");
     await deploy("CartesiCompute", {
@@ -16,7 +15,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
         libraries: {
             Merkle: Merkle.address,
         },
-        args: [Logger.address, VGInstantiator.address, Step.address],
+        args: [VGInstantiator.address, Step.address],
     });
 };
 

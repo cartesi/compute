@@ -199,10 +199,6 @@ import "@cartesi/util/contracts/Instantiator.sol";
 
 interface CartesiComputeInterface is Instantiator {
     enum State {
-        WaitingProviders,
-        ProviderMissedDeadline,
-        WaitingChallengeDrives,
-        WaitingReveals,
         WaitingClaim,
         ClaimerMissedDeadline,
         WaitingConfirmationDeadline, // "Voting Phase"
@@ -231,18 +227,9 @@ interface CartesiComputeInterface is Instantiator {
         uint8 driveLog2Size;
         // direct value inserted to the drive
         bytes directValue;
-        // ipfs object path of the logger drive
-        bytes loggerIpfsPath;
         // root hash of the drive submitted to the logger
-        bytes32 loggerRootHash;
-        // the user who's responsible for filling out the drive
-        address provider;
-        // indicates the drive needs to wait for the provider to provide content
-        bool waitsProvider;
-        // indicates the content of the drive must be retrieved from logger
-        bool needsLogger;
-        // use CAR file for download
-        bool downloadAsCAR;
+        bytes32 driveRootHash;
+    	bool directDrive;
     }
 
     struct Party {
@@ -266,8 +253,7 @@ interface CartesiComputeInterface is Instantiator {
         uint8 _outputLog2Size,
         uint256 _roundDuration,
         address[] memory parties,
-        Drive[] memory _inputDrives,
-        bool _noChallengeDrive
+        Drive[] memory _inputDrives
     ) external returns (uint256);
 
     /// @notice Get result of a finished instance.
