@@ -417,9 +417,7 @@ dependencies = [
  "ethereum-types 0.9.2",
  "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
  "hex 0.3.2",
- "ipfs_interface",
  "log 0.4.8",
- "logger_service",
  "protobuf",
  "serde",
  "serde_derive",
@@ -1707,22 +1705,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ipfs_interface"
-version = "0.1.0"
-dependencies = [
- "env_logger",
- "ethereum-types 0.9.2",
- "futures",
- "futures-cpupool",
- "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
- "httpbis",
- "log 0.4.8",
- "protobuf",
- "protoc-rust-grpc",
- "rustc-hex",
-]
-
-[[package]]
 name = "itertools"
 version = "0.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1907,32 +1889,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14b6052be84e6b71ab17edffc2eeabf5c2c3ae1fdb464aae35ac50c67a44e1f7"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "logger_interface"
-version = "0.1.0"
-dependencies = [
- "env_logger",
- "ethereum-types 0.4.2",
- "futures",
- "futures-cpupool",
- "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
- "httpbis",
- "log 0.4.8",
- "protobuf",
- "protoc-rust-grpc",
- "rustc-hex",
-]
-
-[[package]]
-name = "logger_service"
-version = "0.1.0"
-dependencies = [
- "bytes",
- "ethereum-types 0.9.2",
- "grpc 0.6.1 (git+https://github.com/cartesi/grpc-rust?branch=make_marshall_public)",
- "logger_interface",
 ]
 
 [[package]]

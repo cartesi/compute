@@ -23,7 +23,6 @@
 
 #![warn(unused_extern_crates)]
 pub mod cartesi_compute;
-pub mod ipfs_service;
 
 extern crate error;
 extern crate grpc;

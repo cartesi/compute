@@ -33,7 +33,7 @@ use super::hex;
 use super::transaction;
 use super::transaction::TransactionRequest;
 use super::{
-    build_machine_id, get_logger_response, Role,
+    build_machine_id, Role,
 };
 use compute::{
     build_session_end_key, build_session_proof_key, build_session_read_key,
@@ -259,8 +259,6 @@ impl DApp<()> for CartesiCompute {
             .chain_err(|| "System time before UNIX_EPOCH")?
             .as_secs();
 
-        match ctx.current_state.as_ref() {
-
         match role {
             Role::Claimer => match ctx.current_state.as_ref() {
                 "WaitingClaim" => {
@@ -373,7 +371,6 @@ impl DApp<()> for CartesiCompute {
                         ctx.output_position,
                         ctx.output_log2_size,
                         machine_id,
-                        ctx.noChallengeDrive,
                     );
                 }
                 _ => {
@@ -586,7 +583,7 @@ fn react_by_machine_output(
             // XXX talk to dapp over gRPC here
             let drive_path = format!(
                 "/opt/cartesi/srv/compute/flashdrive/{:x}",
-                drive.root_hash
+                drive.root_hash);
             let data_len = std::fs::metadata(drive_path.clone())?.len();
             let archive_key = build_session_replace_key(
                 machine_id.clone(),
