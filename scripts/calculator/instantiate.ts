@@ -43,11 +43,8 @@ async function main() {
         position: "0x90000000000000",
         driveLog2Size: 12,
         directValue: ethers.utils.toUtf8Bytes(data),
-        loggerIpfsPath: ethers.utils.formatBytes32String(""),
-        loggerRootHash: ethers.utils.formatBytes32String(""),
-        waitsProvider: false,
-        needsLogger: false,
-        provider: alice,
+        driveRootHash: ethers.utils.formatBytes32String(""),
+        directDrive: true
     };
 
     // instantiates cartesi_compute computation
@@ -63,8 +60,7 @@ async function main() {
         // round duration
         config.roundDuration,
         peers,
-        [input],
-        false
+        [input]
     );
 
     // retrieves created computation's index

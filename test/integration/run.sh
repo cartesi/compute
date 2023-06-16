@@ -32,10 +32,10 @@ echo "Executing helloworld test"
 ./scripts/helloworld/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/helloworld/instantiate.ts
 
-## testing Calculator
-#echo "Executing calculator test"
-#./scripts/calculator/build-cartesi-machine.sh ./images ./machines
-#npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
+# testing Calculator
+echo "Executing calculator test"
+./scripts/calculator/build-cartesi-machine.sh ./images ./machines
+npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
 
 #echo "Executing calculator test with logger"
 #npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
