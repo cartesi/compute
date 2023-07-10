@@ -864,8 +864,8 @@ fn react_by_machine_output(
         }
     }
 
-    let time = final_time.as_u64();
-    let sample_points: Vec<u64> = vec![0, time];
+    let time = final_time.as_u128();
+    let sample_points: Vec<u128> = vec![0, time];
 
     let request = SessionRunRequest {
         session_id: machine_id.clone(),
