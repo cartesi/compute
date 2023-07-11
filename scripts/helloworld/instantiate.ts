@@ -42,8 +42,7 @@ async function main() {
         // round duration
         config.roundDuration,
         peers,
-        [],
-        false
+        []
     );
 
     // retrieves created computation's index

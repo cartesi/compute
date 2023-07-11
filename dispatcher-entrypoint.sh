@@ -36,8 +36,6 @@ fi
 echo "Waiting for services..."
 dockerize \
     -wait tcp://${MACHINE_MANAGER_HOST}:${MACHINE_MANAGER_PORT} \
-    -wait tcp://${LOGGER_HOST}:${LOGGER_PORT} \
-    -wait tcp://${IPFS_HOST}:${IPFS_PORT} \
     -wait tcp://${ETHEREUM_HOST}:${ETHEREUM_PORT} \
     -timeout ${ETHEREUM_TIMEOUT}
 

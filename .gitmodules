@@ -1,6 +1,3 @@
 [submodule "arbitration-dlib"]
 	path = arbitration-dlib
 	url = ../arbitration-dlib.git
-[submodule "logger-dlib"]
-	path = logger-dlib
-	url = ../logger-dlib.git

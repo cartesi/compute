@@ -23,7 +23,6 @@
 
 #![warn(unused_extern_crates)]
 pub mod cartesi_compute;
-pub mod ipfs_service;
 
 extern crate error;
 extern crate grpc;
@@ -38,17 +37,9 @@ extern crate dispatcher;
 extern crate ethabi;
 extern crate ethereum_types;
 extern crate hex;
-extern crate ipfs_interface;
-extern crate logger_service;
 extern crate transaction;
 
 pub use cartesi_compute::{CartesiCompute, CartesiComputeCtx, CartesiComputeCtxParsed};
-
-pub use logger_service::{
-    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest,
-    SubmitFileResponse, LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
-    LOGGER_SERVICE_NAME,
-};
 
 use ethereum_types::{Address, H256, U256};
 
@@ -58,96 +49,9 @@ enum Role {
     Challenger,
     Other,
 }
-
-pub fn get_logger_response(
-    archive: &dispatcher::Archive,
-    contract: String,
-    key: String,
-    method: String,
-    request: Vec<u8>,
-) -> error::Result<Vec<u8>> {
-    let service = LOGGER_SERVICE_NAME.to_string();
-    let raw_response = archive.get_response(
-        service.clone(),
-        key.clone(),
-        method.clone(),
-        request.clone(),
-    )?;
-
-    match method.as_ref() {
-        LOGGER_METHOD_SUBMIT => {
-            let response: SubmitFileResponse = raw_response.clone().into();
-            if response.status == 0 {
-                Ok(raw_response)
-            } else {
-                warn!(
-                    "Fail to get logger response, status: {}, description: {}",
-                    response.status, response.description
-                );
-                Err(error::Error::from(error::ErrorKind::ServiceNeedsRetry(
-                    service,
-                    key,
-                    method,
-                    request,
-                    contract,
-                    response.status,
-                    response.progress,
-                    response.description,
-                )))
-            }
-        }
-        LOGGER_METHOD_DOWNLOAD => {
-            let response: DownloadFileResponse = raw_response.clone().into();
-            if response.status == 0 {
-                Ok(raw_response)
-            } else {
-                warn!(
-                    "Fail to get logger response, status: {}, description: {}",
-                    response.status, response.description
-                );
-                Err(error::Error::from(error::ErrorKind::ServiceNeedsRetry(
-                    service,
-                    key,
-                    method,
-                    request,
-                    contract,
-                    response.status,
-                    response.progress,
-                    response.description,
-                )))
-            }
-        }
-        _ => {
-            error!(
-                "Unknown logger method {} received, shouldn't happen!",
-                method
-            );
-            Err(error::Error::from(error::ErrorKind::ResponseInvalidError(
-                service, key, method,
-            )))
-        }
-    }
-}
-
 pub fn build_machine_id(
     cartesi_compute_index: U256,
     player_address: &Address,
 ) -> String {
     return format!("{:x}:{}", player_address, cartesi_compute_index);
-}
-
-pub fn build_logger_submit_key(root_hash: H256) -> String {
-    return format!("{:x}.logger.submit", root_hash);
-}
-
-pub fn build_logger_download_key(root_hash: H256) -> String {
-    return format!("{:x}.logger.download", root_hash);
-}
-
-pub fn build_ipfs_add_key(file_path: String) -> String {
-    return format!("{}.ipfs.get", file_path);
-}
-
-pub fn build_ipfs_get_key(ipfs_path: String) -> String {
-    return format!("{}.ipfs.get", ipfs_path);
 }

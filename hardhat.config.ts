@@ -52,6 +52,10 @@ const config: HardhatUserConfig = {
             url: process.env.RPC_URL || "https://arb1.arbitrum.io/rpc",
             accounts: mnemonic ? { mnemonic } : undefined,
         },
+        arbitrum_goerli: {
+            url: process.env.RPC_URL || "https://goerli-rollup.arbitrum.io/rpc",
+            accounts: mnemonic ? { mnemonic } : undefined,
+        },
         goerli: infuraNetwork("goerli", 5, 6283185),
         matic_testnet: infuraNetwork("polygon-mumbai", 80001),
         bsc_testnet: {

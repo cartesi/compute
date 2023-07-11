@@ -33,8 +33,7 @@ use super::hex;
 use super::transaction;
 use super::transaction::TransactionRequest;
 use super::{
-    build_ipfs_get_key, build_logger_download_key, build_logger_submit_key,
-    build_machine_id, get_logger_response, Role,
+    build_machine_id, Role,
 };
 use compute::{
     build_session_end_key, build_session_proof_key, build_session_read_key,
@@ -48,14 +47,6 @@ use compute::{
     EMULATOR_METHOD_REPLACE,
     EMULATOR_SERVICE_NAME,
 };
-use ipfs_service::{
-    GetFileRequest, GetFileResponse, GetFileResponseOneOf, IPFS_METHOD_GET,
-    IPFS_SERVICE_NAME,
-};
-use logger_service::{
-    DownloadFileRequest, DownloadFileResponse, SubmitFileRequest,
-    SubmitFileResponse, LOGGER_METHOD_DOWNLOAD, LOGGER_METHOD_SUBMIT,
-};
 
 use std::time::{SystemTime, UNIX_EPOCH};
 
@@ -63,7 +54,7 @@ pub struct CartesiCompute();
 
 #[derive(Serialize, Deserialize)]
 pub enum TupleType {
-    #[serde(rename = "(uint64,uint8,bytes,bytes,bytes32,address,bool,bool,bool)[]")]
+    #[serde(rename = "(uint64,uint8,bytes,bytes32,bool)[]")]
     DriveArrayTuple,
     #[serde(rename = "(bool,bool,bool,uint64)")]
     PartyTypeTuple,
@@ -74,12 +65,8 @@ pub struct DriveParsed(
     U256,    // position
     U256,    // log2Size
     String,  // directValue
-    String,  // loggerIpfsPath
-    H256,    // loggerRootHash
-    Address, // provider
-    bool,    // needsProvider
-    bool,    // needsLogger
-    bool,    // downloadAsCAR
+    H256,    // driveRootHash
+    bool,    // directDrive
 );
 
 #[derive(Serialize, Deserialize)]
@@ -95,12 +82,8 @@ pub struct Drive {
     position: U256,
     log2_size: U256,
     direct_value: Vec<u8>,
-    ipfs_path: String,
     root_hash: H256,
-    provider: Address,
-    waits_provider: bool,
-    needs_logger: bool,
-    download_as_car: bool,
+    direct_drive: bool,
 }
 
 impl From<&DriveParsed> for Drive {
@@ -109,21 +92,8 @@ impl From<&DriveParsed> for Drive {
             position: parsed.0,
             log2_size: parsed.1,
             direct_value: hex::decode(&parsed.2[2..]).unwrap(),
-            ipfs_path: hex::decode(&parsed.3[2..])
-                .and_then(|vec_u8| {
-                    let removed_trailing_zeros = vec_u8
-                        .iter()
-                        .take_while(|&n| *n != 0)
-                        .map(|&n| n)
-                        .collect();
-                    Ok(String::from_utf8(removed_trailing_zeros).unwrap())
-                })
-                .unwrap(),
-            root_hash: parsed.4,
-            provider: parsed.5,
-            waits_provider: parsed.6,
-            needs_logger: parsed.7,
-            download_as_car: parsed.8
+            root_hash: parsed.3,
+            direct_drive: parsed.4,
         }
     }
 }
@@ -175,7 +145,6 @@ pub struct CartesiComputeCtxParsed(
     BytesField,   // claimedOutput
     DriveArray,
     PartyType,
-    BoolField
 );
 
 #[derive(Serialize, Debug)]
@@ -193,7 +162,6 @@ pub struct CartesiComputeCtx {
     pub current_state: String,
     pub input_drives: Vec<Drive>,
     pub partyState: Party,
-    pub noChallengeDrive: bool,
 }
 
 impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
@@ -221,7 +189,6 @@ impl From<CartesiComputeCtxParsed> for CartesiComputeCtx {
             claimed_output: parsed.3.value,
             input_drives: parsed.4.value.iter().map(|d| d.into()).collect(),
             partyState: parsed.5.value.into(),
-            noChallengeDrive: parsed.6.value.into()
         }
     }
 }
@@ -247,14 +214,15 @@ impl DApp<()> for CartesiCompute {
         let ctx: CartesiComputeCtx = parsed.into();
         trace!("Context for cartesi compute (index {}) {:?}", instance.index, ctx);
 
+
+
         let machine_id =
             build_machine_id(instance.index, &instance.concern.user_address);
 
         // these states should not occur as they indicate an innactive instance,
         // but it is possible that the blockchain state changed between queries
         match ctx.current_state.as_ref() {
-            "ProviderMissedDeadline"
-            | "ClaimerMissedDeadline"
+              "ClaimerMissedDeadline"
             | "ChallengerWon"
             | "ClaimerWon"
             | "ConsensusResult" => {
@@ -276,6 +244,8 @@ impl DApp<()> for CartesiCompute {
             _ => {}
         };
 
+        // XXX check here with dapp if we should care about it
+        
         // if we reach this code, the instance is active, get user's role
         let role = match instance.concern.user_address {
             cl if (cl == ctx.claimer) => Role::Claimer,
@@ -283,122 +253,11 @@ impl DApp<()> for CartesiCompute {
             _ => Role::Other,
         };
         trace!("Role played (index {}) is: {:?}", instance.index, role);
-
+        
         let current_time = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .chain_err(|| "System time before UNIX_EPOCH")?
             .as_secs();
-
-        match ctx.current_state.as_ref() {
-            "WaitingProviders" => {
-                if instance.concern.user_address != ctx.input_drives[0].provider
-                {
-                    // wait others to provide drives
-                    // or abort if the deadline is over
-                    return abort_by_deadline_or_idle(
-                        &instance.concern,
-                        instance.index,
-                        ctx.deadline.as_u64(),
-                    );
-                }
-            }
-            "WaitingChallengeDrives" => {
-                for drive in &ctx.input_drives {
-                    if drive.needs_logger {
-                        if let Err(e) = get_ipfs_drive(
-                            archive,
-                            drive.ipfs_path.clone(),
-                            drive.log2_size.as_u64() as u32,
-                            drive.root_hash,
-                        ) {
-                            if ctx.noChallengeDrive {
-                                return Err(e);
-                            }
-                            match e.kind() {
-                                ErrorKind::ResponseInvalidError(
-                                    _service,
-                                    _key,
-                                    _m,
-                                ) => {
-                                    if drive.provider != Address::zero() {
-                                        let request = TransactionRequest {
-                                            contract_name: None, /* Name not needed, is concern */
-                                            concern: instance.concern.clone(),
-                                            value: U256::from(0),
-                                            function: "challengeDrives".into(),
-                                            data: vec![Token::Uint(
-                                                instance.index,
-                                            )],
-                                            gas: None,
-                                            strategy:
-                                                transaction::Strategy::Simplest,
-                                        };
-                                        return Ok(Reaction::Transaction(
-                                            request,
-                                        ));
-                                    }
-                                }
-                                _ => {
-                                    return Err(e);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            "WaitingReveals" => {
-                if instance.concern.user_address != ctx.input_drives[0].provider
-                {
-                    // wait others to reveal drives
-                    // or abort if the deadline is over
-                    return abort_by_deadline_or_idle(
-                        &instance.concern,
-                        instance.index,
-                        ctx.deadline.as_u64(),
-                    );
-                }
-                let root = ctx.input_drives[0].root_hash.clone();
-                let request = SubmitFileRequest {
-                    path: format!("{:x}", root),
-                    page_log2_size: 3,
-                    tree_log2_size: ctx.input_drives[0].log2_size.as_u64(),
-                };
-
-                let processed_response: SubmitFileResponse =
-                    get_logger_response(
-                        archive,
-                        "CartesiCompute".into(),
-                        build_logger_submit_key(root.clone()),
-                        LOGGER_METHOD_SUBMIT.to_string(),
-                        request.into(),
-                    )?
-                    .into();
-
-                if processed_response.root != root {
-                    error!(
-                        "Submitted log hash({:x}) doesn't match value from drive({:x})",
-                        processed_response.root, root
-                    );
-                    return Ok(Reaction::Idle);
-                }
-                trace!(
-                    "Submitted file with hash: {:x}...",
-                    processed_response.root
-                );
-
-                let request = TransactionRequest {
-                    contract_name: None, // Name not needed, is concern
-                    concern: instance.concern.clone(),
-                    value: U256::from(0),
-                    function: "revealLoggerDrive".into(),
-                    data: vec![Token::Uint(instance.index)],
-                    gas: None,
-                    strategy: transaction::Strategy::Simplest,
-                };
-                return Ok(Reaction::Transaction(request));
-            }
-            _ => {}
-        };
 
         match role {
             Role::Claimer => match ctx.current_state.as_ref() {
@@ -416,28 +275,7 @@ impl DApp<()> for CartesiCompute {
                         ctx.output_position,
                         ctx.output_log2_size,
                         machine_id,
-                        ctx.noChallengeDrive,
                     );
-                }
-                "WaitingChallengeDrives" => {
-                    // no one challenges the drives, claim output directly
-                    if current_time > ctx.deadline.as_u64() {
-                        return react_by_machine_output(
-                            archive,
-                            &instance.concern,
-                            instance.index,
-                            &role,
-                            ctx.input_drives,
-                            ctx.template_hash,
-                            ctx.claimed_final_hash,
-                            ctx.final_time,
-                            ctx.output_position,
-                            ctx.output_log2_size,
-                            machine_id,
-                            ctx.noChallengeDrive,
-                        );
-                    }
-                    return Ok(Reaction::Idle);
                 }
                 "WaitingChallengeResult" => {
                     // we inspect the verification contract
@@ -533,7 +371,6 @@ impl DApp<()> for CartesiCompute {
                         ctx.output_position,
                         ctx.output_log2_size,
                         machine_id,
-                        ctx.noChallengeDrive,
                     );
                 }
                 _ => {
@@ -684,7 +521,6 @@ fn react_by_machine_output(
     output_position: U256,
     output_log2_size: U256,
     machine_id: String,
-    noChallengeDrive: bool,
 ) -> Result<Reaction> {
     // create machine and fill in all the drives
     let mut machine = cartesi_machine::MachineRequest::new();
@@ -717,7 +553,7 @@ fn react_by_machine_output(
     for drive in &input_drives {
         let address = drive.position.as_u64();
         let log2_size = drive.log2_size.as_u64();
-        if !drive.needs_logger {
+        if drive.direct_drive {
             // write direct values to drive
             let data = drive.direct_value.clone();
             let archive_key = build_session_write_key(
@@ -744,53 +580,10 @@ fn react_by_machine_output(
                 request.into(),
             )?;
         } else {
-            let drive_path = match get_ipfs_drive(
-                archive,
-                drive.ipfs_path.clone(),
-                drive.log2_size.as_u64() as u32,
-                drive.root_hash,
-            ) {
-                // try to get drive from Ipfs first
-                Ok(output_path) => output_path,
-                Err(e) => {
-                    if noChallengeDrive {
-                        return Err(e);
-                    }
-                    match e.kind() {
-                        ErrorKind::ResponseInvalidError(_service, _key, _m) => {
-                            // fall back to logger if drive not found in ipfs
-                            let request = DownloadFileRequest {
-                                root: drive.root_hash.clone(),
-                                path: format!("{:x}", drive.root_hash),
-                                page_log2_size: 3,
-                                tree_log2_size: drive.log2_size.as_u64(),
-                            };
-
-                            let processed_response: DownloadFileResponse =
-                                get_logger_response(
-                                    archive,
-                                    "CartesiCompute".into(),
-                                    build_logger_download_key(
-                                        drive.root_hash.clone(),
-                                    ),
-                                    LOGGER_METHOD_DOWNLOAD.to_string(),
-                                    request.into(),
-                                )?
-                                .into();
-                            trace!(
-                                "Downloaded! File stored at: {}...",
-                                processed_response.path
-                            );
-
-                            processed_response.path
-                        }
-                        _ => {
-                            return Err(e);
-                        }
-                    }
-                }
-            };
-
+            // XXX talk to dapp over gRPC here
+            let drive_path = format!(
+                "/opt/cartesi/srv/compute/flashdrive/{:x}",
+                drive.root_hash);
             let data_len = std::fs::metadata(drive_path.clone())?.len();
             let archive_key = build_session_replace_key(
                 machine_id.clone(),
@@ -1004,72 +797,5 @@ fn react_by_machine_output(
             error!("Challenger shouldn't get here!");
             return Ok(Reaction::Idle); //@dev this shouldnt happen, shoud we explode here? how?
         }
-    }
-}
-
-fn get_ipfs_drive(
-    archive: &Archive,
-    ipfs_path: String,
-    log2_size: u32,
-    root_hash: H256,
-) -> std::result::Result<String, Error> {
-    let key = build_ipfs_get_key(ipfs_path.clone());
-
-    let invalid_error = Error::from(ErrorKind::ResponseInvalidError(
-        IPFS_SERVICE_NAME.to_string(),
-        key.clone(),
-        "".to_string(),
-    ));
-
-    // skip empty ipfs path
-    if ipfs_path == "" {
-        return Err(invalid_error);
-    }
-
-    let request = GetFileRequest {
-        ipfs_path,
-        log2_size,
-        output_path: format!(
-            "/opt/cartesi/srv/compute/flashdrive/{:x}",
-            root_hash
-        ),
-        // TODO: come up with better timeout
-        timeout: 120,
-    };
-
-    match archive.get_response(
-        IPFS_SERVICE_NAME.into(),
-        key.clone(),
-        IPFS_METHOD_GET.into(),
-        request.clone().into(),
-    ) {
-        Ok(data) => {
-            let response: GetFileResponse = data.into();
-            info!("Response received from Ipfs {:?}", response);
-
-            match response.one_of {
-                GetFileResponseOneOf::GetProgress(p) => {
-                    Err(Error::from(ErrorKind::ServiceNeedsRetry(
-                        IPFS_SERVICE_NAME.to_string(),
-                        key,
-                        IPFS_METHOD_GET.into(),
-                        request.into(),
-                        "CartesiCompute".into(),
-                        1,
-                        p.progress,
-                        "IPFS still getting".to_string(),
-                    )))
-                }
-                GetFileResponseOneOf::GetResult(r) => {
-                    if r.root_hash != root_hash {
-                        info!("Root hash mismatch");
-                        Err(invalid_error)
-                    } else {
-                        Ok(r.output_path)
-                    }
-                }
-            }
-        }
-        Err(e) => Err(e),
     }
 }

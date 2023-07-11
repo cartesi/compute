@@ -37,29 +37,29 @@ echo "Executing calculator test"
 ./scripts/calculator/build-cartesi-machine.sh ./images ./machines
 npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate.ts
 
-echo "Executing calculator test with logger"
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+#echo "Executing calculator test with logger"
+#npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
 
-echo "Executing calculator test with logger provider 0"
-export PROVIDER=0x0000000000000000000000000000000000000000
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
-unset PROVIDER
+#echo "Executing calculator test with logger provider 0"
+#export PROVIDER=0x0000000000000000000000000000000000000000
+#npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-logger.ts
+#unset PROVIDER
 
-echo "Executing calculator test with provider"
-npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
+#echo "Executing calculator test with provider"
+#npx hardhat run --network localhost --no-compile ./scripts/calculator/instantiate-provider.ts
 
 # testing IPFS
-echo "Testing IPFS"
-./scripts/ipfs/run.sh
-echo "Testing IPFS large 1m"
-./scripts/ipfs/run-large-1M.sh
-echo "Testing IPFS large 8m"
-./scripts/ipfs/run-large-8M.sh
-echo "Testing IPFS logger fallback"
-./scripts/ipfs/run-logger-fallback.sh
-echo "Testing direct IPFS node injection"
-./scripts/ipfs/run-no-provider.sh
-
+#echo "Testing IPFS"
+#./scripts/ipfs/run.sh
+#echo "Testing IPFS large 1m"
+#./scripts/ipfs/run-large-1M.sh
+#echo "Testing IPFS large 8m"
+#./scripts/ipfs/run-large-8M.sh
+#echo "Testing IPFS logger fallback"
+#./scripts/ipfs/run-logger-fallback.sh
+#echo "Testing direct IPFS node injection"
+#./scripts/ipfs/run-no-provider.sh
+#
 # waiting for resuls
 echo "Waiting for results"
 npx hardhat run --network localhost --no-compile ./test/integration/wait-results.ts
