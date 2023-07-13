@@ -4,3 +4,6 @@
 [submodule "logger-dlib"]
 	path = logger-dlib
 	url = ../logger-dlib.git
+[submodule "solidity-util"]
+	path = solidity-util
+	url = https://github.com/frehml/solidity-util

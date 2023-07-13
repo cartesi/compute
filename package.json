@@ -53,10 +53,10 @@
     },
     "homepage": "https://github.com/cartesi/compute#readme",
     "dependencies": {
-        "@cartesi/arbitration": "^0.7.0-rc2",
-        "@cartesi/logger": "^0.7.4",
+        "@cartesi/arbitration": "file:./arbitration-dlib",
+        "@cartesi/logger": "file:./logger-dlib",
         "@cartesi/machine-solidity-step": "^0.8.0-rc2",
-        "@cartesi/util": "^2.0.1",
+        "@cartesi/util": "file:../solidity-util",
         "@openzeppelin/contracts": "^4.9.2",
         "patch-package": "^7.0.0"
     },

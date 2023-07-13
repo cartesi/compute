@@ -9,19 +9,15 @@
   dependencies:
     "@cartesi/util" "^2.0.1"
 
-"@cartesi/arbitration@^0.7.0-rc2":
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/@cartesi/arbitration/-/arbitration-0.7.0.tgz#8e1003d7e6eb4933f10b1a566482de1f31e867ac"
-  integrity sha512-fWMaPJDUlhKWF5j1FD5YtbBmpD4j/sqeIwlH7G9r1edrDgyVc/tAHhkIAdQdk366DkZHoMTDpr1hUlkIET1urA==
+"@cartesi/arbitration@file:./arbitration-dlib":
+  version "0.8.0"
   dependencies:
-    "@cartesi/util" "^2.0.1"
+    "@cartesi/util" "file:../../../Library/Caches/Yarn/v6/npm-@cartesi-arbitration-0.8.0-34e5eb88-977d-44e5-8d96-330dc56624db-1689264162151/node_modules/solidity-util"
 
-"@cartesi/logger@^0.7.4":
-  version "0.7.4"
-  resolved "https://registry.yarnpkg.com/@cartesi/logger/-/logger-0.7.4.tgz#1538cc9b977ac0def7516f327b02e7b64002ccbd"
-  integrity sha512-+F2KNlPmeiGCMVPKf+Q02D+NkUphl4dY+F50w0kygAHkY9AXILImLjf5tWgKuQE1TbWtQ7aT47G4HJdgFz1zRw==
+"@cartesi/logger@file:./logger-dlib":
+  version "0.8.0"
   dependencies:
-    "@cartesi/util" "^2.0.1"
+    "@cartesi/util" "file:../../../Library/Caches/Yarn/v6/npm-@cartesi-logger-0.8.0-45629c76-d359-4a0c-a1af-3852a6100833-1689264162154/node_modules/solidity-util"
 
 "@cartesi/machine-solidity-step@^0.8.0-rc2":
   version "0.8.0-rc2"
@@ -35,6 +31,11 @@
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/@cartesi/util/-/util-2.0.1.tgz#fcc7bc3e7e9596c7505aa54a1de0923017692a50"
   integrity sha512-gxx9MX8QI6aKr6WrEy9aRcGXIpHAAfG7j/jj6on6D/yrfW4ZLv3uE9HkDd3DBO1qwrWTPEdOg2RAOc9ae0y1Pw==
+  dependencies:
+    "@openzeppelin/contracts" "3.2.1-solc-0.7"
+
+"@cartesi/util@file:../solidity-util":
+  version "5.0.2"
   dependencies:
     "@openzeppelin/contracts" "3.2.1-solc-0.7"
 
