@@ -192,12 +192,12 @@
 
 /// @title CartesiComputeInterface
 /// @author Stephen Chen
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
-import "@cartesi/util/contracts/Instantiator.sol";
+import "@cartesi/util/contracts/InstantiatorV2.sol";
 
-interface CartesiComputeInterface is Instantiator {
+interface CartesiComputeInterface is InstantiatorV2 {
     enum State {
         WaitingProviders,
         ProviderMissedDeadline,

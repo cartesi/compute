@@ -11,7 +11,7 @@
 // specific language governing permissions and limitations under the License.
 
 /// @title Library for Merkle proofs
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 library Merkle {
     function getPristineHash(uint8 _log2Size)

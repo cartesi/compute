@@ -192,23 +192,23 @@
 
 /// @title CartesiCompute
 /// @author Stephen Chen
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 // #if BUILD_TEST
 import "./test/TestMerkle.sol";
 // #else
-import "@cartesi/util/contracts/Merkle.sol";
+import "@cartesi/util/contracts/MerkleV3.sol";
 // #endif
-import "@cartesi/util/contracts/Decorated.sol";
-import "@cartesi/util/contracts/InstantiatorImpl.sol";
+import "@cartesi/util/contracts/DecoratedV2.sol";
+import "@cartesi/util/contracts/InstantiatorImplV2.sol";
 import "@cartesi/logger/contracts/LoggerInterface.sol";
 import "@cartesi/arbitration/contracts/VGInterface.sol";
 import "./CartesiComputeInterface.sol";
 
 contract CartesiCompute is
-    InstantiatorImpl,
-    Decorated,
+    InstantiatorImplV2,
+    DecoratedV2,
     CartesiComputeInterface
 {
     address machine; // machine which will run the challenge

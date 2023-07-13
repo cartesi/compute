@@ -192,11 +192,11 @@
 
 /// @title CartesiComputeHarness
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/Pausable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "./CartesiComputeInterface.sol";
 
 // This harness contract sits in between a dapp and the factual Cartesi Compute
