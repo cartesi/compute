@@ -1,0 +1,31 @@
+syntax = "proto3";
+package compute;
+
+message StartDisputeRequest {
+}
+
+message StartDisputeResponse {
+}
+
+message FinishDisputeRequest {
+}
+
+message FinishDisputeResponse {
+}
+
+message DisputeInfo {
+  bool closed = 1;
+}
+
+message GetDisputeInfoRequest {
+}
+
+message GetDisputeInfoResponse {
+  DisputeInfo info = 1;
+}
+
+service ComputeServer {
+  rpc StartDispute (StartDisputeRequest) returns (StartDisputeResponse);
+  rpc StopDispute (FinishDisputeRequest) returns (FinishDisputeResponse);
+  rpc GetDisputeInfo(GetDisputeInfoRequest) returns (GetDisputeInfoResponse);
+}
