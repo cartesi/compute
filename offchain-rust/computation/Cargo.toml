@@ -1,0 +1,18 @@
+[package]
+name = "computation"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "computation"
+path = "src/mod.rs"
+
+[dependencies]
+ruint = "1.8.0"
+cryptography = { path = "../cryptography" }
+utils = { path = "../utils" }
+lazy_static = "1.4.0"
+jsonrpc-cartesi-machine = {git="https://github.com/dymchenkko/machine-manager", branch = "feat/jsonrpc"}
+tokio = { version = "1.16.0", features = ["macros", "rt-multi-thread","time"]}

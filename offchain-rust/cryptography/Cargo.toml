@@ -1,0 +1,15 @@
+[package]
+name = "cryptography"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "cryptography"
+path = "src/mod.rs"
+
+[dependencies]
+utils = { path = "../utils" }
+tiny-keccak = { version = "2.0", features = ["sha3"] }
+lazy_static = "1.4.0"
