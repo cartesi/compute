@@ -22,3 +22,12 @@ test/uarch-log
 
 # Rust build
 offchain/target
+
+offchain-rust/target
+offchain-rust/Cargo.lock
+
+offchain-rust/jsonrpc-cartesi-machine/target
+offchain-rust/jsonrpc-cartesi-machine/Cargo.lock
+
+offchain-rust/cartesi-jsonrpc-interfaces/target
+offchain-rust/cartesi-jsonrpc-interfaces/Cargo.lock
