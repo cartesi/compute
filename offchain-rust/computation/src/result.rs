@@ -1,5 +1,6 @@
 use super::machine::Machine;
 use cryptography::hash::Hash;
+use jsonrpc_cartesi_machine::JsonRpcCartesiMachineClient;
 pub struct ComputationResult {
     pub state: Hash,
     pub halted: bool,
@@ -15,12 +16,12 @@ impl ComputationResult {
         }
     }
 
-    pub async fn from_current_machine_state(machine: &Machine) -> ComputationResult {
-        let hash = Hash::from_digest_bin(machine.machine.get_root_hash().await.unwrap().as_vec());
+    pub async fn from_current_machine_state(machine: std::sync::Arc<std::sync::Mutex<JsonRpcCartesiMachineClient>>) -> ComputationResult {
+        let hash = Hash::from_digest_bin(&machine.lock().unwrap().get_root_hash().await.unwrap());
         ComputationResult::new(
             hash,
-            machine.machine.read_iflags_h().await.unwrap(),
-            machine.machine.read_uarch_halt_flag().await,
+            machine.lock().unwrap().read_iflags_h().await.unwrap(),
+            machine.lock().unwrap().read_uarch_halt_flag().await.unwrap(),
         )
     }
 }

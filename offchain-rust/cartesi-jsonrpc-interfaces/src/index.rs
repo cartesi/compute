@@ -422,7 +422,7 @@ where
         params.insert(mcycle_end);
         self.transport.request(method, params)
     }
-
+    
     pub fn MachineRunUarch<'a>(
         &'a mut self,
         uarch_cycle_end: UnsignedInteger,

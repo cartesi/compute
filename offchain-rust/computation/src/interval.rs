@@ -55,17 +55,17 @@ impl Interval {
         }
     }
 
-    fn _build_iter(&self, log2_total_strides: u32) -> (StrideCounter, u64, StrideCounter) {
+    fn _build_iter(&self, log2_total_strides: u32) -> (u64, StrideCounter) {
         let total_strides = arithmetic::max_int(log2_total_strides);
         let stride = StrideCounter::new(self, total_strides.try_into().unwrap(), None);
-        (istrides, total_strides, stride)
+        (total_strides, stride)
     }
 
-    pub fn strides(&self) -> (StrideCounter, u64, StrideCounter) {
+    pub fn strides(&self) -> (u64, StrideCounter) {
         self._build_iter(self.log2_stride_count)
     }
 
-    pub fn big_strides(&self) -> (StrideCounter, u64, StrideCounter) {
+    pub fn big_strides(&self) -> (u64, StrideCounter) {
         let bid_strides_in_interval = if self.log2_stride_count >= constants::A {
             self.log2_stride_count - constants::A
         } else {
@@ -80,9 +80,9 @@ impl Interval {
         arithmetic::max_int(ucycles) as u32
     }
 
-    pub fn ucycles_in_cycle(&self) -> (StrideCounter, u32, StrideCounter) {
+    pub fn ucycles_in_cycle(&self) -> (u32, StrideCounter) {
         let total_strides = self.total_ucycles_in_cycle();
         let stride = StrideCounter::new(self, total_strides, None);
-        (iustrides, total_strides, stride)
+        (total_strides, stride)
     }
 }

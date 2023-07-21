@@ -1,16 +1,29 @@
-use cryptography::hash::Hash;
-use crate::machine::Machine;
 use crate::constants;
-use ruint::Uint;
+use crate::machine::Machine;
+use cryptography::hash::Hash;
 use cryptography::merkle_tree::MerkleTree;
 use jsonrpc_cartesi_machine::{JsonRpcCartesiMachineClient, MachineRuntimeConfig};
 use lazy_static::lazy_static;
+use ruint::Uint;
+use std::sync::{Arc, Mutex};
+use tokio::runtime::Runtime;
 
 pub const MAX_A: Uint<256, 4> = get_mask(constants::A);
 pub const MAX_B: Uint<256, 4> = get_mask(constants::B);
 
 lazy_static! {
-    static ref root_machine: JsonRpcCartesiMachineClient = JsonRpcCartesiMachineClient::new("http://localhost:8080".to_string());
+    static ref root_machine: std::sync::Arc<std::sync::Mutex<JsonRpcCartesiMachineClient>> = initialize_root_machine();
+}
+
+async fn initialize_machine() -> JsonRpcCartesiMachineClient {
+    let url = "http://localhost:8080".to_string();
+    JsonRpcCartesiMachineClient::new(url).await.unwrap()
+}
+
+fn initialize_root_machine() -> Arc<Mutex<JsonRpcCartesiMachineClient>> {
+    let rt = Runtime::new().unwrap();
+    let machine = rt.block_on(initialize_machine());
+    Arc::new(Mutex::new(machine))
 }
 pub struct ComputationCounter {
     stride: Uint<256, 4>,
@@ -20,7 +33,11 @@ pub struct ComputationCounter {
 }
 
 impl ComputationCounter {
-    pub fn new(log2_stride: u32, base_meta_counter: Uint<256, 4>, log2_stride_count: u32) -> ComputationCounter {
+    pub fn new(
+        log2_stride: u32,
+        base_meta_counter: Uint<256, 4>,
+        log2_stride_count: u32,
+    ) -> ComputationCounter {
         let stride = Uint::from(1 << log2_stride);
         let stride_count = Uint::from(1 << log2_stride_count);
 
@@ -85,10 +102,12 @@ impl ComputationResult {
         }
     }
 
-    pub async fn from_current_machine_state(machine: &JsonRpcCartesiMachineClient) -> ComputationResult {
-        let hash = Hash::from_digest_bin(machine.get_root_hash().await);
-        let halted = machine.read_iflags_h().await.unwrap();
-        let uhalted = machine.read_uarch_halt_flag();
+    pub async fn from_current_machine_state(
+        machine: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    ) -> ComputationResult {
+        let hash = Hash::from_digest_bin(&machine.lock().unwrap().get_root_hash().await.unwrap());
+        let halted = machine.lock().unwrap().read_iflags_h().await.unwrap();
+        let uhalted = machine.lock().unwrap().read_uarch_halt_flag().await.unwrap();
 
         ComputationResult::new(hash, halted, uhalted)
     }
@@ -104,49 +123,73 @@ impl std::fmt::Display for ComputationResult {
     }
 }
 
-pub struct BaseMachine<'a> {
-    stub: &'a JsonRpcCartesiMachineClient,
+pub struct BaseMachine {
+    stub: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     base_cycle: u64,
 }
 
-impl<'a> BaseMachine<'a> {
-    pub async fn new_root(path: &'a str) -> BaseMachine<'a> {
+impl BaseMachine{
+    pub async fn new_root(path: &str) -> BaseMachine {
+        //let machine_future = root_machine.lock().unwrap();
+        //let future_machine: &dyn std::future::Future<Output = Result<JsonRpcCartesiMachineClient, jsonrpsee::core::error::Error>> = &*machine_future;
 
-        root_machine.await.unwrap().load_machine(path, &MachineRuntimeConfig::default());
-        let start_cycle = root_machine.await.unwrap().get_csr_address("mcycle".to_string()).await;
+        // Now, you need to await the Future to get the actual JsonRpcCartesiMachineClient
+        // Note: This requires being within an async context (async function or block)
+        //let result: Result<JsonRpcCartesiMachineClient, jsonrpsee::core::error::Error> = future_machine.await;
+
+        root_machine
+            .lock()
+            .unwrap()
+            .load_machine(path, &MachineRuntimeConfig::default());
+        let start_cycle = root_machine
+            .lock()
+            .unwrap()
+            .get_csr_address("mcycle".to_string())
+            .await;
 
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
-        assert_eq!(root_machine.await.unwrap().root_machine.get_csr_address("uarch_cycle".to_string()), 0);
+        assert_eq!(
+            root_machine
+                .lock()
+                .unwrap()
+                .get_csr_address("uarch_cycle".to_string()).await.unwrap(),
+            0
+        );
 
         BaseMachine {
-            stub: &root_machine.await.unwrap(),
+            stub: Arc::clone(&root_machine),
             base_cycle: start_cycle.unwrap(),
         }
     }
 
-    pub fn create_big_machine(&self) -> BigMachine {
-        let new_stub = assert!(create_stub(self.stub.fork()));
-        BigMachine::new(self, new_stub)
+    pub async fn create_big_machine(self) -> BigMachine {
+        let mut new_stub = Arc::new(Mutex::new(JsonRpcCartesiMachineClient::new(self.stub.lock().unwrap().fork().await.unwrap()).await.unwrap()));
+        BigMachine::new(self, new_stub).await
     }
 
-    pub fn result(&self) -> ComputationResult {
+    pub async fn result(&self) -> ComputationResult {
         //let machine = self.stub.get_machine();
-        ComputationResult::from_current_machine_state(&self.stub).await
+        ComputationResult::from_current_machine_state(Arc::clone(&self.stub)).await
     }
 }
 
-pub struct BigMachine<'a> {
-    base_machine: &'a BaseMachine<'a>,
-    stub: &'a JsonRpcCartesiMachineClient,
+pub struct BigMachine{
+    base_machine: BaseMachine,
+    stub: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     cycle: u64,
 }
 
-impl<'a> BigMachine<'a> {
-    pub fn new(base_machine: &'a BaseMachine<'a>, stub: &'a JsonRpcCartesiMachineClient) -> BigMachine<'a> {
-        let machine = stub.get_machine();
-        assert_eq!(machine.read_mcycle(), base_machine.base_cycle);
-        assert_eq!(machine.read_uarch_cycle(), 0);
+impl BigMachine {
+    pub async fn new(
+        base_machine: BaseMachine,
+        stub: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    ) -> BigMachine{
+        assert_eq!(
+            stub.lock().unwrap().get_csr_address("mcycle".to_string()).await.unwrap(),
+            base_machine.base_cycle
+        );
+        assert_eq!(stub.lock().unwrap().get_csr_address("uarch_cycle".to_string()).await.unwrap(), 0);
 
         BigMachine {
             base_machine,
@@ -157,39 +200,41 @@ impl<'a> BigMachine<'a> {
 
     pub fn advance(&mut self, cycle: u64) {
         //let machine = self.stub.get_machine();
-        self.stub.run(self.base_machine.base_cycle + cycle);
+        self.stub.lock().unwrap().run(self.base_machine.base_cycle + cycle);
         self.cycle = cycle;
     }
 
-    pub fn get_state(&self) -> ComputationResult {
-        //let machine = self.stub.get_machine();
-        ComputationResult::from_current_machine_state(&self.stub).await
+    pub async fn get_state(&mut self) -> ComputationResult {
+        ComputationResult::from_current_machine_state(Arc::clone(&self.stub)).await
     }
 
-    pub fn create_small_machine(&self) -> SmallMachine {
-        let new_stub = assert!(create_stub(self.stub.fork()));
-        SmallMachine::new(self, new_stub)
+    pub async fn create_small_machine(self) -> Arc<Mutex<SmallMachine>> {
+        let new_stub = Arc::new(Mutex::new(JsonRpcCartesiMachineClient::new(self.stub.lock().unwrap().fork().await.unwrap()).await.unwrap()));
+        Arc::new(Mutex::new(SmallMachine::new(Arc::new(Mutex::new(self)), new_stub).await))
     }
 
     pub fn shutdown(&self) {
-        self.stub.shutdown();
+        self.stub.lock().unwrap().shutdown();
     }
 
-    pub fn base_machine(&self) -> &BaseMachine<'a> {
+    pub fn base_machine(&self) -> BaseMachine {
         self.shutdown();
         self.base_machine
     }
 }
 
-pub struct SmallMachine<'a> {
-    big_machine: &'a BigMachine<'a>,
-    stub: &'a JsonRpcCartesiMachineClient,
+pub struct SmallMachine {
+    big_machine: Arc<Mutex<BigMachine>>,
+    stub: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     ucycle: u64,
 }
 
-impl<'a> SmallMachine<'a> {
-    pub fn new(big_machine: &'a BigMachine<'a>, stub: &'a JsonRpcCartesiMachineClient) -> SmallMachine<'a> {
-        assert_eq!(stub.read_uarch_cycle(), 0);
+impl SmallMachine{
+    pub async fn new(
+        big_machine: Arc<Mutex<BigMachine>>,
+        stub: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    ) -> SmallMachine {
+        assert_eq!(stub.lock().unwrap().get_csr_address("uarch_cycle".to_string()).await.unwrap(), 0);
 
         SmallMachine {
             big_machine,
@@ -199,23 +244,23 @@ impl<'a> SmallMachine<'a> {
     }
 
     pub fn uadvance(&mut self, ucycle: u64) {
-        let machine = self.stub;
+        let machine = self.stub.lock().unwrap();
         machine.run_uarch(ucycle);
         self.ucycle = ucycle;
     }
 
-    pub fn get_state(&self) -> ComputationResult {
-        let machine = self.stub.get_machine();
-        ComputationResult::from_current_machine_state(&machine).await
+    pub async fn get_state(&self) -> ComputationResult {
+        //let machine = self.stub.get_machine();
+        ComputationResult::from_current_machine_state(Arc::clone(&self.stub)).await
     }
 
     pub fn shutdown(&self) {
-        self.stub.shutdown();
+        self.stub.lock().unwrap().shutdown();
     }
 
-    pub fn shutdown_and_get_big_machine(&self) -> &BigMachine<'a> {
+    pub fn shutdown_and_get_big_machine(&self) -> Arc<Mutex<BigMachine>> {
         self.shutdown();
-        self.big_machine
+        Arc::clone(&self.big_machine)
     }
 }
 
@@ -233,20 +278,24 @@ fn get_cycle(mc: &Uint<256, 4>) -> u64 {
     ((mc >> constants::A as usize) & get_mask(constants::B)).to::<u64>()
 }
 
-fn add_uintervals<F>(counter: &mut ComputationCounter, big_machine: &BigMachine, mut add_state: F)
-where
+async fn add_uintervals<F>(
+    counter: &mut ComputationCounter,
+    big_machine: Arc<Mutex<BigMachine>>,
+    mut add_state: F,
+) where
     F: FnMut(Hash, Option<Uint<256, 4>>),
 {
-    let mut small_machine = big_machine.create_small_machine();
+    let mut small_machine = big_machine.lock().unwrap().create_small_machine().await;
     let current_instruction = get_cycle(&counter.peek_next().unwrap());
 
     while !counter.is_empty() && current_instruction == get_cycle(&counter.peek_next().unwrap()) {
         let next_uinstruction = get_ucycle(&counter.peek_next().unwrap());
-        small_machine.uadvance(next_uinstruction);
-        let result = small_machine.get_state();
+        small_machine.lock().unwrap().uadvance(next_uinstruction);
+        let result = small_machine.lock().unwrap().get_state().await;
 
         if result.uhalted {
-            let r = (MAX_A - Uint::from(next_uinstruction) / &counter.stride + Uint::from(1)).min(counter.len());
+            let r = (MAX_A - Uint::from(next_uinstruction) / &counter.stride + Uint::from(1))
+                .min(counter.len());
             add_state(result.state, Some(r.clone()));
             counter.popn(&r);
             break;
@@ -256,27 +305,31 @@ where
         }
     }
 
-    small_machine.shutdown();
+    small_machine.lock().unwrap().shutdown();
 }
 
-fn add_intervals<F>(counter: &mut ComputationCounter, base_machine: &BaseMachine, mut add_state: F)
-where
+async fn add_intervals<F>(
+    counter: &mut ComputationCounter,
+    base_machine: Arc<Mutex<BaseMachine>>,
+    mut add_state: F,
+) where
     F: FnMut(Hash, Option<Uint<256, 4>>),
 {
-    let mut big_machine = base_machine.create_big_machine();
+    let mut big_machine = base_machine.lock().unwrap().create_big_machine().await;
 
     while !counter.is_empty() {
         let next_mc = counter.peek_next().unwrap();
         let next_instruction = get_cycle(&next_mc);
-        big_machine.advance(next_instruction);
+        big_machine.lock().unwrap().advance(next_instruction);
 
         if get_ucycle(&next_mc) != 0 {
-            add_uintervals(counter, &big_machine, &mut add_state);
+            add_uintervals(counter, big_machine, &mut add_state);
         } else {
-            let result = big_machine.get_state();
+            let result = big_machine.lock().unwrap().get_state().await;
 
             if result.uhalted && &counter.stride & Uint::from(MAX_A) == Uint::from(0) {
-                let r = (MAX_B - Uint::from(next_instruction) / &counter.stride + Uint::from(1)).min(counter.len());
+                let r = (MAX_B - Uint::from(next_instruction) / &counter.stride + Uint::from(1))
+                    .min(counter.len());
                 add_state(result.state, Some(r.clone()));
                 counter.popn(&r);
                 assert!(counter.is_empty());
@@ -288,21 +341,26 @@ where
         }
     }
 
-    big_machine.shutdown();
+    big_machine.lock().unwrap().shutdown();
 }
 
-fn get_leafs(log2_stride: u32, base_meta_counter: Uint<256, 4>, log2_stride_count: u32, base_machine: &BaseMachine) -> (Hash, Vec<(Hash, Option<Uint<256, 4>>)>) {
+async fn get_leafs(
+    log2_stride: u32,
+    base_meta_counter: Uint<256, 4>,
+    log2_stride_count: u32,
+    base_machine: &mut BaseMachine,
+) -> (Hash, Vec<(Hash, Option<Uint<256, 4>>)>) {
     let mut interval = ComputationCounter::new(log2_stride, base_meta_counter, log2_stride_count);
     let mut accumulator = Vec::new();
 
     let mut add_state = |s: Hash, r: Option<Uint<256, 4>>| {
         let r = r.unwrap_or_else(|| Uint::from(1));
-        accumulator.push((s, Some(r.clone())));
+        accumulator.push((s.clone(), Some(r.clone())));
         println!("{}, {:?}, {})", accumulator.len(), s, r);
     };
 
-    add_intervals(&mut interval, base_machine, add_state);
-    let inital_state = base_machine.result().state;
+    add_intervals(&mut interval, &mut base_machine, add_state);
+    let inital_state = base_machine.result().await.state;
 
     (inital_state, accumulator)
 }
@@ -311,7 +369,7 @@ async fn main() {
     let base_machine = BaseMachine::new_root("program/simple-program").await;
 
     let mc = Uint::from(0) + (Uint::from(0) << 64);
-    let (_, y) = get_leafs(5, mc, 64, &base_machine);
+    let (_, y) = get_leafs(5, mc, 64, &base_machine).await;
 
     for (i, v) in y.iter().enumerate() {
         println!("{}, {:?}, {:?}", i + 1, v.0, v.1);
