@@ -14,5 +14,6 @@ ruint = "1.8.0"
 cryptography = { path = "../cryptography" }
 utils = { path = "../utils" }
 lazy_static = "1.4.0"
-jsonrpc-cartesi-machine = {git="https://github.com/dymchenkko/machine-manager", branch = "feat/jsonrpc"}
+jsonrpc-cartesi-machine = {path="../jsonrpc-cartesi-machine"}
 tokio = { version = "1.16.0", features = ["macros", "rt-multi-thread","time"]}
+jsonrpsee = {version = "0.18.2", features=["client-core"]}

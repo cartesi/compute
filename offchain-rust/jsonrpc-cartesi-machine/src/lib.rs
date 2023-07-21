@@ -327,31 +327,6 @@ impl From<&cartesi_jsonrpc_interfaces::index::MemoryRangeConfig> for MemoryRange
     }
 }
 
-/*impl From<&grpc_cartesi_machine::MemoryRangeConfig> for MemoryRangeConfig {
-    fn from(config: &grpc_cartesi_machine::MemoryRangeConfig) -> Self {
-        MemoryRangeConfig {
-            start: config.start,
-            length: config.length,
-            shared: config.shared,
-            image_filename: config.image_filename.clone(),
-        }
-    }
-}*/
-
-/*impl From<&grpc_cartesi_machine::UarchConfig> for UarchConfig {
-    fn from(config: &grpc_cartesi_machine::UarchConfig) -> Self {
-        UarchConfig {
-            processor: match &config.processor {
-                Some(config) => Some(crate::UarchProcessorConfig::from(config)),
-                None => None,
-            },
-            ram: match &config.ram {
-                Some(config) => Some(crate::UarchRAMConfig::from(config)),
-                None => None,
-            },
-        }
-    }
-}*/
 #[doc = " Cartesi machine rollup configuration"]
 #[derive(Debug, Clone, Default)]
 pub struct RollupConfig {
@@ -789,6 +764,12 @@ impl JsonRpcCartesiMachineClient {
         Ok(response)
     }
 
+    /// Run uarch remote machine to maximum limit cycle
+    pub async fn run_uarch(&self, limit: u64) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+        let response = self.client.lock().await.MachineRunUarch(limit).await.unwrap();
+        Ok(response)
+    }
+
     /// Serialize entire remote machine state to directory on cartesi machine server host
     pub async fn store(&mut self, directory: &str) -> Result<(), Box<jsonrpsee::core::Error>> {
         let response = self
@@ -981,6 +962,11 @@ impl JsonRpcCartesiMachineClient {
         Ok(response)
     }
 
+    pub async fn read_uarch_halt_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        let response = self.client.lock().await.MachineReadUarchHaltFlag().await.unwrap();
+        Ok(response)
+    }
+
     /// Writes the value of a general-purpose register for the remote machine
     pub async fn write_x(
         &mut self,
@@ -1007,6 +993,18 @@ impl JsonRpcCartesiMachineClient {
             .await
             .unwrap();
         Ok(())
+    }
+
+    /// Resets uarch state on the remote machine
+    pub async fn reset_uarch_state(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
+        let response = self
+            .client
+            .lock()
+            .await
+            .MachineResetUarchState()
+            .await
+            .unwrap();
+        Ok(response)
     }
 
     /// Gets the address of any CSR
