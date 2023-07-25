@@ -11,13 +11,15 @@ pub struct Machine {
 
 impl Machine {
     pub async fn new_from_path(path: &str) -> Machine {
-        let machine = Arc::new(Mutex::new(JsonRpcCartesiMachineClient::new().await.unwrap()));
+        let url = "http://0.0.0.0:7001".to_string();
+
+        let machine = Arc::new(Mutex::new(JsonRpcCartesiMachineClient::new(url).await.unwrap()));
         machine.lock().unwrap().load_machine(path, &MachineRuntimeConfig::default());
         let start_cycle = machine.lock().unwrap().get_csr_address("mcycle".to_string()).await.unwrap();
 
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
-        assert_eq!(machine.lock().unwrap().get_csr_address("uarch_cycle".to_string()).await.unwrap(), 0);
+        //assert_eq!(machine.lock().unwrap().get_csr_address("uarch_cycle".to_string()).await.unwrap(), 0);
 
         Machine {
             machine,

@@ -19,15 +19,7 @@ RUN export ARCH=$(uname -m | sed 's/aarch64/aarch_64/') && \
    curl -LO https://github.com/protocolbuffers/protobuf/releases/download/v3.20.1/protoc-3.20.1-linux-$ARCH.zip && \
    unzip protoc-3.20.1-linux-$ARCH.zip -d $HOME/.local
 
-COPY ./src /root/src
-COPY ./Cargo.toml /root/Cargo.toml
-
-COPY ./jsonrpc-cartesi-machine /root/jsonrpc-cartesi-machine
-COPY ./cartesi-jsonrpc-interfaces /root/cartesi-jsonrpc-interfaces
-
-COPY ./utils /root/utils
-COPY ./computation /root/computation
-COPY ./cryptography /root/cryptography
+COPY ./ /root
 
 RUN cd /root && PATH="$PATH:$HOME/.local/bin" && cargo build --release && cargo run --release
 

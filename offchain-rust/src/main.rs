@@ -1,9 +1,10 @@
 use std::process::Command;
 
-use computation::commitment;
-fn main() {
+use computation::machine_test;
+#[tokio::main]
+async fn main() {
     println!("Hello, world!");
-    /*let output = Command::new("sh")
+    let output = Command::new("sh")
          .arg("program/gen_machine_simple.sh")
          .output()
          .expect("Failed to execute program/gen_machine_simple.sh");
@@ -14,8 +15,8 @@ fn main() {
      } else {
          let stderr = String::from_utf8_lossy(&output.stderr);
          println!("Script execution failed: {}", stderr);
-     }*/
- 
+     }
+     machine_test::test_execution().await;
      // os.execute "jsonrpc-remote-cartesi-machine --server-address=localhost:8080 &"
      // os.execute "sleep 2"
      // require "cryptography.merkle_builder"

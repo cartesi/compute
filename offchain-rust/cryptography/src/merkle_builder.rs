@@ -59,7 +59,7 @@ impl<'a> Slice<'a> {
         l
     }
 }
-
+#[derive(Clone)]
 pub struct MerkleBuilder {
     leafs: Vec<Leaf>,
 }
@@ -108,7 +108,7 @@ impl MerkleBuilder {
         };
 
         let root_hash = merkle(&Slice::new(&self.leafs, 0, self.leafs.len() as u64), log2size, 0);
-        MerkleTree::new(&self.leafs, root_hash, log2size)
+        MerkleTree::new(self.leafs.clone(), root_hash, log2size)
     }
 }
 #[derive(Clone)]
