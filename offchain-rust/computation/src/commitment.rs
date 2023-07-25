@@ -4,20 +4,22 @@ use super::{interval::Interval, machine::Machine};
 use ruint::Uint;
 use cryptography::merkle_tree::MerkleTree;
 
-async fn build_small_machine_commitment<'a>(interval: Interval, machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree<'a> {
+async fn build_small_machine_commitment(interval: Interval, machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree {
     let mut outer_builder = MerkleBuilder::new();
 
-    for remaining_big_strides in interval.big_strides().2 {
+    for stride_counter in interval.iter(interval.log2_stride_count - constants::A) {
         let mut inner_builder = MerkleBuilder::new();
 
-        for (ucycle, remaining_strides) in interval.ucycles_in_cycle().1.zip(interval.ucycles_in_cycle().2) {
-            machine.lock().unwrap().uadvance(ucycle);
+        for ucycles_stride_counter in interval.ucycles_in_cycle() {
+            let ucycle = ucycles_stride_counter.cycle();
+        let remaining_strides = ucycles_stride_counter.remaining_strides();
+            machine.lock().unwrap().uadvance(ucycle as u64);
             let state = machine.lock().unwrap().result().await;
 
-            if !state.uhalted {
+            if !state.halted {
                 inner_builder.add(state.state, None);
             } else {
-                inner_builder.add(state.state, remaining_strides);
+                inner_builder.add(state.state, Some(remaining_strides as u64));
                 break;
             }
         }
@@ -28,9 +30,10 @@ async fn build_small_machine_commitment<'a>(interval: Interval, machine: std::sy
         inner_builder.add(state.state, None);
 
         if !state.halted {
-            outer_builder.add(inner_builder.build(), None);
+            outer_builder.add(inner_builder.build().root_hash, None);
         } else {
-            outer_builder.add(inner_builder.build(), remaining_big_strides);
+            let remaining_big_strides = stride_counter.remaining_strides();
+            outer_builder.add(inner_builder.build().root_hash, Some(remaining_big_strides as u64));
             break;
         }
     }
@@ -38,18 +41,21 @@ async fn build_small_machine_commitment<'a>(interval: Interval, machine: std::sy
     outer_builder.build()
 }
 
-async fn build_big_machine_commitment<'a>(interval: Interval, machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree<'a> {
+async fn build_big_machine_commitment(interval: Interval, machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree {
     let mut builder = MerkleBuilder::new();
 
-    for (cycle, remaining_strides) in interval.strides() {
+    for stride_counter in interval.iter(interval.log2_stride_count) {
+        let cycle = stride_counter.cycle();
+        let remaining_strides = stride_counter.remaining_strides();
+
         let mut machine = machine.lock().unwrap();
-        machine.advance(cycle);
+        machine.advance(cycle as u64);
         let state = machine.result().await;
 
         if !state.halted {
             builder.add(state.state, None);
         } else {
-            builder.add(state.state, remaining_strides + 1);
+            builder.add(state.state, Some(remaining_strides as u64 + 1));
             break;
         }
     }
@@ -66,8 +72,7 @@ async fn build_commitment(interval: Interval, path: &str) -> MerkleTree {
     }
 }
 
-#[tokio::main]
-async fn main() {
+pub async fn commitment_execution() {
     let mc = Uint::<256, 4>::from(0);
     let i = Interval::new(mc, 0, 64);
     let path = "program/simple-program";

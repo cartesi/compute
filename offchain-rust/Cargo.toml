@@ -10,6 +10,8 @@ num-bigint = "0.4.3"
 computation = { path = "computation" }
 cryptography = { path = "cryptography" }
 jsonrpc-cartesi-machine = {path="jsonrpc-cartesi-machine"}
+tokio = { version = "1.16.0", features = ["macros", "rt-multi-thread","time"]}
+
 [workspace]
 
 members = [

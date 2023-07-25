@@ -1,14 +1,14 @@
 use crate::hash::Hash;
 use crate::merkle_builder::Leaf;
-pub struct MerkleTree<'a> {
-    leafs: &'a [Leaf],
+pub struct MerkleTree {
+    leafs: Vec<Leaf>,
     pub root_hash: Hash,
     digest_hex: String,
     log2size: u32,
 }
 
-impl<'a> MerkleTree<'a> {
-    pub fn new(leafs: &'a [Leaf], root_hash: Hash, log2size: u32) -> Self {
+impl MerkleTree {
+    pub fn new(leafs: Vec<Leaf>, root_hash: Hash, log2size: u32) -> Self {
         MerkleTree {
             leafs,
             root_hash: root_hash.clone(),
