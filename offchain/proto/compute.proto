@@ -24,8 +24,8 @@ message GetDisputeInfoResponse {
   DisputeInfo info = 1;
 }
 
-service ComputeServer {
+service Compute {
   rpc StartDispute (StartDisputeRequest) returns (StartDisputeResponse);
-  rpc StopDispute (FinishDisputeRequest) returns (FinishDisputeResponse);
+  rpc FinishDispute (FinishDisputeRequest) returns (FinishDisputeResponse);
   rpc GetDisputeInfo(GetDisputeInfoRequest) returns (GetDisputeInfoResponse);
 }

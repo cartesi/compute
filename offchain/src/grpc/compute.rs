@@ -26,15 +26,15 @@ pub struct GetDisputeInfoResponse {
     pub info: ::core::option::Option<DisputeInfo>,
 }
 /// Generated client implementations.
-pub mod compute_server_client {
+pub mod compute_client {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
     use tonic::codegen::http::Uri;
     #[derive(Debug, Clone)]
-    pub struct ComputeServerClient<T> {
+    pub struct ComputeClient<T> {
         inner: tonic::client::Grpc<T>,
     }
-    impl ComputeServerClient<tonic::transport::Channel> {
+    impl ComputeClient<tonic::transport::Channel> {
         /// Attempt to create a new client by connecting to a given endpoint.
         pub async fn connect<D>(dst: D) -> Result<Self, tonic::transport::Error>
         where
@@ -45,7 +45,7 @@ pub mod compute_server_client {
             Ok(Self::new(conn))
         }
     }
-    impl<T> ComputeServerClient<T>
+    impl<T> ComputeClient<T>
     where
         T: tonic::client::GrpcService<tonic::body::BoxBody>,
         T::Error: Into<StdError>,
@@ -63,7 +63,7 @@ pub mod compute_server_client {
         pub fn with_interceptor<F>(
             inner: T,
             interceptor: F,
-        ) -> ComputeServerClient<InterceptedService<T, F>>
+        ) -> ComputeClient<InterceptedService<T, F>>
         where
             F: tonic::service::Interceptor,
             T::ResponseBody: Default,
@@ -77,7 +77,7 @@ pub mod compute_server_client {
                 http::Request<tonic::body::BoxBody>,
             >>::Error: Into<StdError> + Send + Sync,
         {
-            ComputeServerClient::new(InterceptedService::new(inner, interceptor))
+            ComputeClient::new(InterceptedService::new(inner, interceptor))
         }
         /// Compress requests with the given encoding.
         ///
@@ -128,14 +128,14 @@ pub mod compute_server_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/compute.ComputeServer/StartDispute",
+                "/compute.Compute/StartDispute",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("compute.ComputeServer", "StartDispute"));
+                .insert(GrpcMethod::new("compute.Compute", "StartDispute"));
             self.inner.unary(req, path, codec).await
         }
-        pub async fn stop_dispute(
+        pub async fn finish_dispute(
             &mut self,
             request: impl tonic::IntoRequest<super::FinishDisputeRequest>,
         ) -> std::result::Result<
@@ -153,11 +153,11 @@ pub mod compute_server_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/compute.ComputeServer/StopDispute",
+                "/compute.Compute/FinishDispute",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("compute.ComputeServer", "StopDispute"));
+                .insert(GrpcMethod::new("compute.Compute", "FinishDispute"));
             self.inner.unary(req, path, codec).await
         }
         pub async fn get_dispute_info(
@@ -178,22 +178,22 @@ pub mod compute_server_client {
                 })?;
             let codec = tonic::codec::ProstCodec::default();
             let path = http::uri::PathAndQuery::from_static(
-                "/compute.ComputeServer/GetDisputeInfo",
+                "/compute.Compute/GetDisputeInfo",
             );
             let mut req = request.into_request();
             req.extensions_mut()
-                .insert(GrpcMethod::new("compute.ComputeServer", "GetDisputeInfo"));
+                .insert(GrpcMethod::new("compute.Compute", "GetDisputeInfo"));
             self.inner.unary(req, path, codec).await
         }
     }
 }
 /// Generated server implementations.
-pub mod compute_server_server {
+pub mod compute_server {
     #![allow(unused_variables, dead_code, missing_docs, clippy::let_unit_value)]
     use tonic::codegen::*;
-    /// Generated trait containing gRPC methods that should be implemented for use with ComputeServerServer.
+    /// Generated trait containing gRPC methods that should be implemented for use with ComputeServer.
     #[async_trait]
-    pub trait ComputeServer: Send + Sync + 'static {
+    pub trait Compute: Send + Sync + 'static {
         async fn start_dispute(
             &self,
             request: tonic::Request<super::StartDisputeRequest>,
@@ -201,7 +201,7 @@ pub mod compute_server_server {
             tonic::Response<super::StartDisputeResponse>,
             tonic::Status,
         >;
-        async fn stop_dispute(
+        async fn finish_dispute(
             &self,
             request: tonic::Request<super::FinishDisputeRequest>,
         ) -> std::result::Result<
@@ -217,7 +217,7 @@ pub mod compute_server_server {
         >;
     }
     #[derive(Debug)]
-    pub struct ComputeServerServer<T: ComputeServer> {
+    pub struct ComputeServer<T: Compute> {
         inner: _Inner<T>,
         accept_compression_encodings: EnabledCompressionEncodings,
         send_compression_encodings: EnabledCompressionEncodings,
@@ -225,7 +225,7 @@ pub mod compute_server_server {
         max_encoding_message_size: Option<usize>,
     }
     struct _Inner<T>(Arc<T>);
-    impl<T: ComputeServer> ComputeServerServer<T> {
+    impl<T: Compute> ComputeServer<T> {
         pub fn new(inner: T) -> Self {
             Self::from_arc(Arc::new(inner))
         }
@@ -277,9 +277,9 @@ pub mod compute_server_server {
             self
         }
     }
-    impl<T, B> tonic::codegen::Service<http::Request<B>> for ComputeServerServer<T>
+    impl<T, B> tonic::codegen::Service<http::Request<B>> for ComputeServer<T>
     where
-        T: ComputeServer,
+        T: Compute,
         B: Body + Send + 'static,
         B::Error: Into<StdError> + Send + 'static,
     {
@@ -295,11 +295,11 @@ pub mod compute_server_server {
         fn call(&mut self, req: http::Request<B>) -> Self::Future {
             let inner = self.inner.clone();
             match req.uri().path() {
-                "/compute.ComputeServer/StartDispute" => {
+                "/compute.Compute/StartDispute" => {
                     #[allow(non_camel_case_types)]
-                    struct StartDisputeSvc<T: ComputeServer>(pub Arc<T>);
+                    struct StartDisputeSvc<T: Compute>(pub Arc<T>);
                     impl<
-                        T: ComputeServer,
+                        T: Compute,
                     > tonic::server::UnaryService<super::StartDisputeRequest>
                     for StartDisputeSvc<T> {
                         type Response = super::StartDisputeResponse;
@@ -341,13 +341,13 @@ pub mod compute_server_server {
                     };
                     Box::pin(fut)
                 }
-                "/compute.ComputeServer/StopDispute" => {
+                "/compute.Compute/FinishDispute" => {
                     #[allow(non_camel_case_types)]
-                    struct StopDisputeSvc<T: ComputeServer>(pub Arc<T>);
+                    struct FinishDisputeSvc<T: Compute>(pub Arc<T>);
                     impl<
-                        T: ComputeServer,
+                        T: Compute,
                     > tonic::server::UnaryService<super::FinishDisputeRequest>
-                    for StopDisputeSvc<T> {
+                    for FinishDisputeSvc<T> {
                         type Response = super::FinishDisputeResponse;
                         type Future = BoxFuture<
                             tonic::Response<Self::Response>,
@@ -359,7 +359,7 @@ pub mod compute_server_server {
                         ) -> Self::Future {
                             let inner = Arc::clone(&self.0);
                             let fut = async move {
-                                (*inner).stop_dispute(request).await
+                                (*inner).finish_dispute(request).await
                             };
                             Box::pin(fut)
                         }
@@ -371,7 +371,7 @@ pub mod compute_server_server {
                     let inner = self.inner.clone();
                     let fut = async move {
                         let inner = inner.0;
-                        let method = StopDisputeSvc(inner);
+                        let method = FinishDisputeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(
@@ -387,11 +387,11 @@ pub mod compute_server_server {
                     };
                     Box::pin(fut)
                 }
-                "/compute.ComputeServer/GetDisputeInfo" => {
+                "/compute.Compute/GetDisputeInfo" => {
                     #[allow(non_camel_case_types)]
-                    struct GetDisputeInfoSvc<T: ComputeServer>(pub Arc<T>);
+                    struct GetDisputeInfoSvc<T: Compute>(pub Arc<T>);
                     impl<
-                        T: ComputeServer,
+                        T: Compute,
                     > tonic::server::UnaryService<super::GetDisputeInfoRequest>
                     for GetDisputeInfoSvc<T> {
                         type Response = super::GetDisputeInfoResponse;
@@ -448,7 +448,7 @@ pub mod compute_server_server {
             }
         }
     }
-    impl<T: ComputeServer> Clone for ComputeServerServer<T> {
+    impl<T: Compute> Clone for ComputeServer<T> {
         fn clone(&self) -> Self {
             let inner = self.inner.clone();
             Self {
@@ -460,7 +460,7 @@ pub mod compute_server_server {
             }
         }
     }
-    impl<T: ComputeServer> Clone for _Inner<T> {
+    impl<T: Compute> Clone for _Inner<T> {
         fn clone(&self) -> Self {
             Self(Arc::clone(&self.0))
         }
@@ -470,7 +470,7 @@ pub mod compute_server_server {
             write!(f, "{:?}", self.0)
         }
     }
-    impl<T: ComputeServer> tonic::server::NamedService for ComputeServerServer<T> {
-        const NAME: &'static str = "compute.ComputeServer";
+    impl<T: Compute> tonic::server::NamedService for ComputeServer<T> {
+        const NAME: &'static str = "compute.Compute";
     }
 }

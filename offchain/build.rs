@@ -9,7 +9,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .build_server(true)
         .out_dir(stub_dirs)
         .compile(&proto_files, &proto_dirs)
-        .unwrap_or_else(|e| panic!("protobuf compilation failed: {}", e));
+        .unwrap_or_else(|e| panic!("failed to build grpc: {}", e));
     
     Ok(())
 }

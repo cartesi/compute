@@ -1,0 +1,2018 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "Match.IdHash",
+          "name": "",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "Tree.Node",
+          "name": "parent",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "Tree.Node",
+          "name": "left",
+          "type": "bytes32"
+        }
+      ],
+      "name": "matchAdvanced",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "Tree.Node",
+          "name": "one",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "Tree.Node",
+          "name": "two",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "Tree.Node",
+          "name": "leftOfTwo",
+          "type": "bytes32"
+        }
+      ],
+      "name": "matchCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentTwo",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct Match.Id",
+          "name": "_matchId",
+          "type": "tuple"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_leftNode",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_rightNode",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_newLeftNode",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_newRightNode",
+          "type": "bytes32"
+        }
+      ],
+      "name": "advanceMatch",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentTwo",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct Match.Id",
+          "name": "_matchId",
+          "type": "tuple"
+        }
+      ],
+      "name": "canWinMatchByTimeout",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Tree.Node",
+          "name": "_commitmentRoot",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getCommitment",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "Time.Duration",
+              "name": "allowance",
+              "type": "uint64"
+            },
+            {
+              "internalType": "Time.Instant",
+              "name": "startInstant",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct Clock.State",
+          "name": "",
+          "type": "tuple"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Match.IdHash",
+          "name": "_matchIdHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getMatch",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "Tree.Node",
+              "name": "otherParent",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "leftNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "rightNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "uint64",
+              "name": "runningLeafPosition",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "height",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "currentHeight",
+              "type": "uint64"
+            }
+          ],
+          "internalType": "struct Match.State",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Match.IdHash",
+          "name": "_matchIdHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getMatchCycle",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Machine.Hash",
+          "name": "_finalState",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32[]",
+          "name": "_proof",
+          "type": "bytes32[]"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_leftNode",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_rightNode",
+          "type": "bytes32"
+        }
+      ],
+      "name": "joinTournament",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "maximumEnforceableDelay",
+      "outputs": [
+        {
+          "internalType": "Time.Instant",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "rootTournamentFinalState",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tournamentLevelConstants",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "_level",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_log2step",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_height",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tournamentWinner",
+      "outputs": [
+        {
+          "internalType": "Tree.Node",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "commitmentTwo",
+              "type": "bytes32"
+            }
+          ],
+          "internalType": "struct Match.Id",
+          "name": "_matchId",
+          "type": "tuple"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_leftNode",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_rightNode",
+          "type": "bytes32"
+        }
+      ],
+      "name": "winMatchByTimeout",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "advanceMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32)": "fcc85391",
+    "canWinMatchByTimeout((bytes32,bytes32))": "6a1a140d",
+    "getCommitment(bytes32)": "7795820c",
+    "getMatch(bytes32)": "fcc6077d",
+    "getMatchCycle(bytes32)": "8acc802d",
+    "joinTournament(bytes32,bytes32[],bytes32,bytes32)": "1d5bf796",
+    "maximumEnforceableDelay()": "60f302dc",
+    "rootTournamentFinalState()": "92b9ead5",
+    "tournamentLevelConstants()": "a1af906b",
+    "tournamentWinner()": "bcb01295",
+    "winMatchByTimeout((bytes32,bytes32),bytes32,bytes32)": "ff78e0ee"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"Match.IdHash\",\"name\":\"\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"Tree.Node\",\"name\":\"parent\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"Tree.Node\",\"name\":\"left\",\"type\":\"bytes32\"}],\"name\":\"matchAdvanced\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"Tree.Node\",\"name\":\"one\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"Tree.Node\",\"name\":\"two\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"Tree.Node\",\"name\":\"leftOfTwo\",\"type\":\"bytes32\"}],\"name\":\"matchCreated\",\"type\":\"event\"},{\"inputs\":[{\"components\":[{\"internalType\":\"Tree.Node\",\"name\":\"commitmentOne\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"commitmentTwo\",\"type\":\"bytes32\"}],\"internalType\":\"struct Match.Id\",\"name\":\"_matchId\",\"type\":\"tuple\"},{\"internalType\":\"Tree.Node\",\"name\":\"_leftNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_rightNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_newLeftNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_newRightNode\",\"type\":\"bytes32\"}],\"name\":\"advanceMatch\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"Tree.Node\",\"name\":\"commitmentOne\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"commitmentTwo\",\"type\":\"bytes32\"}],\"internalType\":\"struct Match.Id\",\"name\":\"_matchId\",\"type\":\"tuple\"}],\"name\":\"canWinMatchByTimeout\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Tree.Node\",\"name\":\"_commitmentRoot\",\"type\":\"bytes32\"}],\"name\":\"getCommitment\",\"outputs\":[{\"components\":[{\"internalType\":\"Time.Duration\",\"name\":\"allowance\",\"type\":\"uint64\"},{\"internalType\":\"Time.Instant\",\"name\":\"startInstant\",\"type\":\"uint64\"}],\"internalType\":\"struct Clock.State\",\"name\":\"\",\"type\":\"tuple\"},{\"internalType\":\"Machine.Hash\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Match.IdHash\",\"name\":\"_matchIdHash\",\"type\":\"bytes32\"}],\"name\":\"getMatch\",\"outputs\":[{\"components\":[{\"internalType\":\"Tree.Node\",\"name\":\"otherParent\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"leftNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"rightNode\",\"type\":\"bytes32\"},{\"internalType\":\"uint64\",\"name\":\"runningLeafPosition\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"height\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"currentHeight\",\"type\":\"uint64\"}],\"internalType\":\"struct Match.State\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Match.IdHash\",\"name\":\"_matchIdHash\",\"type\":\"bytes32\"}],\"name\":\"getMatchCycle\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Machine.Hash\",\"name\":\"_finalState\",\"type\":\"bytes32\"},{\"internalType\":\"bytes32[]\",\"name\":\"_proof\",\"type\":\"bytes32[]\"},{\"internalType\":\"Tree.Node\",\"name\":\"_leftNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_rightNode\",\"type\":\"bytes32\"}],\"name\":\"joinTournament\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maximumEnforceableDelay\",\"outputs\":[{\"internalType\":\"Time.Instant\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"rootTournamentFinalState\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"Machine.Hash\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tournamentLevelConstants\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"_level\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"_log2step\",\"type\":\"uint64\"},{\"internalType\":\"uint64\",\"name\":\"_height\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tournamentWinner\",\"outputs\":[{\"internalType\":\"Tree.Node\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"components\":[{\"internalType\":\"Tree.Node\",\"name\":\"commitmentOne\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"commitmentTwo\",\"type\":\"bytes32\"}],\"internalType\":\"struct Match.Id\",\"name\":\"_matchId\",\"type\":\"tuple\"},{\"internalType\":\"Tree.Node\",\"name\":\"_leftNode\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_rightNode\",\"type\":\"bytes32\"}],\"name\":\"winMatchByTimeout\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{\"advanceMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32)\":{\"details\":\"this function is being called repeatedly in turns by the two parties that disagree on the commitment.\"},\"joinTournament(bytes32,bytes32[],bytes32,bytes32)\":{\"details\":\"root tournaments are open to everyone, while non-root tournaments are open to anyone who's final state hash matches the one of the two in the tournament\"},\"tournamentWinner()\":{\"returns\":{\"_0\":\"_winner commitment of the tournament\"}}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"advanceMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32)\":{\"notice\":\"Advance the match until the smallest divergence is found at current level\"}},\"notice\":\"Root tournament has no parent\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/tournament/abstracts/RootTournament.sol\":\"RootTournament\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@cartesi/=lib/machine-solidity-step/node_modules/@cartesi/\",\":@ensdomains/=lib/machine-solidity-step/node_modules/@ensdomains/\",\":@openzeppelin/=lib/machine-solidity-step/node_modules/@openzeppelin/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":eth-gas-reporter/=lib/machine-solidity-step/node_modules/eth-gas-reporter/\",\":forge-std/=lib/forge-std/src/\",\":hardhat-deploy/=lib/machine-solidity-step/node_modules/hardhat-deploy/\",\":hardhat/=lib/machine-solidity-step/node_modules/hardhat/\",\":machine-solidity-step/=lib/machine-solidity-step/contracts/\",\":step/=lib/machine-solidity-step/\"]},\"sources\":{\"src/CanonicalConstants.sol\":{\"keccak256\":\"0xee7c0dd997efc700a05941d30d339f9e0dd2f0fccc820398923003d9609ca458\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://7a046902e706f696c76ae7ff7c1592f64def4b28c814b9fd3ca0d19f99043430\",\"dweb:/ipfs/QmXZLzhBKsW1Yy54TjFp51cK8S95uy2sxgdtK7oV6Hjvy6\"]},\"src/Clock.sol\":{\"keccak256\":\"0x9f868159408a77219e0340396a4173eeb7b6543bfac7f62ce966fbe3935ca1b5\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://159fbea056ca191f7931da19d94f8aaed5cde43ea30162b51926c6b33f5a84fe\",\"dweb:/ipfs/QmddgnANrd9DLjgJXyySRroSZoxKBVxWfwxPAWRufuh2jV\"]},\"src/Commitment.sol\":{\"keccak256\":\"0xbae4c23a8e16c29fe0c18d4aa040528c70dd3cf99716c38ed6d9ec3955af3d3b\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://3fc0b6bbf65a429ce313abe7cbf4e1b8eab58d3218473afd7c76d6c2b4afc2d9\",\"dweb:/ipfs/Qme9U5PA9Xv8xAnAqLPgs3ZxzCbv2hy5QiQ3YfZV8oGE3j\"]},\"src/Machine.sol\":{\"keccak256\":\"0xf5f7bc980d3470cc6209abac7a4765453c21e987a487e2b806003c2b42c7fc14\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://94e2597232926a2c1a693ac339cae6c328ceeb6efca8776d5d00c946a8720aaa\",\"dweb:/ipfs/QmZ5ZWpXMqSaDbdrsLsFFBKXArMyAA2vUPojZ8ComXjT7H\"]},\"src/Match.sol\":{\"keccak256\":\"0x8dc79fe569186ec80dd9c6db57585dd2f00a6bebadadbe86ae919a6b9e13eb45\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://c9aac9d63c6cab2cd84bf81cd71b1587dcd5f5d9ae5e3e45a32a397007d0e550\",\"dweb:/ipfs/QmWTjtNeB1N73PxjeX7CaMRCuHHXsFXL3LDTCrs9YK1u6h\"]},\"src/Time.sol\":{\"keccak256\":\"0xe12a425e196fcb3b4bb8895469860e7f5d5b7ee4d5ad3b553e64803e4ed94948\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://e27fae905773c98c94efeba83af9943ee1801168427338c377d5f74ccf4fcfa0\",\"dweb:/ipfs/QmQLsVgKUuZSVLjZHaX4bUuLAgxs3pyvphvMdf1FjXpSbG\"]},\"src/Tree.sol\":{\"keccak256\":\"0x1ab5c9b7d58bc82d237f4c99f17950972d763e0b648fd98b044128bbe9069a3e\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://4ea4c94272288948d297bdd5a9f01d6df3316d7f0709d65f0f63766c590aa8da\",\"dweb:/ipfs/QmXCSBgPDX5Gbu9iwPHoAfwgAXTg8nHumaHyqsZE3sBAYB\"]},\"src/tournament/abstracts/RootTournament.sol\":{\"keccak256\":\"0x164a8bbc20c0ba26667890110c31e2682f3c4c3ae09ca28736383d27c9324c28\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://077cb6e3971f69cfebb14be437ea62f24f623796bf05460014676eb5fcd30b97\",\"dweb:/ipfs/QmUQtnej4NTbUhVK1PwS8Fuy4qKDCrsJbQyW1pDLVA6aNc\"]},\"src/tournament/abstracts/Tournament.sol\":{\"keccak256\":\"0x23ac4c914e5be170a72d8ec729e87f65ff8d00a2b362437bec7132edfe64c5e8\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://cc2b293c4a926c3f5d8cb633c1166f8f0182beaec935b7e2c236c2501e4ddc3f\",\"dweb:/ipfs/QmfArGhUmNWQN7bVxLFhkNPisg7RcSV3WMZ5pReK2nbCrT\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.20+commit.a1b79de6"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "Match.IdHash",
+              "name": "",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "parent",
+              "type": "bytes32",
+              "indexed": false
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "left",
+              "type": "bytes32",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "matchAdvanced",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Tree.Node",
+              "name": "one",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "two",
+              "type": "bytes32",
+              "indexed": true
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "leftOfTwo",
+              "type": "bytes32",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "matchCreated",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "struct Match.Id",
+              "name": "_matchId",
+              "type": "tuple",
+              "components": [
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentOne",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentTwo",
+                  "type": "bytes32"
+                }
+              ]
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_leftNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_rightNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_newLeftNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_newRightNode",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "advanceMatch"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "struct Match.Id",
+              "name": "_matchId",
+              "type": "tuple",
+              "components": [
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentOne",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentTwo",
+                  "type": "bytes32"
+                }
+              ]
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "canWinMatchByTimeout",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Tree.Node",
+              "name": "_commitmentRoot",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getCommitment",
+          "outputs": [
+            {
+              "internalType": "struct Clock.State",
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "internalType": "Time.Duration",
+                  "name": "allowance",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "Time.Instant",
+                  "name": "startInstant",
+                  "type": "uint64"
+                }
+              ]
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "",
+              "type": "bytes32"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Match.IdHash",
+              "name": "_matchIdHash",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getMatch",
+          "outputs": [
+            {
+              "internalType": "struct Match.State",
+              "name": "",
+              "type": "tuple",
+              "components": [
+                {
+                  "internalType": "Tree.Node",
+                  "name": "otherParent",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "Tree.Node",
+                  "name": "leftNode",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "Tree.Node",
+                  "name": "rightNode",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "runningLeafPosition",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "height",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "currentHeight",
+                  "type": "uint64"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Match.IdHash",
+              "name": "_matchIdHash",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getMatchCycle",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Machine.Hash",
+              "name": "_finalState",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes32[]",
+              "name": "_proof",
+              "type": "bytes32[]"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_leftNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_rightNode",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "joinTournament"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "maximumEnforceableDelay",
+          "outputs": [
+            {
+              "internalType": "Time.Instant",
+              "name": "",
+              "type": "uint64"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "rootTournamentFinalState",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "",
+              "type": "bytes32"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "tournamentLevelConstants",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "_level",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "_log2step",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint64",
+              "name": "_height",
+              "type": "uint64"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "tournamentWinner",
+          "outputs": [
+            {
+              "internalType": "Tree.Node",
+              "name": "",
+              "type": "bytes32"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "struct Match.Id",
+              "name": "_matchId",
+              "type": "tuple",
+              "components": [
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentOne",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "Tree.Node",
+                  "name": "commitmentTwo",
+                  "type": "bytes32"
+                }
+              ]
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_leftNode",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_rightNode",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "winMatchByTimeout"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "advanceMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32)": {
+            "details": "this function is being called repeatedly in turns by the two parties that disagree on the commitment."
+          },
+          "joinTournament(bytes32,bytes32[],bytes32,bytes32)": {
+            "details": "root tournaments are open to everyone, while non-root tournaments are open to anyone who's final state hash matches the one of the two in the tournament"
+          },
+          "tournamentWinner()": {
+            "returns": {
+              "_0": "_winner commitment of the tournament"
+            }
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "advanceMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32)": {
+            "notice": "Advance the match until the smallest divergence is found at current level"
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@cartesi/=lib/machine-solidity-step/node_modules/@cartesi/",
+        ":@ensdomains/=lib/machine-solidity-step/node_modules/@ensdomains/",
+        ":@openzeppelin/=lib/machine-solidity-step/node_modules/@openzeppelin/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":eth-gas-reporter/=lib/machine-solidity-step/node_modules/eth-gas-reporter/",
+        ":forge-std/=lib/forge-std/src/",
+        ":hardhat-deploy/=lib/machine-solidity-step/node_modules/hardhat-deploy/",
+        ":hardhat/=lib/machine-solidity-step/node_modules/hardhat/",
+        ":machine-solidity-step/=lib/machine-solidity-step/contracts/",
+        ":step/=lib/machine-solidity-step/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/tournament/abstracts/RootTournament.sol": "RootTournament"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/CanonicalConstants.sol": {
+        "keccak256": "0xee7c0dd997efc700a05941d30d339f9e0dd2f0fccc820398923003d9609ca458",
+        "urls": [
+          "bzz-raw://7a046902e706f696c76ae7ff7c1592f64def4b28c814b9fd3ca0d19f99043430",
+          "dweb:/ipfs/QmXZLzhBKsW1Yy54TjFp51cK8S95uy2sxgdtK7oV6Hjvy6"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Clock.sol": {
+        "keccak256": "0x9f868159408a77219e0340396a4173eeb7b6543bfac7f62ce966fbe3935ca1b5",
+        "urls": [
+          "bzz-raw://159fbea056ca191f7931da19d94f8aaed5cde43ea30162b51926c6b33f5a84fe",
+          "dweb:/ipfs/QmddgnANrd9DLjgJXyySRroSZoxKBVxWfwxPAWRufuh2jV"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Commitment.sol": {
+        "keccak256": "0xbae4c23a8e16c29fe0c18d4aa040528c70dd3cf99716c38ed6d9ec3955af3d3b",
+        "urls": [
+          "bzz-raw://3fc0b6bbf65a429ce313abe7cbf4e1b8eab58d3218473afd7c76d6c2b4afc2d9",
+          "dweb:/ipfs/Qme9U5PA9Xv8xAnAqLPgs3ZxzCbv2hy5QiQ3YfZV8oGE3j"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Machine.sol": {
+        "keccak256": "0xf5f7bc980d3470cc6209abac7a4765453c21e987a487e2b806003c2b42c7fc14",
+        "urls": [
+          "bzz-raw://94e2597232926a2c1a693ac339cae6c328ceeb6efca8776d5d00c946a8720aaa",
+          "dweb:/ipfs/QmZ5ZWpXMqSaDbdrsLsFFBKXArMyAA2vUPojZ8ComXjT7H"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Match.sol": {
+        "keccak256": "0x8dc79fe569186ec80dd9c6db57585dd2f00a6bebadadbe86ae919a6b9e13eb45",
+        "urls": [
+          "bzz-raw://c9aac9d63c6cab2cd84bf81cd71b1587dcd5f5d9ae5e3e45a32a397007d0e550",
+          "dweb:/ipfs/QmWTjtNeB1N73PxjeX7CaMRCuHHXsFXL3LDTCrs9YK1u6h"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Time.sol": {
+        "keccak256": "0xe12a425e196fcb3b4bb8895469860e7f5d5b7ee4d5ad3b553e64803e4ed94948",
+        "urls": [
+          "bzz-raw://e27fae905773c98c94efeba83af9943ee1801168427338c377d5f74ccf4fcfa0",
+          "dweb:/ipfs/QmQLsVgKUuZSVLjZHaX4bUuLAgxs3pyvphvMdf1FjXpSbG"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Tree.sol": {
+        "keccak256": "0x1ab5c9b7d58bc82d237f4c99f17950972d763e0b648fd98b044128bbe9069a3e",
+        "urls": [
+          "bzz-raw://4ea4c94272288948d297bdd5a9f01d6df3316d7f0709d65f0f63766c590aa8da",
+          "dweb:/ipfs/QmXCSBgPDX5Gbu9iwPHoAfwgAXTg8nHumaHyqsZE3sBAYB"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/RootTournament.sol": {
+        "keccak256": "0x164a8bbc20c0ba26667890110c31e2682f3c4c3ae09ca28736383d27c9324c28",
+        "urls": [
+          "bzz-raw://077cb6e3971f69cfebb14be437ea62f24f623796bf05460014676eb5fcd30b97",
+          "dweb:/ipfs/QmUQtnej4NTbUhVK1PwS8Fuy4qKDCrsJbQyW1pDLVA6aNc"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/Tournament.sol": {
+        "keccak256": "0x23ac4c914e5be170a72d8ec729e87f65ff8d00a2b362437bec7132edfe64c5e8",
+        "urls": [
+          "bzz-raw://cc2b293c4a926c3f5d8cb633c1166f8f0182beaec935b7e2c236c2501e4ddc3f",
+          "dweb:/ipfs/QmfArGhUmNWQN7bVxLFhkNPisg7RcSV3WMZ5pReK2nbCrT"
+        ],
+        "license": "UNLICENSED"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/tournament/abstracts/RootTournament.sol",
+    "id": 52595,
+    "exportedSymbols": {
+      "ArbitrationConstants": [
+        49255
+      ],
+      "Clock": [
+        49672
+      ],
+      "Commitment": [
+        49728
+      ],
+      "Machine": [
+        49794
+      ],
+      "Match": [
+        50599
+      ],
+      "RootTournament": [
+        52594
+      ],
+      "Time": [
+        51126
+      ],
+      "Tournament": [
+        53531
+      ],
+      "Tree": [
+        51317
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "39:1223:38",
+    "nodes": [
+      {
+        "id": 52500,
+        "nodeType": "PragmaDirective",
+        "src": "39:24:38",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".17"
+        ]
+      },
+      {
+        "id": 52501,
+        "nodeType": "ImportDirective",
+        "src": "65:26:38",
+        "nodes": [],
+        "absolutePath": "src/tournament/abstracts/Tournament.sol",
+        "file": "./Tournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 52595,
+        "sourceUnit": 53532,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 52594,
+        "nodeType": "ContractDefinition",
+        "src": "135:1126:38",
+        "nodes": [
+          {
+            "id": 52518,
+            "nodeType": "FunctionDefinition",
+            "src": "222:129:38",
+            "nodes": [],
+            "body": {
+              "id": 52517,
+              "nodeType": "Block",
+              "src": "349:2:38",
+              "nodes": [],
+              "statements": []
+            },
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "id": 52510,
+                    "name": "_initialHash",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 52507,
+                    "src": "286:12:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  {
+                    "expression": {
+                      "id": 52511,
+                      "name": "ArbitrationConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 49255,
+                      "src": "300:20:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_ArbitrationConstants_$49255_$",
+                        "typeString": "type(library ArbitrationConstants)"
+                      }
+                    },
+                    "id": 52512,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "321:20:38",
+                    "memberName": "CENSORSHIP_TOLERANCE",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 49156,
+                    "src": "300:41:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Duration_$50769",
+                      "typeString": "Time.Duration"
+                    }
+                  },
+                  {
+                    "hexValue": "30",
+                    "id": 52513,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "343:1:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    },
+                    "value": "0"
+                  },
+                  {
+                    "hexValue": "30",
+                    "id": 52514,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "number",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "346:1:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_rational_0_by_1",
+                      "typeString": "int_const 0"
+                    },
+                    "value": "0"
+                  }
+                ],
+                "id": 52515,
+                "kind": "baseConstructorSpecifier",
+                "modifierName": {
+                  "id": 52509,
+                  "name": "Tournament",
+                  "nameLocations": [
+                    "275:10:38"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 53531,
+                  "src": "275:10:38"
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "275:73:38"
+              }
+            ],
+            "name": "",
+            "nameLocation": "-1:-1:-1",
+            "parameters": {
+              "id": 52508,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52507,
+                  "mutability": "mutable",
+                  "name": "_initialHash",
+                  "nameLocation": "256:12:38",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52518,
+                  "src": "243:25:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 52506,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 52505,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "243:7:38",
+                        "251:4:38"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 49732,
+                      "src": "243:12:38"
+                    },
+                    "referencedDeclaration": 49732,
+                    "src": "243:12:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "233:41:38"
+            },
+            "returnParameters": {
+              "id": 52516,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "349:0:38"
+            },
+            "scope": 52594,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "id": 52529,
+            "nodeType": "FunctionDefinition",
+            "src": "357:114:38",
+            "nodes": [],
+            "body": {
+              "id": 52528,
+              "nodeType": "Block",
+              "src": "428:43:38",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 52525,
+                      "name": "_tournamentWinner",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 53135,
+                      "src": "445:17:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$__$returns$_t_userDefinedValueType$_Node_$51135_$",
+                        "typeString": "function () view returns (Tree.Node)"
+                      }
+                    },
+                    "id": 52526,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "445:19:38",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "functionReturnParameters": 52524,
+                  "id": 52527,
+                  "nodeType": "Return",
+                  "src": "438:26:38"
+                }
+              ]
+            },
+            "baseFunctions": [
+              53142
+            ],
+            "functionSelector": "bcb01295",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "tournamentWinner",
+            "nameLocation": "366:16:38",
+            "overrides": {
+              "id": 52520,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "399:8:38"
+            },
+            "parameters": {
+              "id": 52519,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "382:2:38"
+            },
+            "returnParameters": {
+              "id": 52524,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52523,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52529,
+                  "src": "417:9:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                    "typeString": "Tree.Node"
+                  },
+                  "typeName": {
+                    "id": 52522,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 52521,
+                      "name": "Tree.Node",
+                      "nameLocations": [
+                        "417:4:38",
+                        "422:4:38"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 51135,
+                      "src": "417:9:38"
+                    },
+                    "referencedDeclaration": 51135,
+                    "src": "417:9:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "416:11:38"
+            },
+            "scope": 52594,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 52537,
+            "nodeType": "FunctionDefinition",
+            "src": "477:164:38",
+            "nodes": [],
+            "body": {
+              "id": 52536,
+              "nodeType": "Block",
+              "src": "567:74:38",
+              "nodes": [],
+              "statements": []
+            },
+            "baseFunctions": [
+              53317
+            ],
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "updateParentTournamentDelay",
+            "nameLocation": "486:27:38",
+            "overrides": {
+              "id": 52534,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "558:8:38"
+            },
+            "parameters": {
+              "id": 52533,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52532,
+                  "mutability": "mutable",
+                  "name": "_delay",
+                  "nameLocation": "536:6:38",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52537,
+                  "src": "523:19:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Instant_$50767",
+                    "typeString": "Time.Instant"
+                  },
+                  "typeName": {
+                    "id": 52531,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 52530,
+                      "name": "Time.Instant",
+                      "nameLocations": [
+                        "523:4:38",
+                        "528:7:38"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 50767,
+                      "src": "523:12:38"
+                    },
+                    "referencedDeclaration": 50767,
+                    "src": "523:12:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Instant_$50767",
+                      "typeString": "Time.Instant"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "513:35:38"
+            },
+            "returnParameters": {
+              "id": 52535,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "567:0:38"
+            },
+            "scope": 52594,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "id": 52549,
+            "nodeType": "FunctionDefinition",
+            "src": "647:178:38",
+            "nodes": [],
+            "body": {
+              "id": 52548,
+              "nodeType": "Block",
+              "src": "747:78:38",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "hexValue": "74727565",
+                    "id": 52546,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "kind": "bool",
+                    "lValueRequested": false,
+                    "nodeType": "Literal",
+                    "src": "814:4:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    },
+                    "value": "true"
+                  },
+                  "functionReturnParameters": 52545,
+                  "id": 52547,
+                  "nodeType": "Return",
+                  "src": "807:11:38"
+                }
+              ]
+            },
+            "baseFunctions": [
+              53476
+            ],
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "validContestedFinalState",
+            "nameLocation": "656:24:38",
+            "overrides": {
+              "id": 52542,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "723:8:38"
+            },
+            "parameters": {
+              "id": 52541,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52540,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52549,
+                  "src": "690:12:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 52539,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 52538,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "690:7:38",
+                        "698:4:38"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 49732,
+                      "src": "690:12:38"
+                    },
+                    "referencedDeclaration": 49732,
+                    "src": "690:12:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "680:28:38"
+            },
+            "returnParameters": {
+              "id": 52545,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52544,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52549,
+                  "src": "741:4:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 52543,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "741:4:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "740:6:38"
+            },
+            "scope": 52594,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "internal"
+          },
+          {
+            "id": 52593,
+            "nodeType": "FunctionDefinition",
+            "src": "831:428:38",
+            "nodes": [],
+            "body": {
+              "id": 52592,
+              "nodeType": "Block",
+              "src": "910:349:38",
+              "nodes": [],
+              "statements": [
+                {
+                  "condition": {
+                    "id": 52559,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "UnaryOperation",
+                    "operator": "!",
+                    "prefix": true,
+                    "src": "924:13:38",
+                    "subExpression": {
+                      "arguments": [],
+                      "expression": {
+                        "argumentTypes": [],
+                        "id": 52557,
+                        "name": "isFinished",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 53530,
+                        "src": "925:10:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$",
+                          "typeString": "function () view returns (bool)"
+                        }
+                      },
+                      "id": 52558,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "kind": "functionCall",
+                      "lValueRequested": false,
+                      "nameLocations": [],
+                      "names": [],
+                      "nodeType": "FunctionCall",
+                      "src": "925:12:38",
+                      "tryCall": false,
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      }
+                    },
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "id": 52566,
+                  "nodeType": "IfStatement",
+                  "src": "920:78:38",
+                  "trueBody": {
+                    "id": 52565,
+                    "nodeType": "Block",
+                    "src": "939:59:38",
+                    "statements": [
+                      {
+                        "expression": {
+                          "components": [
+                            {
+                              "hexValue": "66616c7365",
+                              "id": 52560,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "kind": "bool",
+                              "lValueRequested": false,
+                              "nodeType": "Literal",
+                              "src": "961:5:38",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_bool",
+                                "typeString": "bool"
+                              },
+                              "value": "false"
+                            },
+                            {
+                              "expression": {
+                                "id": 52561,
+                                "name": "Machine",
+                                "nodeType": "Identifier",
+                                "overloadedDeclarations": [],
+                                "referencedDeclaration": 49794,
+                                "src": "968:7:38",
+                                "typeDescriptions": {
+                                  "typeIdentifier": "t_type$_t_contract$_Machine_$49794_$",
+                                  "typeString": "type(library Machine)"
+                                }
+                              },
+                              "id": 52562,
+                              "isConstant": false,
+                              "isLValue": false,
+                              "isPure": true,
+                              "lValueRequested": false,
+                              "memberLocation": "976:10:38",
+                              "memberName": "ZERO_STATE",
+                              "nodeType": "MemberAccess",
+                              "referencedDeclaration": 49739,
+                              "src": "968:18:38",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                                "typeString": "Machine.Hash"
+                              }
+                            }
+                          ],
+                          "id": 52563,
+                          "isConstant": false,
+                          "isInlineArray": false,
+                          "isLValue": false,
+                          "isPure": true,
+                          "lValueRequested": false,
+                          "nodeType": "TupleExpression",
+                          "src": "960:27:38",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_tuple$_t_bool_$_t_userDefinedValueType$_Hash_$49732_$",
+                            "typeString": "tuple(bool,Machine.Hash)"
+                          }
+                        },
+                        "functionReturnParameters": 52556,
+                        "id": 52564,
+                        "nodeType": "Return",
+                        "src": "953:34:38"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "assignments": [
+                    52568,
+                    52571
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 52568,
+                      "mutability": "mutable",
+                      "name": "_hasDanglingCommitment",
+                      "nameLocation": "1014:22:38",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 52592,
+                      "src": "1009:27:38",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_bool",
+                        "typeString": "bool"
+                      },
+                      "typeName": {
+                        "id": 52567,
+                        "name": "bool",
+                        "nodeType": "ElementaryTypeName",
+                        "src": "1009:4:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      },
+                      "visibility": "internal"
+                    },
+                    {
+                      "constant": false,
+                      "id": 52571,
+                      "mutability": "mutable",
+                      "name": "_danglingCommitment",
+                      "nameLocation": "1048:19:38",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 52592,
+                      "src": "1038:29:38",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                        "typeString": "Tree.Node"
+                      },
+                      "typeName": {
+                        "id": 52570,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 52569,
+                          "name": "Tree.Node",
+                          "nameLocations": [
+                            "1038:4:38",
+                            "1043:4:38"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 51135,
+                          "src": "1038:9:38"
+                        },
+                        "referencedDeclaration": 51135,
+                        "src": "1038:9:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                          "typeString": "Tree.Node"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 52574,
+                  "initialValue": {
+                    "arguments": [],
+                    "expression": {
+                      "argumentTypes": [],
+                      "id": 52572,
+                      "name": "hasDanglingCommitment",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 53291,
+                      "src": "1083:21:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_view$__$returns$_t_bool_$_t_userDefinedValueType$_Node_$51135_$",
+                        "typeString": "function () view returns (bool,Tree.Node)"
+                      }
+                    },
+                    "id": 52573,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1083:23:38",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_userDefinedValueType$_Node_$51135_$",
+                      "typeString": "tuple(bool,Tree.Node)"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1008:98:38"
+                },
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 52576,
+                        "name": "_hasDanglingCommitment",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52568,
+                        "src": "1123:22:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "id": 52575,
+                      "name": "assert",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": -3,
+                      "src": "1116:6:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_assert_pure$_t_bool_$returns$__$",
+                        "typeString": "function (bool) pure"
+                      }
+                    },
+                    "id": 52577,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1116:30:38",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 52578,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1116:30:38"
+                },
+                {
+                  "assignments": [
+                    52583
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 52583,
+                      "mutability": "mutable",
+                      "name": "_finalState",
+                      "nameLocation": "1170:11:38",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 52592,
+                      "src": "1157:24:38",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                        "typeString": "Machine.Hash"
+                      },
+                      "typeName": {
+                        "id": 52582,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 52581,
+                          "name": "Machine.Hash",
+                          "nameLocations": [
+                            "1157:7:38",
+                            "1165:4:38"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 49732,
+                          "src": "1157:12:38"
+                        },
+                        "referencedDeclaration": 49732,
+                        "src": "1157:12:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 52587,
+                  "initialValue": {
+                    "baseExpression": {
+                      "id": 52584,
+                      "name": "finalStates",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 52671,
+                      "src": "1184:11:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_mapping$_t_userDefinedValueType$_Node_$51135_$_t_userDefinedValueType$_Hash_$49732_$",
+                        "typeString": "mapping(Tree.Node => Machine.Hash)"
+                      }
+                    },
+                    "id": 52586,
+                    "indexExpression": {
+                      "id": 52585,
+                      "name": "_danglingCommitment",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 52571,
+                      "src": "1196:19:38",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_userDefinedValueType$_Node_$51135",
+                        "typeString": "Tree.Node"
+                      }
+                    },
+                    "isConstant": false,
+                    "isLValue": true,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "IndexAccess",
+                    "src": "1184:32:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1157:59:38"
+                },
+                {
+                  "expression": {
+                    "components": [
+                      {
+                        "hexValue": "74727565",
+                        "id": 52588,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "bool",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "1234:4:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        "value": "true"
+                      },
+                      {
+                        "id": 52589,
+                        "name": "_finalState",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 52583,
+                        "src": "1240:11:38",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                          "typeString": "Machine.Hash"
+                        }
+                      }
+                    ],
+                    "id": 52590,
+                    "isConstant": false,
+                    "isInlineArray": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "nodeType": "TupleExpression",
+                    "src": "1233:19:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$_t_bool_$_t_userDefinedValueType$_Hash_$49732_$",
+                      "typeString": "tuple(bool,Machine.Hash)"
+                    }
+                  },
+                  "functionReturnParameters": 52556,
+                  "id": 52591,
+                  "nodeType": "Return",
+                  "src": "1226:26:38"
+                }
+              ]
+            },
+            "functionSelector": "92b9ead5",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "rootTournamentFinalState",
+            "nameLocation": "840:24:38",
+            "parameters": {
+              "id": 52550,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "864:2:38"
+            },
+            "returnParameters": {
+              "id": 52556,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 52552,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52593,
+                  "src": "890:4:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 52551,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "890:4:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 52555,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 52593,
+                  "src": "896:12:38",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 52554,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 52553,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "896:7:38",
+                        "904:4:38"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 49732,
+                      "src": "896:12:38"
+                    },
+                    "referencedDeclaration": 49732,
+                    "src": "896:12:38",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$49732",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "889:20:38"
+            },
+            "scope": 52594,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": true,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 52503,
+              "name": "Tournament",
+              "nameLocations": [
+                "171:10:38"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 53531,
+              "src": "171:10:38"
+            },
+            "id": 52504,
+            "nodeType": "InheritanceSpecifier",
+            "src": "171:10:38"
+          }
+        ],
+        "canonicalName": "RootTournament",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": {
+          "id": 52502,
+          "nodeType": "StructuredDocumentation",
+          "src": "93:42:38",
+          "text": "@notice Root tournament has no parent"
+        },
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          52594,
+          53531
+        ],
+        "name": "RootTournament",
+        "nameLocation": "153:14:38",
+        "scope": 52595,
+        "usedErrors": [],
+        "usedEvents": [
+          52688,
+          52699
+        ]
+      }
+    ],
+    "license": "UNLICENSED"
+  },
+  "id": 38
+}
