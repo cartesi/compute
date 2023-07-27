@@ -38,6 +38,7 @@ impl Hash {
 
         iterated_hashes.insert(h.clone(), vec![h.clone()]);
         internalized_hashes_locked.insert(digest_hex.to_string(), h.clone());
+        //println!("---------------digest_hex {:?}, from_digest {:?}", digest_hex, h);
         h
     }
 

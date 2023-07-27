@@ -20,6 +20,9 @@ RUN export ARCH=$(uname -m | sed 's/aarch64/aarch_64/') && \
    unzip protoc-3.20.1-linux-$ARCH.zip -d $HOME/.local
 
 COPY ./ /root
+COPY test-files /root/share/images
 
-RUN cd /root && PATH="$PATH:$HOME/.local/bin" && cargo build --release && cargo run --release
+WORKDIR "/root"
+
+CMD [ "cargo", "run", "--release"]
 

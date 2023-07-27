@@ -37,10 +37,12 @@ impl<'a> Slice<'a> {
 
     fn get(&self, idx: u64) -> Leaf {
         let idx = idx;
-        assert!(idx > 0);
+        //assert!(idx > 0);
         let i = self.start_idx_inc + idx - 1;
-        assert!(i < self.end_idx_ex);
-        self.arr[i as usize].clone()
+        //assert!(i < self.end_idx_ex);
+        //self.arr[i as usize].clone()
+
+        self.arr[0].clone()
     }
 
     fn find_cell_containing(&self, elem: u64) -> u64 {
@@ -59,9 +61,9 @@ impl<'a> Slice<'a> {
         l
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct MerkleBuilder {
-    leafs: Vec<Leaf>,
+    pub leafs: Vec<Leaf>,
 }
 
 impl MerkleBuilder {
@@ -70,6 +72,7 @@ impl MerkleBuilder {
     }
 
     pub fn add(&mut self, hash: Hash, rep: Option<u64>) {
+        //println!("add hash {:?}", hash);
         let rep = match rep {
             Some(r) => r,
             None => 1
@@ -99,6 +102,8 @@ impl MerkleBuilder {
     pub fn build(&self) -> MerkleTree {
         let last = self.leafs.last().expect("no leafs in merkle builder");
         let count = last.accumulated_count as u64;
+        //println!("last {:?}", last);
+        println!("count {:?}", count);
 
         let log2size = if count == 0 {
             64
@@ -111,7 +116,7 @@ impl MerkleBuilder {
         MerkleTree::new(self.leafs.clone(), root_hash, log2size)
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Leaf {
     hash: Hash,
     accumulated_count: u64,
