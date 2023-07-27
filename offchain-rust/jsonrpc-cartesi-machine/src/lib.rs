@@ -652,8 +652,9 @@ impl From<&cartesi_jsonrpc_interfaces::index::AccessLog> for AccessLog {
 
 pub struct JsonRpcCartesiMachineClient {
     server_address: String,
-    client:
-        std::sync::Arc<async_mutex::Mutex<RemoteCartesiMachine<jsonrpsee::http_client::HttpClient>>>,
+    client: std::sync::Arc<
+        async_mutex::Mutex<RemoteCartesiMachine<jsonrpsee::http_client::HttpClient>>,
+    >,
 }
 
 impl JsonRpcCartesiMachineClient {
@@ -673,7 +674,7 @@ impl JsonRpcCartesiMachineClient {
         let mut remote_machine = std::sync::Arc::new(async_mutex::Mutex::new(
             RemoteCartesiMachine::new(transport),
         ));
-       match remote_machine
+        match remote_machine
             .lock()
             .await
             .CheckConnection()
@@ -765,8 +766,17 @@ impl JsonRpcCartesiMachineClient {
     }
 
     /// Run uarch remote machine to maximum limit cycle
-    pub async fn run_uarch(&self, limit: u64) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
-        let response = self.client.lock().await.MachineRunUarch(limit).await.unwrap();
+    pub async fn run_uarch(
+        &self,
+        limit: u64,
+    ) -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+        let response = self
+            .client
+            .lock()
+            .await
+            .MachineRunUarch(limit)
+            .await
+            .unwrap();
         Ok(response)
     }
 
@@ -948,8 +958,17 @@ impl JsonRpcCartesiMachineClient {
     }
 
     pub async fn read_iflags_h(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
-        let response = self.client.lock().await.MachineReadIflagsH().await.unwrap();
-        Ok(response)
+        let response = self.client.lock().await.MachineReadIflagsH().await;
+        match response {
+            Ok(response) => {
+                Ok(response)
+            }
+            Err(_) => {
+                Err(Box::new(JsonrpcCartesiMachineError::new(
+                    "Error reading iglags h from cartesi machine",
+                )))
+            }
+        }
     }
 
     pub async fn read_iflags_x(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
@@ -963,7 +982,13 @@ impl JsonRpcCartesiMachineClient {
     }
 
     pub async fn read_uarch_halt_flag(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
-        let response = self.client.lock().await.MachineReadUarchHaltFlag().await.unwrap();
+        let response = self
+            .client
+            .lock()
+            .await
+            .MachineReadUarchHaltFlag()
+            .await
+            .unwrap();
         Ok(response)
     }
 
@@ -1002,9 +1027,18 @@ impl JsonRpcCartesiMachineClient {
             .lock()
             .await
             .MachineResetUarchState()
-            .await
-            .unwrap();
-        Ok(response)
+            .await;
+        match response {
+            Ok(response) => {
+                Ok(response)
+            }
+            Err(e) => {
+
+                Err(Box::new(JsonrpcCartesiMachineError::new(
+                    e.to_string().as_str(),
+                )))
+            }
+        }
     }
 
     /// Gets the address of any CSR

@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use computation::machine_test;
+use computation::{machine_test, commitment};
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
@@ -15,8 +15,8 @@ async fn main() {
      } else {
          let stderr = String::from_utf8_lossy(&output.stderr);
          println!("Script execution failed: {}", stderr);
-     }
-     machine_test::test_execution().await;
+     }        
+        commitment::commitment_execution().await;
      // os.execute "jsonrpc-remote-cartesi-machine --server-address=localhost:8080 &"
      // os.execute "sleep 2"
      // require "cryptography.merkle_builder"

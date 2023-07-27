@@ -1,6 +1,14 @@
-pub fn max_int(k: u32) -> u64 {
+pub fn max_int(k: u32) -> i64 {
+    println!("k {:?}", k);
     assert!(k <= 64);
-    (1 << k) - 1
+    let shifting = (1 as u64).checked_shl(k);
+    let result: i64 = match shifting {
+        Some(sh) => (sh - 1) as i64,
+        None => -1,
+    };
+    println!("return {:?}", result);
+
+    result
 }
 
 pub fn ulte(x: u64, y: u64) -> bool {

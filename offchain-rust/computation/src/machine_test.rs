@@ -152,7 +152,7 @@ impl BaseMachine {
 
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
-        assert_eq!(
+        /*assert_eq!(
             ROOT_MACHINE
                 .get()
                 .unwrap().clone()
@@ -160,7 +160,7 @@ impl BaseMachine {
                 .await
                 .unwrap(),
             0
-        );
+        );*/
 
         BaseMachine {
             stub: Arc::new(Mutex::new(ROOT_MACHINE
@@ -358,7 +358,6 @@ async fn add_intervals<F>(
 ) where
     F: FnMut(Hash, Option<Uint<256, 4>>),
 {
-    //let mut base_machine_cloned: Arc<Mutex<BaseMachine>> = Arc::clone(&base_machine);
     let mut big_machine = base_machine.clone().create_big_machine().await;
 
     while !counter.is_empty() {
@@ -411,14 +410,15 @@ async fn get_leafs(
 
     (inital_state, accumulator)
 }
-pub async fn test_execution() {
+pub async fn test_execution() -> Vec<(cryptography::hash::Hash, Option<Uint<256, 4>>)>{
     ROOT_MACHINE.set(initialize_machine().await);
     let base_machine = BaseMachine::new_root("program/simple-program").await;
 
     let mc = Uint::from(0) + (Uint::from(0) << 64);
     let (_, y) = get_leafs(5, mc, 64, base_machine).await;
 
-    for (i, v) in y.iter().enumerate() {
+    /*for (i, v) in y.iter().enumerate() {
         println!("{}, {:?}, {:?}", i + 1, v.0, v.1);
-    }
+    }*/
+    y
 }

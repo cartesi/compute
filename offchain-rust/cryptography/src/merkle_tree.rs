@@ -1,5 +1,6 @@
 use crate::hash::Hash;
 use crate::merkle_builder::Leaf;
+#[derive(Debug)]
 pub struct MerkleTree {
     leafs: Vec<Leaf>,
     pub root_hash: Hash,
