@@ -1,4 +1,4 @@
-pub mod compute;
+mod compute;
 
 pub use compute::{
     StartDisputeRequest,
