@@ -7,7 +7,7 @@ use ethers::{
     types::{Bytes, Address},
     providers::{Provider, Http},
     signers::LocalWallet,
-    contract::ContractFactory,
+    contract:: ContractFactory,
     middleware::SignerMiddleware,
 };
 
@@ -28,18 +28,21 @@ use crate::contract::{
     INNER_TOURNAMENT_FACTORY_BYTECODE,
     ROOT_TOURNAMENT_FACTORY_ABI,
     ROOT_TOURNAMENT_FACTORY_BYTECODE,
+    RootTournamentFactory,
 };
 
 use crate::config::Config;
-use crate::dispute::Dispute;
+
+pub type Web3Provider = Provider<Http>; 
+pub type Web3Client = SignerMiddleware<Web3Provider, LocalWallet>;
 
 #[derive(Debug)]
 pub struct ComputeManager {
     config: Config,
-    web3_client: Arc<SignerMiddleware<Provider<Http>, LocalWallet>>,
+    provider: Web3Provider,
+    client: Arc<Web3Client>,
     root_factory_address: Address,
 }
-
 
 impl ComputeManager {
     pub fn new(config: &Config) -> ComputeManager {
@@ -47,11 +50,12 @@ impl ComputeManager {
             .expect("failed to init wallet");
         let provider = Provider::<Http>::try_from(config.web3_http_url.clone())
             .expect("failed to init web3 provider");        
-        let client = Arc::new(SignerMiddleware::new(provider, wallet));
+        let client = Arc::new(SignerMiddleware::new(provider.clone(), wallet));
 
         Self {
             config: config.clone(),
-            web3_client: client,
+            provider: provider,
+            client,
             root_factory_address: Address::default(),
         }
     }
@@ -60,7 +64,7 @@ impl ComputeManager {
         // Deploy inner tournament factory.
         let inner_factory_abi = (*INNER_TOURNAMENT_FACTORY_ABI).clone();
         let inner_factory_bytecode = Bytes::from(INNER_TOURNAMENT_FACTORY_BYTECODE.clone());
-        let inner_factory_deployer = ContractFactory::new(inner_factory_abi, inner_factory_bytecode, self.web3_client.clone());
+        let inner_factory_deployer = ContractFactory::new(inner_factory_abi, inner_factory_bytecode, self.client.clone());
         let inner_factory = inner_factory_deployer
             .deploy(())?
             .confirmations(0usize)
@@ -70,7 +74,7 @@ impl ComputeManager {
         // Deploy root tournament factory.
         let root_factory_abi = (*ROOT_TOURNAMENT_FACTORY_ABI).clone();
         let root_factory_bytecode = Bytes::from(ROOT_TOURNAMENT_FACTORY_BYTECODE.clone());
-        let root_factory_deployer = ContractFactory::new(root_factory_abi, root_factory_bytecode, self.web3_client.clone());
+        let root_factory_deployer = ContractFactory::new(root_factory_abi, root_factory_bytecode, self.client.clone());
         let root_factory = root_factory_deployer
             .deploy(inner_factory.address())?
             .confirmations(0usize)
@@ -89,6 +93,9 @@ impl Compute for ComputeManager {
         &self,
         request: Request<StartDisputeRequest>,
     ) -> Result<Response<StartDisputeResponse>, Status> {
+        let root_factory = RootTournamentFactory::new(self.root_factory_address, self.client.clone());
+        root_factory.instantiate_top_of_multiple(initial_hash).send().await;
+
         Ok(Response::new(StartDisputeResponse{}))
     }
 

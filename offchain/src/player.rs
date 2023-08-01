@@ -1,8 +1,13 @@
-pub struct Player {
+use crate::arena::Arena;
 
+pub struct Player {
 }
 
 impl Player {
+    pub fn new(arena: Box<dyn Arena>) -> Self {
+        
+    }
+
     fn react_tournament(&mut self) {
 
     }
