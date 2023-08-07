@@ -5,7 +5,9 @@ pub struct Player {
 
 impl Player {
     pub fn new(arena: Box<dyn Arena>) -> Self {
-        
+        Self {
+            
+        }
     }
 
     fn react_tournament(&mut self) {

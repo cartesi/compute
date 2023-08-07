@@ -1,8 +1,22 @@
 use std::time::Duration;
 
 #[derive(Debug, Clone)]
-pub struct Config {
+pub struct ArenaConfig {
     pub web3_http_url: String,
-    pub wallet_private_key: String,
-    pub player_react_period: Duration,
+    pub private_key: String,
+    pub contract_artifacts: ContractArtifactsConfig,
+}
+
+#[derive(Debug, Clone)]
+pub struct ContractArtifactsConfig {
+    pub single_level_factory: String,
+    pub top_factory: String,
+    pub middle_factory: String,
+    pub bottom_factory: String,
+    pub tournament_factory: String,
+}
+
+#[derive(Debug, Clone)]
+pub struct PlayerConfig {
+    pub react_period: Duration, 
 }

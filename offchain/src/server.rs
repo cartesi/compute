@@ -2,19 +2,36 @@ use std::time::Duration;
 
 use tonic::transport::Server;
 
-use cartesi_compute::grpc::ComputeServer;
-use cartesi_compute::manager::ComputeManager;
-
-use cartesi_compute::config::Config;
+use cartesi_compute::{
+    config::{
+        ArenaConfig,
+        ContractArtifactsConfig,
+        PlayerConfig,
+    },
+    arena::EthersArena,
+    manager::ComputeManager,
+    grpc::ComputeServer,
+}; 
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let config = Config{
+    let arena_config = ArenaConfig{
         web3_http_url: String::from("http://localhost:8545"),
-        wallet_private_key: String::from("dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7"),
-        player_react_period: Duration::from_secs(5),
+        private_key: String::from("dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7"),
+        contract_artifacts: ContractArtifactsConfig { 
+            single_level_factory: String::new(), 
+            top_factory: String::new(), 
+            middle_factory: String::new(), 
+            bottom_factory: String::new(), 
+            tournament_factory: String::new(),
+        },
     };
-    let compute = ComputeManager::new(&config);
+    let arena = Box::new(EthersArena::new(arena_config));
+
+    let player_config = PlayerConfig{
+        react_period: Duration::from_secs(5),
+    };
+    let compute = ComputeManager::new(arena, player_config);
 
     println!("Starting gRPC Server...");
 

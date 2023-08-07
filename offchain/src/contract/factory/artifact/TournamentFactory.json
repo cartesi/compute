@@ -1,0 +1,3431 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "contract SingleLevelTournamentFactory",
+          "name": "_singleLevelFactory",
+          "type": "address"
+        },
+        {
+          "internalType": "contract TopTournamentFactory",
+          "name": "_topFactory",
+          "type": "address"
+        },
+        {
+          "internalType": "contract MiddleTournamentFactory",
+          "name": "_middleFactory",
+          "type": "address"
+        },
+        {
+          "internalType": "contract BottomTournamentFactory",
+          "name": "_bottomFactory",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "contract Tournament",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "rootCreated",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Machine.Hash",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_contestedCommitmentOne",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "_contestedFinalStateOne",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_contestedCommitmentTwo",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "_contestedFinalStateTwo",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Time.Duration",
+          "name": "_allowance",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startCycle",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_level",
+          "type": "uint64"
+        }
+      ],
+      "name": "instantiateBottom",
+      "outputs": [
+        {
+          "internalType": "contract Tournament",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Machine.Hash",
+          "name": "_initialHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_contestedCommitmentOne",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "_contestedFinalStateOne",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Tree.Node",
+          "name": "_contestedCommitmentTwo",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Machine.Hash",
+          "name": "_contestedFinalStateTwo",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "Time.Duration",
+          "name": "_allowance",
+          "type": "uint64"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_startCycle",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint64",
+          "name": "_level",
+          "type": "uint64"
+        }
+      ],
+      "name": "instantiateMiddle",
+      "outputs": [
+        {
+          "internalType": "contract Tournament",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Machine.Hash",
+          "name": "_initialHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "instantiateSingleLevel",
+      "outputs": [
+        {
+          "internalType": "contract Tournament",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "Machine.Hash",
+          "name": "_initialHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "instantiateTop",
+      "outputs": [
+        {
+          "internalType": "contract Tournament",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x61010060405234801561001157600080fd5b5060405161055d38038061055d8339810160408190526100309161006a565b6001600160a01b0392831660a05290821660c052811660e052166080526100c9565b6001600160a01b038116811461006757600080fd5b50565b6000806000806080858703121561008057600080fd5b845161008b81610052565b602086015190945061009c81610052565b60408601519093506100ad81610052565b60608601519092506100be81610052565b939692955090935050565b60805160a05160c05160e05161045c6101016000396000610296015260006101e60152600060dc015260006101b2015261045c6000f3fe608060405234801561001057600080fd5b506004361061004c5760003560e01c80630a5abb4b1461005157806319809fed1461008057806350404b7c14610093578063b96efa6b146100a6575b600080fd5b61006461005f3660046102f0565b6100b9565b6040516001600160a01b03909116815260200160405180910390f35b61006461008e3660046102f0565b61018f565b6100646100a1366004610322565b6101e1565b6100646100b4366004610322565b610291565b604051630d3d4b1b60e31b81526004810182905260009081906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906369ea58d8906024015b6020604051808303816000875af1158015610126573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061014a91906103aa565b6040516001600160a01b03821681529091507fba35f4f3a38c454d2bb9d88f4c8e3d33eefc0eb6934f460a53fb758fd7009e689060200160405180910390a192915050565b604051630d3d4b1b60e31b81526004810182905260009081906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906369ea58d890602401610107565b6000807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316635cd870168b8b8b8b8b8b8b8b336040518a63ffffffff1660e01b8152600401610240999897969594939291906103ce565b6020604051808303816000875af115801561025f573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061028391906103aa565b9a9950505050505050505050565b6000807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316635cd870168b8b8b8b8b8b8b8b336040518a63ffffffff1660e01b8152600401610240999897969594939291906103ce565b60006020828403121561030257600080fd5b5035919050565b67ffffffffffffffff8116811461031f57600080fd5b50565b600080600080600080600080610100898b03121561033f57600080fd5b883597506020890135965060408901359550606089013594506080890135935060a089013561036d81610309565b925060c0890135915060e089013561038481610309565b809150509295985092959890939650565b6001600160a01b038116811461031f57600080fd5b6000602082840312156103bc57600080fd5b81516103c781610395565b9392505050565b988952602089019790975260408801959095526060870193909352608086019190915267ffffffffffffffff90811660a086015260c08501919091521660e08301526001600160a01b0316610100820152610120019056fea264697066735822122061afdc4036ff6f9f496a48b3e035638286a6d3523b3cdb1530d22ec2adce1aeb64736f6c63430008140033",
+    "sourceMap": "452:2795:45:-:0;;;724:385;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;-1:-1:-1;;;;;948:24:45;;;;;982:30;;;;;1022;;;;1062:40;;;452:2795;;14:161:51;-1:-1:-1;;;;;119:31:51;;109:42;;99:70;;165:1;162;155:12;99:70;14:161;:::o;180:908::-;411:6;419;427;435;488:3;476:9;467:7;463:23;459:33;456:53;;;505:1;502;495:12;456:53;537:9;531:16;556:61;611:5;556:61;:::i;:::-;686:2;671:18;;665:25;636:5;;-1:-1:-1;699:63:51;665:25;699:63;:::i;:::-;833:2;818:18;;812:25;781:7;;-1:-1:-1;846:63:51;812:25;846:63;:::i;:::-;980:2;965:18;;959:25;928:7;;-1:-1:-1;993:63:51;959:25;993:63;:::i;:::-;180:908;;;;-1:-1:-1;180:908:51;;-1:-1:-1;;180:908:51:o;:::-;452:2795:45;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b506004361061004c5760003560e01c80630a5abb4b1461005157806319809fed1461008057806350404b7c14610093578063b96efa6b146100a6575b600080fd5b61006461005f3660046102f0565b6100b9565b6040516001600160a01b03909116815260200160405180910390f35b61006461008e3660046102f0565b61018f565b6100646100a1366004610322565b6101e1565b6100646100b4366004610322565b610291565b604051630d3d4b1b60e31b81526004810182905260009081906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906369ea58d8906024015b6020604051808303816000875af1158015610126573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061014a91906103aa565b6040516001600160a01b03821681529091507fba35f4f3a38c454d2bb9d88f4c8e3d33eefc0eb6934f460a53fb758fd7009e689060200160405180910390a192915050565b604051630d3d4b1b60e31b81526004810182905260009081906001600160a01b037f000000000000000000000000000000000000000000000000000000000000000016906369ea58d890602401610107565b6000807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316635cd870168b8b8b8b8b8b8b8b336040518a63ffffffff1660e01b8152600401610240999897969594939291906103ce565b6020604051808303816000875af115801561025f573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061028391906103aa565b9a9950505050505050505050565b6000807f00000000000000000000000000000000000000000000000000000000000000006001600160a01b0316635cd870168b8b8b8b8b8b8b8b336040518a63ffffffff1660e01b8152600401610240999897969594939291906103ce565b60006020828403121561030257600080fd5b5035919050565b67ffffffffffffffff8116811461031f57600080fd5b50565b600080600080600080600080610100898b03121561033f57600080fd5b883597506020890135965060408901359550606089013594506080890135935060a089013561036d81610309565b925060c0890135915060e089013561038481610309565b809150509295985092959890939650565b6001600160a01b038116811461031f57600080fd5b6000602082840312156103bc57600080fd5b81516103c781610395565b9392505050565b988952602089019790975260408801959095526060870193909352608086019190915267ffffffffffffffff90811660a086015260c08501919091521660e08301526001600160a01b0316610100820152610120019056fea264697066735822122061afdc4036ff6f9f496a48b3e035638286a6d3523b3cdb1530d22ec2adce1aeb64736f6c63430008140033",
+    "sourceMap": "452:2795:45:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1420:275;;;;;;:::i;:::-;;:::i;:::-;;;-1:-1:-1;;;;;409:32:51;;;391:51;;379:2;364:18;1420:275:45;;;;;;;1115:299;;;;;;:::i;:::-;;:::i;1701:769::-;;;;;;:::i;:::-;;:::i;2476:::-;;;;;;:::i;:::-;;:::i;1420:275::-;1562:58;;-1:-1:-1;;;1562:58:45;;;;;1791:25:51;;;1512:10:45;;;;-1:-1:-1;;;;;1562:10:45;:22;;;;1764:18:51;;1562:58:45;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1635:24;;-1:-1:-1;;;;;409:32:51;;391:51;;1534:86:45;;-1:-1:-1;1635:24:45;;379:2:51;364:18;1635:24:45;;;;;;;1677:11;1420:275;-1:-1:-1;;1420:275:45:o;1115:299::-;1273:66;;-1:-1:-1;;;1273:66:45;;;;;1791:25:51;;;1215:10:45;;;;-1:-1:-1;;;;;1273:18:45;:30;;;;1764:18:51;;1273:66:45;1619:203:51;1701:769:45;2060:10;2082:28;2113:13;-1:-1:-1;;;;;2113:25:45;;2152:12;2178:23;2215;2252;2289;2326:10;2350:11;2375:6;2413:10;2113:321;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;2082:352;1701:769;-1:-1:-1;;;;;;;;;;1701:769:45:o;2476:::-;2835:10;2857:28;2888:13;-1:-1:-1;;;;;2888:25:45;;2927:12;2953:23;2990;3027;3064;3101:10;3125:11;3150:6;3188:10;2888:321;;;;;;;;;;;;;;;;;;;;;;;:::i;14:206:51:-;99:6;152:2;140:9;131:7;127:23;123:32;120:52;;;168:1;165;158:12;120:52;-1:-1:-1;191:23:51;;14:206;-1:-1:-1;14:206:51:o;453:152::-;561:18;554:5;550:30;543:5;540:41;530:69;;595:1;592;585:12;530:69;453:152;:::o;610:1004::-;891:6;899;907;915;923;931;939;947;1000:3;988:9;979:7;975:23;971:33;968:53;;;1017:1;1014;1007:12;968:53;1053:9;1040:23;1030:33;;1110:2;1099:9;1095:18;1082:32;1072:42;;1161:2;1150:9;1146:18;1133:32;1123:42;;1212:2;1201:9;1197:18;1184:32;1174:42;;1263:3;1252:9;1248:19;1235:33;1225:43;;1318:3;1307:9;1303:19;1290:33;1332:53;1379:5;1332:53;:::i;:::-;1404:5;-1:-1:-1;1456:3:51;1441:19;;1428:33;;-1:-1:-1;1513:3:51;1498:19;;1485:33;1527:55;1485:33;1527:55;:::i;:::-;1601:7;1591:17;;;610:1004;;;;;;;;;;;:::o;1827:146::-;-1:-1:-1;;;;;1917:31:51;;1907:42;;1897:70;;1963:1;1960;1953:12;1978:289;2071:6;2124:2;2112:9;2103:7;2099:23;2095:32;2092:52;;;2140:1;2137;2130:12;2092:52;2172:9;2166:16;2191:46;2231:5;2191:46;:::i;:::-;2256:5;1978:289;-1:-1:-1;;;1978:289:51:o;3044:1016::-;3599:25;;;3655:2;3640:18;;3633:34;;;;3698:2;3683:18;;3676:34;;;;3741:2;3726:18;;3719:34;;;;3784:3;3769:19;;3762:35;;;;3816:18;3871:15;;;3865:3;3850:19;;3843:44;3918:3;3903:19;;3896:35;;;;3968:15;3962:3;3947:19;;3940:44;-1:-1:-1;;;;;4021:32:51;4015:3;4000:19;;3993:61;3586:3;3571:19;;3044:1016::o",
+    "linkReferences": {},
+    "immutableReferences": {
+      "40908": [
+        {
+          "start": 434,
+          "length": 32
+        }
+      ],
+      "40911": [
+        {
+          "start": 220,
+          "length": 32
+        }
+      ],
+      "40914": [
+        {
+          "start": 486,
+          "length": 32
+        }
+      ],
+      "40917": [
+        {
+          "start": 662,
+          "length": 32
+        }
+      ]
+    }
+  },
+  "methodIdentifiers": {
+    "instantiateBottom(bytes32,bytes32,bytes32,bytes32,bytes32,uint64,uint256,uint64)": "b96efa6b",
+    "instantiateMiddle(bytes32,bytes32,bytes32,bytes32,bytes32,uint64,uint256,uint64)": "50404b7c",
+    "instantiateSingleLevel(bytes32)": "19809fed",
+    "instantiateTop(bytes32)": "0a5abb4b"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.20+commit.a1b79de6\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"contract SingleLevelTournamentFactory\",\"name\":\"_singleLevelFactory\",\"type\":\"address\"},{\"internalType\":\"contract TopTournamentFactory\",\"name\":\"_topFactory\",\"type\":\"address\"},{\"internalType\":\"contract MiddleTournamentFactory\",\"name\":\"_middleFactory\",\"type\":\"address\"},{\"internalType\":\"contract BottomTournamentFactory\",\"name\":\"_bottomFactory\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"contract Tournament\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"rootCreated\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"Machine.Hash\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_contestedCommitmentOne\",\"type\":\"bytes32\"},{\"internalType\":\"Machine.Hash\",\"name\":\"_contestedFinalStateOne\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_contestedCommitmentTwo\",\"type\":\"bytes32\"},{\"internalType\":\"Machine.Hash\",\"name\":\"_contestedFinalStateTwo\",\"type\":\"bytes32\"},{\"internalType\":\"Time.Duration\",\"name\":\"_allowance\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"_startCycle\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"_level\",\"type\":\"uint64\"}],\"name\":\"instantiateBottom\",\"outputs\":[{\"internalType\":\"contract Tournament\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Machine.Hash\",\"name\":\"_initialHash\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_contestedCommitmentOne\",\"type\":\"bytes32\"},{\"internalType\":\"Machine.Hash\",\"name\":\"_contestedFinalStateOne\",\"type\":\"bytes32\"},{\"internalType\":\"Tree.Node\",\"name\":\"_contestedCommitmentTwo\",\"type\":\"bytes32\"},{\"internalType\":\"Machine.Hash\",\"name\":\"_contestedFinalStateTwo\",\"type\":\"bytes32\"},{\"internalType\":\"Time.Duration\",\"name\":\"_allowance\",\"type\":\"uint64\"},{\"internalType\":\"uint256\",\"name\":\"_startCycle\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"_level\",\"type\":\"uint64\"}],\"name\":\"instantiateMiddle\",\"outputs\":[{\"internalType\":\"contract Tournament\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Machine.Hash\",\"name\":\"_initialHash\",\"type\":\"bytes32\"}],\"name\":\"instantiateSingleLevel\",\"outputs\":[{\"internalType\":\"contract Tournament\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"Machine.Hash\",\"name\":\"_initialHash\",\"type\":\"bytes32\"}],\"name\":\"instantiateTop\",\"outputs\":[{\"internalType\":\"contract Tournament\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/tournament/factories/TournamentFactory.sol\":\"TournamentFactory\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":machine-solidity-step/=lib/machine-solidity-step/\",\":step/=lib/machine-solidity-step/\"]},\"sources\":{\"lib/machine-solidity-step/ready_src/AccessLogs.sol\":{\"keccak256\":\"0x235490176cd5b30f225f1bb02adc91c2982abc0ed3011d054856effb8de00c19\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://bf00de32f45f71adc9306436423cdda0aff403b955e1068f3e654eec2085a42b\",\"dweb:/ipfs/QmV9FLebRS4NkQ6991MaqiBttWSonXcDdN89uZubJiPnRj\"]},\"lib/machine-solidity-step/ready_src/Buffer.sol\":{\"keccak256\":\"0x0a03fe0909ba152571d9928fa5a131269a9ef029d9d37165294491f17261bbd2\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://5f584377d9d77d0159a3d91937b9e7c74351627066917e14c963aa764b17118e\",\"dweb:/ipfs/QmdJiKViXtS7G5jBuxe5Key7q13JzTADFn34Hp6u8oKYz1\"]},\"lib/machine-solidity-step/ready_src/Memory.sol\":{\"keccak256\":\"0x2b8135352128de41f7abc4425a54bb60e36ab1e55c077c4201e3ee10bec1881f\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://3b12c4a343f4351aa89d346bd6b435c37c7b659e30ca077b65c3907e8182e555\",\"dweb:/ipfs/QmVoMJrv4DzFLvdrwwpJvR7j4N1kRpjuJ4EuBiEAnwAJWb\"]},\"lib/machine-solidity-step/ready_src/UArchCompat.sol\":{\"keccak256\":\"0x84eb392edebdcd0284c456110324007edf24122540806e7d865aba89bcdc3444\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://7d1247c22a5f6eace640c0e3f3949184c2d7fa6ba56e4e9d5293d4d92504a38f\",\"dweb:/ipfs/QmcQVMkNJtpzXcnAbPSnUPVXqQBs4yWx4U32HJGUxyQUE5\"]},\"lib/machine-solidity-step/ready_src/UArchConstants.sol\":{\"keccak256\":\"0xac6461a4d2833404b5476bd4dd9eb0b2d811fa157fb841a8fe3ba97164ccee35\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://0d29252d6b53c82e9628c7a2b6bdc50185493b6796f14f5ba4dc6c5bbbf6f137\",\"dweb:/ipfs/QmV1e5GQXW1Cjfa6p28bGoFU4gvDWKEErVpDfsTTeoexBg\"]},\"lib/machine-solidity-step/ready_src/UArchStep.sol\":{\"keccak256\":\"0xaaaf9027b1ec963e1987ecb248b325348bd200ca558693b641a661cca28d343e\",\"license\":\"Apache-2.0\",\"urls\":[\"bzz-raw://9a47acb98fa65c85ea0ed70f667f6016976501345e9afcf1b925b2c0cb68810b\",\"dweb:/ipfs/QmNyLYfbNcw9JRnVjp9uckL8t1pJeV8Rq79CY4HowVaiGx\"]},\"src/CanonicalConstants.sol\":{\"keccak256\":\"0xee7c0dd997efc700a05941d30d339f9e0dd2f0fccc820398923003d9609ca458\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://7a046902e706f696c76ae7ff7c1592f64def4b28c814b9fd3ca0d19f99043430\",\"dweb:/ipfs/QmXZLzhBKsW1Yy54TjFp51cK8S95uy2sxgdtK7oV6Hjvy6\"]},\"src/Clock.sol\":{\"keccak256\":\"0x9f868159408a77219e0340396a4173eeb7b6543bfac7f62ce966fbe3935ca1b5\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://159fbea056ca191f7931da19d94f8aaed5cde43ea30162b51926c6b33f5a84fe\",\"dweb:/ipfs/QmddgnANrd9DLjgJXyySRroSZoxKBVxWfwxPAWRufuh2jV\"]},\"src/Commitment.sol\":{\"keccak256\":\"0x2354b3c5295470a8aa541f1caaf8f6c381b0d33017d27ba4479153e4b198aeea\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://a9b7729bfa71cdb2e58808cc34049a0d97d9467669f0ef459dcce313fb58a166\",\"dweb:/ipfs/QmXh391iN7YZU2a7XorSePZ4Ph9B8NqbeqFbxaE3cAJQtF\"]},\"src/Machine.sol\":{\"keccak256\":\"0xf5f7bc980d3470cc6209abac7a4765453c21e987a487e2b806003c2b42c7fc14\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://94e2597232926a2c1a693ac339cae6c328ceeb6efca8776d5d00c946a8720aaa\",\"dweb:/ipfs/QmZ5ZWpXMqSaDbdrsLsFFBKXArMyAA2vUPojZ8ComXjT7H\"]},\"src/Match.sol\":{\"keccak256\":\"0x2b647ee44b8d18b61278d6074d77f4121cd03689431338a8b90e2682768ad72c\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://2e8880b036a17eb9256d5cef31d08634899278396e7ee7a329bf30762dc417ce\",\"dweb:/ipfs/QmNy2s42evq9rJjdgEzVxdvTLfRt5yDY44fbEMCDpD6JsV\"]},\"src/Merkle.sol\":{\"keccak256\":\"0xb9023320b0b0afb72ccc229046a21cdb527a804ce57a75dbb2cd7ca9ea517ede\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://9a07c4764c7e595cc29bf4f6e0b8ea6e96ca36fff7e9801293092a50a9aa31c4\",\"dweb:/ipfs/QmVisnwBCXDiEyBNEwicTH5SsDmQEJEyXMc8TtQr97tGNx\"]},\"src/Time.sol\":{\"keccak256\":\"0xe12a425e196fcb3b4bb8895469860e7f5d5b7ee4d5ad3b553e64803e4ed94948\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://e27fae905773c98c94efeba83af9943ee1801168427338c377d5f74ccf4fcfa0\",\"dweb:/ipfs/QmQLsVgKUuZSVLjZHaX4bUuLAgxs3pyvphvMdf1FjXpSbG\"]},\"src/Tree.sol\":{\"keccak256\":\"0x1ab5c9b7d58bc82d237f4c99f17950972d763e0b648fd98b044128bbe9069a3e\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://4ea4c94272288948d297bdd5a9f01d6df3316d7f0709d65f0f63766c590aa8da\",\"dweb:/ipfs/QmXCSBgPDX5Gbu9iwPHoAfwgAXTg8nHumaHyqsZE3sBAYB\"]},\"src/tournament/abstracts/LeafTournament.sol\":{\"keccak256\":\"0x2c3fe33e4463619c0892bafd32bdf5c9de4b0ee08e2885edbc4af249005920c9\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://f46cd4e47893f650d0a08d36bd71b28102c892217abf165befc295f9b6b4b0e1\",\"dweb:/ipfs/QmepYEsuUYdE3K1mr5FgYW2s5V33sjMNgT8TMyPmHnPnp6\"]},\"src/tournament/abstracts/NonLeafTournament.sol\":{\"keccak256\":\"0xa7d677f2ae368efbe0314ab2af99f47090e805aa8453e27a43afdf0ac4edfc0f\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://00ca9669460c358cd1d3d4c2a9c173ecf4d37266e318dae755c90dac8ca66136\",\"dweb:/ipfs/QmRpN66yUDtFu4RcSwHhMLP6dSTPLJMg73gpr1kJKKmgwx\"]},\"src/tournament/abstracts/NonRootTournament.sol\":{\"keccak256\":\"0x9835a03a8e1d14f6c8681fc656da0986845f80169b4060024c245f2caf0cf859\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://596677d3e4874ccdea612eeb0b72a8a61c7a603316d09d1c71b53a19331e4d29\",\"dweb:/ipfs/QmUtpC51BhLBBDou5Gx3N9oyyJTNk9td2DcikgdSNv3vsH\"]},\"src/tournament/abstracts/RootTournament.sol\":{\"keccak256\":\"0x164a8bbc20c0ba26667890110c31e2682f3c4c3ae09ca28736383d27c9324c28\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://077cb6e3971f69cfebb14be437ea62f24f623796bf05460014676eb5fcd30b97\",\"dweb:/ipfs/QmUQtnej4NTbUhVK1PwS8Fuy4qKDCrsJbQyW1pDLVA6aNc\"]},\"src/tournament/abstracts/Tournament.sol\":{\"keccak256\":\"0x781bc2b1549b83c403704baf7d7e900d6f6a28a942536d2e60793e4fddcfee8b\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://537f5a4e9cbdfb8a0da8ae6b76534d92d99195452fd6b0e28bfcc29171150a84\",\"dweb:/ipfs/QmQi2vfM4EV1Qr8w7BtgNT2af6bQfobYhzzZ4LnHuwHFiX\"]},\"src/tournament/concretes/BottomTournament.sol\":{\"keccak256\":\"0x5832b5355740f3d18dbf96b689dd97187ef5458d3422b83909c445e671865aa4\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://9cc1f0f264781e4b51ce7cbd5682e2304ed430d8ff38d20ad06b98cb29f1525f\",\"dweb:/ipfs/QmZ7VZ2d29N8aMhM9wfUBwdg6bRJucmP7DgiyczDMws8wG\"]},\"src/tournament/concretes/MiddleTournament.sol\":{\"keccak256\":\"0xafe0a5fec227401e24766035a62abd2903653af331df9d45a1ec3e845c1a6330\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://52b4ab8074bde84a968a68b6984869dd94e582ef46d58ccbb95383c27046a9c8\",\"dweb:/ipfs/QmbzQMbsmx1cHQQRVFXcxkrkA7HWEwhduo7DEJYtZzUvbu\"]},\"src/tournament/concretes/SingleLevelTournament.sol\":{\"keccak256\":\"0x539745e7df0f4393a3e1f3840ee01c8358384d35d0c664aaa789e8795515260f\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://4fb134a09ceb8bc36ffad32bf3e80d87ae4a0f3b762004ff46d8b8fda64ad287\",\"dweb:/ipfs/QmSqSqWALJF9HXnMNC3faQBJa58MBwVDCstKr44XH3TvNH\"]},\"src/tournament/concretes/TopTournament.sol\":{\"keccak256\":\"0x1783f71461302ec0054e9f8991cd1773ecc935c84791801b642ce02f41f1b63e\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://9e2ced1f68de51675841ff200927f6696f64aefa2318be42a0b13aefe5f7df07\",\"dweb:/ipfs/QmegFPyS3AybksyHiHccD77HuajryYk7u5jf6btHZ6MJGY\"]},\"src/tournament/factories/BottomTournamentFactory.sol\":{\"keccak256\":\"0x353e8708da9eaa4a68c0841b8086779114af0fb320e590e1e54973707589d63c\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://9076074991f0f1c966200c0b9b0bab537c30d45756b6fd36def8e3ed25a02039\",\"dweb:/ipfs/QmSgapdq6mQfm5NsnsSRstsXsg2XSqEtMiSAWfMSt4ux9G\"]},\"src/tournament/factories/ITournamentFactory.sol\":{\"keccak256\":\"0xa8959f1653055aca06591a48bdf82fe6577199db80e5ca342cb08ff5bba8f147\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://3a47ac6a2be10ded371adb91a93db044d8c95c80bf11428998c6969b3d225fe5\",\"dweb:/ipfs/QmcqRQ3vcYdje4BiPRAhdoyuinPj7VESFioSKWJKMyoova\"]},\"src/tournament/factories/MiddleTournamentFactory.sol\":{\"keccak256\":\"0x5e1ab65e68cb095d0078cd5ae2735b3ef906f90e38659791d3a0bb98d4ea7367\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://b47c3dcd9d84f99d6d929441ea5a2c4fd50b88e3f0c92f8f094b58d4b90f15e6\",\"dweb:/ipfs/QmWr7xec71eJeSp7GuayYei41ysrv3DEGoTRNmKGQdCjg2\"]},\"src/tournament/factories/SingleLevelTournamentFactory.sol\":{\"keccak256\":\"0x2b83e257b8c1dafd67fd12f52fd5a629b549140724fc01b16974295c6df2a14b\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://21504454773757b6965fab0fffef70cb9f28c24606389cb9e20337d4b4caa1aa\",\"dweb:/ipfs/QmTsa9wDdGoH6XW12r4VVr6W1wAm2sYTAN4GveLzMkadTF\"]},\"src/tournament/factories/TopTournamentFactory.sol\":{\"keccak256\":\"0xd26f823107bb46740dabc58b78e4222fb958503fd1d83b01ee862df5986e9be0\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://7c98dbb02683bda0467313252e522b7cce4b07f465fecbd5e7ae38c5d3123b55\",\"dweb:/ipfs/QmWEabPaadihg98pzdtdBEVERjbnFErDwbZWcUZS7nK6PY\"]},\"src/tournament/factories/TournamentFactory.sol\":{\"keccak256\":\"0x017a7c5ea8611b64dec94fab71c95d646e7752aa5cb28a0c31c14f10810481b3\",\"license\":\"UNLICENSED\",\"urls\":[\"bzz-raw://b645bd0333476eb8f2ecbb42edeeea02f16774b9980d408c65152c1fa826d271\",\"dweb:/ipfs/QmY4LHfhNoSLV7sHhm5PQU8JEH1GvJvBykiN9FadfoUmwn\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.20+commit.a1b79de6"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract SingleLevelTournamentFactory",
+              "name": "_singleLevelFactory",
+              "type": "address"
+            },
+            {
+              "internalType": "contract TopTournamentFactory",
+              "name": "_topFactory",
+              "type": "address"
+            },
+            {
+              "internalType": "contract MiddleTournamentFactory",
+              "name": "_middleFactory",
+              "type": "address"
+            },
+            {
+              "internalType": "contract BottomTournamentFactory",
+              "name": "_bottomFactory",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract Tournament",
+              "name": "",
+              "type": "address",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "rootCreated",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Machine.Hash",
+              "name": "_initialHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_contestedCommitmentOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "_contestedFinalStateOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_contestedCommitmentTwo",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "_contestedFinalStateTwo",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Time.Duration",
+              "name": "_allowance",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_startCycle",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "_level",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "instantiateBottom",
+          "outputs": [
+            {
+              "internalType": "contract Tournament",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Machine.Hash",
+              "name": "_initialHash",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_contestedCommitmentOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "_contestedFinalStateOne",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Tree.Node",
+              "name": "_contestedCommitmentTwo",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Machine.Hash",
+              "name": "_contestedFinalStateTwo",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "Time.Duration",
+              "name": "_allowance",
+              "type": "uint64"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_startCycle",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "_level",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "instantiateMiddle",
+          "outputs": [
+            {
+              "internalType": "contract Tournament",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Machine.Hash",
+              "name": "_initialHash",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "instantiateSingleLevel",
+          "outputs": [
+            {
+              "internalType": "contract Tournament",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "Machine.Hash",
+              "name": "_initialHash",
+              "type": "bytes32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "instantiateTop",
+          "outputs": [
+            {
+              "internalType": "contract Tournament",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":machine-solidity-step/=lib/machine-solidity-step/",
+        ":step/=lib/machine-solidity-step/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/tournament/factories/TournamentFactory.sol": "TournamentFactory"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/machine-solidity-step/ready_src/AccessLogs.sol": {
+        "keccak256": "0x235490176cd5b30f225f1bb02adc91c2982abc0ed3011d054856effb8de00c19",
+        "urls": [
+          "bzz-raw://bf00de32f45f71adc9306436423cdda0aff403b955e1068f3e654eec2085a42b",
+          "dweb:/ipfs/QmV9FLebRS4NkQ6991MaqiBttWSonXcDdN89uZubJiPnRj"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/machine-solidity-step/ready_src/Buffer.sol": {
+        "keccak256": "0x0a03fe0909ba152571d9928fa5a131269a9ef029d9d37165294491f17261bbd2",
+        "urls": [
+          "bzz-raw://5f584377d9d77d0159a3d91937b9e7c74351627066917e14c963aa764b17118e",
+          "dweb:/ipfs/QmdJiKViXtS7G5jBuxe5Key7q13JzTADFn34Hp6u8oKYz1"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/machine-solidity-step/ready_src/Memory.sol": {
+        "keccak256": "0x2b8135352128de41f7abc4425a54bb60e36ab1e55c077c4201e3ee10bec1881f",
+        "urls": [
+          "bzz-raw://3b12c4a343f4351aa89d346bd6b435c37c7b659e30ca077b65c3907e8182e555",
+          "dweb:/ipfs/QmVoMJrv4DzFLvdrwwpJvR7j4N1kRpjuJ4EuBiEAnwAJWb"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/machine-solidity-step/ready_src/UArchCompat.sol": {
+        "keccak256": "0x84eb392edebdcd0284c456110324007edf24122540806e7d865aba89bcdc3444",
+        "urls": [
+          "bzz-raw://7d1247c22a5f6eace640c0e3f3949184c2d7fa6ba56e4e9d5293d4d92504a38f",
+          "dweb:/ipfs/QmcQVMkNJtpzXcnAbPSnUPVXqQBs4yWx4U32HJGUxyQUE5"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/machine-solidity-step/ready_src/UArchConstants.sol": {
+        "keccak256": "0xac6461a4d2833404b5476bd4dd9eb0b2d811fa157fb841a8fe3ba97164ccee35",
+        "urls": [
+          "bzz-raw://0d29252d6b53c82e9628c7a2b6bdc50185493b6796f14f5ba4dc6c5bbbf6f137",
+          "dweb:/ipfs/QmV1e5GQXW1Cjfa6p28bGoFU4gvDWKEErVpDfsTTeoexBg"
+        ],
+        "license": "Apache-2.0"
+      },
+      "lib/machine-solidity-step/ready_src/UArchStep.sol": {
+        "keccak256": "0xaaaf9027b1ec963e1987ecb248b325348bd200ca558693b641a661cca28d343e",
+        "urls": [
+          "bzz-raw://9a47acb98fa65c85ea0ed70f667f6016976501345e9afcf1b925b2c0cb68810b",
+          "dweb:/ipfs/QmNyLYfbNcw9JRnVjp9uckL8t1pJeV8Rq79CY4HowVaiGx"
+        ],
+        "license": "Apache-2.0"
+      },
+      "src/CanonicalConstants.sol": {
+        "keccak256": "0xee7c0dd997efc700a05941d30d339f9e0dd2f0fccc820398923003d9609ca458",
+        "urls": [
+          "bzz-raw://7a046902e706f696c76ae7ff7c1592f64def4b28c814b9fd3ca0d19f99043430",
+          "dweb:/ipfs/QmXZLzhBKsW1Yy54TjFp51cK8S95uy2sxgdtK7oV6Hjvy6"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Clock.sol": {
+        "keccak256": "0x9f868159408a77219e0340396a4173eeb7b6543bfac7f62ce966fbe3935ca1b5",
+        "urls": [
+          "bzz-raw://159fbea056ca191f7931da19d94f8aaed5cde43ea30162b51926c6b33f5a84fe",
+          "dweb:/ipfs/QmddgnANrd9DLjgJXyySRroSZoxKBVxWfwxPAWRufuh2jV"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Commitment.sol": {
+        "keccak256": "0x2354b3c5295470a8aa541f1caaf8f6c381b0d33017d27ba4479153e4b198aeea",
+        "urls": [
+          "bzz-raw://a9b7729bfa71cdb2e58808cc34049a0d97d9467669f0ef459dcce313fb58a166",
+          "dweb:/ipfs/QmXh391iN7YZU2a7XorSePZ4Ph9B8NqbeqFbxaE3cAJQtF"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Machine.sol": {
+        "keccak256": "0xf5f7bc980d3470cc6209abac7a4765453c21e987a487e2b806003c2b42c7fc14",
+        "urls": [
+          "bzz-raw://94e2597232926a2c1a693ac339cae6c328ceeb6efca8776d5d00c946a8720aaa",
+          "dweb:/ipfs/QmZ5ZWpXMqSaDbdrsLsFFBKXArMyAA2vUPojZ8ComXjT7H"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Match.sol": {
+        "keccak256": "0x2b647ee44b8d18b61278d6074d77f4121cd03689431338a8b90e2682768ad72c",
+        "urls": [
+          "bzz-raw://2e8880b036a17eb9256d5cef31d08634899278396e7ee7a329bf30762dc417ce",
+          "dweb:/ipfs/QmNy2s42evq9rJjdgEzVxdvTLfRt5yDY44fbEMCDpD6JsV"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Merkle.sol": {
+        "keccak256": "0xb9023320b0b0afb72ccc229046a21cdb527a804ce57a75dbb2cd7ca9ea517ede",
+        "urls": [
+          "bzz-raw://9a07c4764c7e595cc29bf4f6e0b8ea6e96ca36fff7e9801293092a50a9aa31c4",
+          "dweb:/ipfs/QmVisnwBCXDiEyBNEwicTH5SsDmQEJEyXMc8TtQr97tGNx"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Time.sol": {
+        "keccak256": "0xe12a425e196fcb3b4bb8895469860e7f5d5b7ee4d5ad3b553e64803e4ed94948",
+        "urls": [
+          "bzz-raw://e27fae905773c98c94efeba83af9943ee1801168427338c377d5f74ccf4fcfa0",
+          "dweb:/ipfs/QmQLsVgKUuZSVLjZHaX4bUuLAgxs3pyvphvMdf1FjXpSbG"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/Tree.sol": {
+        "keccak256": "0x1ab5c9b7d58bc82d237f4c99f17950972d763e0b648fd98b044128bbe9069a3e",
+        "urls": [
+          "bzz-raw://4ea4c94272288948d297bdd5a9f01d6df3316d7f0709d65f0f63766c590aa8da",
+          "dweb:/ipfs/QmXCSBgPDX5Gbu9iwPHoAfwgAXTg8nHumaHyqsZE3sBAYB"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/LeafTournament.sol": {
+        "keccak256": "0x2c3fe33e4463619c0892bafd32bdf5c9de4b0ee08e2885edbc4af249005920c9",
+        "urls": [
+          "bzz-raw://f46cd4e47893f650d0a08d36bd71b28102c892217abf165befc295f9b6b4b0e1",
+          "dweb:/ipfs/QmepYEsuUYdE3K1mr5FgYW2s5V33sjMNgT8TMyPmHnPnp6"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/NonLeafTournament.sol": {
+        "keccak256": "0xa7d677f2ae368efbe0314ab2af99f47090e805aa8453e27a43afdf0ac4edfc0f",
+        "urls": [
+          "bzz-raw://00ca9669460c358cd1d3d4c2a9c173ecf4d37266e318dae755c90dac8ca66136",
+          "dweb:/ipfs/QmRpN66yUDtFu4RcSwHhMLP6dSTPLJMg73gpr1kJKKmgwx"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/NonRootTournament.sol": {
+        "keccak256": "0x9835a03a8e1d14f6c8681fc656da0986845f80169b4060024c245f2caf0cf859",
+        "urls": [
+          "bzz-raw://596677d3e4874ccdea612eeb0b72a8a61c7a603316d09d1c71b53a19331e4d29",
+          "dweb:/ipfs/QmUtpC51BhLBBDou5Gx3N9oyyJTNk9td2DcikgdSNv3vsH"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/RootTournament.sol": {
+        "keccak256": "0x164a8bbc20c0ba26667890110c31e2682f3c4c3ae09ca28736383d27c9324c28",
+        "urls": [
+          "bzz-raw://077cb6e3971f69cfebb14be437ea62f24f623796bf05460014676eb5fcd30b97",
+          "dweb:/ipfs/QmUQtnej4NTbUhVK1PwS8Fuy4qKDCrsJbQyW1pDLVA6aNc"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/abstracts/Tournament.sol": {
+        "keccak256": "0x781bc2b1549b83c403704baf7d7e900d6f6a28a942536d2e60793e4fddcfee8b",
+        "urls": [
+          "bzz-raw://537f5a4e9cbdfb8a0da8ae6b76534d92d99195452fd6b0e28bfcc29171150a84",
+          "dweb:/ipfs/QmQi2vfM4EV1Qr8w7BtgNT2af6bQfobYhzzZ4LnHuwHFiX"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/concretes/BottomTournament.sol": {
+        "keccak256": "0x5832b5355740f3d18dbf96b689dd97187ef5458d3422b83909c445e671865aa4",
+        "urls": [
+          "bzz-raw://9cc1f0f264781e4b51ce7cbd5682e2304ed430d8ff38d20ad06b98cb29f1525f",
+          "dweb:/ipfs/QmZ7VZ2d29N8aMhM9wfUBwdg6bRJucmP7DgiyczDMws8wG"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/concretes/MiddleTournament.sol": {
+        "keccak256": "0xafe0a5fec227401e24766035a62abd2903653af331df9d45a1ec3e845c1a6330",
+        "urls": [
+          "bzz-raw://52b4ab8074bde84a968a68b6984869dd94e582ef46d58ccbb95383c27046a9c8",
+          "dweb:/ipfs/QmbzQMbsmx1cHQQRVFXcxkrkA7HWEwhduo7DEJYtZzUvbu"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/concretes/SingleLevelTournament.sol": {
+        "keccak256": "0x539745e7df0f4393a3e1f3840ee01c8358384d35d0c664aaa789e8795515260f",
+        "urls": [
+          "bzz-raw://4fb134a09ceb8bc36ffad32bf3e80d87ae4a0f3b762004ff46d8b8fda64ad287",
+          "dweb:/ipfs/QmSqSqWALJF9HXnMNC3faQBJa58MBwVDCstKr44XH3TvNH"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/concretes/TopTournament.sol": {
+        "keccak256": "0x1783f71461302ec0054e9f8991cd1773ecc935c84791801b642ce02f41f1b63e",
+        "urls": [
+          "bzz-raw://9e2ced1f68de51675841ff200927f6696f64aefa2318be42a0b13aefe5f7df07",
+          "dweb:/ipfs/QmegFPyS3AybksyHiHccD77HuajryYk7u5jf6btHZ6MJGY"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/BottomTournamentFactory.sol": {
+        "keccak256": "0x353e8708da9eaa4a68c0841b8086779114af0fb320e590e1e54973707589d63c",
+        "urls": [
+          "bzz-raw://9076074991f0f1c966200c0b9b0bab537c30d45756b6fd36def8e3ed25a02039",
+          "dweb:/ipfs/QmSgapdq6mQfm5NsnsSRstsXsg2XSqEtMiSAWfMSt4ux9G"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/ITournamentFactory.sol": {
+        "keccak256": "0xa8959f1653055aca06591a48bdf82fe6577199db80e5ca342cb08ff5bba8f147",
+        "urls": [
+          "bzz-raw://3a47ac6a2be10ded371adb91a93db044d8c95c80bf11428998c6969b3d225fe5",
+          "dweb:/ipfs/QmcqRQ3vcYdje4BiPRAhdoyuinPj7VESFioSKWJKMyoova"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/MiddleTournamentFactory.sol": {
+        "keccak256": "0x5e1ab65e68cb095d0078cd5ae2735b3ef906f90e38659791d3a0bb98d4ea7367",
+        "urls": [
+          "bzz-raw://b47c3dcd9d84f99d6d929441ea5a2c4fd50b88e3f0c92f8f094b58d4b90f15e6",
+          "dweb:/ipfs/QmWr7xec71eJeSp7GuayYei41ysrv3DEGoTRNmKGQdCjg2"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/SingleLevelTournamentFactory.sol": {
+        "keccak256": "0x2b83e257b8c1dafd67fd12f52fd5a629b549140724fc01b16974295c6df2a14b",
+        "urls": [
+          "bzz-raw://21504454773757b6965fab0fffef70cb9f28c24606389cb9e20337d4b4caa1aa",
+          "dweb:/ipfs/QmTsa9wDdGoH6XW12r4VVr6W1wAm2sYTAN4GveLzMkadTF"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/TopTournamentFactory.sol": {
+        "keccak256": "0xd26f823107bb46740dabc58b78e4222fb958503fd1d83b01ee862df5986e9be0",
+        "urls": [
+          "bzz-raw://7c98dbb02683bda0467313252e522b7cce4b07f465fecbd5e7ae38c5d3123b55",
+          "dweb:/ipfs/QmWEabPaadihg98pzdtdBEVERjbnFErDwbZWcUZS7nK6PY"
+        ],
+        "license": "UNLICENSED"
+      },
+      "src/tournament/factories/TournamentFactory.sol": {
+        "keccak256": "0x017a7c5ea8611b64dec94fab71c95d646e7752aa5cb28a0c31c14f10810481b3",
+        "urls": [
+          "bzz-raw://b645bd0333476eb8f2ecbb42edeeea02f16774b9980d408c65152c1fa826d271",
+          "dweb:/ipfs/QmY4LHfhNoSLV7sHhm5PQU8JEH1GvJvBykiN9FadfoUmwn"
+        ],
+        "license": "UNLICENSED"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/tournament/factories/TournamentFactory.sol",
+    "id": 41103,
+    "exportedSymbols": {
+      "AccessLogs": [
+        29699
+      ],
+      "ArbitrationConstants": [
+        36171
+      ],
+      "BottomTournament": [
+        40514
+      ],
+      "BottomTournamentFactory": [
+        40679
+      ],
+      "Buffer": [
+        29968
+      ],
+      "Clock": [
+        36588
+      ],
+      "Commitment": [
+        36644
+      ],
+      "ITournamentFactory": [
+        40762
+      ],
+      "LeafTournament": [
+        38744
+      ],
+      "Machine": [
+        36710
+      ],
+      "Match": [
+        37565
+      ],
+      "Memory": [
+        30240
+      ],
+      "Merkle": [
+        37729
+      ],
+      "MiddleTournament": [
+        40571
+      ],
+      "MiddleTournamentFactory": [
+        40830
+      ],
+      "NonLeafTournament": [
+        39251
+      ],
+      "NonRootTournament": [
+        39433
+      ],
+      "RootTournament": [
+        39529
+      ],
+      "SingleLevelTournament": [
+        40592
+      ],
+      "SingleLevelTournamentFactory": [
+        40859
+      ],
+      "Time": [
+        38092
+      ],
+      "TopTournament": [
+        40620
+      ],
+      "TopTournamentFactory": [
+        40892
+      ],
+      "Tournament": [
+        40462
+      ],
+      "TournamentFactory": [
+        41102
+      ],
+      "Tree": [
+        38283
+      ],
+      "UArchCompat": [
+        30782
+      ],
+      "UArchConstants": [
+        30812
+      ],
+      "UArchStep": [
+        36053
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "39:3209:45",
+    "nodes": [
+      {
+        "id": 40894,
+        "nodeType": "PragmaDirective",
+        "src": "39:24:45",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".17"
+        ]
+      },
+      {
+        "id": 40895,
+        "nodeType": "ImportDirective",
+        "src": "65:44:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/abstracts/NonRootTournament.sol",
+        "file": "../abstracts/NonRootTournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 39434,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40896,
+        "nodeType": "ImportDirective",
+        "src": "110:40:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/concretes/TopTournament.sol",
+        "file": "../concretes/TopTournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40621,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40897,
+        "nodeType": "ImportDirective",
+        "src": "151:43:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/concretes/MiddleTournament.sol",
+        "file": "../concretes/MiddleTournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40572,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40898,
+        "nodeType": "ImportDirective",
+        "src": "195:43:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/concretes/BottomTournament.sol",
+        "file": "../concretes/BottomTournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40515,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40899,
+        "nodeType": "ImportDirective",
+        "src": "239:48:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/concretes/SingleLevelTournament.sol",
+        "file": "../concretes/SingleLevelTournament.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40593,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40900,
+        "nodeType": "ImportDirective",
+        "src": "289:36:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/factories/TopTournamentFactory.sol",
+        "file": "./TopTournamentFactory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40893,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40901,
+        "nodeType": "ImportDirective",
+        "src": "326:39:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/factories/MiddleTournamentFactory.sol",
+        "file": "./MiddleTournamentFactory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40831,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40902,
+        "nodeType": "ImportDirective",
+        "src": "366:39:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/factories/BottomTournamentFactory.sol",
+        "file": "./BottomTournamentFactory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40680,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 40903,
+        "nodeType": "ImportDirective",
+        "src": "406:44:45",
+        "nodes": [],
+        "absolutePath": "src/tournament/factories/SingleLevelTournamentFactory.sol",
+        "file": "./SingleLevelTournamentFactory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 41103,
+        "sourceUnit": 40860,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 41102,
+        "nodeType": "ContractDefinition",
+        "src": "452:2795:45",
+        "nodes": [
+          {
+            "id": 40908,
+            "nodeType": "VariableDeclaration",
+            "src": "507:57:45",
+            "nodes": [],
+            "constant": false,
+            "mutability": "immutable",
+            "name": "singleLevelFactory",
+            "nameLocation": "546:18:45",
+            "scope": 41102,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+              "typeString": "contract SingleLevelTournamentFactory"
+            },
+            "typeName": {
+              "id": 40907,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 40906,
+                "name": "SingleLevelTournamentFactory",
+                "nameLocations": [
+                  "507:28:45"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 40859,
+                "src": "507:28:45"
+              },
+              "referencedDeclaration": 40859,
+              "src": "507:28:45",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                "typeString": "contract SingleLevelTournamentFactory"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 40911,
+            "nodeType": "VariableDeclaration",
+            "src": "570:41:45",
+            "nodes": [],
+            "constant": false,
+            "mutability": "immutable",
+            "name": "topFactory",
+            "nameLocation": "601:10:45",
+            "scope": 41102,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+              "typeString": "contract TopTournamentFactory"
+            },
+            "typeName": {
+              "id": 40910,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 40909,
+                "name": "TopTournamentFactory",
+                "nameLocations": [
+                  "570:20:45"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 40892,
+                "src": "570:20:45"
+              },
+              "referencedDeclaration": 40892,
+              "src": "570:20:45",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                "typeString": "contract TopTournamentFactory"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 40914,
+            "nodeType": "VariableDeclaration",
+            "src": "617:47:45",
+            "nodes": [],
+            "constant": false,
+            "mutability": "immutable",
+            "name": "middleFactory",
+            "nameLocation": "651:13:45",
+            "scope": 41102,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+              "typeString": "contract MiddleTournamentFactory"
+            },
+            "typeName": {
+              "id": 40913,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 40912,
+                "name": "MiddleTournamentFactory",
+                "nameLocations": [
+                  "617:23:45"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 40830,
+                "src": "617:23:45"
+              },
+              "referencedDeclaration": 40830,
+              "src": "617:23:45",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                "typeString": "contract MiddleTournamentFactory"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 40917,
+            "nodeType": "VariableDeclaration",
+            "src": "670:47:45",
+            "nodes": [],
+            "constant": false,
+            "mutability": "immutable",
+            "name": "bottomFactory",
+            "nameLocation": "704:13:45",
+            "scope": 41102,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+              "typeString": "contract BottomTournamentFactory"
+            },
+            "typeName": {
+              "id": 40916,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 40915,
+                "name": "BottomTournamentFactory",
+                "nameLocations": [
+                  "670:23:45"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 40679,
+                "src": "670:23:45"
+              },
+              "referencedDeclaration": 40679,
+              "src": "670:23:45",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                "typeString": "contract BottomTournamentFactory"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 40949,
+            "nodeType": "FunctionDefinition",
+            "src": "724:385:45",
+            "nodes": [],
+            "body": {
+              "id": 40948,
+              "nodeType": "Block",
+              "src": "938:171:45",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "id": 40934,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 40932,
+                      "name": "topFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40911,
+                      "src": "948:10:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                        "typeString": "contract TopTournamentFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 40933,
+                      "name": "_topFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40923,
+                      "src": "961:11:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                        "typeString": "contract TopTournamentFactory"
+                      }
+                    },
+                    "src": "948:24:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                      "typeString": "contract TopTournamentFactory"
+                    }
+                  },
+                  "id": 40935,
+                  "nodeType": "ExpressionStatement",
+                  "src": "948:24:45"
+                },
+                {
+                  "expression": {
+                    "id": 40938,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 40936,
+                      "name": "middleFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40914,
+                      "src": "982:13:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                        "typeString": "contract MiddleTournamentFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 40937,
+                      "name": "_middleFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40926,
+                      "src": "998:14:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                        "typeString": "contract MiddleTournamentFactory"
+                      }
+                    },
+                    "src": "982:30:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                      "typeString": "contract MiddleTournamentFactory"
+                    }
+                  },
+                  "id": 40939,
+                  "nodeType": "ExpressionStatement",
+                  "src": "982:30:45"
+                },
+                {
+                  "expression": {
+                    "id": 40942,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 40940,
+                      "name": "bottomFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40917,
+                      "src": "1022:13:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                        "typeString": "contract BottomTournamentFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 40941,
+                      "name": "_bottomFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40929,
+                      "src": "1038:14:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                        "typeString": "contract BottomTournamentFactory"
+                      }
+                    },
+                    "src": "1022:30:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                      "typeString": "contract BottomTournamentFactory"
+                    }
+                  },
+                  "id": 40943,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1022:30:45"
+                },
+                {
+                  "expression": {
+                    "id": 40946,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "lValueRequested": false,
+                    "leftHandSide": {
+                      "id": 40944,
+                      "name": "singleLevelFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40908,
+                      "src": "1062:18:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                        "typeString": "contract SingleLevelTournamentFactory"
+                      }
+                    },
+                    "nodeType": "Assignment",
+                    "operator": "=",
+                    "rightHandSide": {
+                      "id": 40945,
+                      "name": "_singleLevelFactory",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40920,
+                      "src": "1083:19:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                        "typeString": "contract SingleLevelTournamentFactory"
+                      }
+                    },
+                    "src": "1062:40:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                      "typeString": "contract SingleLevelTournamentFactory"
+                    }
+                  },
+                  "id": 40947,
+                  "nodeType": "ExpressionStatement",
+                  "src": "1062:40:45"
+                }
+              ]
+            },
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [],
+            "name": "",
+            "nameLocation": "-1:-1:-1",
+            "parameters": {
+              "id": 40930,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 40920,
+                  "mutability": "mutable",
+                  "name": "_singleLevelFactory",
+                  "nameLocation": "774:19:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40949,
+                  "src": "745:48:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                    "typeString": "contract SingleLevelTournamentFactory"
+                  },
+                  "typeName": {
+                    "id": 40919,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40918,
+                      "name": "SingleLevelTournamentFactory",
+                      "nameLocations": [
+                        "745:28:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40859,
+                      "src": "745:28:45"
+                    },
+                    "referencedDeclaration": 40859,
+                    "src": "745:28:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                      "typeString": "contract SingleLevelTournamentFactory"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 40923,
+                  "mutability": "mutable",
+                  "name": "_topFactory",
+                  "nameLocation": "824:11:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40949,
+                  "src": "803:32:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                    "typeString": "contract TopTournamentFactory"
+                  },
+                  "typeName": {
+                    "id": 40922,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40921,
+                      "name": "TopTournamentFactory",
+                      "nameLocations": [
+                        "803:20:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40892,
+                      "src": "803:20:45"
+                    },
+                    "referencedDeclaration": 40892,
+                    "src": "803:20:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                      "typeString": "contract TopTournamentFactory"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 40926,
+                  "mutability": "mutable",
+                  "name": "_middleFactory",
+                  "nameLocation": "869:14:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40949,
+                  "src": "845:38:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                    "typeString": "contract MiddleTournamentFactory"
+                  },
+                  "typeName": {
+                    "id": 40925,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40924,
+                      "name": "MiddleTournamentFactory",
+                      "nameLocations": [
+                        "845:23:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40830,
+                      "src": "845:23:45"
+                    },
+                    "referencedDeclaration": 40830,
+                    "src": "845:23:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                      "typeString": "contract MiddleTournamentFactory"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 40929,
+                  "mutability": "mutable",
+                  "name": "_bottomFactory",
+                  "nameLocation": "917:14:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40949,
+                  "src": "893:38:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                    "typeString": "contract BottomTournamentFactory"
+                  },
+                  "typeName": {
+                    "id": 40928,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40927,
+                      "name": "BottomTournamentFactory",
+                      "nameLocations": [
+                        "893:23:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40679,
+                      "src": "893:23:45"
+                    },
+                    "referencedDeclaration": 40679,
+                    "src": "893:23:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                      "typeString": "contract BottomTournamentFactory"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "735:202:45"
+            },
+            "returnParameters": {
+              "id": 40931,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "938:0:45"
+            },
+            "scope": 41102,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "public"
+          },
+          {
+            "id": 40974,
+            "nodeType": "FunctionDefinition",
+            "src": "1115:299:45",
+            "nodes": [],
+            "body": {
+              "id": 40973,
+              "nodeType": "Block",
+              "src": "1227:187:45",
+              "nodes": [],
+              "statements": [
+                {
+                  "assignments": [
+                    40961
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 40961,
+                      "mutability": "mutable",
+                      "name": "_tournament",
+                      "nameLocation": "1259:11:45",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 40973,
+                      "src": "1237:33:45",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                        "typeString": "contract SingleLevelTournament"
+                      },
+                      "typeName": {
+                        "id": 40960,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 40959,
+                          "name": "SingleLevelTournament",
+                          "nameLocations": [
+                            "1237:21:45"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 40592,
+                          "src": "1237:21:45"
+                        },
+                        "referencedDeclaration": 40592,
+                        "src": "1237:21:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                          "typeString": "contract SingleLevelTournament"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 40966,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "id": 40964,
+                        "name": "_initialHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40952,
+                        "src": "1317:12:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      ],
+                      "expression": {
+                        "id": 40962,
+                        "name": "singleLevelFactory",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40908,
+                        "src": "1273:18:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_SingleLevelTournamentFactory_$40859",
+                          "typeString": "contract SingleLevelTournamentFactory"
+                        }
+                      },
+                      "id": 40963,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "1292:11:45",
+                      "memberName": "instantiate",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 40858,
+                      "src": "1273:30:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_userDefinedValueType$_Hash_$36648_$returns$_t_contract$_SingleLevelTournament_$40592_$",
+                        "typeString": "function (Machine.Hash) external returns (contract SingleLevelTournament)"
+                      }
+                    },
+                    "id": 40965,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1273:66:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                      "typeString": "contract SingleLevelTournament"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1237:102:45"
+                },
+                {
+                  "eventCall": {
+                    "arguments": [
+                      {
+                        "id": 40968,
+                        "name": "_tournament",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40961,
+                        "src": "1366:11:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                          "typeString": "contract SingleLevelTournament"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                          "typeString": "contract SingleLevelTournament"
+                        }
+                      ],
+                      "id": 40967,
+                      "name": "rootCreated",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40687,
+                      "src": "1354:11:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_contract$_Tournament_$40462_$returns$__$",
+                        "typeString": "function (contract Tournament)"
+                      }
+                    },
+                    "id": 40969,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1354:24:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 40970,
+                  "nodeType": "EmitStatement",
+                  "src": "1349:29:45"
+                },
+                {
+                  "expression": {
+                    "id": 40971,
+                    "name": "_tournament",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 40961,
+                    "src": "1396:11:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_SingleLevelTournament_$40592",
+                      "typeString": "contract SingleLevelTournament"
+                    }
+                  },
+                  "functionReturnParameters": 40958,
+                  "id": 40972,
+                  "nodeType": "Return",
+                  "src": "1389:18:45"
+                }
+              ]
+            },
+            "baseFunctions": [
+              40696
+            ],
+            "functionSelector": "19809fed",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "instantiateSingleLevel",
+            "nameLocation": "1124:22:45",
+            "overrides": {
+              "id": 40954,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "1197:8:45"
+            },
+            "parameters": {
+              "id": 40953,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 40952,
+                  "mutability": "mutable",
+                  "name": "_initialHash",
+                  "nameLocation": "1169:12:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40974,
+                  "src": "1156:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 40951,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40950,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "1156:7:45",
+                        "1164:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "1156:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "1156:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1146:41:45"
+            },
+            "returnParameters": {
+              "id": 40958,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 40957,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40974,
+                  "src": "1215:10:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_Tournament_$40462",
+                    "typeString": "contract Tournament"
+                  },
+                  "typeName": {
+                    "id": 40956,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40955,
+                      "name": "Tournament",
+                      "nameLocations": [
+                        "1215:10:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40462,
+                      "src": "1215:10:45"
+                    },
+                    "referencedDeclaration": 40462,
+                    "src": "1215:10:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_Tournament_$40462",
+                      "typeString": "contract Tournament"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1214:12:45"
+            },
+            "scope": 41102,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 40999,
+            "nodeType": "FunctionDefinition",
+            "src": "1420:275:45",
+            "nodes": [],
+            "body": {
+              "id": 40998,
+              "nodeType": "Block",
+              "src": "1524:171:45",
+              "nodes": [],
+              "statements": [
+                {
+                  "assignments": [
+                    40986
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 40986,
+                      "mutability": "mutable",
+                      "name": "_tournament",
+                      "nameLocation": "1548:11:45",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 40998,
+                      "src": "1534:25:45",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_TopTournament_$40620",
+                        "typeString": "contract TopTournament"
+                      },
+                      "typeName": {
+                        "id": 40985,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 40984,
+                          "name": "TopTournament",
+                          "nameLocations": [
+                            "1534:13:45"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 40620,
+                          "src": "1534:13:45"
+                        },
+                        "referencedDeclaration": 40620,
+                        "src": "1534:13:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_TopTournament_$40620",
+                          "typeString": "contract TopTournament"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 40991,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "id": 40989,
+                        "name": "_initialHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40977,
+                        "src": "1598:12:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      ],
+                      "expression": {
+                        "id": 40987,
+                        "name": "topFactory",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40911,
+                        "src": "1562:10:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_TopTournamentFactory_$40892",
+                          "typeString": "contract TopTournamentFactory"
+                        }
+                      },
+                      "id": 40988,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "1573:11:45",
+                      "memberName": "instantiate",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 40891,
+                      "src": "1562:22:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_userDefinedValueType$_Hash_$36648_$returns$_t_contract$_TopTournament_$40620_$",
+                        "typeString": "function (Machine.Hash) external returns (contract TopTournament)"
+                      }
+                    },
+                    "id": 40990,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1562:58:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_TopTournament_$40620",
+                      "typeString": "contract TopTournament"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "1534:86:45"
+                },
+                {
+                  "eventCall": {
+                    "arguments": [
+                      {
+                        "id": 40993,
+                        "name": "_tournament",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40986,
+                        "src": "1647:11:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_TopTournament_$40620",
+                          "typeString": "contract TopTournament"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_contract$_TopTournament_$40620",
+                          "typeString": "contract TopTournament"
+                        }
+                      ],
+                      "id": 40992,
+                      "name": "rootCreated",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 40687,
+                      "src": "1635:11:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_event_nonpayable$_t_contract$_Tournament_$40462_$returns$__$",
+                        "typeString": "function (contract Tournament)"
+                      }
+                    },
+                    "id": 40994,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "1635:24:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 40995,
+                  "nodeType": "EmitStatement",
+                  "src": "1630:29:45"
+                },
+                {
+                  "expression": {
+                    "id": 40996,
+                    "name": "_tournament",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 40986,
+                    "src": "1677:11:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_TopTournament_$40620",
+                      "typeString": "contract TopTournament"
+                    }
+                  },
+                  "functionReturnParameters": 40983,
+                  "id": 40997,
+                  "nodeType": "Return",
+                  "src": "1670:18:45"
+                }
+              ]
+            },
+            "baseFunctions": [
+              40705
+            ],
+            "functionSelector": "0a5abb4b",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "instantiateTop",
+            "nameLocation": "1429:14:45",
+            "overrides": {
+              "id": 40979,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "1494:8:45"
+            },
+            "parameters": {
+              "id": 40978,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 40977,
+                  "mutability": "mutable",
+                  "name": "_initialHash",
+                  "nameLocation": "1466:12:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40999,
+                  "src": "1453:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 40976,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40975,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "1453:7:45",
+                        "1461:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "1453:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "1453:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1443:41:45"
+            },
+            "returnParameters": {
+              "id": 40983,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 40982,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 40999,
+                  "src": "1512:10:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_Tournament_$40462",
+                    "typeString": "contract Tournament"
+                  },
+                  "typeName": {
+                    "id": 40981,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 40980,
+                      "name": "Tournament",
+                      "nameLocations": [
+                        "1512:10:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40462,
+                      "src": "1512:10:45"
+                    },
+                    "referencedDeclaration": 40462,
+                    "src": "1512:10:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_Tournament_$40462",
+                      "typeString": "contract Tournament"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1511:12:45"
+            },
+            "scope": 41102,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 41050,
+            "nodeType": "FunctionDefinition",
+            "src": "1701:769:45",
+            "nodes": [],
+            "body": {
+              "id": 41049,
+              "nodeType": "Block",
+              "src": "2072:398:45",
+              "nodes": [],
+              "statements": [
+                {
+                  "assignments": [
+                    41030
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 41030,
+                      "mutability": "mutable",
+                      "name": "_tournament",
+                      "nameLocation": "2099:11:45",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 41049,
+                      "src": "2082:28:45",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_MiddleTournament_$40571",
+                        "typeString": "contract MiddleTournament"
+                      },
+                      "typeName": {
+                        "id": 41029,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 41028,
+                          "name": "MiddleTournament",
+                          "nameLocations": [
+                            "2082:16:45"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 40571,
+                          "src": "2082:16:45"
+                        },
+                        "referencedDeclaration": 40571,
+                        "src": "2082:16:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_MiddleTournament_$40571",
+                          "typeString": "contract MiddleTournament"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 41046,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "id": 41033,
+                        "name": "_initialHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41002,
+                        "src": "2152:12:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41034,
+                        "name": "_contestedCommitmentOne",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41005,
+                        "src": "2178:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        }
+                      },
+                      {
+                        "id": 41035,
+                        "name": "_contestedFinalStateOne",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41008,
+                        "src": "2215:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41036,
+                        "name": "_contestedCommitmentTwo",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41011,
+                        "src": "2252:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        }
+                      },
+                      {
+                        "id": 41037,
+                        "name": "_contestedFinalStateTwo",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41014,
+                        "src": "2289:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41038,
+                        "name": "_allowance",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41017,
+                        "src": "2326:10:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                          "typeString": "Time.Duration"
+                        }
+                      },
+                      {
+                        "id": 41039,
+                        "name": "_startCycle",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41019,
+                        "src": "2350:11:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "id": 41040,
+                        "name": "_level",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41021,
+                        "src": "2375:6:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      },
+                      {
+                        "arguments": [
+                          {
+                            "expression": {
+                              "id": 41042,
+                              "name": "msg",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": -15,
+                              "src": "2413:3:45",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_magic_message",
+                                "typeString": "msg"
+                              }
+                            },
+                            "id": 41043,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberLocation": "2417:6:45",
+                            "memberName": "sender",
+                            "nodeType": "MemberAccess",
+                            "src": "2413:10:45",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          ],
+                          "id": 41041,
+                          "name": "NonLeafTournament",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 39251,
+                          "src": "2395:17:45",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_NonLeafTournament_$39251_$",
+                            "typeString": "type(contract NonLeafTournament)"
+                          }
+                        },
+                        "id": 41044,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "2395:29:45",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_NonLeafTournament_$39251",
+                          "typeString": "contract NonLeafTournament"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                          "typeString": "Time.Duration"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        },
+                        {
+                          "typeIdentifier": "t_contract$_NonLeafTournament_$39251",
+                          "typeString": "contract NonLeafTournament"
+                        }
+                      ],
+                      "expression": {
+                        "id": 41031,
+                        "name": "middleFactory",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40914,
+                        "src": "2113:13:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_MiddleTournamentFactory_$40830",
+                          "typeString": "contract MiddleTournamentFactory"
+                        }
+                      },
+                      "id": 41032,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "2127:11:45",
+                      "memberName": "instantiate",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 40829,
+                      "src": "2113:25:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Node_$38101_$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Node_$38101_$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Duration_$37735_$_t_uint256_$_t_uint64_$_t_contract$_NonLeafTournament_$39251_$returns$_t_contract$_MiddleTournament_$40571_$",
+                        "typeString": "function (Machine.Hash,Tree.Node,Machine.Hash,Tree.Node,Machine.Hash,Time.Duration,uint256,uint64,contract NonLeafTournament) external returns (contract MiddleTournament)"
+                      }
+                    },
+                    "id": 41045,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2113:321:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiddleTournament_$40571",
+                      "typeString": "contract MiddleTournament"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2082:352:45"
+                },
+                {
+                  "expression": {
+                    "id": 41047,
+                    "name": "_tournament",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 41030,
+                    "src": "2452:11:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_MiddleTournament_$40571",
+                      "typeString": "contract MiddleTournament"
+                    }
+                  },
+                  "functionReturnParameters": 41027,
+                  "id": 41048,
+                  "nodeType": "Return",
+                  "src": "2445:18:45"
+                }
+              ]
+            },
+            "baseFunctions": [
+              40733
+            ],
+            "functionSelector": "50404b7c",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "instantiateMiddle",
+            "nameLocation": "1710:17:45",
+            "overrides": {
+              "id": 41023,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "2042:8:45"
+            },
+            "parameters": {
+              "id": 41022,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 41002,
+                  "mutability": "mutable",
+                  "name": "_initialHash",
+                  "nameLocation": "1750:12:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1737:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41001,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41000,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "1737:7:45",
+                        "1745:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "1737:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "1737:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41005,
+                  "mutability": "mutable",
+                  "name": "_contestedCommitmentOne",
+                  "nameLocation": "1782:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1772:33:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                    "typeString": "Tree.Node"
+                  },
+                  "typeName": {
+                    "id": 41004,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41003,
+                      "name": "Tree.Node",
+                      "nameLocations": [
+                        "1772:4:45",
+                        "1777:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 38101,
+                      "src": "1772:9:45"
+                    },
+                    "referencedDeclaration": 38101,
+                    "src": "1772:9:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41008,
+                  "mutability": "mutable",
+                  "name": "_contestedFinalStateOne",
+                  "nameLocation": "1828:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1815:36:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41007,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41006,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "1815:7:45",
+                        "1823:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "1815:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "1815:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41011,
+                  "mutability": "mutable",
+                  "name": "_contestedCommitmentTwo",
+                  "nameLocation": "1871:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1861:33:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                    "typeString": "Tree.Node"
+                  },
+                  "typeName": {
+                    "id": 41010,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41009,
+                      "name": "Tree.Node",
+                      "nameLocations": [
+                        "1861:4:45",
+                        "1866:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 38101,
+                      "src": "1861:9:45"
+                    },
+                    "referencedDeclaration": 38101,
+                    "src": "1861:9:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41014,
+                  "mutability": "mutable",
+                  "name": "_contestedFinalStateTwo",
+                  "nameLocation": "1917:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1904:36:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41013,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41012,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "1904:7:45",
+                        "1912:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "1904:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "1904:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41017,
+                  "mutability": "mutable",
+                  "name": "_allowance",
+                  "nameLocation": "1964:10:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1950:24:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                    "typeString": "Time.Duration"
+                  },
+                  "typeName": {
+                    "id": 41016,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41015,
+                      "name": "Time.Duration",
+                      "nameLocations": [
+                        "1950:4:45",
+                        "1955:8:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 37735,
+                      "src": "1950:13:45"
+                    },
+                    "referencedDeclaration": 37735,
+                    "src": "1950:13:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                      "typeString": "Time.Duration"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41019,
+                  "mutability": "mutable",
+                  "name": "_startCycle",
+                  "nameLocation": "1992:11:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "1984:19:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 41018,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1984:7:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41021,
+                  "mutability": "mutable",
+                  "name": "_level",
+                  "nameLocation": "2020:6:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "2013:13:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 41020,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2013:6:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1727:305:45"
+            },
+            "returnParameters": {
+              "id": 41027,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 41026,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41050,
+                  "src": "2060:10:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_Tournament_$40462",
+                    "typeString": "contract Tournament"
+                  },
+                  "typeName": {
+                    "id": 41025,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41024,
+                      "name": "Tournament",
+                      "nameLocations": [
+                        "2060:10:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40462,
+                      "src": "2060:10:45"
+                    },
+                    "referencedDeclaration": 40462,
+                    "src": "2060:10:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_Tournament_$40462",
+                      "typeString": "contract Tournament"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2059:12:45"
+            },
+            "scope": 41102,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 41101,
+            "nodeType": "FunctionDefinition",
+            "src": "2476:769:45",
+            "nodes": [],
+            "body": {
+              "id": 41100,
+              "nodeType": "Block",
+              "src": "2847:398:45",
+              "nodes": [],
+              "statements": [
+                {
+                  "assignments": [
+                    41081
+                  ],
+                  "declarations": [
+                    {
+                      "constant": false,
+                      "id": 41081,
+                      "mutability": "mutable",
+                      "name": "_tournament",
+                      "nameLocation": "2874:11:45",
+                      "nodeType": "VariableDeclaration",
+                      "scope": 41100,
+                      "src": "2857:28:45",
+                      "stateVariable": false,
+                      "storageLocation": "default",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_contract$_BottomTournament_$40514",
+                        "typeString": "contract BottomTournament"
+                      },
+                      "typeName": {
+                        "id": 41080,
+                        "nodeType": "UserDefinedTypeName",
+                        "pathNode": {
+                          "id": 41079,
+                          "name": "BottomTournament",
+                          "nameLocations": [
+                            "2857:16:45"
+                          ],
+                          "nodeType": "IdentifierPath",
+                          "referencedDeclaration": 40514,
+                          "src": "2857:16:45"
+                        },
+                        "referencedDeclaration": 40514,
+                        "src": "2857:16:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_BottomTournament_$40514",
+                          "typeString": "contract BottomTournament"
+                        }
+                      },
+                      "visibility": "internal"
+                    }
+                  ],
+                  "id": 41097,
+                  "initialValue": {
+                    "arguments": [
+                      {
+                        "id": 41084,
+                        "name": "_initialHash",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41053,
+                        "src": "2927:12:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41085,
+                        "name": "_contestedCommitmentOne",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41056,
+                        "src": "2953:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        }
+                      },
+                      {
+                        "id": 41086,
+                        "name": "_contestedFinalStateOne",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41059,
+                        "src": "2990:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41087,
+                        "name": "_contestedCommitmentTwo",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41062,
+                        "src": "3027:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        }
+                      },
+                      {
+                        "id": 41088,
+                        "name": "_contestedFinalStateTwo",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41065,
+                        "src": "3064:23:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        }
+                      },
+                      {
+                        "id": 41089,
+                        "name": "_allowance",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41068,
+                        "src": "3101:10:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                          "typeString": "Time.Duration"
+                        }
+                      },
+                      {
+                        "id": 41090,
+                        "name": "_startCycle",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41070,
+                        "src": "3125:11:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        }
+                      },
+                      {
+                        "id": 41091,
+                        "name": "_level",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 41072,
+                        "src": "3150:6:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        }
+                      },
+                      {
+                        "arguments": [
+                          {
+                            "expression": {
+                              "id": 41093,
+                              "name": "msg",
+                              "nodeType": "Identifier",
+                              "overloadedDeclarations": [],
+                              "referencedDeclaration": -15,
+                              "src": "3188:3:45",
+                              "typeDescriptions": {
+                                "typeIdentifier": "t_magic_message",
+                                "typeString": "msg"
+                              }
+                            },
+                            "id": 41094,
+                            "isConstant": false,
+                            "isLValue": false,
+                            "isPure": false,
+                            "lValueRequested": false,
+                            "memberLocation": "3192:6:45",
+                            "memberName": "sender",
+                            "nodeType": "MemberAccess",
+                            "src": "3188:10:45",
+                            "typeDescriptions": {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          }
+                        ],
+                        "expression": {
+                          "argumentTypes": [
+                            {
+                              "typeIdentifier": "t_address",
+                              "typeString": "address"
+                            }
+                          ],
+                          "id": 41092,
+                          "name": "NonLeafTournament",
+                          "nodeType": "Identifier",
+                          "overloadedDeclarations": [],
+                          "referencedDeclaration": 39251,
+                          "src": "3170:17:45",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_type$_t_contract$_NonLeafTournament_$39251_$",
+                            "typeString": "type(contract NonLeafTournament)"
+                          }
+                        },
+                        "id": 41095,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": false,
+                        "kind": "typeConversion",
+                        "lValueRequested": false,
+                        "nameLocations": [],
+                        "names": [],
+                        "nodeType": "FunctionCall",
+                        "src": "3170:29:45",
+                        "tryCall": false,
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_NonLeafTournament_$39251",
+                          "typeString": "contract NonLeafTournament"
+                        }
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                          "typeString": "Tree.Node"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                          "typeString": "Machine.Hash"
+                        },
+                        {
+                          "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                          "typeString": "Time.Duration"
+                        },
+                        {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        {
+                          "typeIdentifier": "t_uint64",
+                          "typeString": "uint64"
+                        },
+                        {
+                          "typeIdentifier": "t_contract$_NonLeafTournament_$39251",
+                          "typeString": "contract NonLeafTournament"
+                        }
+                      ],
+                      "expression": {
+                        "id": 41082,
+                        "name": "bottomFactory",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 40917,
+                        "src": "2888:13:45",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_contract$_BottomTournamentFactory_$40679",
+                          "typeString": "contract BottomTournamentFactory"
+                        }
+                      },
+                      "id": 41083,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "2902:11:45",
+                      "memberName": "instantiate",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 40678,
+                      "src": "2888:25:45",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_external_nonpayable$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Node_$38101_$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Node_$38101_$_t_userDefinedValueType$_Hash_$36648_$_t_userDefinedValueType$_Duration_$37735_$_t_uint256_$_t_uint64_$_t_contract$_NonLeafTournament_$39251_$returns$_t_contract$_BottomTournament_$40514_$",
+                        "typeString": "function (Machine.Hash,Tree.Node,Machine.Hash,Tree.Node,Machine.Hash,Time.Duration,uint256,uint64,contract NonLeafTournament) external returns (contract BottomTournament)"
+                      }
+                    },
+                    "id": 41096,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "2888:321:45",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BottomTournament_$40514",
+                      "typeString": "contract BottomTournament"
+                    }
+                  },
+                  "nodeType": "VariableDeclarationStatement",
+                  "src": "2857:352:45"
+                },
+                {
+                  "expression": {
+                    "id": 41098,
+                    "name": "_tournament",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 41081,
+                    "src": "3227:11:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_BottomTournament_$40514",
+                      "typeString": "contract BottomTournament"
+                    }
+                  },
+                  "functionReturnParameters": 41078,
+                  "id": 41099,
+                  "nodeType": "Return",
+                  "src": "3220:18:45"
+                }
+              ]
+            },
+            "baseFunctions": [
+              40761
+            ],
+            "functionSelector": "b96efa6b",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "instantiateBottom",
+            "nameLocation": "2485:17:45",
+            "overrides": {
+              "id": 41074,
+              "nodeType": "OverrideSpecifier",
+              "overrides": [],
+              "src": "2817:8:45"
+            },
+            "parameters": {
+              "id": 41073,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 41053,
+                  "mutability": "mutable",
+                  "name": "_initialHash",
+                  "nameLocation": "2525:12:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2512:25:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41052,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41051,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "2512:7:45",
+                        "2520:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "2512:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "2512:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41056,
+                  "mutability": "mutable",
+                  "name": "_contestedCommitmentOne",
+                  "nameLocation": "2557:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2547:33:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                    "typeString": "Tree.Node"
+                  },
+                  "typeName": {
+                    "id": 41055,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41054,
+                      "name": "Tree.Node",
+                      "nameLocations": [
+                        "2547:4:45",
+                        "2552:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 38101,
+                      "src": "2547:9:45"
+                    },
+                    "referencedDeclaration": 38101,
+                    "src": "2547:9:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41059,
+                  "mutability": "mutable",
+                  "name": "_contestedFinalStateOne",
+                  "nameLocation": "2603:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2590:36:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41058,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41057,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "2590:7:45",
+                        "2598:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "2590:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "2590:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41062,
+                  "mutability": "mutable",
+                  "name": "_contestedCommitmentTwo",
+                  "nameLocation": "2646:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2636:33:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                    "typeString": "Tree.Node"
+                  },
+                  "typeName": {
+                    "id": 41061,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41060,
+                      "name": "Tree.Node",
+                      "nameLocations": [
+                        "2636:4:45",
+                        "2641:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 38101,
+                      "src": "2636:9:45"
+                    },
+                    "referencedDeclaration": 38101,
+                    "src": "2636:9:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Node_$38101",
+                      "typeString": "Tree.Node"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41065,
+                  "mutability": "mutable",
+                  "name": "_contestedFinalStateTwo",
+                  "nameLocation": "2692:23:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2679:36:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                    "typeString": "Machine.Hash"
+                  },
+                  "typeName": {
+                    "id": 41064,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41063,
+                      "name": "Machine.Hash",
+                      "nameLocations": [
+                        "2679:7:45",
+                        "2687:4:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 36648,
+                      "src": "2679:12:45"
+                    },
+                    "referencedDeclaration": 36648,
+                    "src": "2679:12:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Hash_$36648",
+                      "typeString": "Machine.Hash"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41068,
+                  "mutability": "mutable",
+                  "name": "_allowance",
+                  "nameLocation": "2739:10:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2725:24:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                    "typeString": "Time.Duration"
+                  },
+                  "typeName": {
+                    "id": 41067,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41066,
+                      "name": "Time.Duration",
+                      "nameLocations": [
+                        "2725:4:45",
+                        "2730:8:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 37735,
+                      "src": "2725:13:45"
+                    },
+                    "referencedDeclaration": 37735,
+                    "src": "2725:13:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_userDefinedValueType$_Duration_$37735",
+                      "typeString": "Time.Duration"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41070,
+                  "mutability": "mutable",
+                  "name": "_startCycle",
+                  "nameLocation": "2767:11:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2759:19:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 41069,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2759:7:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 41072,
+                  "mutability": "mutable",
+                  "name": "_level",
+                  "nameLocation": "2795:6:45",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2788:13:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 41071,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2788:6:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2502:305:45"
+            },
+            "returnParameters": {
+              "id": 41078,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 41077,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 41101,
+                  "src": "2835:10:45",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_Tournament_$40462",
+                    "typeString": "contract Tournament"
+                  },
+                  "typeName": {
+                    "id": 41076,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 41075,
+                      "name": "Tournament",
+                      "nameLocations": [
+                        "2835:10:45"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 40462,
+                      "src": "2835:10:45"
+                    },
+                    "referencedDeclaration": 40462,
+                    "src": "2835:10:45",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_Tournament_$40462",
+                      "typeString": "contract Tournament"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2834:12:45"
+            },
+            "scope": 41102,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 40904,
+              "name": "ITournamentFactory",
+              "nameLocations": [
+                "482:18:45"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 40762,
+              "src": "482:18:45"
+            },
+            "id": 40905,
+            "nodeType": "InheritanceSpecifier",
+            "src": "482:18:45"
+          }
+        ],
+        "canonicalName": "TournamentFactory",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          41102,
+          40762
+        ],
+        "name": "TournamentFactory",
+        "nameLocation": "461:17:45",
+        "scope": 41103,
+        "usedErrors": [],
+        "usedEvents": [
+          40687
+        ]
+      }
+    ],
+    "license": "UNLICENSED"
+  },
+  "id": 45
+}

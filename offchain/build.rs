@@ -23,17 +23,25 @@ fn generate_grpc_stubs() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn generate_contract_bidings() -> Result<(), Box<dyn std::error::Error>> {
-    Abigen::new("InnerTournamentFactory", "src/contract/artifacts/InnerTournamentFactory.json")?
+    Abigen::new("RootTournament", "src/contract/tournament/artifact/RootTournament.json")?
         .generate()?
-        .write_to_file("src/contract/inner_tournament_factory.rs")?;
+        .write_to_file("src/contract/tournament/root_tournament.rs")?;
 
-    Abigen::new("RootTournamentFactory", "src/contract/artifacts/RootTournamentFactory.json")?
+    Abigen::new("NonLeafTournament", "src/contract/tournament/artifact/NonLeafTournament.json")?
         .generate()?
-        .write_to_file("src/contract/root_tournament_factory.rs")?;
+        .write_to_file("src/contract/tournament/non_leaf_tournament.rs")?;
 
-    Abigen::new("RootTournament", "src/contract/artifacts/RootTournament.json")?
+    Abigen::new("LeafTournament", "src/contract/tournament/artifact/LeafTournament.json")?
         .generate()?
-        .write_to_file("src/contract/root_tournament.rs")?;
+        .write_to_file("src/contract/tournament/leaf_tournament.rs")?;
+
+    Abigen::new("Tournament", "src/contract/tournament/artifact/Tournament.json")?
+        .generate()?
+        .write_to_file("src/contract/tournament/tournament.rs")?;
+
+    Abigen::new("TournamentFactory", "src/contract/factory/artifact/TournamentFactory.json")?
+        .generate()?
+        .write_to_file("src/contract/factory/tournament_factory.rs")?;
 
     Ok(())
 }

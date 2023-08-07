@@ -4,12 +4,14 @@ use async_trait::async_trait;
 use primitive_types::H160;
 
 #[async_trait]
-pub trait Arena {
-    async fn create_root_tournament(&mut self, initial_hash: Hash);
+pub trait Arena : Send + Sync {
+    async fn init(&mut self) -> Result<(), Box<dyn Error>>;
     
+    async fn create_root_tournament(&mut self, initial_hash: Hash) -> Result<Address, Box<dyn Error>>;
+
     async fn join_tournament(
         &mut self,
-        tournament_address: Address, 
+        tournament: Address, 
         final_state: Hash,
         proof: Proof,
         left_child: Hash,
@@ -28,7 +30,7 @@ pub trait Arena {
     
     async fn seal_inner_match(
         &mut self,
-        tournamet: Address,
+        tournament: Address,
         match_id: MatchID,
         left_leaf: Hash,
         right_leaf: Hash,
@@ -60,10 +62,11 @@ pub trait Arena {
         match_id: MatchID,
         left_node: Hash,
         right_node: Hash,
+        proofs: Vec<Hash>,
     ) -> Result<(), Box<dyn Error>>;
 
-    async fn created_tournaments(&self) -> Result<Vec<TournamentInfo>, Box<dyn Error>>;
-    async fn created_matches(&self) -> Result<Vec<MatchInfo>, Box<dyn Error>>;
+    async fn created_tournaments(&self) -> Result<Vec<TournamentCreatedEvent>, Box<dyn Error>>;
+    async fn created_matches(&self) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>>;
    
     async fn commitment(
         &self,
@@ -77,18 +80,18 @@ pub trait Arena {
         match_id_hash: Hash
     )-> Result<MatchState, Box<dyn Error>>;
 
-    async fn root_tournament_winner(&self, tournamet: Address) -> Result<Hash, Box<dyn Error>>;
+    async fn root_tournament_winner(&self, tournament: Address) -> Result<Hash, Box<dyn Error>>;
     async fn tournament_winner(&self, tournament: Address) -> Result<Hash, Box<dyn Error>>;
     
     async fn maximum_delay(&self, tournament: Address) -> Result<u64, Box<dyn Error>>;
 }
 
-pub struct TournamentInfo {
+pub struct TournamentCreatedEvent {
 
 }
 
-pub struct MatchInfo {
-
+pub struct MatchCreatedEvent {
+    
 }
 
 pub struct ClockState {
@@ -101,15 +104,15 @@ pub struct MatchState {
     pub left_node: Hash,
     pub right_node: Hash,
     pub running_leaf_position: u64,
-    pub height: u64,
     pub current_height: u64,
+    pub level: u64,
 }
 
 pub struct MatchID {
-    commitment_one: Hash,
-    commitment_two: Hash,
+    pub commitment_one: Hash,
+    pub commitment_two: Hash,
 }
 
-type Address = H160;
-type Hash = [u8; 32];
-type Proof = Vec<Hash>;
+pub type Address = H160;
+pub type Hash = [u8; 32];
+pub type Proof = Vec<Hash>;
