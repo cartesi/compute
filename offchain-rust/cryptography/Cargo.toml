@@ -12,4 +12,4 @@ path = "src/mod.rs"
 [dependencies]
 utils = { path = "../utils" }
 tiny-keccak = { version = "2.0", features = ["sha3"] }
-lazy_static = "1.4.0"
+once_cell = "1.18.0"

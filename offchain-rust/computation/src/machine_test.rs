@@ -131,19 +131,82 @@ pub struct BaseMachine {
 
 impl BaseMachine {
     pub async fn new_root(path: &str) -> BaseMachine {
-        //let machine_future = root_machine.lock().unwrap();
+          //let machine_future = root_machine.lock().unwrap();
         //let future_machine: &dyn std::future::Future<Output = Result<JsonRpcCartesiMachineClient, jsonrpsee::core::error::Error>> = &*machine_future;
 
         // Now, you need to await the Future to get the actual JsonRpcCartesiMachineClient
         // Note: This requires being within an async context (async function or block)
         //let result: Result<JsonRpcCartesiMachineClient, jsonrpsee::core::error::Error> = future_machine.await;
 
-        ROOT_MACHINE
+        /*ROOT_MACHINE
             .get()
             .unwrap()
             .load_machine(path, &MachineRuntimeConfig::default())
             .await
+            .unwrap();*/
+        let mut default_config = ROOT_MACHINE.get()
+        .unwrap().get_default_config().await.unwrap();
+
+        default_config.rom = jsonrpc_cartesi_machine::RomConfig {
+            bootargs: String::from("console=hvc0 -- ls /bin"),
+            image_filename: String::from("program/bins/bootstrap.bin"),
+        };
+        default_config.ram = jsonrpc_cartesi_machine::RamConfig {
+            length: 0x4000000,
+            image_filename: String::from("program/bins/rv64ui-p-addi.bin"),
+        };
+    
+        default_config.uarch = jsonrpc_cartesi_machine::UarchConfig {
+            processor: Some(cartesi_jsonrpc_interfaces::index::UarchProcessorConfig {
+                x: Some(vec![0; 32]),
+                pc: Some(0x70000000),
+                cycle: Some(0),
+            }),
+            ram: Some(cartesi_jsonrpc_interfaces::index::UarchRAMConfig {
+                length: Some(0x1000000),
+                image_filename: Some(String::from("share/images/uarch-ram.bin")),
+            }),
+        };
+    
+        default_config.rollup = jsonrpc_cartesi_machine::RollupConfig {
+            input_metadata: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
+                start: 0x60400000,
+                length: 4096,
+                image_filename: "".to_string(),
+                shared: false,
+            }),
+            notice_hashes: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
+                start: 0x60800000,
+                length: 2 << 20,
+                image_filename: "".to_string(),
+                shared: false,
+            }),
+            rx_buffer: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
+                start: 0x60000000,
+                length: 2 << 20,
+                image_filename: "".to_string(),
+                shared: false,
+            }),
+            voucher_hashes: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
+                start: 0x60600000,
+                length: 2 << 20,
+                image_filename: "".to_string(),
+                shared: false,
+            }),
+            tx_buffer: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
+                start: 0x60200000,
+                length: 2 << 20,
+                image_filename: "".to_string(),
+                shared: false,
+            }),
+        };
+        ROOT_MACHINE
+            .get()
+            .unwrap()
+            .create_machine(&default_config, &MachineRuntimeConfig::default())
+            .await
             .unwrap();
+
         let start_cycle = ROOT_MACHINE
             .get()
             .unwrap().clone()
@@ -306,13 +369,13 @@ fn get_mask(k: u32) -> Uint<256, 4> {
 }
 
 fn get_ucycle(mc: &Uint<256, 4>) -> u64 {
-    assert!(mc & get_mask(constants::A) < Uint::from(std::u64::MAX));
-    (mc & get_mask(constants::A)).to::<u64>()
+    assert!(mc & get_mask(constants::LOG2_EMULATOR_SPAN) < Uint::from(std::u64::MAX));
+    (mc & get_mask(constants::LOG2_EMULATOR_SPAN)).to::<u64>()
 }
 
 fn get_cycle(mc: &Uint<256, 4>) -> u64 {
-    assert!((mc >> constants::A as usize) & get_mask(constants::B) < Uint::from(std::u64::MAX));
-    ((mc >> constants::A as usize) & get_mask(constants::B)).to::<u64>()
+    assert!((mc >> constants::LOG2_EMULATOR_SPAN as usize) & get_mask(constants::LOG2_EMULATOR_SPAN) < Uint::from(std::u64::MAX));
+    ((mc >> constants::LOG2_EMULATOR_SPAN as usize) & get_mask(constants::LOG2_EMULATOR_SPAN)).to::<u64>()
 }
 
 async fn add_uintervals<F>(
@@ -336,7 +399,7 @@ async fn add_uintervals<F>(
         let result = small_machine.lock().unwrap().get_state().await;
 
         if result.uhalted {
-            let r = (get_mask(constants::A) - Uint::from(next_uinstruction) / &counter.stride
+            let r = (get_mask(constants::LOG2_EMULATOR_SPAN) - Uint::from(next_uinstruction) / &counter.stride
                 + Uint::from(1))
             .min(counter.len());
             add_state(result.state, Some(r.clone()));
@@ -371,9 +434,9 @@ async fn add_intervals<F>(
             let result = big_machine.lock().unwrap().get_state().await;
 
             if result.uhalted
-                && &counter.stride & Uint::from(get_mask(constants::A)) == Uint::from(0)
+                && &counter.stride & Uint::from(get_mask(constants::LOG2_EMULATOR_SPAN)) == Uint::from(0)
             {
-                let r = (get_mask(constants::B) - Uint::from(next_instruction) / &counter.stride
+                let r = (get_mask(constants::LOG2_EMULATOR_SPAN) - Uint::from(next_instruction) / &counter.stride
                     + Uint::from(1))
                 .min(counter.len());
                 add_state(result.state, Some(r.clone()));
