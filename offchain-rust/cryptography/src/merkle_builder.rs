@@ -72,7 +72,6 @@ impl MerkleBuilder {
     }
 
     pub fn add(&mut self, hash: Hash, rep: Option<u64>) {
-        //println!("add hash {:?}", hash);
         let rep = match rep {
             Some(r) => r,
             None => 1
@@ -102,14 +101,10 @@ impl MerkleBuilder {
     pub fn build(&self) -> MerkleTree {
         let last = self.leafs.last().expect("no leafs in merkle builder");
         let count = last.accumulated_count as u64;
-        //println!("last {:?}", last);
-        println!("count {:?}", count);
-
-        let log2size = if count == 0 {
-            64
-        } else {
+        let mut log2size = 64;
+         if count != 0 {
             assert!(arithmetic::is_pow2(count), "{}", count);
-            arithmetic::ctz(count)
+            log2size = arithmetic::ctz(count)
         };
 
         let root_hash = merkle(&Slice::new(&self.leafs, 0, self.leafs.len() as u64), log2size, 0);
@@ -125,17 +120,13 @@ pub struct Leaf {
 fn merkle(leafs: &Slice, log2size: u32, stride: usize) -> Hash {
     let first_time = stride * (1 << log2size) + 1;
     let last_time = (stride + 1) * (1 << log2size);
-
     let first_cell = leafs.find_cell_containing(first_time as u64);
     let last_cell = leafs.find_cell_containing(last_time as u64);
-
     if first_cell == last_cell {
         return leafs.get(first_cell).hash.iterated_merkle(log2size);
     }
-
     let slice = leafs.slice(first_cell, last_cell + 1);
     let hash_left = merkle(&slice, log2size - 1, stride << 1);
     let hash_right = merkle(&slice, log2size - 1, (stride << 1) + 1);
-
     hash_left.join(&hash_right)
 }

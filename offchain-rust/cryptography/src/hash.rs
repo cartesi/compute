@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use tiny_keccak::{Hasher, Sha3};
-use lazy_static::lazy_static;
+use once_cell::sync::OnceCell;
 
 
 fn hex_from_bin(bin: &[u8]) -> String {
@@ -15,18 +15,18 @@ pub struct Hash {
     left: Option<String>,
     right: Option<String>,
 }
-lazy_static! {
-    static ref internalized_hashes: std::sync::Mutex<HashMap<String, Hash>> = std::sync::Mutex::new(HashMap::new());
-    static ref iterateds: std::sync::Mutex<HashMap<Hash, Vec<Hash>>> = std::sync::Mutex::new(HashMap::new());
-}
+
+static INTERNALIZED_HASHES: OnceCell<HashMap<String, Hash>> = OnceCell::new();
+static ITHERADETS: OnceCell<HashMap<Hash, Vec<Hash>>> = OnceCell::new();
+
 
 impl Hash {
     pub fn from_digest(digest_hex: &str) -> Hash {
         assert!(digest_hex.len() == 66);
-        let mut iterated_hashes = &mut iterateds.lock().unwrap();
-        let mut internalized_hashes_locked = &mut internalized_hashes.lock().unwrap();
 
-        if let Some(x) = internalized_hashes_locked.get(digest_hex) {
+        if let Some(x) = INTERNALIZED_HASHES.get_or_init(|| {
+            HashMap::new()
+        }).get(digest_hex).clone() {
             return x.clone();
         }
 
@@ -35,10 +35,18 @@ impl Hash {
             left: None,
             right: None,
         };
+        let mut extended_itheradets = ITHERADETS.get_or_init(|| {
+            HashMap::new()
+        }).clone();
+        let mut extended_internalized_hashes = INTERNALIZED_HASHES.get_or_init(|| {
+            HashMap::new()
+        }).clone();
 
-        iterated_hashes.insert(h.clone(), vec![h.clone()]);
-        internalized_hashes_locked.insert(digest_hex.to_string(), h.clone());
-        //println!("---------------digest_hex {:?}, from_digest {:?}", digest_hex, h);
+        extended_itheradets.insert(h.clone(), vec![h.clone()]);
+        extended_internalized_hashes.insert(digest_hex.to_string(), h.clone());
+
+        ITHERADETS.set(extended_itheradets);
+        INTERNALIZED_HASHES.set(extended_internalized_hashes);
         h
     }
 
@@ -77,8 +85,7 @@ impl Hash {
     }
 
     pub fn iterated_merkle(&self, level: u32) -> Hash {
-        let iterated_hashes = &mut iterateds.lock().unwrap();
-
+        let mut iterated_hashes = ITHERADETS.get().unwrap().clone();
         if let Some(iterated) = iterated_hashes.get(self) {
             if let Some(hash) = iterated.get(level as usize) {
                 return hash.clone();
@@ -89,13 +96,12 @@ impl Hash {
 
         let mut highest_level = self.clone();
         let mut i = iterated_hashes[&highest_level].len();
-
         while i < level as usize {
             highest_level = highest_level.join(&highest_level);
             i += 1;
             iterated_hashes.get_mut(&self).unwrap().push(highest_level.clone());
         }
-
+        ITHERADETS.set(iterated_hashes);
         highest_level
     }
 

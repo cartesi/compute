@@ -722,7 +722,6 @@ impl JsonRpcCartesiMachineClient {
         let runtime =
             cartesi_jsonrpc_interfaces::index::MachineRuntimeConfig::from(machine_runtime_config);
         let machine_oneof = cartesi_jsonrpc_interfaces::index::MachineConfig::from(machine_config);
-
         let response = self
             .client
             .lock()
@@ -960,14 +959,10 @@ impl JsonRpcCartesiMachineClient {
     pub async fn read_iflags_h(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
         let response = self.client.lock().await.MachineReadIflagsH().await;
         match response {
-            Ok(response) => {
-                Ok(response)
-            }
-            Err(_) => {
-                Err(Box::new(JsonrpcCartesiMachineError::new(
-                    "Error reading iglags h from cartesi machine",
-                )))
-            }
+            Ok(response) => Ok(response),
+            Err(_) => Err(Box::new(JsonrpcCartesiMachineError::new(
+                "Error reading iglags h from cartesi machine",
+            ))),
         }
     }
 
@@ -1022,22 +1017,12 @@ impl JsonRpcCartesiMachineClient {
 
     /// Resets uarch state on the remote machine
     pub async fn reset_uarch_state(&mut self) -> Result<bool, Box<dyn std::error::Error>> {
-        let response = self
-            .client
-            .lock()
-            .await
-            .MachineResetUarchState()
-            .await;
+        let response = self.client.lock().await.MachineResetUarchState().await;
         match response {
-            Ok(response) => {
-                Ok(response)
-            }
-            Err(e) => {
-
-                Err(Box::new(JsonrpcCartesiMachineError::new(
-                    e.to_string().as_str(),
-                )))
-            }
+            Ok(response) => Ok(response),
+            Err(e) => Err(Box::new(JsonrpcCartesiMachineError::new(
+                e.to_string().as_str(),
+            ))),
         }
     }
 

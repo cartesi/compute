@@ -21,6 +21,7 @@ RUN export ARCH=$(uname -m | sed 's/aarch64/aarch_64/') && \
 
 COPY ./ /root
 COPY test-files /root/share/images
+COPY program /root/program
 
 WORKDIR "/root"
 

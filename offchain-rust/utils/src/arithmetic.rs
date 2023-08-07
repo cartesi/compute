@@ -1,12 +1,12 @@
-pub fn max_int(k: u32) -> i64 {
-    println!("k {:?}", k);
+pub const fn max_uint(k: u32) -> i64 {
+    //println!("k {:?}", k);
     assert!(k <= 64);
     let shifting = (1 as u64).checked_shl(k);
     let result: i64 = match shifting {
         Some(sh) => (sh - 1) as i64,
         None => -1,
     };
-    println!("return {:?}", result);
+    //println!("return {:?}", result);
 
     result
 }

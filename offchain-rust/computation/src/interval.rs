@@ -25,10 +25,10 @@ impl StrideCounter {
         self.value += 1;
     }
 
-    pub fn cycle(&self) -> u32 {
+    /*pub fn cycle(&self) -> u32 {
         let cycle = (self.value << (self.interval.log2_stride - constants::A)) as u32;
         cycle
-    }
+    }*/
 
     fn ucycle(&self) -> u32 {
         let ucycle = (self.value << self.interval.log2_stride) as u32;
@@ -42,7 +42,7 @@ impl StrideCounter {
 #[derive(Clone, Debug)]
 
 pub struct Interval {
-    base_meta_counter: Uint<256, 4>,
+    pub base_meta_counter: Uint<256, 4>,
     pub log2_stride: u32,
     pub log2_stride_count: u32,
 }
@@ -60,17 +60,17 @@ impl Interval {
         }
     }
 
-    pub fn iter(&self, log2_total_strides: i32) -> IntervalIterator {
+    /*pub fn iter(&self, log2_total_strides: i32) -> IntervalIterator {
         IntervalIterator::new(self.clone(), log2_total_strides)
-    }
+    }*/
 
     pub fn _build_iter(&self, log2_total_strides: u32) -> (u64, StrideCounter) {
-        let total_strides = arithmetic::max_int(log2_total_strides);
+        let total_strides = arithmetic::max_uint(log2_total_strides);
         let stride = StrideCounter::new(self.clone(), total_strides.try_into().unwrap(), None);
         (total_strides as u64, stride)
     }
 
-    pub fn big_strides(&self) -> (u64, StrideCounter) {
+    /*pub fn big_strides(&self) -> (u64, StrideCounter) {
         let bid_strides_in_interval = if self.log2_stride_count >= constants::A {
             self.log2_stride_count - constants::A
         } else {
@@ -85,21 +85,21 @@ impl Interval {
             interval: self,
             remaining_big_strides: self.log2_stride_count as u64,
         }
-    }
+    }*/
     
 
-    fn strides(&self) -> impl Iterator<Item = (u64, u64, u64)> {
+    /*fn strides(&self) -> impl Iterator<Item = (u64, u64, u64)> {
         let (total_strides, mut stride) = self._build_iter(self.log2_stride_count);
         (0..total_strides).map(move |_| {
             stride.increment();
             (stride.value as u64, stride.cycle() as u64, stride.remaining_strides() as u64)
         })
-    }
+    }*/
 
-    pub fn total_ucycles_in_cycle(&self) -> i32 {
+    /*pub fn total_ucycles_in_cycle(&self) -> i32 {
         let ucycles = std::cmp::min(constants::A, self.log2_stride_count);
-        arithmetic::max_int(ucycles) as i32
-    }
+        arithmetic::max_uint(ucycles) as i32
+    }*/
 
     /*pub fn ucycles_in_cycle(&self) -> IntervalIterator {
         //println!("call total_ucycles_in_cycleeeeee");
@@ -110,7 +110,7 @@ impl Interval {
         IntervalIterator::new(self.clone(), total_strides)
     }*/
 
-    pub fn ucycles_in_cycle(&self) -> impl Iterator<Item = (u64, u64, u64)> {
+    /*pub fn ucycles_in_cycle(&self) -> impl Iterator<Item = (u64, u64, u64)> {
         let total_strides = self.total_ucycles_in_cycle();
         let mut stride = StrideCounter::new(self.clone(), total_strides as i64, None);
         (0..total_strides).map(move |_| {
@@ -127,9 +127,9 @@ impl Interval {
             remaining_ucycles_in_cycle: total_ucycles_in_cycle as u64,
             remaining_strides: (total_ucycles_in_cycle << self.log2_stride) as u64,
         }
-    }
+    }*/
 }
-
+/*
 pub struct BigStridesIter<'a> {
     interval: &'a Interval,
     remaining_big_strides: u64,
@@ -160,7 +160,7 @@ impl<'a> Iterator for UCyclesInCycleIter<'a> {
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.remaining_ucycles_in_cycle > 0 {
-            let ucycle = self.interval.total_ucycles_in_cycle() - self.remaining_ucycles_in_cycle as i32 + 1;
+            let ucycle = self.interval.total_ucycles_in_cycle() - self.remaining_ucycles_in_cycle as i32;
             self.remaining_ucycles_in_cycle -= 1;
             let remaining_strides = self.remaining_strides;
             self.remaining_strides -= 1;
@@ -194,3 +194,4 @@ impl<'a> Iterator for IntervalIterator {
         }
     }
 }
+*/
