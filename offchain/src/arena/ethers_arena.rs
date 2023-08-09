@@ -267,29 +267,47 @@ impl Arena for EthersArena {
         &self,
         tournament: Address,
         match_id_hash: Hash
-    )-> Result<MatchState, Box<dyn Error>> {
+    )-> Result<Option<MatchState>, Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
         let match_state = tournament.get_match(match_id_hash).call().await?;
-        Ok(MatchState { 
-            other_parent: match_state.other_parent,
-            left_node: match_state.left_node, 
-            right_node: match_state.right_node, 
-            running_leaf_position: match_state.running_leaf_position, 
-            current_height: match_state.current_height, 
-            level: match_state.level,
-        })
+        if !is_hash_zero(match_state.other_parent) {
+            Ok(Some(MatchState { 
+                other_parent: match_state.other_parent,
+                left_node: match_state.left_node, 
+                right_node: match_state.right_node, 
+                running_leaf_position: match_state.running_leaf_position, 
+                current_height: match_state.current_height, 
+                level: match_state.level,
+            }))
+        } else {
+            Ok(None)
+        }
     }
 
-    async fn root_tournament_winner(&self, root_tournament: Address) -> Result<Hash, Box<dyn Error>> {
+    async fn root_tournament_winner(
+        &self,
+        root_tournament: Address
+    ) -> Result<Option<Hash>, Box<dyn Error>> {
         let root_tournament = root_tournament::RootTournament::new(root_tournament, self.client.clone());
-        let (_, hash) = root_tournament.root_tournament_final_state().call().await?;
-        Ok(hash)
+        let (finished, hash) = root_tournament.root_tournament_final_state().call().await?;
+        if finished {
+            Ok(Some(hash))
+        } else {
+            Ok(None)
+        }
     }
 
-    async fn tournament_winner(&self, tournament: Address) -> Result<Hash, Box<dyn Error>> {
+    async fn tournament_winner(
+        &self,
+        tournament: Address
+    ) -> Result<Option<Hash>, Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
         let hash = tournament.tournament_winner().call().await?;
-        Ok(hash)
+        if !is_hash_zero(hash) {
+            Ok(Some(hash))
+        } else {
+            Ok(None)
+        }
     }
     
     async fn maximum_delay(&self, tournament: Address) -> Result<u64, Box<dyn Error>> {

@@ -378,6 +378,7 @@ dependencies = [
  "ethers-contract-abigen",
  "ethers-solc",
  "hex",
+ "log",
  "once_cell",
  "primitive-types",
  "prost",

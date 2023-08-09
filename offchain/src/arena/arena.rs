@@ -76,14 +76,24 @@ pub trait Arena : Send + Sync {
     
     async fn match_state(
         &self,
-        match_address: Address,
+        tournament: Address,
         match_id_hash: Hash
-    )-> Result<MatchState, Box<dyn Error>>;
+    )-> Result<Option<MatchState>, Box<dyn Error>>;
 
-    async fn root_tournament_winner(&self, tournament: Address) -> Result<Hash, Box<dyn Error>>;
-    async fn tournament_winner(&self, tournament: Address) -> Result<Hash, Box<dyn Error>>;
+    async fn root_tournament_winner(
+        &self,
+        tournament: Address
+    ) -> Result<Option<Hash>, Box<dyn Error>>;
     
-    async fn maximum_delay(&self, tournament: Address) -> Result<u64, Box<dyn Error>>;
+    async fn tournament_winner(
+        &self,
+        tournament: Address
+    )-> Result<Option<Hash>, Box<dyn Error>>;
+    
+    async fn maximum_delay(
+        &self,
+        tournament: Address
+    ) -> Result<u64, Box<dyn Error>>;
 }
 
 pub struct TournamentCreatedEvent {
@@ -116,3 +126,8 @@ pub struct MatchID {
 pub type Address = H160;
 pub type Hash = [u8; 32];
 pub type Proof = Vec<Hash>;
+
+pub fn is_hash_zero(hash: Hash) -> bool {
+    // TODO
+    return false;
+}
