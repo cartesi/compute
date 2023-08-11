@@ -220,7 +220,6 @@ impl Arena for EthersArena {
         match_id: MatchID,
         left_node: Hash,
         right_node: Hash,
-        proofs: Vec<Hash>,
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {
@@ -241,11 +240,22 @@ impl Arena for EthersArena {
         Ok(())
     }
 
-    async fn created_tournaments(&self) -> Result<Vec<TournamentCreatedEvent>, Box<dyn Error>> {
-        Ok(Vec::<TournamentCreatedEvent>::new())
+    async fn created_tournament(
+        &self,
+        tournament: Address,
+        match_id_hash: Hash,           
+    ) -> Result<TournamentCreatedEvent, Box<dyn Error>> {
+        Ok(TournamentCreatedEvent {
+            parent_match_id_hash: Hash::default(),
+            address: Address::default(),
+        })
     }
     
-    async fn created_matches(&self) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>> {
+    async fn created_matches(
+        &self,
+        tournament: Address,
+        commitment_hash: Hash
+    ) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>> {
         Ok(Vec::<MatchCreatedEvent>::new())
     }
    

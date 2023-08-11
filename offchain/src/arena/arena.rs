@@ -61,12 +61,20 @@ pub trait Arena : Send + Sync {
         tournament: Address,
         match_id: MatchID,
         left_node: Hash,
-        right_node: Hash,
-        proofs: Vec<Hash>,
+        right_node: Hash
     ) -> Result<(), Box<dyn Error>>;
 
-    async fn created_tournaments(&self) -> Result<Vec<TournamentCreatedEvent>, Box<dyn Error>>;
-    async fn created_matches(&self) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>>;
+    async fn created_tournament(
+        &self,
+        tournament: Address,
+        match_id_hash: Hash,   
+    ) -> Result<TournamentCreatedEvent, Box<dyn Error>>;
+    
+    async fn created_matches(
+        &self,
+        tournament: Address,
+        commitment_hash: Hash,
+    ) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>>;
    
     async fn commitment(
         &self,
@@ -96,19 +104,29 @@ pub trait Arena : Send + Sync {
     ) -> Result<u64, Box<dyn Error>>;
 }
 
-pub struct TournamentCreatedEvent {
+#[derive(Debug, Clone, Copy)]
 
+pub struct TournamentCreatedEvent {
+    pub parent_match_id_hash: Hash,
+    pub address: Address,
 }
+
+#[derive(Debug, Clone, Copy)]
 
 pub struct MatchCreatedEvent {
-    
+    pub commitment_one: Hash,
+    pub commitment_two: Hash,
+    pub left_hash: Hash,
+    pub id_hash: Hash,    
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct ClockState {
     pub allowance: u64,
     pub start_instant: u64,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct MatchState {
     pub other_parent: Hash,
     pub left_node: Hash,
@@ -118,6 +136,7 @@ pub struct MatchState {
     pub level: u64,
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct MatchID {
     pub commitment_one: Hash,
     pub commitment_two: Hash,

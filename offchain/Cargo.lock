@@ -382,6 +382,7 @@ dependencies = [
  "once_cell",
  "primitive-types",
  "prost",
+ "thiserror",
  "tokio",
  "tonic",
  "tonic-build",
