@@ -1,0 +1,565 @@
+// Copyright 2019 Cartesi Pte. Ltd.
+
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+// this file except in compliance with the License. You may obtain a copy of the
+// License at http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+
+syntax = "proto3";
+
+import "versioning.proto";
+
+package CartesiMachine;
+
+//Service definiton section
+
+service Machine {
+    rpc GetVersion(Void) returns (Versioning.GetVersionResponse) {}
+    rpc SetCheckInTarget(SetCheckInTargetRequest) returns (Void) {}
+    rpc Machine(MachineRequest) returns (Void) {}
+    rpc Run(RunRequest) returns (RunResponse) {}
+    rpc RunUarch(RunUarchRequest) returns (RunUarchResponse) {}
+    rpc ResetUarchState(Void) returns (Void) {}
+    rpc Store(StoreRequest) returns (Void) {}
+    rpc Destroy(Void) returns (Void) {}
+    rpc Snapshot(Void) returns (Void) {}
+    rpc Rollback(Void) returns (Void) {}
+    rpc Shutdown(Void) returns (Void) {}
+    rpc StepUarch(StepUarchRequest) returns (StepUarchResponse) {}
+    rpc ReadMemory(ReadMemoryRequest) returns (ReadMemoryResponse) {}
+    rpc WriteMemory(WriteMemoryRequest) returns (Void) {}
+    rpc ReadVirtualMemory(ReadMemoryRequest) returns (ReadMemoryResponse) {}
+    rpc WriteVirtualMemory(WriteMemoryRequest) returns (Void) {}
+    rpc ReadWord(ReadWordRequest) returns (ReadWordResponse) {}
+    rpc GetRootHash(Void) returns (GetRootHashResponse) {}
+    rpc GetProof(GetProofRequest) returns (GetProofResponse) {}
+    rpc ReplaceMemoryRange (ReplaceMemoryRangeRequest) returns (Void) {}
+    rpc GetXAddress(GetXAddressRequest) returns (GetXAddressResponse) {}
+    rpc GetUarchXAddress(GetUarchXAddressRequest) returns (GetUarchXAddressResponse) {}
+    rpc ReadX(ReadXRequest) returns (ReadXResponse) {}
+    rpc WriteX(WriteXRequest) returns (Void) {}
+    rpc GetFAddress(GetFAddressRequest) returns (GetFAddressResponse) {}
+    rpc ReadF(ReadFRequest) returns (ReadFResponse) {}
+    rpc WriteF(WriteFRequest) returns (Void) {}
+    rpc ReadUarchX(ReadUarchXRequest) returns (ReadUarchXResponse) {}
+    rpc WriteUarchX(WriteUarchXRequest) returns (Void) {}
+    rpc ResetIflagsY(Void) returns (Void) {}
+    rpc GetCsrAddress(GetCsrAddressRequest) returns (GetCsrAddressResponse) {}
+    rpc ReadCsr(ReadCsrRequest) returns (ReadCsrResponse) {}
+    rpc WriteCsr(WriteCsrRequest) returns (Void) {}
+    rpc GetInitialConfig(Void) returns (GetInitialConfigResponse) {}
+    rpc VerifyMerkleTree(Void) returns (VerifyMerkleTreeResponse) {}
+    rpc VerifyDirtyPageMaps(Void) returns (VerifyDirtyPageMapsResponse) {}
+    rpc DumpPmas(Void) returns (Void) {}
+    rpc GetDefaultConfig(Void) returns (GetDefaultConfigResponse) {}
+    rpc VerifyAccessLog(VerifyAccessLogRequest) returns (Void) {}
+    rpc VerifyStateTransition(VerifyStateTransitionRequest) returns (Void) {}
+
+}
+
+//Messages definition section
+
+message Void { }
+
+message SetCheckInTargetRequest {
+    string session_id = 1;
+    string address = 2;
+}
+
+message Hash {
+    bytes data = 1;
+}
+
+message ProcessorConfig {
+    optional uint64 x1 = 1;
+    optional uint64 x2 = 2;
+    optional uint64 x3 = 3;
+    optional uint64 x4 = 4;
+    optional uint64 x5 = 5;
+    optional uint64 x6 = 6;
+    optional uint64 x7 = 7;
+    optional uint64 x8 = 8;
+    optional uint64 x9 = 9;
+    optional uint64 x10 = 10;
+    optional uint64 x11 = 11;
+    optional uint64 x12 = 12;
+    optional uint64 x13 = 13;
+    optional uint64 x14 = 14;
+    optional uint64 x15 = 15;
+    optional uint64 x16 = 16;
+    optional uint64 x17 = 17;
+    optional uint64 x18 = 18;
+    optional uint64 x19 = 19;
+    optional uint64 x20 = 20;
+    optional uint64 x21 = 21;
+    optional uint64 x22 = 22;
+    optional uint64 x23 = 23;
+    optional uint64 x24 = 24;
+    optional uint64 x25 = 25;
+    optional uint64 x26 = 26;
+    optional uint64 x27 = 27;
+    optional uint64 x28 = 28;
+    optional uint64 x29 = 29;
+    optional uint64 x30 = 30;
+    optional uint64 x31 = 31;
+    optional uint64 f0 = 32;
+    optional uint64 f1 = 33;
+    optional uint64 f2 = 34;
+    optional uint64 f3 = 35;
+    optional uint64 f4 = 36;
+    optional uint64 f5 = 37;
+    optional uint64 f6 = 38;
+    optional uint64 f7 = 39;
+    optional uint64 f8 = 40;
+    optional uint64 f9 = 41;
+    optional uint64 f10 = 42;
+    optional uint64 f11 = 43;
+    optional uint64 f12 = 44;
+    optional uint64 f13 = 45;
+    optional uint64 f14 = 46;
+    optional uint64 f15 = 47;
+    optional uint64 f16 = 48;
+    optional uint64 f17 = 49;
+    optional uint64 f18 = 50;
+    optional uint64 f19 = 51;
+    optional uint64 f20 = 52;
+    optional uint64 f21 = 53;
+    optional uint64 f22 = 54;
+    optional uint64 f23 = 55;
+    optional uint64 f24 = 56;
+    optional uint64 f25 = 57;
+    optional uint64 f26 = 58;
+    optional uint64 f27 = 59;
+    optional uint64 f28 = 60;
+    optional uint64 f29 = 61;
+    optional uint64 f30 = 62;
+    optional uint64 f31 = 63;
+    optional uint64 pc = 64;
+    optional uint64 fcsr = 65;
+    optional uint64 mvendorid = 66;
+    optional uint64 marchid = 67;
+    optional uint64 mimpid = 68;
+    optional uint64 mcycle = 69;
+    optional uint64 icycleinstret = 70;
+    optional uint64 mstatus = 71;
+    optional uint64 mtvec = 72;
+    optional uint64 mscratch = 73;
+    optional uint64 mepc = 74;
+    optional uint64 mcause = 75;
+    optional uint64 mtval = 76;
+    optional uint64 misa = 77;
+    optional uint64 mie = 78;
+    optional uint64 mip = 79;
+    optional uint64 medeleg = 80;
+    optional uint64 mideleg = 81;
+    optional uint64 mcounteren = 82;
+    optional uint64 menvcfg = 83;
+    optional uint64 stvec = 84;
+    optional uint64 sscratch = 85;
+    optional uint64 sepc = 86;
+    optional uint64 scause = 87;
+    optional uint64 stval = 88;
+    optional uint64 satp = 89;
+    optional uint64 scounteren = 90;
+    optional uint64 senvcfg = 91;
+    optional uint64 ilrsc = 92;
+    optional uint64 iflags = 93;
+}
+
+message ROMConfig {
+    string bootargs = 1;
+    string image_filename = 2;
+}
+
+message RAMConfig {
+    uint64 length = 1;
+    string image_filename = 2;
+}
+
+message MemoryRangeConfig {
+    uint64 start = 1;
+    uint64 length = 2;
+    string image_filename = 3;
+    bool shared = 4;
+}
+
+message TLBConfig {
+    string image_filename = 1;
+}
+
+message CLINTConfig {
+    optional uint64 mtimecmp = 1;
+}
+
+message HTIFConfig {
+    optional uint64 fromhost = 1;
+    optional uint64 tohost = 2;
+    bool console_getchar = 3;
+    bool yield_manual = 4;
+    bool yield_automatic = 5;
+}
+
+message RollupConfig {
+    MemoryRangeConfig rx_buffer = 1;
+    MemoryRangeConfig tx_buffer = 2;
+    MemoryRangeConfig input_metadata = 3;
+    MemoryRangeConfig voucher_hashes = 4;
+    MemoryRangeConfig notice_hashes = 5;
+}
+
+message UarchRAMConfig {
+    uint64 length = 1;
+    string image_filename = 2;
+}
+
+message UarchProcessorConfig {
+    optional uint64 x1 = 1;
+    optional uint64 x2 = 2;
+    optional uint64 x3 = 3;
+    optional uint64 x4 = 4;
+    optional uint64 x5 = 5;
+    optional uint64 x6 = 6;
+    optional uint64 x7 = 7;
+    optional uint64 x8 = 8;
+    optional uint64 x9 = 9;
+    optional uint64 x10 = 10;
+    optional uint64 x11 = 11;
+    optional uint64 x12 = 12;
+    optional uint64 x13 = 13;
+    optional uint64 x14 = 14;
+    optional uint64 x15 = 15;
+    optional uint64 x16 = 16;
+    optional uint64 x17 = 17;
+    optional uint64 x18 = 18;
+    optional uint64 x19 = 19;
+    optional uint64 x20 = 20;
+    optional uint64 x21 = 21;
+    optional uint64 x22 = 22;
+    optional uint64 x23 = 23;
+    optional uint64 x24 = 24;
+    optional uint64 x25 = 25;
+    optional uint64 x26 = 26;
+    optional uint64 x27 = 27;
+    optional uint64 x28 = 28;
+    optional uint64 x29 = 29;
+    optional uint64 x30 = 30;
+    optional uint64 x31 = 31;
+    optional uint64 pc = 32;
+    optional uint64 cycle = 33;
+}
+
+message UarchConfig {
+    UarchProcessorConfig processor = 1;
+    UarchRAMConfig ram = 2;
+}
+
+message MachineConfig {
+    ProcessorConfig processor = 1;
+    ROMConfig rom = 2;
+    RAMConfig ram = 3;
+    repeated MemoryRangeConfig flash_drive = 4;
+    CLINTConfig clint = 5;
+    HTIFConfig htif = 6;
+    RollupConfig rollup = 7;
+    UarchConfig uarch = 8;
+    TLBConfig tlb = 9;
+}
+
+message ConcurrencyConfig {
+    uint64 update_merkle_tree = 1;
+}
+
+message MachineRuntimeConfig {
+    ConcurrencyConfig concurrency = 1;
+}
+
+message MerkleTreeProof {
+    uint64 target_address = 1;
+    uint64 log2_target_size = 2;
+    Hash target_hash = 3;
+    uint64 log2_root_size = 4;
+    Hash root_hash = 5;
+    repeated Hash sibling_hashes = 6;
+}
+
+enum AccessType {
+    READ = 0;
+    WRITE = 1;
+}
+
+message Access {
+    AccessType type = 1;
+    bytes read = 2;
+    bytes written = 3;
+    MerkleTreeProof proof = 4;
+    uint64 address = 5;
+    uint64 log2_size = 6;
+}
+
+message BracketNote {
+    enum BracketNoteType {
+        BEGIN = 0;
+        END = 1;
+    }
+    BracketNoteType type = 1;
+    uint64 where = 2;
+    string text = 3;
+}
+
+message AccessLogType {
+    bool proofs = 1;
+    bool annotations = 2;
+}
+
+message AccessLog {
+    AccessLogType log_type = 1;
+    repeated Access accesses = 2;
+    repeated BracketNote brackets = 3;
+    repeated string notes = 4;
+}
+
+message MachineRequest {
+    oneof machine_oneof {
+        MachineConfig config = 1;
+        string directory = 2;
+    }
+    MachineRuntimeConfig runtime = 3;
+}
+
+message GetInitialConfigResponse {
+    MachineConfig config = 1;
+}
+
+message GetDefaultConfigResponse {
+    MachineConfig config = 1;
+}
+
+message VerifyAccessLogRequest {
+    AccessLog log = 1;
+    bool one_based = 2;
+    MachineRuntimeConfig runtime = 3;
+}
+
+message VerifyStateTransitionRequest {
+    Hash root_hash_before = 1;
+    AccessLog log = 2;
+    Hash root_hash_after = 3;
+    bool one_based = 4;
+    MachineRuntimeConfig runtime = 5;
+}
+
+message VerifyMerkleTreeResponse {
+    bool success = 1;
+}
+
+message VerifyDirtyPageMapsResponse {
+    bool success = 1;
+}
+
+message RunRequest {
+    uint64 limit = 1;
+}
+
+message RunResponse {
+    uint64 mcycle = 1;
+    uint64 tohost = 2;
+    bool iflags_h = 3;
+    bool iflags_y = 4;
+    bool iflags_x = 5;
+}
+
+message RunUarchRequest {
+    uint64 limit = 1;
+}
+
+message RunUarchResponse {
+    uint64 cycle = 1;
+    uint64 pc = 2;
+    uint64 halt_flag = 3;
+}
+
+message StoreRequest {
+    string directory = 1;
+}
+
+message StepUarchRequest {
+    AccessLogType log_type = 1;
+    bool one_based = 2;
+}
+
+message StepUarchResponse {
+    AccessLog log = 1;
+}
+
+message ReadWordRequest {
+    uint64 address = 1;
+}
+
+message ReadWordResponse {
+    bool success = 1;
+    uint64 value = 2;
+}
+
+message ReadMemoryRequest {
+    uint64 address = 1;
+    uint64 length = 2;
+}
+
+message ReadMemoryResponse {
+    bytes data = 1;
+}
+
+message WriteMemoryRequest {
+    uint64 address = 1;
+    bytes data = 2;
+}
+
+message GetRootHashResponse {
+    Hash hash = 1;
+}
+
+message GetProofRequest {
+    uint64 address = 1;
+    uint64 log2_size = 2;
+}
+
+message GetProofResponse {
+    MerkleTreeProof proof = 1;
+}
+
+message ReplaceMemoryRangeRequest {
+    MemoryRangeConfig config = 1;
+}
+
+message GetXAddressRequest {
+    uint32 index = 1;
+}
+
+message GetXAddressResponse {
+    uint64 address = 1;
+}
+
+message GetUarchXAddressRequest {
+    uint32 index = 1;
+}
+
+message GetUarchXAddressResponse {
+    uint64 address = 1;
+}
+
+message ReadXRequest {
+    uint32 index = 1;
+}
+
+message ReadXResponse {
+    uint64 value = 1;
+}
+
+message WriteXRequest {
+    uint32 index = 1;
+    uint64 value = 2;
+}
+
+message GetFAddressRequest {
+    uint32 index = 1;
+}
+
+message GetFAddressResponse {
+    uint64 address = 1;
+}
+
+message ReadFRequest {
+    uint32 index = 1;
+}
+
+message ReadFResponse {
+    uint64 value = 1;
+}
+
+message WriteFRequest {
+    uint32 index = 1;
+    uint64 value = 2;
+}
+
+message ReadUarchXRequest {
+    uint32 index = 1;
+}
+
+message ReadUarchXResponse {
+    uint64 value = 1;
+}
+
+message WriteUarchXRequest {
+    uint32 index = 1;
+    uint64 value = 2;
+}
+
+enum Csr {
+    PC = 0;
+    FCSR = 1;
+    MVENDORID = 2;
+    MARCHID = 3;
+    MIMPID = 4;
+    MCYCLE = 5;
+    ICYCLEINSTRET = 6;
+    MSTATUS = 7;
+    MTVEC = 8;
+    MSCRATCH = 9;
+    MEPC = 10;
+    MCAUSE = 11;
+    MTVAL = 12;
+    MISA = 13;
+    MIE = 14;
+    MIP = 15;
+    MEDELEG = 16;
+    MIDELEG = 17;
+    MCOUNTEREN = 18;
+    MENVCFG = 19;
+    STVEC = 20;
+    SSCRATCH = 21;
+    SEPC = 22;
+    SCAUSE = 23;
+    STVAL = 24;
+    SATP = 25;
+    SCOUNTEREN = 26;
+    SENVCFG = 27;
+    ILRSC = 28;
+    IFLAGS = 29;
+    CLINT_MTIMECMP = 30;
+    HTIF_TOHOST = 31;
+    HTIF_FROMHOST = 32;
+    HTIF_IHALT = 33;
+    HTIF_ICONSOLE = 34;
+    HTIF_IYIELD = 35;
+    UARCH_PC = 36;
+    UARCH_CYCLE = 37;
+    UARCH_HALT_FLAG = 38;
+    UARCH_RAM_LENGTH = 39;
+}
+
+message GetCsrAddressRequest {
+    Csr csr = 1;
+}
+
+message GetCsrAddressResponse {
+    uint64 address = 1;
+}
+
+message ReadCsrRequest {
+    Csr csr = 1;
+}
+
+message ReadCsrResponse {
+    uint64 value = 1;
+}
+
+message WriteCsrRequest {
+    Csr csr = 1;
+    uint64 value = 2;
+}
+

@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use computation::{commitment, machine_test};
+use computation::{commitment};
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
@@ -16,8 +16,6 @@ async fn main() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         println!("Script execution failed: {}", stderr);
     }    
-    instantiate_external_server_instance(50051);
-
     commitment::commitment_execution().await;
 
     // os.execute "jsonrpc-remote-cartesi-machine --server-address=localhost:8080 &"
@@ -56,18 +54,4 @@ async fn main() {
     // machine:read_mcycle()
 
     println!("Good-bye, world!");
-}
-
-fn instantiate_external_server_instance(port: u32) -> Result<(), Box<dyn std::error::Error>> {
-    let address = format!("127.0.0.1:{0}", port);
-    println!(
-        "Starting Cartesi jsonrpc remote machine on address {}",
-        address
-    );
-    std::process::Command::new("/opt/cartesi/bin/jsonrpc-remote-cartesi-machine")
-        .arg(&address)
-        .spawn()
-        .expect("Unable to launch jsonrpc cartesi machine server");
-    std::thread::sleep(std::time::Duration::from_secs(2));
-    Ok(())
 }

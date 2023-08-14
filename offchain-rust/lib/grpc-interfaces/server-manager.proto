@@ -1,0 +1,281 @@
+// Copyright 2021 Cartesi Pte. Ltd.
+
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use
+// this file except in compliance with the License. You may obtain a copy of the
+// License at http://www.apache.org/licenses/LICENSE-2.0
+
+// Unless required by applicable law or agreed to in writing, software distributed
+// under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
+// CONDITIONS OF ANY KIND, either express or implied. See the License for the
+// specific language governing permissions and limitations under the License.
+
+syntax = "proto3";
+
+import "versioning.proto";
+
+import "cartesi-machine.proto";
+
+package CartesiServerManager;
+
+// The version implemented by an instance of the Cartesi Server Manager can be obtained with a call to GetVersion.
+// Each Cartesi Server Manager controls a variety of independent Sessions (see StartSession).
+// The current list of Sessions can be obtained with a call to GetStatus.
+// Each Session controls a single Cartesi Machine through a connection to a Cartesi Machine Server that the
+// Server Manager itself spawns for the session.
+// The Cartesi Machine is specified in the StartSession request, by directory.
+// Each Session is divided into Epochs.
+// The list of past Epochs (and the current Epoch) for a Session can be obtained with a call to GetSessionStatus.
+// Within each Epoch, the state of the associated machine is advanced by individual inputs (see AdvanceState).
+// The processing of each input, when successful, may produce several Vouchers (i.e., collateral effects
+// actionable in the blockchain) and a variety of Notices (which describe any relevant changes to the internal
+// state of applications running inside the Cartesi Machine).
+// The current Epoch can be closed (and the next Epoch started) with a call to FinishEpoch.
+// This is a synchronous call that can only be issued after all inputs in the active epoch have been processed.
+// The entire state of the machine can be stored on disk (and later recovered) when the Epoch is finished.
+// A closed epoch can be deleted to free the Server Manager's memory with a call to DeleteEpoch.
+// An input can be skipped for a variety of reasons (see CompletionStatus).
+// Whether successfully processed or skipped, the machine can produce a variety of Reports (i.e., diagnostics, logs, etc)
+// Input processing is asynchronous: the results of all processed inputs for processing can be
+// obtained with a call to GetEpochStatus.
+// Information about an Epoch is retained until its Session is terminated (see EndSession).
+// (Note that machines stored on disk are always retained.)
+// When an input is skipped, for whatever reason, the state of the Cartesi Machine is reverted to what it was
+// before the input was given to the machine: i.e., from the perspective of the machine, it never happened.
+// Certain error conditions may cause a Session to become unusable.
+// An unusable Session is said to be "tainted".
+// All further operations in a tainted Session (other than EndSession) will fail.
+// The underlying reason can be obtained with a call to GetSessionStatus.
+// Between inputs, the state of the machine can be inspected with a query (see InspectState).
+// Processing of a query can produce a variety of Reports.
+// Processing of a query can be aborted for a variety of reasons (see CompletionStatus).
+// After the query is processed, the state of the Cartesi Machine is reverted to what it was before the query was given
+// to the machine: i.e., from the perspective of the machine, it never happened.
+// State inspection is synchronous: the query is processed as soon as the current input is done (if any) and all
+// produced Reports are immediately returned.
+// A Cartesi Machine used with the Cartesi Server Manager must define 5 memory ranges, in addition to however
+// many flash drives the application it runs might require.
+// Each memory range must have a power-of-two length and must start at a multiple of its size.
+// The first two are the rx buffer and tx buffer memory ranges.
+// The rx buffer is used by the Cartesi Server Manager to send the input and query payloads into the Cartesi
+// Machine.
+// The tx buffer is used by the Cartesi Machine to send Vouchers, Notices, and Reports to the Cartesi Server
+// Manager.
+// Each input to AdvanceState, in addition to the payload, requires some metadata.
+// This is sent into the Cartesi Machine through the input metadata memory range.
+// The last two remaining memory ranges are the voucher hashes and notice hashes memory ranges.
+// These contain an array of hashes, respectively of each voucher and notice produced while processing input.
+// Whenever an input is processed, the Cartesi Server Manager collects from the Cartesi Machine a Merkle proof
+// that the voucher hashes and notice hashes memory ranges are part of the Cartesi Machine State.
+// Likewise, each voucher and notice accompanies a proof that its hash is part of, respectively, the voucher hashes
+// memory range and notice hashes memory range.
+// Finally, the Cartesi Server Manager also maintains two additional Merkle trees, respectively containing as
+// leaves the Merkle tree root hash of the voucher hashes memory range and the notice hashes memory range.
+
+service ServerManager {
+    rpc GetVersion(CartesiMachine.Void) returns (Versioning.GetVersionResponse) {}
+    rpc StartSession (StartSessionRequest) returns (StartSessionResponse) {}
+    rpc AdvanceState (AdvanceStateRequest) returns (CartesiMachine.Void) {}
+    rpc GetStatus (CartesiMachine.Void) returns (GetStatusResponse) {}
+    rpc GetSessionStatus (GetSessionStatusRequest) returns (GetSessionStatusResponse) {}
+    rpc GetEpochStatus (GetEpochStatusRequest) returns (GetEpochStatusResponse) {}
+    rpc InspectState (InspectStateRequest) returns (InspectStateResponse) {}
+    rpc FinishEpoch (FinishEpochRequest) returns (FinishEpochResponse) {}
+    rpc DeleteEpoch (DeleteEpochRequest) returns (CartesiMachine.Void) {}
+    rpc EndSession (EndSessionRequest) returns (CartesiMachine.Void) {}
+}
+
+message StartSessionResponse {
+    CartesiMachine.MachineConfig config = 1; // Configuration of instantiated machine
+}
+
+message GetStatusResponse {
+    repeated string session_id = 1; // List of available sessions
+}
+
+// Deadlines for a variety of machine server tasks
+// (All deadlines are in milliseconds)
+message DeadlineConfig {
+    uint64 checkin = 1; // Deadline for receiving checkin from spawned machine server
+    uint64 advance_state = 2; // Deadline for advancing the state
+    uint64 advance_state_increment = 3; // Deadline for each increment when advancing state
+    uint64 inspect_state = 4; // Deadline for inspecting state
+    uint64 inspect_state_increment = 5; // Deadline for each increment when inspecting state
+    uint64 machine = 6; // Deadling for instantiating a machine
+    uint64 store = 7; // Deadling for storing a machine
+    uint64 fast = 8; // Deadling for quick machine server tasks
+}
+
+// Cycle limits for a variety of machine server tasks
+message CyclesConfig {
+    uint64 max_advance_state = 1; // Maximum number of cycles that processing the input in an AdvanceState can take
+    uint64 advance_state_increment = 2; // Number of cycles in each increment to processing an input
+    uint64 max_inspect_state = 3; // Maximum number of cycles that processing the query in an InspectState can take
+    uint64 inspect_state_increment = 4; // Number of cycles in each increment to processing a query
+}
+
+message StartSessionRequest {
+    string session_id = 1; // Id of session to start
+    string machine_directory = 2; // Machine to instantiate for session
+    uint64 active_epoch_index = 3; // Active epoch for the newly instantiated machine
+    uint64 processed_input_count = 4; // Number of processed inputs since genesis
+    CyclesConfig server_cycles = 5; // Cycle limit for server tasks
+    DeadlineConfig server_deadline = 6; // Time limit for server tasks
+    CartesiMachine.MachineRuntimeConfig runtime = 7; // Machine runtime parameters
+}
+
+// Information about why the session became invalid
+message TaintStatus {
+    int32 error_code = 1; // Error code associated to tainting of session
+    string error_message = 2; // Descriptive error message
+}
+
+message GetSessionStatusRequest {
+    string session_id = 1; // Id of session to describe
+}
+
+message GetSessionStatusResponse {
+    string session_id = 1; // Id of session being described
+    uint64 active_epoch_index = 2; // Currently active epoch in session
+    repeated uint64 epoch_index = 3; // List of epochs the session holds
+    TaintStatus taint_status = 4; // If session is tainted, an error code and message giving the cause
+}
+
+message EndSessionRequest {
+    string session_id = 1; // Session to end.
+}
+
+message Address {
+    bytes data = 1; // 20-byte address
+}
+
+message InputMetadata {
+    Address msg_sender = 1; // 20-byte address of sender
+    uint64 block_number = 2; // Block number when input was posted
+    uint64 timestamp = 3; // Time stamp of block (Unix?)
+    uint64 epoch_index = 4; // Deprecated. Always receives 0
+    uint64 input_index = 5; // Input index starting from genesis
+}
+
+message AdvanceStateRequest {
+    string session_id = 1;
+    uint64 active_epoch_index = 2; // To double-check the desired epoch is the active one
+    uint64 current_input_index = 3; // To double-check the current input is the expected one
+    InputMetadata input_metadata = 4; // Information sent via the input metadata memory range
+    bytes input_payload = 5; // Payload sent via the rx buffer memory range
+}
+
+message GetEpochStatusRequest {
+    string session_id = 1; // Session to which epoch belongs
+    uint64 epoch_index = 2; // Index of epoch to describe. May refer to an old epoch that is still cached by the session
+}
+
+// Reason why input was skipped
+enum CompletionStatus {
+    ACCEPTED = 0;
+    REJECTED = 1;
+    EXCEPTION = 2;
+    MACHINE_HALTED = 3;
+    CYCLE_LIMIT_EXCEEDED = 4;
+    TIME_LIMIT_EXCEEDED = 5;
+}
+
+message AcceptedData {
+    repeated Voucher vouchers = 1; // List of vouchers produced when processing the input
+    repeated Notice notices = 2; // List of notices produced when processing the input
+}
+
+message ProcessedInput {
+    uint64 input_index = 1; // Index of input starting from genesis
+    CompletionStatus status = 2; // Status of the processed input
+    oneof ProcessedInputOneOf {
+        AcceptedData accepted_data = 3; // Result of processed input when completed with success (ACCEPTED)
+        bytes exception_data = 4; // Exception payload when there was an EXCEPTION
+    }
+    repeated Report reports = 5; // Reports produced during input or query processing
+}
+
+enum EpochState {
+    ACTIVE = 0; // Epoch is still accepting inputs
+    FINISHED = 1; // Epoch has been buried under the next active epoch but is perhaps still processing pending inputs
+}
+
+message GetEpochStatusResponse {
+    string session_id = 1; // Session to which epoch belong
+    uint64 epoch_index = 2; // Index of epoch being described
+    EpochState state = 3; // State epoch is currently in
+    repeated ProcessedInput processed_inputs = 4; // List of inputs already processed in this epoch
+    uint64 pending_input_count = 5; // Number of inputs pending processing
+    TaintStatus taint_status = 6; // If session is tainted, an error code and message giving the cause
+}
+
+message Notice {
+    bytes payload = 1; // Notice payload
+}
+
+message Voucher {
+    Address destination = 1; // 20-byte address
+    bytes payload = 2; // Voucher payload
+}
+
+message Report {
+    bytes payload = 1; // Report payload
+}
+
+message InspectStateRequest {
+    string session_id = 1; // Session to inspect
+    bytes query_payload = 2; // Query payload
+}
+
+message InspectStateResponse {
+    string session_id = 1; // Id of session being described
+    uint64 active_epoch_index = 2;  // Epoch that was inspected
+    uint64 processed_input_count = 3; // Number of processed inputs since genesis
+    CompletionStatus status = 4; // Whether inspection completed or not (and why not)
+    optional bytes exception_data = 5; // Exception payload when finished with EXCEPTION
+    repeated Report reports = 6; // Reports produced while processing the query
+}
+
+// Validity proof for an output
+message OutputValidityProof {
+    uint64 input_index_within_epoch = 1; // Local input index within the context of the related epoch
+    uint64 output_index_within_input = 2; // Output index within the context of the input that produced it
+    CartesiMachine.Hash output_hashes_root_hash = 3; // Merkle root of all output hashes of the related input
+    CartesiMachine.Hash vouchers_epoch_root_hash = 4; // Merkle root of all voucher hashes of the related epoch
+    CartesiMachine.Hash notices_epoch_root_hash = 5; // Merkle root of all notice hashes of the related epoch
+    CartesiMachine.Hash machine_state_hash = 6; // Hash of the machine state claimed for the related epoch
+    repeated CartesiMachine.Hash output_hash_in_output_hashes_siblings = 7; // Proof that this output hash is in the output-hashes merkle tree. This array of siblings is bottom-up ordered (from the leaf to the root).
+    repeated CartesiMachine.Hash output_hashes_in_epoch_siblings = 8; // Proof that this output-hashes root hash is in epoch's output merkle tree. This array of siblings is bottom-up ordered (from the leaf to the root).
+}
+
+enum OutputEnum {
+    VOUCHER = 0;
+    NOTICE = 1;
+}
+
+// Data that can be used as proof to validate notices and execute vouchers on the base layer blockchain
+message Proof {
+    uint64 input_index = 1; // Index of input starting from genesis
+    uint64 output_index = 2; // Index of output (voucher or notice) in the context of the input
+    OutputEnum output_enum = 3; // Type of the output
+    OutputValidityProof validity = 4; // Validity proof for an output
+    bytes context = 5; // Data that allows the validity proof to be contextualized within submitted claims. Currently, the context is the epoch number as a ABI-encoded uint256.
+}
+
+message FinishEpochRequest {
+    string session_id = 1; // Id of session containing epoch to finish
+    uint64 active_epoch_index = 2; // To double-check epoch index is correct
+    uint64 processed_input_count_within_epoch = 3; // To double-check all inputs sent have been processed in this epoch
+    string storage_directory = 4; // Directory to store machine state (do not store if empty string)
+}
+
+message FinishEpochResponse {
+    CartesiMachine.Hash machine_hash = 1; // Machine hash in epoch
+    CartesiMachine.Hash vouchers_epoch_root_hash = 2; // Root hash for Merkle tree of voucher hashes memory ranges
+    CartesiMachine.Hash notices_epoch_root_hash = 3; // Root hash for Merkle tree of notice hashes memory ranges
+    repeated Proof proofs = 4; // Proofs for the outputs
+}
+
+message DeleteEpochRequest {
+    string session_id = 1; // Id of session containing epoch to delete
+    uint64 epoch_index = 2; // Index of the epoch to delete
+}
