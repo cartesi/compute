@@ -10,10 +10,8 @@ name = "computation"
 path = "src/mod.rs"
 
 [dependencies]
-ruint = "1.8.0"
 cryptography = { path = "../cryptography" }
 utils = { path = "../utils" }
-lazy_static = "1.4.0"
 jsonrpc-cartesi-machine = {path="../jsonrpc-cartesi-machine"}
 cartesi-jsonrpc-interfaces = {path="../cartesi-jsonrpc-interfaces"}
 tokio = { version = "1.16.0", features = ["macros", "rt-multi-thread","time"]}

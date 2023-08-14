@@ -1,8 +1,6 @@
 use std::collections::HashMap;
-
-use tiny_keccak::{Hasher, Sha3};
 use once_cell::sync::OnceCell;
-
+use sha3::{Digest, Keccak256};
 
 fn hex_from_bin(bin: &[u8]) -> String {
     assert_eq!(bin.len(), 32);
@@ -19,14 +17,15 @@ pub struct Hash {
 static INTERNALIZED_HASHES: OnceCell<HashMap<String, Hash>> = OnceCell::new();
 static ITHERADETS: OnceCell<HashMap<Hash, Vec<Hash>>> = OnceCell::new();
 
-
 impl Hash {
     pub fn from_digest(digest_hex: &str) -> Hash {
         assert!(digest_hex.len() == 66);
 
-        if let Some(x) = INTERNALIZED_HASHES.get_or_init(|| {
-            HashMap::new()
-        }).get(digest_hex).clone() {
+        if let Some(x) = INTERNALIZED_HASHES
+            .get_or_init(|| HashMap::new())
+            .get(digest_hex)
+            .clone()
+        {
             return x.clone();
         }
 
@@ -35,12 +34,9 @@ impl Hash {
             left: None,
             right: None,
         };
-        let mut extended_itheradets = ITHERADETS.get_or_init(|| {
-            HashMap::new()
-        }).clone();
-        let mut extended_internalized_hashes = INTERNALIZED_HASHES.get_or_init(|| {
-            HashMap::new()
-        }).clone();
+        let mut extended_itheradets = ITHERADETS.get_or_init(|| HashMap::new()).clone();
+        let mut extended_internalized_hashes =
+            INTERNALIZED_HASHES.get_or_init(|| HashMap::new()).clone();
 
         extended_itheradets.insert(h.clone(), vec![h.clone()]);
         extended_internalized_hashes.insert(digest_hex.to_string(), h.clone());
@@ -56,22 +52,26 @@ impl Hash {
     }
 
     fn from_data(data: &[u8]) -> Hash {
-        let mut hasher = Sha3::v256();
-        hasher.update(data);
-        let mut digest = [0u8; 32];
-        hasher.finalize(&mut digest);
+        let mut keccak = Keccak256::new();
+        keccak.update(&hex::decode(&data).unwrap());
+        let digest = keccak.finalize();
         let digest_hex = hex_from_bin(&digest);
         Hash::from_digest(&digest_hex)
     }
 
     pub fn join(&self, other_hash: &Hash) -> Hash {
-        let mut hasher = Sha3::v256();
-        hasher.update(self.digest_hex[2..].as_bytes());
-        hasher.update(other_hash.digest_hex[2..].as_bytes());
-        let mut digest = [0u8; 32];
-        hasher.finalize(&mut digest);
+        //println!("self.digest_hex {:?}", self.digest_hex);
+        //println!("other_hash.digest_hex {:?}", other_hash.digest_hex);
+
+        let mut keccak = Keccak256::new();
+        keccak.update(&hex::decode(&self.digest_hex[2..]).unwrap());
+        keccak.update(&hex::decode(&other_hash.digest_hex[2..]).unwrap());
+        let digest = keccak.finalize();
+        //println!("digest {:?}", digest);
         let digest_hex = hex_from_bin(&digest);
+        //println!("digest_hex {:?}", digest_hex);
         let mut ret = Hash::from_digest(&digest_hex);
+        //println!("ret {:?}", ret);
         ret.left = Some(self.digest_hex.clone());
         ret.right = Some(other_hash.digest_hex.clone());
         ret
@@ -99,7 +99,10 @@ impl Hash {
         while i < level as usize {
             highest_level = highest_level.join(&highest_level);
             i += 1;
-            iterated_hashes.get_mut(&self).unwrap().push(highest_level.clone());
+            iterated_hashes
+                .get_mut(&self)
+                .unwrap()
+                .push(highest_level.clone());
         }
         ITHERADETS.set(iterated_hashes);
         highest_level

@@ -1,5 +1,4 @@
 use crate::constants;
-use ruint::Uint;
 use utils::arithmetic;
 #[derive(Clone, Debug)]
 pub struct StrideCounter {
@@ -42,14 +41,14 @@ impl StrideCounter {
 #[derive(Clone, Debug)]
 
 pub struct Interval {
-    pub base_meta_counter: Uint<256, 4>,
+    pub base_meta_counter: u32,
     pub log2_stride: u32,
     pub log2_stride_count: u32,
 }
 
 impl Interval {
     pub fn new(
-        base_meta_counter: Uint<256, 4>,
+        base_meta_counter: u32,
         log2_stride: u32,
         log2_stride_count: u32,
     ) -> Interval {

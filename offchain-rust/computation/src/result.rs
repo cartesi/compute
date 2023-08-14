@@ -20,7 +20,6 @@ impl ComputationState  {
         let root_hash = Hash::from_digest_bin(&machine.lock().unwrap().get_root_hash().await.unwrap());
         let halted = machine.lock().unwrap().read_iflags_h().await.unwrap();
         let unhalted = machine.lock().unwrap().read_uarch_halt_flag().await.unwrap();
-        //println!("from_current_machine_state: {:?}; {:?}; {:?}", &machine.lock().unwrap().get_root_hash().await.unwrap(), halted, unhalted);
         ComputationState::new(
             root_hash,
             halted,
