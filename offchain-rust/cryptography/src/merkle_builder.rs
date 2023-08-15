@@ -118,7 +118,7 @@ pub struct Leaf {
     accumulated_count: u64,
 }
 
-fn merkle(leafs: &Slice, log2size: u32, stride: usize) -> Hash {
+fn merkle(leafs: &Slice, log2size: u32, stride: u64) -> Hash {
     let first_time = stride * (1 << log2size) + 1;
     let shifting = (1 as u64).checked_shl(log2size);
     let last_time = match shifting {

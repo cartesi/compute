@@ -15,5 +15,4 @@ utils = { path = "../utils" }
 jsonrpc-cartesi-machine = {path="../jsonrpc-cartesi-machine"}
 cartesi-jsonrpc-interfaces = {path="../cartesi-jsonrpc-interfaces"}
 tokio = { version = "1.16.0", features = ["macros", "rt-multi-thread","time"]}
-jsonrpsee = {version = "0.18.2", features=["client-core"]}
 once_cell = "1.18.0"
