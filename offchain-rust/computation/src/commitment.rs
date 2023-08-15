@@ -1,8 +1,10 @@
-use super::{interval::Interval, machine::Machine};
+use super::machine::Machine;
 use crate::constants;
 use cryptography::merkle_builder::MerkleBuilder;
 use cryptography::merkle_tree::MerkleTree;
 use utils::arithmetic;
+use std::collections::HashMap;
+use cryptography::hash::Hash;
 
 async fn run_uarch_span(machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree {
     assert!(machine.lock().unwrap().ucycle == 0);
@@ -29,18 +31,19 @@ async fn run_uarch_span(machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> M
 }
 
 async fn build_small_machine_commitment(
-    interval: Interval,
+    base_cycle: u64,
+    log2_stride_count: u8,
     machine: std::sync::Arc<std::sync::Mutex<Machine>>,
 ) -> (cryptography::hash::Hash, MerkleTree) {
     std::sync::Arc::clone(&machine)
         .lock()
         .unwrap()
-        .run(interval.base_meta_counter as u64)
+        .run(base_cycle)
         .await;
     let initial_state = machine.lock().unwrap().state().await.root_hash;
     let mut builder = MerkleBuilder::new();
     let instruction_count =
-        arithmetic::max_uint(interval.log2_stride_count - constants::LOG2_UARCH_SPAN);
+        arithmetic::max_uint(log2_stride_count as u32 - constants::LOG2_UARCH_SPAN);
     let mut instructions = 0;
 
     loop {
@@ -54,7 +57,6 @@ async fn build_small_machine_commitment(
             None,
         );
         instructions += 1;
-
         if std::sync::Arc::clone(&machine)
             .lock()
             .unwrap()
@@ -75,26 +77,28 @@ async fn build_small_machine_commitment(
 }
 
 async fn build_big_machine_commitment(
-    interval: Interval,
+    base_cycle: u64,
+    log2_stride: u32,
+    log2_stride_count: u8,
     machine: std::sync::Arc<std::sync::Mutex<Machine>>,
 ) -> (cryptography::hash::Hash, MerkleTree) {
     std::sync::Arc::clone(&machine)
         .lock()
         .unwrap()
-        .run(interval.base_meta_counter as u64)
+        .run(base_cycle)
         .await;
     let initial_state = machine.lock().unwrap().state().await.root_hash;
     let mut builder = MerkleBuilder::new();
     let instruction_count =
-        arithmetic::max_uint(interval.log2_stride_count - constants::LOG2_UARCH_SPAN);
+        arithmetic::max_uint(log2_stride_count as u32);
     let mut instruction = 0;
 
-    while arithmetic::ulte(instruction as u64, instruction_count as u64) {
-        let cycle = ((instruction + 1) << (interval.log2_stride - constants::LOG2_UARCH_SPAN));
+   while arithmetic::ulte(instruction as u64, instruction_count as u64) {
+        let cycle = (instruction + 1) << (log2_stride - constants::LOG2_UARCH_SPAN);
         std::sync::Arc::clone(&machine)
             .lock()
             .unwrap()
-            .run(interval.base_meta_counter as u64 + cycle)
+            .run(base_cycle + cycle)
             .await;
         if !machine.lock().unwrap().state().await.halted {
             builder.add(machine.lock().unwrap().state().await.root_hash, None);
@@ -111,24 +115,61 @@ async fn build_big_machine_commitment(
 }
 
 async fn build_commitment(
-    interval: Interval,
+    base_cycle: u64,
+    log2_stride: u32,
+    log2_stride_count: u8,
     path: &str,
 ) -> (cryptography::hash::Hash, MerkleTree) {
     let machine = std::sync::Arc::new(std::sync::Mutex::new(Machine::new_from_path(path).await));
-    if interval.log2_stride >= constants::LOG2_UARCH_SPAN {
+    if log2_stride >= constants::LOG2_UARCH_SPAN{
         assert!(
-            interval.log2_stride - constants::LOG2_UARCH_SPAN + interval.log2_stride_count <= 63
-        );
-        build_big_machine_commitment(interval, machine).await
+            log2_stride + log2_stride_count as u32 <=
+            constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
+        );  
+        build_big_machine_commitment(base_cycle, log2_stride, log2_stride_count, machine).await
     } else {
-        build_small_machine_commitment(interval, machine).await
+        build_small_machine_commitment(base_cycle, log2_stride_count, machine).await
+    }
+}
+
+struct CommitmentBuilder {
+    machine_path: String,
+    commitments: HashMap<usize, HashMap<usize, Hash>>,
+}
+
+impl CommitmentBuilder {
+    fn new(machine_path: String) -> Self {
+        CommitmentBuilder {
+            machine_path,
+            commitments: HashMap::new(),
+        }
+    }
+
+    async fn build(&mut self, base_cycle: u64, level: usize) -> Hash {
+        assert!(level <= constants::LEVELS);
+        if !self.commitments.contains_key(&level) {
+            self.commitments.insert(level, HashMap::new());
+        } else if self.commitments[&level].contains_key(&(base_cycle as usize)) {
+            return self.commitments[&level][&(base_cycle as usize)].clone();
+        }
+
+        let l = (constants::LEVELS - level + 1) as usize;
+        let log2_stride = constants::LOG2STEP[l];
+        let log2_stride_count = constants::HEIGHTS[l];
+
+        let (_, commitment) = build_commitment(base_cycle, log2_stride, log2_stride_count, &self.machine_path).await;
+        self.commitments
+            .entry(level)
+            .or_insert_with(HashMap::new)
+            .insert(base_cycle as usize, commitment.root_hash.clone());
+
+        commitment.root_hash
     }
 }
 
 pub async fn commitment_execution() {
-    let i = Interval::new(0, 0, 64);
     let path = "simple-program";
-    let tree = build_commitment(i, path).await;
+    let tree = build_commitment(0, 0, 64, path).await;
 
     println!("{:?}  {:?}", tree.0.digest_hex, tree.1.root_hash.digest_hex);
 }

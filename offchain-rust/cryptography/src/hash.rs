@@ -60,18 +60,12 @@ impl Hash {
     }
 
     pub fn join(&self, other_hash: &Hash) -> Hash {
-        //println!("self.digest_hex {:?}", self.digest_hex);
-        //println!("other_hash.digest_hex {:?}", other_hash.digest_hex);
-
         let mut keccak = Keccak256::new();
         keccak.update(&hex::decode(&self.digest_hex[2..]).unwrap());
         keccak.update(&hex::decode(&other_hash.digest_hex[2..]).unwrap());
         let digest = keccak.finalize();
-        //println!("digest {:?}", digest);
         let digest_hex = hex_from_bin(&digest);
-        //println!("digest_hex {:?}", digest_hex);
         let mut ret = Hash::from_digest(&digest_hex);
-        //println!("ret {:?}", ret);
         ret.left = Some(self.digest_hex.clone());
         ret.right = Some(other_hash.digest_hex.clone());
         ret
@@ -127,6 +121,6 @@ fn zero_bytes32() -> String {
     "0x0000000000000000000000000000000000000000000000000000000000000000".to_string()
 }
 
-fn zero_hash() -> Hash {
+pub fn zero_hash() -> Hash {
     Hash::from_digest(&zero_bytes32())
 }
