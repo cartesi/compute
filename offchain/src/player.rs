@@ -145,20 +145,21 @@ impl Player {
 
         let match_state = if let Some(m) = self.arena.match_state(
             tournament, 
-            last_match.id_hash,
+            last_match.id,
         ).await? {
             m
         } else {
             return Ok(None)
         };
 
-        self.matches.insert(last_match.id_hash, PlayerMatch {
+        let match_id_hash = last_match.id.hash();
+        self.matches.insert(match_id_hash, PlayerMatch {
             state: match_state,
             event: *last_match,
             tournament: tournament,
         });
 
-        Ok(Some(last_match.id_hash))
+        Ok(Some(match_id_hash))
     }
 
     async fn join_tournament_if_needed(
@@ -224,19 +225,16 @@ impl Player {
             
             if let Some(_) = self.arena.match_state(
                 player_match.tournament,
-                player_match.event.id_hash
+                player_match.event.id,
             ).await? {
                 let delay = self.arena.maximum_delay(player_match.tournament).await?;
-                info!("delay for match {} is {}", player_match.event.id_hash, delay);
+                info!("delay for match {} is {}", player_match.event.id.hash(), delay);
                 return Ok(None)
             }
             
             self.arena.win_leaf_match(
                 player_match.tournament,
-                MatchID {
-                    commitment_one: player_match.event.commitment_one,
-                    commitment_two: player_match.event.commitment_two,
-                },
+                player_match.event.id,
                 left_child,
                 right_child,
             ).await?;
@@ -269,10 +267,7 @@ impl Player {
         if tournament.level == 1 {
             self.arena.seal_leaf_match(
                 tournament.address,
-                MatchID { 
-                    commitment_one: player_match.event.commitment_one,
-                    commitment_two: player_match.event.commitment_two,
-                },
+                player_match.event.id,
                 left_child,
                 right_child,
                 initial_hash,
@@ -282,10 +277,7 @@ impl Player {
         } else {
             self.arena.seal_leaf_match(
                 tournament.address,
-                MatchID { 
-                    commitment_one: player_match.event.commitment_one,
-                    commitment_two: player_match.event.commitment_two,
-                },
+                player_match.event.id,
                 left_child,
                 right_child,
                 initial_hash,
@@ -323,10 +315,7 @@ impl Player {
 
         self.arena.advance_match(
             player_match.tournament,
-            MatchID { 
-                commitment_one: player_match.event.commitment_one,
-                commitment_two: player_match.event.commitment_two,
-            },
+            player_match.event.id,
             left_child,
             right_child,
             new_left,
@@ -344,8 +333,8 @@ impl Player {
         
         let address = self.arena.created_tournament(
             player_match.tournament,
-            player_match.event.id_hash,
-        ).await?.address;
+            player_match.event.id,
+        ).await?.unwrap().new_tournament_address;
 
         self.tournaments.insert(address, PlayerTournament {
             address: address,

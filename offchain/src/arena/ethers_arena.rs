@@ -243,26 +243,43 @@ impl Arena for EthersArena {
     async fn created_tournament(
         &self,
         tournament: Address,
-        match_id_hash: Hash,           
-    ) -> Result<TournamentCreatedEvent, Box<dyn Error>> {
-        Ok(TournamentCreatedEvent {
-            parent_match_id_hash: Hash::default(),
-            address: Address::default(),
-        })
+        match_id: MatchID,           
+    ) -> Result<Option<TournamentCreatedEvent>, Box<dyn Error>> {
+        let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
+        let events = tournament.new_inner_tournament_filter().query().await.unwrap();
+        if let Some(event) = events.first() {
+            Ok(Some(TournamentCreatedEvent {
+                parent_match_id_hash: match_id.hash(),
+                new_tournament_address: event.1,
+            }))
+        } else {
+            Ok(None)
+        }
     }
     
     async fn created_matches(
         &self,
         tournament: Address,
-        commitment_hash: Hash
+        commitment_hash: Hash,
     ) -> Result<Vec<MatchCreatedEvent>, Box<dyn Error>> {
-        Ok(Vec::<MatchCreatedEvent>::new())
+        let tournament = tournament::Tournament::new(tournament, self.client.clone());
+        let events = tournament.match_created_filter().query().await.unwrap();
+        let events: Vec<MatchCreatedEvent> = events.iter().map(|event| {
+            MatchCreatedEvent {
+                id: MatchID {
+                    commitment_one: event.two,
+                    commitment_two: event.left_of_two,
+                },
+                left_hash: event.one,
+            }
+        }).collect();
+        Ok(events)
     }
    
     async fn commitment(
         &self,
         tournament: Address,
-        commitment_hash: Hash
+        commitment_hash: Hash,
     ) -> Result<(ClockState, Hash), Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
         let (clock_state, hash) = tournament.get_commitment(commitment_hash).call().await?;
@@ -276,10 +293,10 @@ impl Arena for EthersArena {
     async fn match_state(
         &self,
         tournament: Address,
-        match_id_hash: Hash
+        match_id: MatchID,
     )-> Result<Option<MatchState>, Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
-        let match_state = tournament.get_match(match_id_hash).call().await?;
+        let match_state = tournament.get_match(match_id.hash()).call().await?;
         if !is_hash_zero(match_state.other_parent) {
             Ok(Some(MatchState { 
                 other_parent: match_state.other_parent,

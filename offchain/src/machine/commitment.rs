@@ -14,6 +14,6 @@ impl ComputationCommitment {
     }
 
     pub fn prove_leaf(&self, leaf_position: u64) -> (Hash, Proof) {
-        (0, Proof::default())
+        (Hash::default(), Proof::default())
     }
 }

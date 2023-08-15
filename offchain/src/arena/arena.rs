@@ -67,8 +67,8 @@ pub trait Arena : Send + Sync {
     async fn created_tournament(
         &self,
         tournament: Address,
-        match_id_hash: Hash,   
-    ) -> Result<TournamentCreatedEvent, Box<dyn Error>>;
+        match_id: MatchID,   
+    ) -> Result<Option<TournamentCreatedEvent>, Box<dyn Error>>;
     
     async fn created_matches(
         &self,
@@ -85,7 +85,7 @@ pub trait Arena : Send + Sync {
     async fn match_state(
         &self,
         tournament: Address,
-        match_id_hash: Hash
+        match_id: MatchID,
     )-> Result<Option<MatchState>, Box<dyn Error>>;
 
     async fn root_tournament_winner(
@@ -108,16 +108,27 @@ pub trait Arena : Send + Sync {
 
 pub struct TournamentCreatedEvent {
     pub parent_match_id_hash: Hash,
-    pub address: Address,
+    pub new_tournament_address: Address,
 }
 
 #[derive(Debug, Clone, Copy)]
 
 pub struct MatchCreatedEvent {
+    pub id: MatchID,
+    pub left_hash: Hash,    
+}
+
+#[derive(Debug, Clone, Copy)]
+pub struct MatchID {
     pub commitment_one: Hash,
     pub commitment_two: Hash,
-    pub left_hash: Hash,
-    pub id_hash: Hash,    
+}
+
+impl MatchID {
+    pub fn hash(&self) -> Hash {
+        // TODO
+        Hash::default()
+    }
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -136,17 +147,11 @@ pub struct MatchState {
     pub level: u64,
 }
 
-#[derive(Debug, Clone, Copy)]
-pub struct MatchID {
-    pub commitment_one: Hash,
-    pub commitment_two: Hash,
-}
-
 pub type Address = H160;
 pub type Hash = [u8; 32];
 pub type Proof = Vec<Hash>;
 
 pub fn is_hash_zero(hash: Hash) -> bool {
     // TODO
-    return false;
+    false
 }
