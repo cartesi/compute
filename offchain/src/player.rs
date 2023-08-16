@@ -6,13 +6,15 @@ use std::{
 use::log::info;
 
 use crate::{
-    arena::{Arena, Address, Hash, Proof, MatchState, MatchCreatedEvent, MatchID},
+    arena::{Arena, Address, Hash, Proof, MatchState, MatchCreatedEvent},
     machine::{ComputationCommitment, Machine},
 };
 
 static LEVELS: u64 = 4;
-static LOG_2_STEP: [u64; 4] = [24, 14, 7, 0];
+static LOG2_STEP: [u64; 4] = [24, 14, 7, 0];
+static LOG2_UARCH_SPAN: u64 = 16;
 static HEIGHTS: [u64; 4] = [39, 10, 7, 7];
+
 
 #[derive(Debug)]
 pub enum PlayerTournamentResult {
@@ -80,8 +82,8 @@ impl Player {
             commitment
         } else {
             let commitment = self.machine.build_commitment(
-                LOG_2_STEP[tournament.level],
-                HEIGHTS[LEVELS - tournament.level],
+                LOG2_STEP[tournament.level as usize],
+                HEIGHTS[(LEVELS - tournament.level) as usize],
                 false, 
                 false,
             ).await?;
@@ -132,7 +134,7 @@ impl Player {
     }
 
     async fn latest_match(
-        &self,
+        &mut self,
         tournament: Address,
         commitment: &ComputationCommitment,
     ) -> Result<Option<Hash>, Box<dyn Error>> {
@@ -153,10 +155,13 @@ impl Player {
         };
 
         let match_id_hash = last_match.id.hash();
+        let player_tournament = self.tournaments.get_mut(&tournament).unwrap();
         self.matches.insert(match_id_hash, PlayerMatch {
             state: match_state,
             event: *last_match,
             tournament: tournament,
+            leaf_cycle: player_tournament.base_big_cycle  + 
+                (match_state.running_leaf_position << (LOG2_STEP[player_tournament.level as usize] + LOG2_UARCH_SPAN)),
         });
 
         Ok(Some(match_id_hash))

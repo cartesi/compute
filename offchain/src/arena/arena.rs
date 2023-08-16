@@ -142,7 +142,7 @@ pub struct MatchState {
     pub other_parent: Hash,
     pub left_node: Hash,
     pub right_node: Hash,
-    pub running_leaf_position: u64,
+    pub running_leaf_position: u128,
     pub current_height: u64,
     pub level: u64,
 }

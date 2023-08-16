@@ -13,7 +13,7 @@ impl ComputationCommitment {
         Some((Hash::default(), Hash::default()))
     }
 
-    pub fn prove_leaf(&self, leaf_position: u64) -> (Hash, Proof) {
+    pub fn prove_leaf(&self, leaf_position: u128) -> (Hash, Proof) {
         (Hash::default(), Proof::default())
     }
 }
