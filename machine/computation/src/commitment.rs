@@ -113,13 +113,13 @@ async fn build_big_machine_commitment(
     return (initial_state, builder.build());
 }
 
-pub struct MachineJsonRpcClient {
+pub struct FatMachineClient {
     pub machine: std::sync::Arc<std::sync::Mutex<Machine>>,
 }
 
-impl MachineJsonRpcClient {
+impl FatMachineClient {
     pub async fn new(url: &str, machine_path: &str) -> Self {
-        MachineJsonRpcClient {
+        FatMachineClient {
             machine: std::sync::Arc::new(std::sync::Mutex::new(Machine::new_from_path(url, machine_path).await)),
         }
     }

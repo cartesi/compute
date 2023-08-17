@@ -31,3 +31,12 @@ offchain-rust/jsonrpc-cartesi-machine/Cargo.lock
 
 offchain-rust/cartesi-jsonrpc-interfaces/target
 offchain-rust/cartesi-jsonrpc-interfaces/Cargo.lock
+
+machine/target
+machine/Cargo.lock
+
+machine/jsonrpc-cartesi-machine/target
+machine/jsonrpc-cartesi-machine/Cargo.lock
+
+machine/cartesi-jsonrpc-interfaces/target
+machine/cartesi-jsonrpc-interfaces/Cargo.lock
