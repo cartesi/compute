@@ -100,7 +100,7 @@ impl Arena for EthersArena {
     
     async fn create_root_tournament(&mut self, initial_hash: Hash) -> Result<Address, Box<dyn Error>> {
         let factory = TournamentFactory::new(self.tournament_factory, self.client.clone());
-        let tournament_address = factory.instantiate_top(initial_hash).await?;
+        let tournament_address = factory.instantiate_top(initial_hash.into()).await?;
         Ok(tournament_address)
     }
     
@@ -113,8 +113,9 @@ impl Arena for EthersArena {
         right_child: Hash
     ) -> Result<(), Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
+        let proof = proof.iter().map(|h| -> [u8;32] { h.clone().into() }).collect();
         tournament
-            .join_tournament(final_state, proof, left_child, right_child)
+            .join_tournament(final_state.into(), proof, left_child.into(), right_child.into())
             .send()
             .await?;
         Ok(())
@@ -131,16 +132,16 @@ impl Arena for EthersArena {
     ) -> Result<(), Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
         let match_id = tournament::Id { 
-            commitment_one: match_id.commitment_one,
-            commitment_two: match_id.commitment_two
+            commitment_one: match_id.commitment_one.into(),
+            commitment_two: match_id.commitment_two.into()
         };
         tournament.
             advance_match(
                 match_id,
-                left_node,
-                right_node,
-                new_left_node,
-                new_right_node)
+                left_node.into(),
+                right_node.into(),
+                new_left_node.into(),
+                new_right_node.into())
             .send()
             .await?;
         Ok(())
@@ -157,15 +158,16 @@ impl Arena for EthersArena {
     ) -> Result<(), Box<dyn Error>> {
         let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
         let match_id = non_leaf_tournament::Id {
-            commitment_one: match_id.commitment_one,
-            commitment_two: match_id.commitment_two
+            commitment_one: match_id.commitment_one.into(),
+            commitment_two: match_id.commitment_two.into(),
         };
+        let initial_hash_proof = initial_hash_proof.iter().map(|h| -> [u8;32] { h.clone().into() }).collect();
         tournament
             .seal_inner_match_and_create_inner_tournament(
                 match_id,
-                left_leaf,
-                right_leaf,
-                initial_hash,
+                left_leaf.into(),
+                right_leaf.into(),
+                initial_hash.into(),
                 initial_hash_proof
             )
             .send()
@@ -181,7 +183,7 @@ impl Arena for EthersArena {
         right_node: Hash,
     ) -> Result<(), Box<dyn Error>> {
         let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
-        tournament.win_inner_match(child_tournament, left_node, right_node)
+        tournament.win_inner_match(child_tournament, left_node.into(), right_node.into())
             .send()
             .await?;
         Ok(())
@@ -198,15 +200,16 @@ impl Arena for EthersArena {
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {
-            commitment_one: match_id.commitment_one,
-            commitment_two: match_id.commitment_two
+            commitment_one: match_id.commitment_one.into(),
+            commitment_two: match_id.commitment_two.into()
         };
+        let initial_hash_proof = initial_hash_proof.iter().map(|h| -> [u8;32] { h.clone().into() }).collect();
         tournament
             .seal_leaf_match(
                 match_id,
-                left_leaf,
-                right_leaf,
-                initial_hash,
+                left_leaf.into(),
+                right_leaf.into(),
+                initial_hash.into(),
                 initial_hash_proof
             )
             .send()
@@ -223,16 +226,16 @@ impl Arena for EthersArena {
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {
-            commitment_one: match_id.commitment_one,
-            commitment_two: match_id.commitment_two
+            commitment_one: match_id.commitment_one.into(),
+            commitment_two: match_id.commitment_two.into(),
         };
         // TODO: convert proofs to ethers::types::Bytes
         let proofs = Bytes::default();
         tournament
             .win_leaf_match(
                 match_id,
-                left_node,
-                right_node,
+                left_node.into(),
+                right_node.into(),
                 proofs
             )
             .send()
@@ -267,10 +270,10 @@ impl Arena for EthersArena {
         let events: Vec<MatchCreatedEvent> = events.iter().map(|event| {
             MatchCreatedEvent {
                 id: MatchID {
-                    commitment_one: event.two,
-                    commitment_two: event.left_of_two,
+                    commitment_one: event.two.into(),
+                    commitment_two: event.left_of_two.into(),
                 },
-                left_hash: event.one,
+                left_hash: event.one.into(),
             }
         }).collect();
         Ok(events)
@@ -282,12 +285,12 @@ impl Arena for EthersArena {
         commitment_hash: Hash,
     ) -> Result<(ClockState, Hash), Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
-        let (clock_state, hash) = tournament.get_commitment(commitment_hash).call().await?;
+        let (clock_state, hash) = tournament.get_commitment(commitment_hash.into()).call().await?;
         let clock_state = ClockState {
             allowance: clock_state.allowance,
             start_instant: clock_state.start_instant
         };
-        Ok((clock_state, hash))
+        Ok((clock_state, Hash::from(hash)))
     }
     
     async fn match_state(
@@ -296,12 +299,12 @@ impl Arena for EthersArena {
         match_id: MatchID,
     )-> Result<Option<MatchState>, Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
-        let match_state = tournament.get_match(match_id.hash()).call().await?;
-        if !is_hash_zero(match_state.other_parent) {
+        let match_state = tournament.get_match(match_id.hash().into()).call().await?;
+        if !Hash::from(match_state.other_parent).is_zero() {
             Ok(Some(MatchState { 
-                other_parent: match_state.other_parent,
-                left_node: match_state.left_node, 
-                right_node: match_state.right_node, 
+                other_parent: match_state.other_parent.into(),
+                left_node: match_state.left_node.into(), 
+                right_node: match_state.right_node.into(), 
                 running_leaf_position: match_state.running_leaf_position.as_u128(), 
                 current_height: match_state.current_height, 
                 level: match_state.level,
@@ -318,7 +321,7 @@ impl Arena for EthersArena {
         let root_tournament = root_tournament::RootTournament::new(root_tournament, self.client.clone());
         let (finished, hash) = root_tournament.root_tournament_final_state().call().await?;
         if finished {
-            Ok(Some(hash))
+            Ok(Some(Hash::from(hash)))
         } else {
             Ok(None)
         }
@@ -329,8 +332,8 @@ impl Arena for EthersArena {
         tournament: Address
     ) -> Result<Option<Hash>, Box<dyn Error>> {
         let tournament = tournament::Tournament::new(tournament, self.client.clone());
-        let hash = tournament.tournament_winner().call().await?;
-        if !is_hash_zero(hash) {
+        let hash = Hash::from(tournament.tournament_winner().call().await?);
+        if !hash.is_zero() {
             Ok(Some(hash))
         } else {
             Ok(None)

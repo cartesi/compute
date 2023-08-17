@@ -1,4 +1,4 @@
-use std::error::Error;
+use std::{error::Error, fmt, hash};
 
 use async_trait::async_trait;
 use primitive_types::H160;
@@ -104,21 +104,21 @@ pub trait Arena : Send + Sync {
     ) -> Result<u64, Box<dyn Error>>;
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 
 pub struct TournamentCreatedEvent {
     pub parent_match_id_hash: Hash,
     pub new_tournament_address: Address,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 
 pub struct MatchCreatedEvent {
     pub id: MatchID,
     pub left_hash: Hash,    
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct MatchID {
     pub commitment_one: Hash,
     pub commitment_two: Hash,
@@ -126,18 +126,17 @@ pub struct MatchID {
 
 impl MatchID {
     pub fn hash(&self) -> Hash {
-        // TODO
-        Hash::default()
+        self.commitment_one.join(&self.commitment_two)
     }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct ClockState {
     pub allowance: u64,
     pub start_instant: u64,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Clone, Copy)]
 pub struct MatchState {
     pub other_parent: Hash,
     pub left_node: Hash,
@@ -148,10 +147,61 @@ pub struct MatchState {
 }
 
 pub type Address = H160;
-pub type Hash = [u8; 32];
-pub type Proof = Vec<Hash>;
 
-pub fn is_hash_zero(hash: Hash) -> bool {
-    // TODO
-    false
+// TODO: use Hash type from machine cryptography crate.
+#[derive(Default)]
+pub struct Hash {
 }
+
+impl Hash {
+    pub fn join(&self, other_hash: &Hash) -> Hash {
+       Hash{}
+    }
+
+    pub fn is_zero(&self) -> bool {
+        false
+    }
+}
+
+impl Copy for Hash {}
+
+impl Clone for Hash {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
+
+impl PartialEq for Hash {
+    fn eq(&self, other: &Self) -> bool {
+        false
+    }
+}
+
+impl From<[u8; 32]> for Hash {
+    fn from(bytes: [u8; 32]) -> Self {
+        Hash{}
+    }
+}
+
+impl From<Hash> for [u8; 32] {
+    fn from (hash: Hash) -> Self {
+        let bytes: [u8; 32];
+        bytes
+    }
+}
+
+impl fmt::Display for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "hash")
+    }
+}
+
+impl Eq for Hash {}
+
+impl hash::Hash for Hash {
+    fn hash<H: hash::Hasher>(&self, state: &mut H) {
+    }
+}
+
+// TODO: should it be in machine crytpograhy crate?
+pub type Proof = Vec<Hash>;

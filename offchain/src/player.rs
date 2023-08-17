@@ -16,13 +16,11 @@ static LOG2_UARCH_SPAN: u64 = 16;
 static HEIGHTS: [u64; 4] = [39, 10, 7, 7];
 
 
-#[derive(Debug)]
 pub enum PlayerTournamentResult {
     TournamentWon,
     TournamentLost,
 }
 
-#[derive(Debug)]
 struct PlayerTournament {
     address: Address,
     level: u64,
@@ -30,7 +28,6 @@ struct PlayerTournament {
     base_big_cycle: u128,
 }
 
-#[derive(Debug)]
 struct PlayerMatch {
     state: MatchState,
     event: MatchCreatedEvent,
@@ -79,7 +76,7 @@ impl Player {
         let tournament = self.tournaments.get(&tournament).unwrap();        
         
         let commitment = if let Some(commitment) = self.commitments.get(&tournament.address) {
-            commitment
+            commitment.clone()
         } else {
             let commitment = self.machine.build_commitment(
                 LOG2_STEP[tournament.level as usize],
