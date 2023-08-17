@@ -185,7 +185,7 @@ impl From<[u8; 32]> for Hash {
 
 impl From<Hash> for [u8; 32] {
     fn from (hash: Hash) -> Self {
-        let bytes: [u8; 32];
+        let bytes: [u8; 32] = todo!();
         bytes
     }
 }
