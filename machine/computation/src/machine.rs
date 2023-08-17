@@ -3,7 +3,7 @@ use utils::arithmetic;
 use jsonrpc_cartesi_machine::{JsonRpcCartesiMachineClient, MachineRuntimeConfig};
 use std::sync::{Arc, Mutex};
 pub struct Machine {
-    pub machine: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    machine: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     cycle: u64,
     pub ucycle: u64,
     start_cycle: u64,
