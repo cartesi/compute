@@ -7,7 +7,7 @@ use std::{
 use::log::info;
 
 use crate::{
-    arena::{Arena, Address, Hash, Proof, MatchState, MatchCreatedEvent},
+    arena::{Arena, Address, Proof, MatchState, MatchCreatedEvent},
     machine::{ComputationCommitment, Machine},
 };
 
@@ -41,8 +41,8 @@ pub struct Player {
     arena: Box<dyn Arena>,
     machine: Box<dyn Machine>,
     root_tournament: Address,
-    tournaments: HashMap<Address, Rc<PlayerTournament>>,
-    matches: HashMap<Hash, Rc<PlayerMatch>>,
+    tournaments: Vec<Rc<PlayerTournament>>,
+    matches: Vec<Rc<PlayerMatch>>,
     commitments: HashMap<Address, Rc<ComputationCommitment>>,
     called_win: HashMap<Address, bool>,
 }
@@ -53,23 +53,23 @@ impl Player {
             arena: arena,
             machine: machine,
             root_tournament: root_tournamet,
-            tournaments: HashMap::from([
-                (root_tournamet, Rc::new(PlayerTournament{
+            tournaments: vec![
+                Rc::new(PlayerTournament{
                     address: root_tournamet,
                     level: LEVELS,
                     parent: None,
                     base_big_cycle: 0,
-                }))
-            ]),
-            matches: HashMap::<Hash, Rc<PlayerMatch>>::new(),
+                }),
+            ],
+            matches: Vec::<Rc<PlayerMatch>>::new(),
             commitments: HashMap::<Address, Rc<ComputationCommitment>>::new(),
             called_win: HashMap::<Address, bool>::new(),
         }
     }
 
     pub async fn react(&mut self) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {
-        let root_tournament = self.tournaments.get(&self.root_tournament).unwrap().clone();
-        self.react_tournament(root_tournament).await
+        let last_tournament = self.tournaments.last().unwrap().clone();
+        self.react_tournament(last_tournament).await
     }
 
     async fn react_tournament(
@@ -123,12 +123,11 @@ impl Player {
         }
 
         match self.latest_match(tournament.address, commitment.clone()).await? {
-            Some(latest_match) => self.react_match(latest_match, commitment).await,
-            None => {
-                self.join_tournament_if_needed(tournament, commitment).await?;
-                Ok(None)
-            }
+            Some(latest_match) => self.react_match(latest_match, commitment).await?,
+            None => self.join_tournament_if_needed(tournament, commitment).await?,
         }
+
+        Ok(None)
     }
 
     async fn latest_match(
@@ -152,16 +151,15 @@ impl Player {
             return Ok(None)
         };
 
-        let player_tournament = self.tournaments.get_mut(&tournament).unwrap();
-        let match_id_hash = last_match.id.hash();
+        let tournament = self.tournaments.iter().find(|t| t.address == tournament).unwrap();
         let player_match = Rc::new(PlayerMatch {
             state: match_state,
             event: *last_match,
-            tournament: tournament,
-            leaf_cycle: player_tournament.base_big_cycle  + 
-                (match_state.running_leaf_position << (LOG2_STEP[player_tournament.level as usize] + LOG2_UARCH_SPAN)),
+            tournament: tournament.address,
+            leaf_cycle: tournament.base_big_cycle  + 
+                (match_state.running_leaf_position << (LOG2_STEP[tournament.level as usize] + LOG2_UARCH_SPAN)),
         });
-        self.matches.insert(match_id_hash, player_match.clone());
+        self.matches.push(player_match.clone());
 
         Ok(Some(player_match))
     }
@@ -200,7 +198,7 @@ impl Player {
         &mut self,
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
-    ) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {
+    ) -> Result<(), Box<dyn Error>> {
         if player_match.state.current_height == 0 {
             self.react_sealed_match(player_match, commitment).await
         } else if player_match.state.current_height == 1 {
@@ -214,7 +212,7 @@ impl Player {
         &mut self,
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
-    ) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {
+    ) -> Result<(), Box<dyn Error>> {
         if player_match.state.level == 1 {
             let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
                 children
@@ -229,7 +227,7 @@ impl Player {
             ).await? {
                 let delay = self.arena.maximum_delay(player_match.tournament).await?;
                 info!("delay for match {} is {}", player_match.event.id.hash(), delay);
-                return Ok(None)
+                return Ok(())
             }
             
             self.arena.win_leaf_match(
@@ -238,22 +236,22 @@ impl Player {
                 left_child,
                 right_child,
             ).await?;
-            return Ok(None)
         } else {
-            let new_tournament = self.new_tournament(player_match).await?;
-            self.react_tournament(new_tournament).await
+            self.new_tournament(player_match).await?;
         }
+        
+        Ok(())
     }
 
     async fn react_unsealed_match(
         &mut self,
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
-    ) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {        
+    ) -> Result<(), Box<dyn Error>> {        
         let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
             children
         } else {
-            return Ok(None)
+            return Ok(())
         };
 
         let (initial_hash, initial_hash_proof) = if player_match.state.running_leaf_position == 0 {
@@ -262,7 +260,7 @@ impl Player {
             commitment.prove_leaf(player_match.state.running_leaf_position)
         };
 
-        let tournament = self.tournaments.get(&player_match.tournament).unwrap();
+        let tournament = self.tournaments.iter().find(|t| t.address == player_match.tournament).unwrap();
         if tournament.level == 1 {
             self.arena.seal_leaf_match(
                 tournament.address,
@@ -272,7 +270,6 @@ impl Player {
                 initial_hash,
                 initial_hash_proof
             ).await?;
-            return Ok(None)
         } else {
             self.arena.seal_leaf_match(
                 tournament.address,
@@ -282,21 +279,21 @@ impl Player {
                 initial_hash,
                 initial_hash_proof
             ).await?;
-            
-            let new_tournament = self.new_tournament(player_match).await?;
-            self.react_tournament(new_tournament).await
+            self.new_tournament(player_match).await?;
         }
+
+        Ok(())
     }
 
     async fn react_running_match(
         &mut self,
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
-    ) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {
+    ) -> Result<(), Box<dyn Error>> {
         let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
             children
         } else {
-            return Ok(None)
+            return Ok(())
         };
 
         let parent = if left_child != player_match.state.left_node {
@@ -320,13 +317,13 @@ impl Player {
             new_right,
         ).await?;
 
-        Ok(None)
+        Ok(())
     }
 
     async fn new_tournament(
         &mut self,
         player_match: Rc<PlayerMatch>,
-    ) -> Result<Rc<PlayerTournament>, Box<dyn Error>> {
+    ) -> Result<(), Box<dyn Error>> {
         let address = self.arena.created_tournament(
             player_match.tournament,
             player_match.event.id,
@@ -338,8 +335,8 @@ impl Player {
             parent: Some(player_match.tournament),
             base_big_cycle: player_match.leaf_cycle,
         });
-        self.tournaments.insert(address, tournament.clone());
+        self.tournaments.push(tournament);
 
-        Ok(tournament)
+        Ok(())
     }
 }
