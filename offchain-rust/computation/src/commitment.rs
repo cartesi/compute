@@ -1,9 +1,9 @@
 use super::machine::Machine;
 use crate::constants;
+use cryptography::hash::Hash;
 use cryptography::merkle_builder::MerkleBuilder;
 use cryptography::merkle_tree::MerkleTree;
 use utils::arithmetic;
-use cryptography::hash::Hash;
 
 async fn run_uarch_span(machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree {
     assert!(machine.lock().unwrap().ucycle == 0);
@@ -88,11 +88,10 @@ async fn build_big_machine_commitment(
         .await;
     let initial_state = machine.lock().unwrap().state().await.root_hash;
     let mut builder = MerkleBuilder::new();
-    let instruction_count =
-        arithmetic::max_uint(log2_stride_count as u32);
+    let instruction_count = arithmetic::max_uint(log2_stride_count as u32);
     let mut instruction = 0;
 
-   while arithmetic::ulte(instruction as u64, instruction_count as u64) {
+    while arithmetic::ulte(instruction as u64, instruction_count as u64) {
         let cycle = (instruction + 1) << (log2_stride - constants::LOG2_UARCH_SPAN);
         std::sync::Arc::clone(&machine)
             .lock()
@@ -120,7 +119,9 @@ pub struct MachineJsonRpcClient {
 impl MachineJsonRpcClient {
     pub async fn new(url: &str, machine_path: &str) -> Self {
         MachineJsonRpcClient {
-            machine: std::sync::Arc::new(std::sync::Mutex::new(Machine::new_from_path(url, machine_path).await)),
+            machine: std::sync::Arc::new(std::sync::Mutex::new(
+                Machine::new_from_path(url, machine_path).await,
+            )),
         }
     }
 
@@ -130,19 +131,29 @@ impl MachineJsonRpcClient {
         log2_stride: u32,
         log2_stride_count: u8,
     ) -> (cryptography::hash::Hash, MerkleTree) {
-        if log2_stride >= constants::LOG2_UARCH_SPAN{
+        if log2_stride >= constants::LOG2_UARCH_SPAN {
             assert!(
-                log2_stride + log2_stride_count as u32 <=
-                constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
-            );  
-            build_big_machine_commitment(base_cycle, log2_stride, log2_stride_count, std::sync::Arc::clone(&self.machine)).await
+                log2_stride + log2_stride_count as u32
+                    <= constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
+            );
+            build_big_machine_commitment(
+                base_cycle,
+                log2_stride,
+                log2_stride_count,
+                std::sync::Arc::clone(&self.machine),
+            )
+            .await
         } else {
-            build_small_machine_commitment(base_cycle, log2_stride_count, std::sync::Arc::clone(&self.machine)).await
+            build_small_machine_commitment(
+                base_cycle,
+                log2_stride_count,
+                std::sync::Arc::clone(&self.machine),
+            )
+            .await
         }
     }
 
     pub async fn initial_hash(&self) -> Hash {
         self.machine.lock().unwrap().initial_hash.clone()
     }
-
 }

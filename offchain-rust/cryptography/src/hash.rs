@@ -2,76 +2,65 @@ use std::collections::HashMap;
 use once_cell::sync::OnceCell;
 use sha3::{Digest, Keccak256};
 
-fn hex_from_bin(bin: &[u8]) -> String {
-    assert_eq!(bin.len(), 32);
-    let hex_chars: Vec<String> = bin.iter().map(|c| format!("{:02x}", c)).collect();
-    format!("0x{}", hex_chars.join(""))
-}
 #[derive(Eq, Hash, PartialEq, Clone, Debug, Default)]
 pub struct Hash {
-    pub digest_hex: String,
-    left: Option<String>,
-    right: Option<String>,
+    pub digest:Vec<u8>,
+    left: Option<Vec<u8>>,
+    right: Option<Vec<u8>>,
 }
 
-static INTERNALIZED_HASHES: OnceCell<HashMap<String, Hash>> = OnceCell::new();
+static INTERNALIZED_HASHES: OnceCell<HashMap<Vec<u8>, Hash>> = OnceCell::new();
 static ITHERADETS: OnceCell<HashMap<Hash, Vec<Hash>>> = OnceCell::new();
 
 impl Hash {
-    pub fn from_digest(digest_hex: &str) -> Hash {
-        assert!(digest_hex.len() == 66);
+    pub fn from_digest(digest: Vec<u8>) -> Hash {
+        let mut extended_itheradets = ITHERADETS.get_or_init(|| HashMap::new()).clone();
 
-        if let Some(x) = INTERNALIZED_HASHES
-            .get_or_init(|| HashMap::new())
-            .get(digest_hex)
-            .clone()
-        {
+        let mut extended_internalized_hashes =
+        INTERNALIZED_HASHES.get_or_init(|| HashMap::new()).clone();
+
+        if let Some(x) = extended_internalized_hashes.get(&digest) {
             return x.clone();
         }
 
         let h = Hash {
-            digest_hex: digest_hex.to_string(),
+            digest: digest.clone(),
             left: None,
             right: None,
         };
-        let mut extended_itheradets = ITHERADETS.get_or_init(|| HashMap::new()).clone();
-        let mut extended_internalized_hashes =
-            INTERNALIZED_HASHES.get_or_init(|| HashMap::new()).clone();
-
         extended_itheradets.insert(h.clone(), vec![h.clone()]);
-        extended_internalized_hashes.insert(digest_hex.to_string(), h.clone());
+        extended_internalized_hashes.insert(digest, h.clone());
 
         ITHERADETS.set(extended_itheradets);
         INTERNALIZED_HASHES.set(extended_internalized_hashes);
         h
     }
 
-    pub fn from_digest_bin(digest_bin: &[u8]) -> Hash {
-        let digest_hex = hex_from_bin(digest_bin);
-        Hash::from_digest(&digest_hex)
+    pub fn from_digest_hex(digest_hex: &str) -> Hash {
+        assert!(digest_hex.len() == 66);
+        let digest = hex::decode(&digest_hex).unwrap();
+        Hash::from_digest(digest)
     }
 
-    fn from_data(data: &[u8]) -> Hash {
+    fn from_data(data: &[u8; 32]) -> Hash {
         let mut keccak = Keccak256::new();
         keccak.update(&hex::decode(&data).unwrap());
         let digest = keccak.finalize();
-        let digest_hex = hex_from_bin(&digest);
-        Hash::from_digest(&digest_hex)
+        Hash::from_digest(digest.to_vec())
     }
 
     pub fn join(&self, other_hash: &Hash) -> Hash {
         let mut keccak = Keccak256::new();
-        keccak.update(&hex::decode(&self.digest_hex[2..]).unwrap());
-        keccak.update(&hex::decode(&other_hash.digest_hex[2..]).unwrap());
+        keccak.update(&self.digest);
+        keccak.update(&other_hash.digest);
         let digest = keccak.finalize();
-        let digest_hex = hex_from_bin(&digest);
-        let mut ret = Hash::from_digest(&digest_hex);
-        ret.left = Some(self.digest_hex.clone());
-        ret.right = Some(other_hash.digest_hex.clone());
+        let mut ret = Hash::from_digest(digest.to_vec());
+        ret.left = Some(self.digest.clone());
+        ret.right = Some(other_hash.digest.clone());
         ret
     }
 
-    pub fn children(&self) -> (Option<String>, Option<String>) {
+    pub fn children(&self) -> (Option<Vec<u8>>, Option<Vec<u8>>) {
         match (self.left.clone(), self.right.clone()) {
             (Some(left), Some(right)) => (Some(left), Some(right)),
             _ => (None, None),
@@ -113,14 +102,14 @@ impl Hash {
 
 impl ToString for Hash {
     fn to_string(&self) -> String {
-        self.digest_hex.clone()
+        format!("{:?}", self.digest.clone())
     }
 }
 
-fn zero_bytes32() -> String {
-    "0x0000000000000000000000000000000000000000000000000000000000000000".to_string()
+fn zero_bytes32() -> Vec<u8> {
+    hex::decode("0x0000000000000000000000000000000000000000000000000000000000000000".to_string()).unwrap()
 }
 
 pub fn zero_hash() -> Hash {
-    Hash::from_digest(&zero_bytes32())
+    Hash::from_digest(zero_bytes32())
 }
