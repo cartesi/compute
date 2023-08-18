@@ -13,7 +13,7 @@ impl MerkleTree {
         MerkleTree {
             leafs,
             root_hash: root_hash.clone(),
-            digest_hex: root_hash.digest_hex.clone(),
+            digest_hex: hex::encode(&root_hash.digest.clone()),
             log2size,
         }
     }
@@ -30,7 +30,7 @@ impl MerkleTree {
         (Hash::default(), Vec::<Hash>::default())
     }
     
-    pub fn children(&self, node: Hash) -> (Option<String>, Option<String>) {
+    pub fn children(&self, node: Hash) -> (Option<Vec<u8>>, Option<Vec<u8>>) {
         self.leafs.iter().find_map(|leaf| {
             if leaf.hash == node {
                 Some(leaf.hash.children())
