@@ -2,30 +2,55 @@ syntax = "proto3";
 package compute;
 
 message StartDisputeRequest {
+  bytes initial_hash = 1;
+  string snapshot_path = 2;
 }
 
 message StartDisputeResponse {
+  string dispute_id = 1; // hex address of root tournament
 }
 
 message FinishDisputeRequest {
-}
-
-message FinishDisputeResponse {
+  string dispute_id = 1; // hex address of root tournament
 }
 
 message DisputeInfo {
   bool closed = 1;
 }
 
+message FinishDisputeResponse {
+  DisputeInfo dispute_info = 1;
+}
+
 message GetDisputeInfoRequest {
+  string dispute_id = 1; // hex address of root tournament
 }
 
 message GetDisputeInfoResponse {
-  DisputeInfo info = 1;
+  DisputeInfo dispute_info = 1;
+}
+
+message MachineSetup {
+  repeated MachineMemoryWrite memory_writes = 1;
+}
+
+message MachineMemoryWrite {
+  uint64 address = 1;
+  bytes data = 2;
+}
+
+message JoinDisputeRequest {
+  string dispute_id = 1; // hex address of root tournament
+  MachineSetup machine_setup = 2;
+}
+
+message JoinDisputeResponse {
+  DisputeInfo dispute_info = 1;
 }
 
 service Compute {
   rpc StartDispute (StartDisputeRequest) returns (StartDisputeResponse);
   rpc FinishDispute (FinishDisputeRequest) returns (FinishDisputeResponse);
   rpc GetDisputeInfo(GetDisputeInfoRequest) returns (GetDisputeInfoResponse);
+  rpc JoinDispute(JoinDisputeRequest) returns (JoinDisputeResponse);
 }

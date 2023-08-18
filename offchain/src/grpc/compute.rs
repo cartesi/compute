@@ -1,15 +1,25 @@
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct StartDisputeRequest {}
+pub struct StartDisputeRequest {
+    #[prost(bytes = "vec", tag = "1")]
+    pub initial_hash: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag = "2")]
+    pub snapshot_path: ::prost::alloc::string::String,
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct StartDisputeResponse {}
+pub struct StartDisputeResponse {
+    /// hex address of root tournament
+    #[prost(string, tag = "1")]
+    pub dispute_id: ::prost::alloc::string::String,
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct FinishDisputeRequest {}
-#[allow(clippy::derive_partial_eq_without_eq)]
-#[derive(Clone, PartialEq, ::prost::Message)]
-pub struct FinishDisputeResponse {}
+pub struct FinishDisputeRequest {
+    /// hex address of root tournament
+    #[prost(string, tag = "1")]
+    pub dispute_id: ::prost::alloc::string::String,
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct DisputeInfo {
@@ -18,12 +28,51 @@ pub struct DisputeInfo {
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct GetDisputeInfoRequest {}
+pub struct FinishDisputeResponse {
+    #[prost(message, optional, tag = "1")]
+    pub dispute_info: ::core::option::Option<DisputeInfo>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct GetDisputeInfoRequest {
+    /// hex address of root tournament
+    #[prost(string, tag = "1")]
+    pub dispute_id: ::prost::alloc::string::String,
+}
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct GetDisputeInfoResponse {
     #[prost(message, optional, tag = "1")]
-    pub info: ::core::option::Option<DisputeInfo>,
+    pub dispute_info: ::core::option::Option<DisputeInfo>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MachineSetup {
+    #[prost(message, repeated, tag = "1")]
+    pub memory_writes: ::prost::alloc::vec::Vec<MachineMemoryWrite>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct MachineMemoryWrite {
+    #[prost(uint64, tag = "1")]
+    pub address: u64,
+    #[prost(bytes = "vec", tag = "2")]
+    pub data: ::prost::alloc::vec::Vec<u8>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JoinDisputeRequest {
+    /// hex address of root tournament
+    #[prost(string, tag = "1")]
+    pub dispute_id: ::prost::alloc::string::String,
+    #[prost(message, optional, tag = "2")]
+    pub machine_setup: ::core::option::Option<MachineSetup>,
+}
+#[allow(clippy::derive_partial_eq_without_eq)]
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct JoinDisputeResponse {
+    #[prost(message, optional, tag = "1")]
+    pub dispute_info: ::core::option::Option<DisputeInfo>,
 }
 /// Generated client implementations.
 pub mod compute_client {
@@ -185,6 +234,31 @@ pub mod compute_client {
                 .insert(GrpcMethod::new("compute.Compute", "GetDisputeInfo"));
             self.inner.unary(req, path, codec).await
         }
+        pub async fn join_dispute(
+            &mut self,
+            request: impl tonic::IntoRequest<super::JoinDisputeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::JoinDisputeResponse>,
+            tonic::Status,
+        > {
+            self.inner
+                .ready()
+                .await
+                .map_err(|e| {
+                    tonic::Status::new(
+                        tonic::Code::Unknown,
+                        format!("Service was not ready: {}", e.into()),
+                    )
+                })?;
+            let codec = tonic::codec::ProstCodec::default();
+            let path = http::uri::PathAndQuery::from_static(
+                "/compute.Compute/JoinDispute",
+            );
+            let mut req = request.into_request();
+            req.extensions_mut()
+                .insert(GrpcMethod::new("compute.Compute", "JoinDispute"));
+            self.inner.unary(req, path, codec).await
+        }
     }
 }
 /// Generated server implementations.
@@ -213,6 +287,13 @@ pub mod compute_server {
             request: tonic::Request<super::GetDisputeInfoRequest>,
         ) -> std::result::Result<
             tonic::Response<super::GetDisputeInfoResponse>,
+            tonic::Status,
+        >;
+        async fn join_dispute(
+            &self,
+            request: tonic::Request<super::JoinDisputeRequest>,
+        ) -> std::result::Result<
+            tonic::Response<super::JoinDisputeResponse>,
             tonic::Status,
         >;
     }
@@ -418,6 +499,52 @@ pub mod compute_server {
                     let fut = async move {
                         let inner = inner.0;
                         let method = GetDisputeInfoSvc(inner);
+                        let codec = tonic::codec::ProstCodec::default();
+                        let mut grpc = tonic::server::Grpc::new(codec)
+                            .apply_compression_config(
+                                accept_compression_encodings,
+                                send_compression_encodings,
+                            )
+                            .apply_max_message_size_config(
+                                max_decoding_message_size,
+                                max_encoding_message_size,
+                            );
+                        let res = grpc.unary(method, req).await;
+                        Ok(res)
+                    };
+                    Box::pin(fut)
+                }
+                "/compute.Compute/JoinDispute" => {
+                    #[allow(non_camel_case_types)]
+                    struct JoinDisputeSvc<T: Compute>(pub Arc<T>);
+                    impl<
+                        T: Compute,
+                    > tonic::server::UnaryService<super::JoinDisputeRequest>
+                    for JoinDisputeSvc<T> {
+                        type Response = super::JoinDisputeResponse;
+                        type Future = BoxFuture<
+                            tonic::Response<Self::Response>,
+                            tonic::Status,
+                        >;
+                        fn call(
+                            &mut self,
+                            request: tonic::Request<super::JoinDisputeRequest>,
+                        ) -> Self::Future {
+                            let inner = Arc::clone(&self.0);
+                            let fut = async move {
+                                (*inner).join_dispute(request).await
+                            };
+                            Box::pin(fut)
+                        }
+                    }
+                    let accept_compression_encodings = self.accept_compression_encodings;
+                    let send_compression_encodings = self.send_compression_encodings;
+                    let max_decoding_message_size = self.max_decoding_message_size;
+                    let max_encoding_message_size = self.max_encoding_message_size;
+                    let inner = self.inner.clone();
+                    let fut = async move {
+                        let inner = inner.0;
+                        let method = JoinDisputeSvc(inner);
                         let codec = tonic::codec::ProstCodec::default();
                         let mut grpc = tonic::server::Grpc::new(codec)
                             .apply_compression_config(

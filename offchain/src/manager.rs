@@ -1,5 +1,5 @@
 use std::{
-    error::Error,
+    error::Error, default,
 };
 
 use tonic::{Request, Response, Status};
@@ -12,8 +12,9 @@ use crate::{
         FinishDisputeResponse,
         GetDisputeInfoRequest,
         GetDisputeInfoResponse,
+        JoinDisputeRequest,
         DisputeInfo,
-        Compute
+        Compute, JoinDisputeResponse
     },
     config::PlayerConfig,
     arena::Arena,
@@ -45,14 +46,18 @@ impl Compute for ComputeManager {
         request: Request<StartDisputeRequest>,
     ) -> Result<Response<StartDisputeResponse>, Status> {
 
-        Ok(Response::new(StartDisputeResponse{}))
+        Ok(Response::new(StartDisputeResponse{ dispute_id: String::default() }))
     }
 
     async fn finish_dispute(
         &self,
         request: Request<FinishDisputeRequest>,
     ) -> Result<Response<FinishDisputeResponse>, Status> {
-        Ok(Response::new(FinishDisputeResponse{}))
+        Ok(Response::new(FinishDisputeResponse{ 
+            dispute_info: Some(DisputeInfo {
+                closed: false,
+            }),
+        }))
     }
 
     async fn get_dispute_info(
@@ -60,7 +65,18 @@ impl Compute for ComputeManager {
         request: Request<GetDisputeInfoRequest>,
     ) -> Result<Response<GetDisputeInfoResponse>, Status> {
         Ok(Response::new(GetDisputeInfoResponse{
-            info: Some(DisputeInfo {
+            dispute_info: Some(DisputeInfo {
+                closed: false,
+            }),
+        }))
+    }
+
+    async fn join_dispute(
+        &self,
+        request: Request<JoinDisputeRequest>,
+    ) -> Result<Response<JoinDisputeResponse>, Status> {
+        Ok(Response::new(JoinDisputeResponse {
+            dispute_info: Some(DisputeInfo {
                 closed: false,
             }),
         }))

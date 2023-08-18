@@ -7,7 +7,10 @@ pub use compute::{
     FinishDisputeResponse,
     GetDisputeInfoRequest,
     GetDisputeInfoResponse,
+    JoinDisputeRequest,
+    JoinDisputeResponse,
     DisputeInfo,
+    MachineSetup,
 };
 
 pub use compute::compute_server::{ 
