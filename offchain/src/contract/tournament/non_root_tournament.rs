@@ -1,4 +1,4 @@
-pub use leaf_tournament::*;
+pub use non_root_tournament::*;
 /// This module was auto-generated with ethers-rs Abigen.
 /// More information at: <https://github.com/gakonst/ethers-rs>
 #[allow(
@@ -9,7 +9,7 @@ pub use leaf_tournament::*;
     dead_code,
     non_camel_case_types,
 )]
-pub mod leaf_tournament {
+pub mod non_root_tournament {
     #[allow(deprecated)]
     fn __abi() -> ::ethers::core::abi::Abi {
         ::ethers::core::abi::ethabi::Contract {
@@ -227,6 +227,37 @@ pub mod leaf_tournament {
                     ],
                 ),
                 (
+                    ::std::borrow::ToOwned::to_owned("innerTournamentWinner"),
+                    ::std::vec![
+                        ::ethers::core::abi::ethabi::Function {
+                            name: ::std::borrow::ToOwned::to_owned(
+                                "innerTournamentWinner",
+                            ),
+                            inputs: ::std::vec![],
+                            outputs: ::std::vec![
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::Bool,
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("bool"),
+                                    ),
+                                },
+                                ::ethers::core::abi::ethabi::Param {
+                                    name: ::std::string::String::new(),
+                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
+                                        32usize,
+                                    ),
+                                    internal_type: ::core::option::Option::Some(
+                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
+                                    ),
+                                },
+                            ],
+                            constant: ::core::option::Option::None,
+                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
+                        },
+                    ],
+                ),
+                (
                     ::std::borrow::ToOwned::to_owned("joinTournament"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
@@ -300,69 +331,6 @@ pub mod leaf_tournament {
                     ],
                 ),
                 (
-                    ::std::borrow::ToOwned::to_owned("sealLeafMatch"),
-                    ::std::vec![
-                        ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("sealLeafMatch"),
-                            inputs: ::std::vec![
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_matchId"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::Tuple(
-                                        ::std::vec![
-                                            ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
-                                            ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
-                                        ],
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("struct Match.Id"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_leftLeaf"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_rightLeaf"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_agreeHash"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Machine.Hash"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_agreeHashProof"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::Array(
-                                        ::std::boxed::Box::new(
-                                            ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
-                                        ),
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("bytes32[]"),
-                                    ),
-                                },
-                            ],
-                            outputs: ::std::vec![],
-                            constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
-                        },
-                    ],
-                ),
-                (
                     ::std::borrow::ToOwned::to_owned("tournamentLevelConstants"),
                     ::std::vec![
                         ::ethers::core::abi::ethabi::Function {
@@ -395,56 +363,6 @@ pub mod leaf_tournament {
                             ],
                             constant: ::core::option::Option::None,
                             state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
-                        },
-                    ],
-                ),
-                (
-                    ::std::borrow::ToOwned::to_owned("winLeafMatch"),
-                    ::std::vec![
-                        ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("winLeafMatch"),
-                            inputs: ::std::vec![
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_matchId"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::Tuple(
-                                        ::std::vec![
-                                            ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
-                                            ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
-                                        ],
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("struct Match.Id"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_leftNode"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_rightNode"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
-                                    ),
-                                },
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("proofs"),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::Bytes,
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("bytes"),
-                                    ),
-                                },
-                            ],
-                            outputs: ::std::vec![],
-                            constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::NonPayable,
                         },
                     ],
                 ),
@@ -564,34 +482,34 @@ pub mod leaf_tournament {
         }
     }
     ///The parsed JSON ABI of the contract.
-    pub static LEAFTOURNAMENT_ABI: ::ethers::contract::Lazy<::ethers::core::abi::Abi> = ::ethers::contract::Lazy::new(
-        __abi,
-    );
-    pub struct LeafTournament<M>(::ethers::contract::Contract<M>);
-    impl<M> ::core::clone::Clone for LeafTournament<M> {
+    pub static NONROOTTOURNAMENT_ABI: ::ethers::contract::Lazy<
+        ::ethers::core::abi::Abi,
+    > = ::ethers::contract::Lazy::new(__abi);
+    pub struct NonRootTournament<M>(::ethers::contract::Contract<M>);
+    impl<M> ::core::clone::Clone for NonRootTournament<M> {
         fn clone(&self) -> Self {
             Self(::core::clone::Clone::clone(&self.0))
         }
     }
-    impl<M> ::core::ops::Deref for LeafTournament<M> {
+    impl<M> ::core::ops::Deref for NonRootTournament<M> {
         type Target = ::ethers::contract::Contract<M>;
         fn deref(&self) -> &Self::Target {
             &self.0
         }
     }
-    impl<M> ::core::ops::DerefMut for LeafTournament<M> {
+    impl<M> ::core::ops::DerefMut for NonRootTournament<M> {
         fn deref_mut(&mut self) -> &mut Self::Target {
             &mut self.0
         }
     }
-    impl<M> ::core::fmt::Debug for LeafTournament<M> {
+    impl<M> ::core::fmt::Debug for NonRootTournament<M> {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
-            f.debug_tuple(::core::stringify!(LeafTournament))
+            f.debug_tuple(::core::stringify!(NonRootTournament))
                 .field(&self.address())
                 .finish()
         }
     }
-    impl<M: ::ethers::providers::Middleware> LeafTournament<M> {
+    impl<M: ::ethers::providers::Middleware> NonRootTournament<M> {
         /// Creates a new contract instance with the specified `ethers` client at
         /// `address`. The contract derefs to a `ethers::Contract` object.
         pub fn new<T: Into<::ethers::core::types::Address>>(
@@ -601,7 +519,7 @@ pub mod leaf_tournament {
             Self(
                 ::ethers::contract::Contract::new(
                     address.into(),
-                    LEAFTOURNAMENT_ABI.clone(),
+                    NONROOTTOURNAMENT_ABI.clone(),
                     client,
                 ),
             )
@@ -658,6 +576,14 @@ pub mod leaf_tournament {
                 .method_hash([138, 204, 128, 45], match_id_hash)
                 .expect("method not found (this should never happen)")
         }
+        ///Calls the contract's `innerTournamentWinner` (0x5145236f) function
+        pub fn inner_tournament_winner(
+            &self,
+        ) -> ::ethers::contract::builders::ContractCall<M, (bool, [u8; 32])> {
+            self.0
+                .method_hash([81, 69, 35, 111], ())
+                .expect("method not found (this should never happen)")
+        }
         ///Calls the contract's `joinTournament` (0x1d5bf796) function
         pub fn join_tournament(
             &self,
@@ -681,43 +607,12 @@ pub mod leaf_tournament {
                 .method_hash([96, 243, 2, 220], ())
                 .expect("method not found (this should never happen)")
         }
-        ///Calls the contract's `sealLeafMatch` (0x5017746a) function
-        pub fn seal_leaf_match(
-            &self,
-            match_id: Id,
-            left_leaf: [u8; 32],
-            right_leaf: [u8; 32],
-            agree_hash: [u8; 32],
-            agree_hash_proof: ::std::vec::Vec<[u8; 32]>,
-        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
-            self.0
-                .method_hash(
-                    [80, 23, 116, 106],
-                    (match_id, left_leaf, right_leaf, agree_hash, agree_hash_proof),
-                )
-                .expect("method not found (this should never happen)")
-        }
         ///Calls the contract's `tournamentLevelConstants` (0xa1af906b) function
         pub fn tournament_level_constants(
             &self,
         ) -> ::ethers::contract::builders::ContractCall<M, (u64, u64, u64)> {
             self.0
                 .method_hash([161, 175, 144, 107], ())
-                .expect("method not found (this should never happen)")
-        }
-        ///Calls the contract's `winLeafMatch` (0x6041ddd5) function
-        pub fn win_leaf_match(
-            &self,
-            match_id: Id,
-            left_node: [u8; 32],
-            right_node: [u8; 32],
-            proofs: ::ethers::core::types::Bytes,
-        ) -> ::ethers::contract::builders::ContractCall<M, ()> {
-            self.0
-                .method_hash(
-                    [96, 65, 221, 213],
-                    (match_id, left_node, right_node, proofs),
-                )
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `winMatchByTimeout` (0xff78e0ee) function
@@ -757,13 +652,13 @@ pub mod leaf_tournament {
         ) -> ::ethers::contract::builders::Event<
             ::std::sync::Arc<M>,
             M,
-            LeafTournamentEvents,
+            NonRootTournamentEvents,
         > {
             self.0.event_with_filter(::core::default::Default::default())
         }
     }
     impl<M: ::ethers::providers::Middleware> From<::ethers::contract::Contract<M>>
-    for LeafTournament<M> {
+    for NonRootTournament<M> {
         fn from(contract: ::ethers::contract::Contract<M>) -> Self {
             Self::new(contract.address(), contract.client())
         }
@@ -805,24 +700,24 @@ pub mod leaf_tournament {
     }
     ///Container type for all of the contract's events
     #[derive(Clone, ::ethers::contract::EthAbiType, Debug, PartialEq, Eq, Hash)]
-    pub enum LeafTournamentEvents {
+    pub enum NonRootTournamentEvents {
         MatchAdvancedFilter(MatchAdvancedFilter),
         MatchCreatedFilter(MatchCreatedFilter),
     }
-    impl ::ethers::contract::EthLogDecode for LeafTournamentEvents {
+    impl ::ethers::contract::EthLogDecode for NonRootTournamentEvents {
         fn decode_log(
             log: &::ethers::core::abi::RawLog,
         ) -> ::core::result::Result<Self, ::ethers::core::abi::Error> {
             if let Ok(decoded) = MatchAdvancedFilter::decode_log(log) {
-                return Ok(LeafTournamentEvents::MatchAdvancedFilter(decoded));
+                return Ok(NonRootTournamentEvents::MatchAdvancedFilter(decoded));
             }
             if let Ok(decoded) = MatchCreatedFilter::decode_log(log) {
-                return Ok(LeafTournamentEvents::MatchCreatedFilter(decoded));
+                return Ok(NonRootTournamentEvents::MatchCreatedFilter(decoded));
             }
             Err(::ethers::core::abi::Error::InvalidData)
         }
     }
-    impl ::core::fmt::Display for LeafTournamentEvents {
+    impl ::core::fmt::Display for NonRootTournamentEvents {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             match self {
                 Self::MatchAdvancedFilter(element) => {
@@ -834,12 +729,12 @@ pub mod leaf_tournament {
             }
         }
     }
-    impl ::core::convert::From<MatchAdvancedFilter> for LeafTournamentEvents {
+    impl ::core::convert::From<MatchAdvancedFilter> for NonRootTournamentEvents {
         fn from(value: MatchAdvancedFilter) -> Self {
             Self::MatchAdvancedFilter(value)
         }
     }
-    impl ::core::convert::From<MatchCreatedFilter> for LeafTournamentEvents {
+    impl ::core::convert::From<MatchCreatedFilter> for NonRootTournamentEvents {
         fn from(value: MatchCreatedFilter) -> Self {
             Self::MatchCreatedFilter(value)
         }
@@ -929,6 +824,19 @@ pub mod leaf_tournament {
     pub struct GetMatchCycleCall {
         pub match_id_hash: [u8; 32],
     }
+    ///Container type for all input parameters for the `innerTournamentWinner` function with signature `innerTournamentWinner()` and selector `0x5145236f`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthCall,
+        ::ethers::contract::EthDisplay,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    #[ethcall(name = "innerTournamentWinner", abi = "innerTournamentWinner()")]
+    pub struct InnerTournamentWinnerCall;
     ///Container type for all input parameters for the `joinTournament` function with signature `joinTournament(bytes32,bytes32[],bytes32,bytes32)` and selector `0x1d5bf796`
     #[derive(
         Clone,
@@ -963,28 +871,6 @@ pub mod leaf_tournament {
     )]
     #[ethcall(name = "maximumEnforceableDelay", abi = "maximumEnforceableDelay()")]
     pub struct MaximumEnforceableDelayCall;
-    ///Container type for all input parameters for the `sealLeafMatch` function with signature `sealLeafMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32[])` and selector `0x5017746a`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthCall,
-        ::ethers::contract::EthDisplay,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    #[ethcall(
-        name = "sealLeafMatch",
-        abi = "sealLeafMatch((bytes32,bytes32),bytes32,bytes32,bytes32,bytes32[])"
-    )]
-    pub struct SealLeafMatchCall {
-        pub match_id: Id,
-        pub left_leaf: [u8; 32],
-        pub right_leaf: [u8; 32],
-        pub agree_hash: [u8; 32],
-        pub agree_hash_proof: ::std::vec::Vec<[u8; 32]>,
-    }
     ///Container type for all input parameters for the `tournamentLevelConstants` function with signature `tournamentLevelConstants()` and selector `0xa1af906b`
     #[derive(
         Clone,
@@ -998,27 +884,6 @@ pub mod leaf_tournament {
     )]
     #[ethcall(name = "tournamentLevelConstants", abi = "tournamentLevelConstants()")]
     pub struct TournamentLevelConstantsCall;
-    ///Container type for all input parameters for the `winLeafMatch` function with signature `winLeafMatch((bytes32,bytes32),bytes32,bytes32,bytes)` and selector `0x6041ddd5`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthCall,
-        ::ethers::contract::EthDisplay,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    #[ethcall(
-        name = "winLeafMatch",
-        abi = "winLeafMatch((bytes32,bytes32),bytes32,bytes32,bytes)"
-    )]
-    pub struct WinLeafMatchCall {
-        pub match_id: Id,
-        pub left_node: [u8; 32],
-        pub right_node: [u8; 32],
-        pub proofs: ::ethers::core::types::Bytes,
-    }
     ///Container type for all input parameters for the `winMatchByTimeout` function with signature `winMatchByTimeout((bytes32,bytes32),bytes32,bytes32)` and selector `0xff78e0ee`
     #[derive(
         Clone,
@@ -1041,20 +906,19 @@ pub mod leaf_tournament {
     }
     ///Container type for all of the contract's call
     #[derive(Clone, ::ethers::contract::EthAbiType, Debug, PartialEq, Eq, Hash)]
-    pub enum LeafTournamentCalls {
+    pub enum NonRootTournamentCalls {
         AdvanceMatch(AdvanceMatchCall),
         CanWinMatchByTimeout(CanWinMatchByTimeoutCall),
         GetCommitment(GetCommitmentCall),
         GetMatch(GetMatchCall),
         GetMatchCycle(GetMatchCycleCall),
+        InnerTournamentWinner(InnerTournamentWinnerCall),
         JoinTournament(JoinTournamentCall),
         MaximumEnforceableDelay(MaximumEnforceableDelayCall),
-        SealLeafMatch(SealLeafMatchCall),
         TournamentLevelConstants(TournamentLevelConstantsCall),
-        WinLeafMatch(WinLeafMatchCall),
         WinMatchByTimeout(WinMatchByTimeoutCall),
     }
-    impl ::ethers::core::abi::AbiDecode for LeafTournamentCalls {
+    impl ::ethers::core::abi::AbiDecode for NonRootTournamentCalls {
         fn decode(
             data: impl AsRef<[u8]>,
         ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
@@ -1082,6 +946,12 @@ pub mod leaf_tournament {
                 return Ok(Self::GetMatchCycle(decoded));
             }
             if let Ok(decoded)
+                = <InnerTournamentWinnerCall as ::ethers::core::abi::AbiDecode>::decode(
+                    data,
+                ) {
+                return Ok(Self::InnerTournamentWinner(decoded));
+            }
+            if let Ok(decoded)
                 = <JoinTournamentCall as ::ethers::core::abi::AbiDecode>::decode(data) {
                 return Ok(Self::JoinTournament(decoded));
             }
@@ -1092,18 +962,10 @@ pub mod leaf_tournament {
                 return Ok(Self::MaximumEnforceableDelay(decoded));
             }
             if let Ok(decoded)
-                = <SealLeafMatchCall as ::ethers::core::abi::AbiDecode>::decode(data) {
-                return Ok(Self::SealLeafMatch(decoded));
-            }
-            if let Ok(decoded)
                 = <TournamentLevelConstantsCall as ::ethers::core::abi::AbiDecode>::decode(
                     data,
                 ) {
                 return Ok(Self::TournamentLevelConstants(decoded));
-            }
-            if let Ok(decoded)
-                = <WinLeafMatchCall as ::ethers::core::abi::AbiDecode>::decode(data) {
-                return Ok(Self::WinLeafMatch(decoded));
             }
             if let Ok(decoded)
                 = <WinMatchByTimeoutCall as ::ethers::core::abi::AbiDecode>::decode(
@@ -1114,7 +976,7 @@ pub mod leaf_tournament {
             Err(::ethers::core::abi::Error::InvalidData.into())
         }
     }
-    impl ::ethers::core::abi::AbiEncode for LeafTournamentCalls {
+    impl ::ethers::core::abi::AbiEncode for NonRootTournamentCalls {
         fn encode(self) -> Vec<u8> {
             match self {
                 Self::AdvanceMatch(element) => {
@@ -1132,19 +994,16 @@ pub mod leaf_tournament {
                 Self::GetMatchCycle(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
+                Self::InnerTournamentWinner(element) => {
+                    ::ethers::core::abi::AbiEncode::encode(element)
+                }
                 Self::JoinTournament(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::MaximumEnforceableDelay(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::SealLeafMatch(element) => {
-                    ::ethers::core::abi::AbiEncode::encode(element)
-                }
                 Self::TournamentLevelConstants(element) => {
-                    ::ethers::core::abi::AbiEncode::encode(element)
-                }
-                Self::WinLeafMatch(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
                 Self::WinMatchByTimeout(element) => {
@@ -1153,7 +1012,7 @@ pub mod leaf_tournament {
             }
         }
     }
-    impl ::core::fmt::Display for LeafTournamentCalls {
+    impl ::core::fmt::Display for NonRootTournamentCalls {
         fn fmt(&self, f: &mut ::core::fmt::Formatter<'_>) -> ::core::fmt::Result {
             match self {
                 Self::AdvanceMatch(element) => ::core::fmt::Display::fmt(element, f),
@@ -1163,70 +1022,66 @@ pub mod leaf_tournament {
                 Self::GetCommitment(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetMatch(element) => ::core::fmt::Display::fmt(element, f),
                 Self::GetMatchCycle(element) => ::core::fmt::Display::fmt(element, f),
+                Self::InnerTournamentWinner(element) => {
+                    ::core::fmt::Display::fmt(element, f)
+                }
                 Self::JoinTournament(element) => ::core::fmt::Display::fmt(element, f),
                 Self::MaximumEnforceableDelay(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::SealLeafMatch(element) => ::core::fmt::Display::fmt(element, f),
                 Self::TournamentLevelConstants(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::WinLeafMatch(element) => ::core::fmt::Display::fmt(element, f),
                 Self::WinMatchByTimeout(element) => ::core::fmt::Display::fmt(element, f),
             }
         }
     }
-    impl ::core::convert::From<AdvanceMatchCall> for LeafTournamentCalls {
+    impl ::core::convert::From<AdvanceMatchCall> for NonRootTournamentCalls {
         fn from(value: AdvanceMatchCall) -> Self {
             Self::AdvanceMatch(value)
         }
     }
-    impl ::core::convert::From<CanWinMatchByTimeoutCall> for LeafTournamentCalls {
+    impl ::core::convert::From<CanWinMatchByTimeoutCall> for NonRootTournamentCalls {
         fn from(value: CanWinMatchByTimeoutCall) -> Self {
             Self::CanWinMatchByTimeout(value)
         }
     }
-    impl ::core::convert::From<GetCommitmentCall> for LeafTournamentCalls {
+    impl ::core::convert::From<GetCommitmentCall> for NonRootTournamentCalls {
         fn from(value: GetCommitmentCall) -> Self {
             Self::GetCommitment(value)
         }
     }
-    impl ::core::convert::From<GetMatchCall> for LeafTournamentCalls {
+    impl ::core::convert::From<GetMatchCall> for NonRootTournamentCalls {
         fn from(value: GetMatchCall) -> Self {
             Self::GetMatch(value)
         }
     }
-    impl ::core::convert::From<GetMatchCycleCall> for LeafTournamentCalls {
+    impl ::core::convert::From<GetMatchCycleCall> for NonRootTournamentCalls {
         fn from(value: GetMatchCycleCall) -> Self {
             Self::GetMatchCycle(value)
         }
     }
-    impl ::core::convert::From<JoinTournamentCall> for LeafTournamentCalls {
+    impl ::core::convert::From<InnerTournamentWinnerCall> for NonRootTournamentCalls {
+        fn from(value: InnerTournamentWinnerCall) -> Self {
+            Self::InnerTournamentWinner(value)
+        }
+    }
+    impl ::core::convert::From<JoinTournamentCall> for NonRootTournamentCalls {
         fn from(value: JoinTournamentCall) -> Self {
             Self::JoinTournament(value)
         }
     }
-    impl ::core::convert::From<MaximumEnforceableDelayCall> for LeafTournamentCalls {
+    impl ::core::convert::From<MaximumEnforceableDelayCall> for NonRootTournamentCalls {
         fn from(value: MaximumEnforceableDelayCall) -> Self {
             Self::MaximumEnforceableDelay(value)
         }
     }
-    impl ::core::convert::From<SealLeafMatchCall> for LeafTournamentCalls {
-        fn from(value: SealLeafMatchCall) -> Self {
-            Self::SealLeafMatch(value)
-        }
-    }
-    impl ::core::convert::From<TournamentLevelConstantsCall> for LeafTournamentCalls {
+    impl ::core::convert::From<TournamentLevelConstantsCall> for NonRootTournamentCalls {
         fn from(value: TournamentLevelConstantsCall) -> Self {
             Self::TournamentLevelConstants(value)
         }
     }
-    impl ::core::convert::From<WinLeafMatchCall> for LeafTournamentCalls {
-        fn from(value: WinLeafMatchCall) -> Self {
-            Self::WinLeafMatch(value)
-        }
-    }
-    impl ::core::convert::From<WinMatchByTimeoutCall> for LeafTournamentCalls {
+    impl ::core::convert::From<WinMatchByTimeoutCall> for NonRootTournamentCalls {
         fn from(value: WinMatchByTimeoutCall) -> Self {
             Self::WinMatchByTimeout(value)
         }
@@ -1279,6 +1134,18 @@ pub mod leaf_tournament {
         Hash
     )]
     pub struct GetMatchCycleReturn(pub ::ethers::core::types::U256);
+    ///Container type for all return fields from the `innerTournamentWinner` function with signature `innerTournamentWinner()` and selector `0x5145236f`
+    #[derive(
+        Clone,
+        ::ethers::contract::EthAbiType,
+        ::ethers::contract::EthAbiCodec,
+        Default,
+        Debug,
+        PartialEq,
+        Eq,
+        Hash
+    )]
+    pub struct InnerTournamentWinnerReturn(pub bool, pub [u8; 32]);
     ///Container type for all return fields from the `maximumEnforceableDelay` function with signature `maximumEnforceableDelay()` and selector `0x60f302dc`
     #[derive(
         Clone,

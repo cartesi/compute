@@ -23,9 +23,13 @@ fn generate_grpc_stubs() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn generate_contract_bidings() -> Result<(), Box<dyn std::error::Error>> {
+    Abigen::new("NonRootTournament", "src/contract/tournament/artifact/NonRootTournament.json")?
+        .generate()?
+        .write_to_file("src/contract/tournament/non_root_tournament.rs")?;
+
     Abigen::new("RootTournament", "src/contract/tournament/artifact/RootTournament.json")?
-    .generate()?
-    .write_to_file("src/contract/tournament/root_tournament.rs")?;
+        .generate()?
+        .write_to_file("src/contract/tournament/root_tournament.rs")?;
 
     Abigen::new("NonLeafTournament", "src/contract/tournament/artifact/NonLeafTournament.json")?
         .generate()?

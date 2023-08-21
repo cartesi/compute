@@ -340,7 +340,7 @@ pub mod non_leaf_tournament {
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_initialHash"),
+                                    name: ::std::borrow::ToOwned::to_owned("_agreeHash"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
                                         32usize,
                                     ),
@@ -349,7 +349,7 @@ pub mod non_leaf_tournament {
                                     ),
                                 },
                                 ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::borrow::ToOwned::to_owned("_initialHashProof"),
+                                    name: ::std::borrow::ToOwned::to_owned("_agreeHashProof"),
                                     kind: ::ethers::core::abi::ethabi::ParamType::Array(
                                         ::std::boxed::Box::new(
                                             ::ethers::core::abi::ethabi::ParamType::FixedBytes(32usize),
@@ -394,28 +394,6 @@ pub mod non_leaf_tournament {
                                     kind: ::ethers::core::abi::ethabi::ParamType::Uint(64usize),
                                     internal_type: ::core::option::Option::Some(
                                         ::std::borrow::ToOwned::to_owned("uint64"),
-                                    ),
-                                },
-                            ],
-                            constant: ::core::option::Option::None,
-                            state_mutability: ::ethers::core::abi::ethabi::StateMutability::View,
-                        },
-                    ],
-                ),
-                (
-                    ::std::borrow::ToOwned::to_owned("tournamentWinner"),
-                    ::std::vec![
-                        ::ethers::core::abi::ethabi::Function {
-                            name: ::std::borrow::ToOwned::to_owned("tournamentWinner"),
-                            inputs: ::std::vec![],
-                            outputs: ::std::vec![
-                                ::ethers::core::abi::ethabi::Param {
-                                    name: ::std::string::String::new(),
-                                    kind: ::ethers::core::abi::ethabi::ParamType::FixedBytes(
-                                        32usize,
-                                    ),
-                                    internal_type: ::core::option::Option::Some(
-                                        ::std::borrow::ToOwned::to_owned("Tree.Node"),
                                     ),
                                 },
                             ],
@@ -748,13 +726,13 @@ pub mod non_leaf_tournament {
             match_id: Id,
             left_leaf: [u8; 32],
             right_leaf: [u8; 32],
-            initial_hash: [u8; 32],
-            initial_hash_proof: ::std::vec::Vec<[u8; 32]>,
+            agree_hash: [u8; 32],
+            agree_hash_proof: ::std::vec::Vec<[u8; 32]>,
         ) -> ::ethers::contract::builders::ContractCall<M, ()> {
             self.0
                 .method_hash(
                     [63, 54, 226, 254],
-                    (match_id, left_leaf, right_leaf, initial_hash, initial_hash_proof),
+                    (match_id, left_leaf, right_leaf, agree_hash, agree_hash_proof),
                 )
                 .expect("method not found (this should never happen)")
         }
@@ -764,14 +742,6 @@ pub mod non_leaf_tournament {
         ) -> ::ethers::contract::builders::ContractCall<M, (u64, u64, u64)> {
             self.0
                 .method_hash([161, 175, 144, 107], ())
-                .expect("method not found (this should never happen)")
-        }
-        ///Calls the contract's `tournamentWinner` (0xbcb01295) function
-        pub fn tournament_winner(
-            &self,
-        ) -> ::ethers::contract::builders::ContractCall<M, [u8; 32]> {
-            self.0
-                .method_hash([188, 176, 18, 149], ())
                 .expect("method not found (this should never happen)")
         }
         ///Calls the contract's `updateTournamentDelay` (0x3c892a9c) function
@@ -1097,8 +1067,8 @@ pub mod non_leaf_tournament {
         pub match_id: Id,
         pub left_leaf: [u8; 32],
         pub right_leaf: [u8; 32],
-        pub initial_hash: [u8; 32],
-        pub initial_hash_proof: ::std::vec::Vec<[u8; 32]>,
+        pub agree_hash: [u8; 32],
+        pub agree_hash_proof: ::std::vec::Vec<[u8; 32]>,
     }
     ///Container type for all input parameters for the `tournamentLevelConstants` function with signature `tournamentLevelConstants()` and selector `0xa1af906b`
     #[derive(
@@ -1113,19 +1083,6 @@ pub mod non_leaf_tournament {
     )]
     #[ethcall(name = "tournamentLevelConstants", abi = "tournamentLevelConstants()")]
     pub struct TournamentLevelConstantsCall;
-    ///Container type for all input parameters for the `tournamentWinner` function with signature `tournamentWinner()` and selector `0xbcb01295`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthCall,
-        ::ethers::contract::EthDisplay,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    #[ethcall(name = "tournamentWinner", abi = "tournamentWinner()")]
-    pub struct TournamentWinnerCall;
     ///Container type for all input parameters for the `updateTournamentDelay` function with signature `updateTournamentDelay(uint64)` and selector `0x3c892a9c`
     #[derive(
         Clone,
@@ -1192,7 +1149,6 @@ pub mod non_leaf_tournament {
             SealInnerMatchAndCreateInnerTournamentCall,
         ),
         TournamentLevelConstants(TournamentLevelConstantsCall),
-        TournamentWinner(TournamentWinnerCall),
         UpdateTournamentDelay(UpdateTournamentDelayCall),
         WinInnerMatch(WinInnerMatchCall),
         WinMatchByTimeout(WinMatchByTimeoutCall),
@@ -1247,12 +1203,6 @@ pub mod non_leaf_tournament {
                 return Ok(Self::TournamentLevelConstants(decoded));
             }
             if let Ok(decoded)
-                = <TournamentWinnerCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
-                return Ok(Self::TournamentWinner(decoded));
-            }
-            if let Ok(decoded)
                 = <UpdateTournamentDelayCall as ::ethers::core::abi::AbiDecode>::decode(
                     data,
                 ) {
@@ -1301,9 +1251,6 @@ pub mod non_leaf_tournament {
                 Self::TournamentLevelConstants(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
-                Self::TournamentWinner(element) => {
-                    ::ethers::core::abi::AbiEncode::encode(element)
-                }
                 Self::UpdateTournamentDelay(element) => {
                     ::ethers::core::abi::AbiEncode::encode(element)
                 }
@@ -1336,7 +1283,6 @@ pub mod non_leaf_tournament {
                 Self::TournamentLevelConstants(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
-                Self::TournamentWinner(element) => ::core::fmt::Display::fmt(element, f),
                 Self::UpdateTournamentDelay(element) => {
                     ::core::fmt::Display::fmt(element, f)
                 }
@@ -1389,11 +1335,6 @@ pub mod non_leaf_tournament {
     impl ::core::convert::From<TournamentLevelConstantsCall> for NonLeafTournamentCalls {
         fn from(value: TournamentLevelConstantsCall) -> Self {
             Self::TournamentLevelConstants(value)
-        }
-    }
-    impl ::core::convert::From<TournamentWinnerCall> for NonLeafTournamentCalls {
-        fn from(value: TournamentWinnerCall) -> Self {
-            Self::TournamentWinner(value)
         }
     }
     impl ::core::convert::From<UpdateTournamentDelayCall> for NonLeafTournamentCalls {
@@ -1487,18 +1428,6 @@ pub mod non_leaf_tournament {
         pub log_2step: u64,
         pub height: u64,
     }
-    ///Container type for all return fields from the `tournamentWinner` function with signature `tournamentWinner()` and selector `0xbcb01295`
-    #[derive(
-        Clone,
-        ::ethers::contract::EthAbiType,
-        ::ethers::contract::EthAbiCodec,
-        Default,
-        Debug,
-        PartialEq,
-        Eq,
-        Hash
-    )]
-    pub struct TournamentWinnerReturn(pub [u8; 32]);
     ///`ClockState(uint64,uint64)`
     #[derive(
         Clone,

@@ -13,7 +13,7 @@ pub trait Arena : Send + Sync {
         &mut self,
         tournament: Address, 
         final_state: Hash,
-        proof: Proof,
+        proof: CommitmentProof,
         left_child: Hash,
         right_child: Hash
     ) -> Result<(), Box<dyn Error>>;
@@ -35,7 +35,7 @@ pub trait Arena : Send + Sync {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: Proof
+        initial_hash_proof: CommitmentProof
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_inner_match(
@@ -53,7 +53,7 @@ pub trait Arena : Send + Sync {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: Proof,
+        initial_hash_proof: CommitmentProof,
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_leaf_match(
@@ -61,7 +61,8 @@ pub trait Arena : Send + Sync {
         tournament: Address,
         match_id: MatchID,
         left_node: Hash,
-        right_node: Hash
+        right_node: Hash,
+        proofs: MachineProof,
     ) -> Result<(), Box<dyn Error>>;
 
     async fn created_tournament(
@@ -91,7 +92,7 @@ pub trait Arena : Send + Sync {
     async fn root_tournament_winner(
         &self,
         tournament: Address
-    ) -> Result<Option<Hash>, Box<dyn Error>>;
+    ) -> Result<Option<(Hash, Hash)>, Box<dyn Error>>;
     
     async fn tournament_winner(
         &self,
@@ -186,7 +187,6 @@ impl From<[u8; 32]> for Hash {
 impl From<Hash> for [u8; 32] {
     fn from (hash: Hash) -> Self {
         let bytes: [u8; 32] = todo!();
-        bytes
     }
 }
 
@@ -203,5 +203,8 @@ impl hash::Hash for Hash {
     }
 }
 
-// TODO: should it be in machine crytpograhy crate?
-pub type Proof = Vec<Hash>;
+// TODO: must be in crtypography crate
+pub type CommitmentProof = Vec<Hash>;
+
+// TODO: must be in machine crate
+pub type MachineProof = Vec<u8>;

@@ -3,7 +3,7 @@ use std::error::Error;
 use async_trait::async_trait;
 
 use crate::{
-    arena::Hash,
+    arena::{Hash, MachineProof},
     machine::commitment::ComputationCommitment,
 };
 
@@ -17,7 +17,7 @@ pub trait Machine {
         arg_2: bool, // TODO
     ) -> Result<ComputationCommitment, Box<dyn Error>>;
 
-    async fn initial_hash(&self) -> Result<Hash, Box<dyn Error>>;
+    async fn get_logs(&self, cycle: u64, ucycle: u64) -> Result<MachineProof, Box<dyn Error>>;
 }
 
 pub struct MachineJsonRpcClient {
@@ -33,11 +33,12 @@ impl Machine for MachineJsonRpcClient {
         arg_2: bool, // TODO
     ) -> Result<ComputationCommitment, Box<dyn Error>> {
         Ok(ComputationCommitment{
-            root: Hash::default(),
+            root_hash: Hash::default(),
+            implicit_hash: Hash::default(),
         })
     }
 
-    async fn initial_hash(&self) -> Result<Hash, Box<dyn Error>> {
-       Ok(Hash::default())
+    async fn get_logs(&self, cycle: u64, ucycle: u64) -> Result<MachineProof, Box<dyn Error>> {
+        Ok(MachineProof::default())
     }
 }

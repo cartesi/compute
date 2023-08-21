@@ -7,13 +7,14 @@ use std::{
 use::log::info;
 
 use crate::{
-    arena::{Arena, Address, Proof, MatchState, MatchCreatedEvent},
+    arena::{Arena, Address, CommitmentProof, MatchState, MatchCreatedEvent},
     machine::{ComputationCommitment, Machine},
 };
 
 static LEVELS: u64 = 4;
 static LOG2_STEP: [u64; 4] = [24, 14, 7, 0];
 static LOG2_UARCH_SPAN: u64 = 16;
+static UARCH_SPAN: u128 =  (1 << LOG2_UARCH_SPAN) - 1;
 static HEIGHTS: [u64; 4] = [39, 10, 7, 7];
 
 
@@ -35,8 +36,10 @@ struct PlayerMatch {
     event: MatchCreatedEvent,
     tournament: Address,
     leaf_cycle: u128,
+    base_big_cycle: u128,
 }
 
+// TODO: use tempaltes, not box
 pub struct Player {
     arena: Box<dyn Arena>,
     machine: Box<dyn Machine>,
@@ -90,9 +93,9 @@ impl Player {
         };
 
         if tournament.parent.is_none() {
-            if let Some(winner) = self.arena.root_tournament_winner(tournament.address).await? {
-                info!("tournament {} finished, winner is {}", tournament.address, winner);
-                if commitment.root == winner {
+            if let Some((winner_commitment, _)) = self.arena.root_tournament_winner(tournament.address).await? {
+                info!("tournament {} finished, winner is {}", tournament.address, winner_commitment);
+                if commitment.root_hash == winner_commitment {
                     return Ok(Some(PlayerTournamentResult::TournamentWon));
                 } else {
                     return Ok(Some(PlayerTournamentResult::TournamentLost));
@@ -103,7 +106,7 @@ impl Player {
         } else {
             if let Some(winner) = self.arena.tournament_winner(tournament.address).await? {
                 let old_commitment = self.commitments.get(&tournament.parent.unwrap()).unwrap();
-                if winner != old_commitment.root {
+                if winner != old_commitment.root_hash {
                     return Ok(Some(PlayerTournamentResult::TournamentLost));
                 }
             }
@@ -118,7 +121,7 @@ impl Player {
                 "player won tournament {} of level {} for commitment {}",
                 tournament.address,
                 tournament.level,
-                commitment.root,
+                commitment.root_hash,
             );
         }
 
@@ -135,7 +138,7 @@ impl Player {
         tournament: Address,
         commitment: Rc<ComputationCommitment>,
     ) -> Result<Option<Rc<PlayerMatch>>, Box<dyn Error>> {
-        let matches = self.arena.created_matches(tournament, commitment.root).await?;
+        let matches = self.arena.created_matches(tournament, commitment.root_hash).await?;
         let last_match = if let Some(last_match) = matches.last() {
             last_match
         } else {
@@ -152,12 +155,16 @@ impl Player {
         };
 
         let tournament = self.tournaments.iter().find(|t| t.address == tournament).unwrap();
+        let base = tournament.base_big_cycle;
+        let step = 1 << LOG2_STEP[tournament.level as usize];
+        let leaf_cycle = base + (step * match_state.running_leaf_position);
+        let base_big_cycle = leaf_cycle >> LOG2_UARCH_SPAN;
         let player_match = Rc::new(PlayerMatch {
             state: match_state,
             event: *last_match,
             tournament: tournament.address,
-            leaf_cycle: tournament.base_big_cycle  + 
-                (match_state.running_leaf_position << (LOG2_STEP[tournament.level as usize] + LOG2_UARCH_SPAN)),
+            leaf_cycle: leaf_cycle,
+            base_big_cycle: base_big_cycle,
         });
         self.matches.push(player_match.clone());
 
@@ -171,14 +178,14 @@ impl Player {
     ) -> Result<(), Box<dyn Error>> {
         let (clock, _) = self.arena.commitment(
             tournament.address,
-            commitment.root,
+            commitment.root_hash,
         ).await?;
 
         if clock.allowance != 0 {
             return Ok(())
         }
 
-        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
+        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
             children
         } else {
             // TODO: return error
@@ -214,7 +221,7 @@ impl Player {
         commitment: Rc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
         if player_match.state.level == 1 {
-            let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
+            let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
                 children
             } else {
                 // TODO: return error
@@ -229,12 +236,17 @@ impl Player {
                 info!("delay for match {} is {}", player_match.event.id.hash(), delay);
                 return Ok(())
             }
+
+            let cycle = player_match.state.running_leaf_position >> LOG2_UARCH_SPAN;
+            let ucycle = player_match.state.running_leaf_position & UARCH_SPAN;
+            let proof = self.machine.get_logs(cycle as u64, ucycle as u64).await?;
             
             self.arena.win_leaf_match(
                 player_match.tournament,
                 player_match.event.id,
                 left_child,
                 right_child,
+                proof,
             ).await?;
         } else {
             self.new_tournament(player_match).await?;
@@ -248,14 +260,14 @@ impl Player {
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {        
-        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
+        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
             children
         } else {
             return Ok(())
         };
 
         let (initial_hash, initial_hash_proof) = if player_match.state.running_leaf_position == 0 {
-            (self.machine.initial_hash().await?, Proof::default())
+            (commitment.implicit_hash, CommitmentProof::default())
         } else {
             commitment.prove_leaf(player_match.state.running_leaf_position)
         };
@@ -290,7 +302,7 @@ impl Player {
         player_match: Rc<PlayerMatch>,
         commitment: Rc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
-        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root) {
+        let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
             children
         } else {
             return Ok(())

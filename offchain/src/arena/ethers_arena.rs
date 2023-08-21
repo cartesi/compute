@@ -21,6 +21,7 @@ use ethers::{
 use crate::contract::{
     factory::TournamentFactory,
     tournament::{
+        non_root_tournament,
         root_tournament,
         non_leaf_tournament,
         leaf_tournament,
@@ -108,7 +109,7 @@ impl Arena for EthersArena {
         &mut self,
         tournament: Address, 
         final_state: Hash,
-        proof: Proof,
+        proof: CommitmentProof,
         left_child: Hash,
         right_child: Hash
     ) -> Result<(), Box<dyn Error>> {
@@ -154,7 +155,7 @@ impl Arena for EthersArena {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: Proof
+        initial_hash_proof: CommitmentProof
     ) -> Result<(), Box<dyn Error>> {
         let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
         let match_id = non_leaf_tournament::Id {
@@ -196,7 +197,7 @@ impl Arena for EthersArena {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: Proof,
+        initial_hash_proof: CommitmentProof,
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {
@@ -223,20 +224,19 @@ impl Arena for EthersArena {
         match_id: MatchID,
         left_node: Hash,
         right_node: Hash,
+        proofs: MachineProof,
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {
             commitment_one: match_id.commitment_one.into(),
             commitment_two: match_id.commitment_two.into(),
         };
-        // TODO: convert proofs to ethers::types::Bytes
-        let proofs = Bytes::default();
         tournament
             .win_leaf_match(
                 match_id,
                 left_node.into(),
                 right_node.into(),
-                proofs
+                Bytes::from(proofs),
             )
             .send()
             .await?;
@@ -317,11 +317,14 @@ impl Arena for EthersArena {
     async fn root_tournament_winner(
         &self,
         root_tournament: Address
-    ) -> Result<Option<Hash>, Box<dyn Error>> {
+    ) -> Result<Option<(Hash, Hash)>, Box<dyn Error>> {
         let root_tournament = root_tournament::RootTournament::new(root_tournament, self.client.clone());
-        let (finished, hash) = root_tournament.root_tournament_final_state().call().await?;
+        let (finished, commitment, state) = root_tournament.arbitration_result().call().await?;
         if finished {
-            Ok(Some(Hash::from(hash)))
+            Ok(Some((
+                Hash::from(commitment),
+                Hash::from(state),
+            )))
         } else {
             Ok(None)
         }
@@ -331,10 +334,10 @@ impl Arena for EthersArena {
         &self,
         tournament: Address
     ) -> Result<Option<Hash>, Box<dyn Error>> {
-        let tournament = tournament::Tournament::new(tournament, self.client.clone());
-        let hash = Hash::from(tournament.tournament_winner().call().await?);
-        if !hash.is_zero() {
-            Ok(Some(hash))
+        let tournament = non_root_tournament::NonRootTournament::new(tournament, self.client.clone());
+        let (finished, state) = tournament.inner_tournament_winner().call().await?;
+        if finished {
+            Ok(Some(Hash::from(state)))
         } else {
             Ok(None)
         }
