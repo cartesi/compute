@@ -40,22 +40,20 @@ struct PlayerMatch {
 }
 
 // TODO: use tempaltes, not box
-pub struct Player {
-    arena: Box<dyn Arena>,
-    machine: Box<dyn Machine>,
-    root_tournament: Address,
+pub struct Player<A: Arena, M: Machine> {
+    arena: Rc<A>,
+    machine: Rc<M>,
     tournaments: Vec<Rc<PlayerTournament>>,
     matches: Vec<Rc<PlayerMatch>>,
     commitments: HashMap<Address, Rc<ComputationCommitment>>,
     called_win: HashMap<Address, bool>,
 }
 
-impl Player {
-    pub fn new(arena: Box<dyn Arena>, machine: Box<dyn Machine>, root_tournamet: Address) -> Self {
+impl<A: Arena, M: Machine> Player<A, M> {
+    pub fn new(arena: Rc<A>, machine: Rc<M>, root_tournamet: Address) -> Self {
         Self {
             arena: arena,
             machine: machine,
-            root_tournament: root_tournamet,
             tournaments: vec![
                 Rc::new(PlayerTournament{
                     address: root_tournamet,

@@ -106,7 +106,7 @@ impl Arena for EthersArena {
     }
     
     async fn join_tournament(
-        &mut self,
+        &self,
         tournament: Address, 
         final_state: Hash,
         proof: CommitmentProof,
@@ -123,7 +123,7 @@ impl Arena for EthersArena {
     }
     
     async fn advance_match(
-        &mut self,
+        &self,
         tournament: Address, 
         match_id: MatchID, 
         left_node: Hash,
@@ -149,7 +149,7 @@ impl Arena for EthersArena {
     }
     
     async fn seal_inner_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_leaf: Hash,
@@ -177,7 +177,7 @@ impl Arena for EthersArena {
     }
     
     async fn win_inner_match(
-        &mut self,
+        &self,
         tournament: Address,
         child_tournament: Address,
         left_node: Hash,
@@ -191,7 +191,7 @@ impl Arena for EthersArena {
     }
     
     async fn seal_leaf_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_leaf: Hash,
@@ -219,7 +219,7 @@ impl Arena for EthersArena {
     }
     
     async fn win_leaf_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_node: Hash,

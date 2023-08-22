@@ -10,7 +10,7 @@ pub trait Arena : Send + Sync {
     async fn create_root_tournament(&mut self, initial_hash: Hash) -> Result<Address, Box<dyn Error>>;
 
     async fn join_tournament(
-        &mut self,
+        &self,
         tournament: Address, 
         final_state: Hash,
         proof: CommitmentProof,
@@ -19,7 +19,7 @@ pub trait Arena : Send + Sync {
     ) -> Result<(), Box<dyn Error>>;
     
     async fn advance_match(
-        &mut self,
+        &self,
         tournament: Address, 
         match_id: MatchID, 
         left_node: Hash,
@@ -29,7 +29,7 @@ pub trait Arena : Send + Sync {
     ) -> Result<(), Box<dyn Error>>;
     
     async fn seal_inner_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_leaf: Hash,
@@ -39,7 +39,7 @@ pub trait Arena : Send + Sync {
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_inner_match(
-        &mut self,
+        &self,
         tournament: Address,
         child_tournament: Address,
         left_node: Hash,
@@ -47,7 +47,7 @@ pub trait Arena : Send + Sync {
     ) -> Result<(), Box<dyn Error>>;
     
     async fn seal_leaf_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_leaf: Hash,
@@ -57,7 +57,7 @@ pub trait Arena : Send + Sync {
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_leaf_match(
-        &mut self,
+        &self,
         tournament: Address,
         match_id: MatchID,
         left_node: Hash,
