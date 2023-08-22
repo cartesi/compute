@@ -16,7 +16,7 @@ async fn main() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         println!("Script execution failed: {}", stderr);
     }    
-    //commitment::commitment_execution().await;
+    commitment::commitment_execution().await;
 
     // os.execute "jsonrpc-remote-cartesi-machine --server-address=localhost:8080 &"
     // os.execute "sleep 2"

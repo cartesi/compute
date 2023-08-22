@@ -1,4 +1,5 @@
-FROM --platform=linux/amd64 cartesi/machine-emulator:0.14.0
+FROM --platform=linux/amd64 cartesi/machine-emulator:0.15.2
+USER root
 RUN apt-get -y update; apt-get -y install curl
 RUN curl -sSL https://github.com/foundry-rs/foundry/releases/download/nightly/foundry_nightly_linux_$(dpkg --print-architecture).tar.gz | \
     tar -zx -C /usr/local/bin
@@ -27,5 +28,5 @@ COPY test-files /root/share/images
 COPY program /root/program
 WORKDIR "/root"
 
-CMD sh -c "/opt/cartesi/bin/jsonrpc-remote-cartesi-machine 127.0.0.1:50051 & sleep 2 && cargo run --release"
+CMD sh -c "/usr/bin/jsonrpc-remote-cartesi-machine --server-address=127.0.0.1:50051 & sleep 2 && cargo run --release"
 

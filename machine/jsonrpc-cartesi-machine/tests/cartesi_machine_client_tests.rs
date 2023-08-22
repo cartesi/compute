@@ -14,16 +14,15 @@ use jsonrpc_cartesi_machine::JsonRpcCartesiMachineClient;
 use rand::{distributions::Alphanumeric, thread_rng, Rng};
 use rstest::*;
 use std::future::Future;
-use std::sync::Arc;
 
 static INITIAL_ROOT_HASH: [u8; 32] = [
-    144, 183, 179, 236, 208, 219, 93, 54, 39, 226, 87, 144, 124, 49, 108, 83, 217, 127, 21, 140,
-    211, 229, 232, 237, 231, 73, 89, 249, 23, 240, 42, 54,
+    134, 97, 187, 228, 108, 242, 89, 237, 97, 43, 127, 135, 153, 29, 132, 227, 4, 188, 239, 190,
+    180, 219, 72, 86, 244, 22, 194, 24, 161, 220, 14, 237,
 ];
 
-static SECOND_STEP_HASH: [u8; 32]  = [
-    110, 90, 203, 63, 104, 45, 25, 191, 179, 40, 66, 74, 136, 38, 7, 235, 164, 40, 142, 134, 175,
-    116, 81, 101, 241, 65, 159, 233, 33, 17, 235, 106,
+static SECOND_STEP_HASH: [u8; 32] = [
+    234, 184, 50, 7, 132, 79, 19, 205, 60, 47, 240, 187, 108, 27, 112, 2, 244, 214, 86, 235, 64,
+    255, 110, 182, 165, 125, 138, 144, 29, 206, 188, 236,
 ];
 
 #[allow(dead_code)]
@@ -44,11 +43,19 @@ fn generate_random_name() -> String {
 
 fn instantiate_external_server_instance(port: u32) -> Result<(), Box<dyn std::error::Error>> {
     let address = format!("127.0.0.1:{0}", port);
-    println!("Starting Cartesi jsonrpc remote machine on address {}", address);
-    std::process::Command::new("/opt/cartesi/bin/jsonrpc-remote-cartesi-machine")
-        .arg(&address)
+    let server_address = format!("--server-address=127.0.0.1:{0}", port);
+
+    println!(
+        "Starting Cartesi jsonrpc remote machine on address {}",
+        address
+    );
+    match std::process::Command::new("/usr/bin/jsonrpc-remote-cartesi-machine")
+        .arg(server_address)
         .spawn()
-        .expect("Unable to launch jsonrpc cartesi machine server");
+    {
+        Ok(child) => {}
+        Err(error) => panic!(error.to_string()),
+    };
     std::thread::sleep(std::time::Duration::from_secs(2));
     Ok(())
 }
@@ -56,7 +63,7 @@ fn instantiate_external_server_instance(port: u32) -> Result<(), Box<dyn std::er
 fn try_stop_container() {
     let result = std::process::Command::new("pkill")
         .arg("-f")
-        .arg("jsonrpc-remote-cartesi-machine")
+        .arg("/usr/bin/jsonrpc-remote-cartesi-machine")
         .status()
         .unwrap();
     if !result.success() {
@@ -134,7 +141,10 @@ mod local_server {
             cartesi_machine_server: match JsonRpcCartesiMachineClient::new(uri).await {
                 Ok(machine) => machine,
                 Err(err) => {
-                    panic!("Unable to create jsonrpc machine server: {}", err.to_string())
+                    panic!(
+                        "Unable to create jsonrpc machine server: {}",
+                        err.to_string()
+                    )
                 }
             },
             port,
@@ -166,6 +176,13 @@ mod local_server {
                 length: Some(77128),
                 image_filename: Some(String::from("/opt/cartesi/share/images/uarch-ram.bin")),
             }),
+        };
+        default_config.htif = jsonrpc_cartesi_machine::HTIFConfig {
+            console_getchar: Some(false),
+            yield_manual: Some(true),
+            yield_automatic: Some(false),
+            fromhost: Some(0),
+            tohost: Some(0),
         };
         default_config.rollup = jsonrpc_cartesi_machine::RollupConfig {
             input_metadata: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
@@ -202,7 +219,10 @@ mod local_server {
 
         match context
             .get_server()
-            .create_machine(&default_config, &jsonrpc_cartesi_machine::MachineRuntimeConfig::default())
+            .create_machine(
+                &default_config,
+                &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(),
+            )
             .await
         {
             Ok(_) => context,
@@ -254,6 +274,13 @@ mod local_server {
         default_config.ram = jsonrpc_cartesi_machine::RamConfig {
             length: 1 << 20,
             image_filename: String::new(),
+        };
+        default_config.htif = jsonrpc_cartesi_machine::HTIFConfig {
+            console_getchar: Some(false),
+            yield_manual: Some(true),
+            yield_automatic: Some(false),
+            fromhost: Some(0),
+            tohost: Some(0),
         };
         default_config.rollup = jsonrpc_cartesi_machine::RollupConfig {
             input_metadata: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
@@ -309,12 +336,18 @@ mod local_server {
         //Create machine
         match context
             .get_server()
-            .create_machine(&default_config, &jsonrpc_cartesi_machine::MachineRuntimeConfig::default())
+            .create_machine(
+                &default_config,
+                &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(),
+            )
             .await
         {
             Ok(_) => context,
             Err(err) => {
-                panic!("Unable to instantiate jsonrpc cartesi machine: {}", err.to_string())
+                panic!(
+                    "Unable to instantiate jsonrpc cartesi machine: {}",
+                    err.to_string()
+                )
             }
         }
     }
@@ -369,7 +402,7 @@ mod local_server {
             jsonrpc_cartesi_machine::SemanticVersion {
                 major: 0,
                 minor: 1,
-                patch: 0,
+                patch: 1,
                 pre_release: "".to_string(),
                 build: "".to_string()
             }
@@ -412,6 +445,13 @@ mod local_server {
             length: 1 << 20,
             image_filename: String::new(),
         };
+        default_config.htif = jsonrpc_cartesi_machine::HTIFConfig {
+            console_getchar: Some(false),
+            yield_manual: Some(true),
+            yield_automatic: Some(false),
+            fromhost: Some(0),
+            tohost: Some(0),
+        };
         default_config.rollup = jsonrpc_cartesi_machine::RollupConfig {
             input_metadata: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
                 start: 0x60400000,
@@ -447,7 +487,10 @@ mod local_server {
 
         context
             .get_server()
-            .create_machine(&default_config, &jsonrpc_cartesi_machine::MachineRuntimeConfig::default())
+            .create_machine(
+                &default_config,
+                &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(),
+            )
             .await?;
         Ok(())
     }
@@ -477,6 +520,13 @@ mod local_server {
                 length: Some(77128),
                 image_filename: Some(String::from("/opt/cartesi/share/images/uarch-ram.bin")),
             }),
+        };
+        default_config.htif = jsonrpc_cartesi_machine::HTIFConfig {
+            console_getchar: Some(false),
+            yield_manual: Some(true),
+            yield_automatic: Some(false),
+            fromhost: Some(0),
+            tohost: Some(0),
         };
         default_config.rollup = jsonrpc_cartesi_machine::RollupConfig {
             input_metadata: Some(jsonrpc_cartesi_machine::MemoryRangeConfig {
@@ -512,7 +562,10 @@ mod local_server {
         };
         let ret = context
             .get_server()
-            .create_machine(&default_config, &jsonrpc_cartesi_machine::MachineRuntimeConfig::default())
+            .create_machine(
+                &default_config,
+                &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(),
+            )
             .await;
         match ret {
             Ok(_) => panic!("Creating existing machine should fail"),
@@ -650,7 +703,10 @@ mod local_server {
         let mut context = context_with_machine_future.await;
         context
             .get_server()
-            .write_memory(0x8000000F, base64::encode([1,2,3,4,5,6,7,8,9,10,11,12]))
+            .write_memory(
+                0x8000000F,
+                base64::encode([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+            )
             .await?;
         let ret = context.get_server().read_memory(0x8000000F, 12).await?;
         assert_eq!(ret, vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
@@ -712,13 +768,13 @@ mod local_server {
         assert_eq!(proof.log2_target_size, 10);
         let mut target_hash_string = proof.target_hash.clone();
         if target_hash_string.ends_with('\n') {
-            target_hash_string.pop(); 
+            target_hash_string.pop();
         }
         assert_eq!(
             base64::decode(target_hash_string).unwrap(),
             [
-                112, 159, 132, 11, 162, 147, 207, 192, 177, 21, 152, 61, 114, 33, 155, 95, 119,
-                111, 172, 26, 224, 42, 65, 31, 37, 65, 7, 55, 70, 18, 172, 73
+                26, 138, 138, 99, 157, 21, 172, 88, 187, 128, 223, 156, 164, 60, 123, 42, 42, 125,
+                169, 162, 174, 170, 76, 51, 148, 162, 125, 172, 221, 244, 71, 27
             ]
         );
         assert_eq!(proof.sibling_hashes.len(), 54);
@@ -745,11 +801,9 @@ mod local_server {
         };
         context
             .get_server()
-            .replace_memory_range(
-                cartesi_jsonrpc_interfaces::index::MemoryRangeConfig::from(
-                    &memory_range_config,
-                ),
-            )
+            .replace_memory_range(cartesi_jsonrpc_interfaces::index::MemoryRangeConfig::from(
+                &memory_range_config,
+            ))
             .await?;
         let ret = context
             .get_server()
@@ -803,7 +857,10 @@ mod local_server {
         context_future: impl Future<Output = Context>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut context = context_future.await;
-        let address = context.get_server().get_csr_address("pc".to_string()).await?;
+        let address = context
+            .get_server()
+            .get_csr_address("pc".to_string())
+            .await?;
         println!("Got address: {}", address);
         Ok(())
     }
@@ -814,13 +871,19 @@ mod local_server {
         context_with_machine_future: impl Future<Output = Context>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         let mut context = context_with_machine_future.await;
-        let x_value = context.get_server().read_csr("sscratch".to_string()).await?;
+        let x_value = context
+            .get_server()
+            .read_csr("sscratch".to_string())
+            .await?;
         assert_eq!(x_value, 0x0);
         context
             .get_server()
             .write_csr("sscratch".to_string(), 0x12345)
             .await?;
-        let x_value = context.get_server().read_csr("sscratch".to_string()).await?;
+        let x_value = context
+            .get_server()
+            .read_csr("sscratch".to_string())
+            .await?;
         assert_eq!(x_value, 0x12345);
         Ok(())
     }
@@ -909,12 +972,16 @@ mod local_server {
             .await?;
         context
             .get_server()
-            .verify_access_log(&log, &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(), false)
+            .verify_access_log(
+                &log,
+                &jsonrpc_cartesi_machine::MachineRuntimeConfig::default(),
+                false,
+            )
             .await?;
         Ok(())
     }
 
-   #[rstest]
+    #[rstest]
     #[tokio::test]
     async fn test_verify_state_transition(
         context_with_machine_future: impl Future<Output = Context>,

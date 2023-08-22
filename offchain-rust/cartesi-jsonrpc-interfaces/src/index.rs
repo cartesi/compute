@@ -19,6 +19,14 @@ pub struct CLINTConfig {
 
 pub type StringDoaGddGA = String;
 pub type BooleanVyG3AETh = bool;
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
+pub struct HTIFRuntimeConfig {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub no_console_putchar: Option<bool>,
+}
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
 #[builder(setter(strip_option), default)]
 #[serde(default)]
@@ -276,6 +284,12 @@ pub struct MachineConfig {
 pub struct MachineRuntimeConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub concurrency: Option<ConcurrencyConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub htif: Option<HTIFRuntimeConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub skip_root_hash_check: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub skip_version_check: Option<bool>
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
 #[builder(setter(strip_option), default)]
@@ -561,7 +575,7 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<BooleanVyG3AETh, Error>> + Send + 'a>> {
         let method = "machine.replace_memory_range";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(range);
+        params.insert(range).unwrap();
         self.transport.request(method, params)
     }
 
@@ -571,7 +585,7 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<UnsignedInteger, Error>> + Send + 'a>> {
         let method = "machine.read_csr";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(csr);
+        params.insert(csr).unwrap();
         self.transport.request(method, params)
     }
 

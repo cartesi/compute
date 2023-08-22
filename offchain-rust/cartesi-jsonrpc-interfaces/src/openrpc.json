@@ -189,13 +189,13 @@
         ],
         "title": "CSR"
       },
-      "ConcurrencyConfig": {
+      "ConcurrencyRuntimeConfig": {
         "properties": {
           "update_merkle_tree": {
             "$ref": "#/components/schemas/UnsignedInteger"
           }
         },
-        "title": "ConcurrencyConfig",
+        "title": "ConcurrencyRuntimeConfig",
         "type": "object"
       },
       "FRegConfig": {
@@ -211,6 +211,15 @@
         },
         "title": "FlashDriveConfigs",
         "type": "array"
+      },
+      "HTIFRuntimeConfig": {
+        "title": "HTIFRuntimeConfig",
+        "type": "object",
+        "properties": {
+          "no_console_putchar": {
+            "type": "boolean"
+          }
+        }
       },
       "HTIFConfig": {
         "properties": {
@@ -279,7 +288,16 @@
       "MachineRuntimeConfig": {
         "properties": {
           "concurrency": {
-            "$ref": "#/components/schemas/ConcurrencyConfig"
+            "$ref": "#/components/schemas/ConcurrencyRuntimeConfig"
+          },
+          "htif": {
+            "$ref": "#/components/schemas/HTIFRuntimeConfig"
+          },
+          "skip_root_hash_check": {
+            "type": "boolean"
+          },
+          "skip_version_check": {
+            "type": "boolean"
           }
         },
         "title": "MachineRuntimeConfig",
@@ -541,7 +559,7 @@
       },
       "UarchInterpreterBreakReason": {
         "enum": [
-          "halted",
+          "uarch_halted",
           "reached_target_cycle"
         ],
         "title": "UarchInterpreterBreakReason"

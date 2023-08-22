@@ -17,7 +17,7 @@ pub mod conversions;
 
 use std::fmt;
 
-use cartesi_jsonrpc_interfaces::index::*;
+pub use cartesi_jsonrpc_interfaces::index::*;
 
 use conversions::*;
 use serde::Deserialize;
@@ -471,6 +471,9 @@ impl From<&cartesi_jsonrpc_interfaces::index::ConcurrencyConfig> for Concurrency
 #[derive(Debug, Clone, Default)]
 pub struct MachineRuntimeConfig {
     pub concurrency: ConcurrencyConfig,
+    pub htif: HTIFRuntimeConfig,
+    pub skip_root_hash_check: bool,
+    pub skip_version_check: bool,
 }
 
 impl From<&cartesi_jsonrpc_interfaces::index::MachineRuntimeConfig> for MachineRuntimeConfig {
@@ -481,6 +484,9 @@ impl From<&cartesi_jsonrpc_interfaces::index::MachineRuntimeConfig> for MachineR
                     .as_ref()
                     .unwrap_or(&cartesi_jsonrpc_interfaces::index::ConcurrencyConfig::default()),
             ),
+            htif: rc.htif.clone().unwrap_or(cartesi_jsonrpc_interfaces::index::HTIFRuntimeConfig::default()),
+            skip_root_hash_check: rc.skip_root_hash_check.unwrap_or(false),
+            skip_version_check: rc.skip_version_check.unwrap_or(false)
         }
     }
 }
@@ -660,14 +666,8 @@ pub struct JsonRpcCartesiMachineClient {
 impl JsonRpcCartesiMachineClient {
     /// Create new client instance. Connect to the server as part of client instantiation
     pub async fn new<'a>(server_address: String) -> Result<Self, jsonrpsee::core::error::Error> {
-        let mut headers = jsonrpsee::http_client::HeaderMap::new();
-        headers.insert(
-            "Any-Header-You-Like",
-            jsonrpsee::http_client::HeaderValue::from_static("42"),
-        );
 
         let transport = jsonrpsee::http_client::HttpClientBuilder::default()
-            .set_headers(headers)
             .build(&server_address)
             .unwrap();
 

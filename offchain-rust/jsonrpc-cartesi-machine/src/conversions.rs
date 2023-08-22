@@ -17,6 +17,9 @@ impl From<&crate::MachineRuntimeConfig> for MachineRuntimeConfig {
             concurrency: Some(cartesi_jsonrpc_interfaces::index::ConcurrencyConfig {
                 update_merkle_tree: Some(rc.concurrency.update_merkle_tree),
             }),
+            htif: Some(HTIFRuntimeConfig { no_console_putchar: rc.htif.no_console_putchar }),
+            skip_root_hash_check: Some(rc.skip_root_hash_check),
+            skip_version_check: Some(rc.skip_version_check)
         }
     }
 }
