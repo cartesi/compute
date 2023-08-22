@@ -19,6 +19,15 @@ pub struct CLINTConfig {
 
 pub type StringDoaGddGA = String;
 pub type BooleanVyG3AETh = bool;
+
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
+#[builder(setter(strip_option), default)]
+#[serde(default)]
+pub struct HTIFRuntimeConfig {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub no_console_putchar: Option<bool>,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
 #[builder(setter(strip_option), default)]
 #[serde(default)]
@@ -276,6 +285,12 @@ pub struct MachineConfig {
 pub struct MachineRuntimeConfig {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub concurrency: Option<ConcurrencyConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub htif: Option<HTIFRuntimeConfig>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub skip_root_hash_check: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub skip_version_check: Option<bool>,
 }
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Builder, Default)]
 #[builder(setter(strip_option), default)]
@@ -377,8 +392,8 @@ where
     {
         let method = "machine.machine.config";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(config);
-        params.insert(runtime);
+        params.insert(config).unwrap();
+        params.insert(runtime).unwrap();
         self.transport.request(method, params)
     }
 
@@ -390,8 +405,8 @@ where
     {
         let method = "machine.machine.directory";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(directory);
-        params.insert(runtime);
+        params.insert(directory).unwrap();
+        params.insert(runtime).unwrap();
         self.transport.request(method, params)
     }
 
@@ -409,7 +424,7 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<BooleanVyG3AETh, Error>> + Send + 'a>> {
         let method = "machine.store";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(directory);
+        params.insert(directory).unwrap();
         self.transport.request(method, params)
     }
 
@@ -419,7 +434,7 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<InterpreterBreakReason, Error>> + Send + 'a>> {
         let method = "machine.run";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(mcycle_end);
+        params.insert(mcycle_end).unwrap();
         self.transport.request(method, params)
     }
     
@@ -429,7 +444,7 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<UarchInterpreterBreakReason, Error>> + Send + 'a>> {
         let method = "machine.run_uarch";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(uarch_cycle_end);
+        params.insert(uarch_cycle_end).unwrap();
         self.transport.request(method, params)
     }
 
@@ -440,8 +455,8 @@ where
     ) -> Pin<Box<dyn Future<Output = Result<AccessLog, Error>> + Send + 'a>> {
         let method = "machine.step_uarch";
         let mut params = jsonrpsee::core::params::ArrayParams::new();
-        params.insert(log_type);
-        params.insert(one_based);
+        params.insert(log_type).unwrap();
+        params.insert(one_based).unwrap();
         self.transport.request(method, params)
     }
 

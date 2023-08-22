@@ -157,3 +157,11 @@ impl MachineJsonRpcClient {
         self.machine.lock().unwrap().initial_hash.clone()
     }
 }
+
+pub async fn commitment_execution() {
+    let path = "simple-program";
+    let url = "http://127.0.0.1:50051";
+    let machine = MachineJsonRpcClient::new(url, path).await;
+    let tree = machine.build_commitment(0, 0, 64).await;
+    println!("{:?}  {:?}", hex::encode(tree.0.digest), hex::encode(tree.1.root_hash.digest));
+}
