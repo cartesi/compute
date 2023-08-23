@@ -9,7 +9,7 @@ use cartesi_compute::{
         PlayerConfig,
     },
     arena::EthersArena,
-    manager::ComputeManager,
+    engine::Engine,
     grpc::ComputeServer,
 }; 
 
@@ -31,7 +31,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let player_config = PlayerConfig{
         react_period: Duration::from_secs(5),
     };
-    let compute = ComputeManager::new(arena, player_config);
+    let compute = Engine::new(arena, player_config);
 
     println!("Starting gRPC Server...");
 

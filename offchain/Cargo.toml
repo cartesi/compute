@@ -16,7 +16,8 @@ tokio = { version = "1.29.1", features = ["full"] }
 ethers = "2.0.8"
 hex = "0.4.3"
 async-trait = "0.1.72"
-primitive-types="0.12.1"
+primitive-types = "0.12.1"
+thiserror = "1.0"
 
 [build-dependencies]
 tonic-build = "0.9.2"

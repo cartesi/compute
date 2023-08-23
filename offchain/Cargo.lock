@@ -381,6 +381,7 @@ dependencies = [
  "log",
  "primitive-types",
  "prost",
+ "thiserror",
  "tokio",
  "tonic",
  "tonic-build",
