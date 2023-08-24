@@ -1,6 +1,6 @@
 use std::process::Command;
 
-use computation::{commitment};
+use machine::{FatMachineClient};
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
@@ -16,7 +16,7 @@ async fn main() {
         let stderr = String::from_utf8_lossy(&output.stderr);
         println!("Script execution failed: {}", stderr);
     }    
-    commitment::commitment_execution().await;
+    commitment_execution().await;
 
     // os.execute "jsonrpc-remote-cartesi-machine --server-address=localhost:8080 &"
     // os.execute "sleep 2"
@@ -54,4 +54,12 @@ async fn main() {
     // machine:read_mcycle()
 
     println!("Good-bye, world!");
+}
+
+pub async fn commitment_execution() {
+    let path = "simple-program";
+    let url = "http://127.0.0.1:50051";
+    let machine = FatMachineClient::new(url, path).await;
+    let tree = machine.build_commitment(0, 0, 64).await;
+    println!("{:?}  {:?}", hex::encode(tree.0.digest), hex::encode(tree.1.root_hash.digest));
 }

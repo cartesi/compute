@@ -5,8 +5,8 @@ use sha3::{Digest, Keccak256};
 #[derive(Eq, Hash, PartialEq, Clone, Debug, Default)]
 pub struct Hash {
     pub digest:Vec<u8>,
-    left: Option<Vec<u8>>,
-    right: Option<Vec<u8>>,
+    left: Option<Box<Hash>>,
+    right: Option<Box<Hash>>,
 }
 
 static INTERNALIZED_HASHES: OnceCell<HashMap<Vec<u8>, Hash>> = OnceCell::new();
@@ -55,12 +55,12 @@ impl Hash {
         keccak.update(&other_hash.digest);
         let digest = keccak.finalize();
         let mut ret = Hash::from_digest(digest.to_vec());
-        ret.left = Some(self.digest.clone());
-        ret.right = Some(other_hash.digest.clone());
+        ret.left = Some(Box::new(self.clone()));
+        ret.right = Some(Box::new(other_hash.clone()));
         ret
     }
 
-    pub fn children(&self) -> (Option<Vec<u8>>, Option<Vec<u8>>) {
+    pub fn children(&self) -> (Option<Box<Hash>>, Option<Box<Hash>>) {
         match (self.left.clone(), self.right.clone()) {
             (Some(left), Some(right)) => (Some(left), Some(right)),
             _ => (None, None),
@@ -98,11 +98,15 @@ impl Hash {
     fn is_of_type_hash(&self, x: &Hash) -> bool {
         self.eq(x)
     }
+
+    pub fn hex_string(&self) -> String {
+        hex::encode(self.digest.clone())
+    }
 }
 
 impl ToString for Hash {
     fn to_string(&self) -> String {
-        format!("{:?}", self.digest.clone())
+        self.hex_string()
     }
 }
 

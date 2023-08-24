@@ -23,10 +23,10 @@ RUN export ARCH=$(uname -m | sed 's/aarch64/aarch_64/') && \
 RUN apt-get update && \
     apt-get install -y protobuf-compiler
 
-COPY ./ /root
-COPY test-files /root/share/images
-COPY program /root/program
-COPY ./machine /root/machine
+COPY offchain-rust /root
+COPY offchain-rust/test-files /root/share/images
+COPY offchain-rust/program /root/program
+COPY machine /root
 WORKDIR "/root"
 
 CMD sh -c "/usr/bin/jsonrpc-remote-cartesi-machine --server-address=127.0.0.1:50051 & sleep 2 && cargo run --release"
