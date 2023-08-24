@@ -52,26 +52,7 @@ impl EthersArena {
         }
     }
 
-    async fn deploy_contract_from_artifact<T: Tokenize>(
-        &self, 
-        artifact_path: &Path, 
-        constuctor_args: T
-    ) -> Result<EthersAddress, Box<dyn Error>> {
-        let abi = Abi::default();
-        let bytecode = Bytes::default();
-        let deployer = ContractFactory::new(abi, bytecode, self.client.clone());
-        let contract = deployer
-            .deploy(constuctor_args)?
-            .confirmations(0usize)
-            .send()
-            .await?;
-        Ok(contract.address())
-    }
-}
-
-#[async_trait]
-impl Arena for EthersArena {
-    async fn init(&mut self) -> Result<(), Box<dyn Error>> {
+    pub async fn init(&mut self) -> Result<(), Box<dyn Error>> {
         // Deploy single level factory.
         let sl_factory_artifact = Path::new(self.config.contract_artifacts.single_level_factory.as_str());
         let sl_factory_address = self.deploy_contract_from_artifact(sl_factory_artifact, ()).await?;
@@ -97,9 +78,27 @@ impl Arena for EthersArena {
         
         return Ok(());
     }
-    
-    
-    async fn create_root_tournament(&mut self, initial_hash: Hash) -> Result<Address, Box<dyn Error>> {
+
+    async fn deploy_contract_from_artifact<T: Tokenize>(
+        &self, 
+        artifact_path: &Path, 
+        constuctor_args: T
+    ) -> Result<EthersAddress, Box<dyn Error>> {
+        let abi = Abi::default();
+        let bytecode = Bytes::default();
+        let deployer = ContractFactory::new(abi, bytecode, self.client.clone());
+        let contract = deployer
+            .deploy(constuctor_args)?
+            .confirmations(0usize)
+            .send()
+            .await?;
+        Ok(contract.address())
+    }
+}
+
+#[async_trait]
+impl Arena for EthersArena {
+    async fn create_root_tournament(&self, initial_hash: Hash) -> Result<Address, Box<dyn Error>> {
         let factory = TournamentFactory::new(self.tournament_factory, self.client.clone());
         let tournament_address = factory.instantiate_top(initial_hash.into()).await?;
         Ok(tournament_address)

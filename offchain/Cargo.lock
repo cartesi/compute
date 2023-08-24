@@ -377,6 +377,7 @@ dependencies = [
  "ethers",
  "ethers-contract-abigen",
  "ethers-solc",
+ "futures",
  "hex",
  "log",
  "primitive-types",

@@ -1,13 +1,18 @@
-use std::{error::Error, fmt, hash};
+use std::{
+    error::Error,
+    fmt,
+    hash,
+};
 
 use async_trait::async_trait;
 use primitive_types::H160;
 
 #[async_trait]
 pub trait Arena : Send + Sync {
-    async fn init(&mut self) -> Result<(), Box<dyn Error>>;
-    
-    async fn create_root_tournament(&mut self, initial_hash: Hash) -> Result<Address, Box<dyn Error>>;
+    async fn create_root_tournament(
+        &self,
+        initial_hash: Hash
+    ) -> Result<Address, Box<dyn Error>>; 
 
     async fn join_tournament(
         &self,

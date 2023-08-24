@@ -6,6 +6,8 @@ use std::{
     collections::HashMap,
 };
 
+use futures::future::join_all;
+
 use thiserror::Error;
 use tonic::{Request, Response, Status};
 
@@ -47,40 +49,38 @@ struct Dispute <A: Arena, M: Machine> {
 }
 
 pub struct Engine <A: Arena, M: Machine> {
-    arena: A,
-    machine: M,
+    arena: Arc<A>,
     player_config: PlayerConfig,
     disputes: Arc<Mutex<HashMap<Address, Dispute<A, M>>>>,
 }
 
 impl<A: Arena, M: Machine> Engine<A, M> {
-    pub fn new(arena: A, machine: M, player_config: PlayerConfig) -> Self {
+    pub fn new(arena: Arc<A>, player_config: PlayerConfig) -> Self {
         Self {
             arena: arena,
-            machine: machine,
             player_config: player_config,
             disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A,M>>::new())),
         }
     }
 
     pub async fn run(&mut self) -> Result<(), Box<dyn Error>> {
-        self.arena.init().await?;
+        // TODO: spawn player execution thread
         Ok(())
     }
 
     pub async fn shutdown(&mut self) -> Result<(), Box<dyn Error>> {
+        // TODO: shutdown player execution thread
         Ok(())
     }
 
     pub async fn start_dispute(
         &mut self,
         inital_hash: Hash,
-        machine_snapshot_path: &Path,
+        machine_snapshot_path: String,
     ) -> Result<Address, Box<dyn Error>> {
-        let root_tournament = self.arena.create_root_tournament(inital_hash).await?;  
+        let root_tournament = self.arena.clone().create_root_tournament(inital_hash).await?;  
         {
-            let disputes = self.disputes.clone().lock().unwrap();
-            disputes.insert(root_tournament, Dispute {
+            let dispute = Dispute {
                 state: DisputeState {
                     initial_hash: inital_hash,
                     machine_snapshot_path: machine_snapshot_path,
@@ -88,7 +88,8 @@ impl<A: Arena, M: Machine> Engine<A, M> {
                     finished: false,
                 },
                 players: Vec::<Player::<A, M>>::new(),
-            })
+            };
+            self.disputes.clone().lock().unwrap().insert(root_tournament, dispute);
         }
 
         Ok(root_tournament)
@@ -104,7 +105,7 @@ impl<A: Arena, M: Machine> Engine<A, M> {
             disputes.remove(&root_tournament);
             Ok(dispute.state.clone())
         } else {
-            EngineError::DsiputeNotFound(root_tournament.to_string())
+            Err(EngineError::DsiputeNotFound(root_tournament.to_string()))
         }
     }
 
@@ -114,29 +115,36 @@ impl<A: Arena, M: Machine> Engine<A, M> {
     ) -> Option<DisputeState> {
         let disputes = self.disputes.clone().lock().unwrap();
         if let Some(dispute) = disputes.get(&root_tournament) {
-            Ok(dispute.state.clone())
+            Some(dispute.state.clone())
         } else {
-            EngineError::DsiputeNotFound(root_tournament.to_string())
+            None
         }
     }
 
-    pub fn create_player(
+    pub async fn create_player(
         &mut self,
         root_tournament: Address
     ) -> Result<(), Box<dyn Error>> {
-       let dispute_state = self.disupte_state(root_tournament)?;
+       let dispute_state = if let Some(dispute_state) = self.disupte_state(root_tournament) {
+            dispute_state
+       } else {
+            return Err(EngineError::DsiputeNotFound(root_tournament.to_string()))
+       };
+
        let machine = self.create_player_machine(dispute_state.machine_snapshot_path).await?;
+       
        {
-            let disputes = self.disputes.clone().lock().unwrap();
-            if disputes.contains_key(&root_tournament) {
-                EngineError::DsiputeNotFound(root_tournament.to_string())
+            let mut disputes = self.disputes.clone().lock().unwrap();
+            if let Some(dispute) = disputes.get_mut(&root_tournament) {
+                dispute.players.push(Player::new(
+                    self.arena.clone(),
+                    Arc::new(machine),
+                    root_tournament,
+                ));
+            } else {
+                return Err(EngineError::DsiputeNotFound(root_tournament.to_string()))
             }
-            disputes.insert(root_tournament, Player::new(
-                self.arena,
-                machine,
-                root_tournament,
-            ));
-       }
+        }
        
        Ok(())
     }
@@ -153,11 +161,21 @@ impl<A: Arena, M: Machine> Engine<A, M> {
     }
 
     async fn execute_players(&mut self) {
-    }   
+        let mut players = Vec::<Player<A, M>>::new();
+        {
+            let disputes = self.disputes.clone().lock().unwrap();
+            disputes.iter().for_each(|(_, dispute)| {
+                players.append(&mut dispute.players);
+            })
+        }
+
+        let player_react_results = players.iter().map(|player| player.react()).collect();
+        let player_react_results = join_all(player_react_results);
+    }
 }
 
 #[tonic::async_trait]
-impl<A: Arena, M: Machine> Compute for Engine<A, M> {    
+impl<A: Arena + 'static, M: Machine + 'static> Compute for Engine<A, M> {    
     async fn start_dispute(
         &self,
         request: Request<StartDisputeRequest>,

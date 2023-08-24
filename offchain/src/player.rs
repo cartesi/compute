@@ -1,7 +1,7 @@
 use std::{
     error::Error,
     collections::HashMap,
-    rc::Rc,
+    sync::{Arc, Mutex},
 };
 
 use::log::info;
@@ -16,8 +16,6 @@ static LOG2_STEP: [u64; 4] = [24, 14, 7, 0];
 static LOG2_UARCH_SPAN: u64 = 16;
 static UARCH_SPAN: u128 =  (1 << LOG2_UARCH_SPAN) - 1;
 static HEIGHTS: [u64; 4] = [39, 10, 7, 7];
-
-
 
 pub enum PlayerTournamentResult {
     TournamentWon,
@@ -41,29 +39,29 @@ struct PlayerMatch {
 
 // TODO: use tempaltes, not box
 pub struct Player<A: Arena, M: Machine> {
-    arena: Rc<A>,
-    machine: Rc<M>,
-    tournaments: Vec<Rc<PlayerTournament>>,
-    matches: Vec<Rc<PlayerMatch>>,
-    commitments: HashMap<Address, Rc<ComputationCommitment>>,
+    arena: Arc<A>,
+    machine: Arc<M>,
+    tournaments: Vec<Arc<PlayerTournament>>,
+    matches: Vec<Arc<PlayerMatch>>,
+    commitments: HashMap<Address, Arc<ComputationCommitment>>,
     called_win: HashMap<Address, bool>,
 }
 
 impl<A: Arena, M: Machine> Player<A, M> {
-    pub fn new(arena: Rc<A>, machine: Rc<M>, root_tournamet: Address) -> Self {
+    pub fn new(arena: Arc<A>, machine: Arc<M>, root_tournamet: Address) -> Self {
         Self {
             arena: arena,
             machine: machine,
             tournaments: vec![
-                Rc::new(PlayerTournament{
+                Arc::new(PlayerTournament{
                     address: root_tournamet,
                     level: LEVELS,
                     parent: None,
                     base_big_cycle: 0,
                 }),
             ],
-            matches: Vec::<Rc<PlayerMatch>>::new(),
-            commitments: HashMap::<Address, Rc<ComputationCommitment>>::new(),
+            matches: Vec::<Arc<PlayerMatch>>::new(),
+            commitments: HashMap::<Address, Arc<ComputationCommitment>>::new(),
             called_win: HashMap::<Address, bool>::new(),
         }
     }
@@ -75,7 +73,7 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn react_tournament(
         &mut self,
-        tournament: Rc<PlayerTournament>,
+        tournament: Arc<PlayerTournament>,
     ) -> Result<Option<PlayerTournamentResult>, Box<dyn Error>> {
         let commitment = if let Some(commitment) = self.commitments.get(&tournament.address) {
             commitment.clone()
@@ -86,7 +84,7 @@ impl<A: Arena, M: Machine> Player<A, M> {
                 false, 
                 false,
             ).await?;
-            self.commitments.insert(tournament.address, Rc::new(commitment));
+            self.commitments.insert(tournament.address, Arc::new(commitment));
             self.commitments.get(&tournament.address).unwrap().clone()
         };
 
@@ -134,8 +132,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
     async fn latest_match(
         &mut self,
         tournament: Address,
-        commitment: Rc<ComputationCommitment>,
-    ) -> Result<Option<Rc<PlayerMatch>>, Box<dyn Error>> {
+        commitment: Arc<ComputationCommitment>,
+    ) -> Result<Option<Arc<PlayerMatch>>, Box<dyn Error>> {
         let matches = self.arena.created_matches(tournament, commitment.root_hash).await?;
         let last_match = if let Some(last_match) = matches.last() {
             last_match
@@ -157,7 +155,7 @@ impl<A: Arena, M: Machine> Player<A, M> {
         let step = 1 << LOG2_STEP[tournament.level as usize];
         let leaf_cycle = base + (step * match_state.running_leaf_position);
         let base_big_cycle = leaf_cycle >> LOG2_UARCH_SPAN;
-        let player_match = Rc::new(PlayerMatch {
+        let player_match = Arc::new(PlayerMatch {
             state: match_state,
             event: *last_match,
             tournament: tournament.address,
@@ -171,8 +169,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn join_tournament_if_needed(
         &mut self,
-        tournament: Rc<PlayerTournament>,
-        commitment: Rc<ComputationCommitment>,
+        tournament: Arc<PlayerTournament>,
+        commitment: Arc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
         let (clock, _) = self.arena.commitment(
             tournament.address,
@@ -201,8 +199,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn react_match(
         &mut self,
-        player_match: Rc<PlayerMatch>,
-        commitment: Rc<ComputationCommitment>,
+        player_match: Arc<PlayerMatch>,
+        commitment: Arc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
         if player_match.state.current_height == 0 {
             self.react_sealed_match(player_match, commitment).await
@@ -215,8 +213,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn react_sealed_match(
         &mut self,
-        player_match: Rc<PlayerMatch>,
-        commitment: Rc<ComputationCommitment>,
+        player_match: Arc<PlayerMatch>,
+        commitment: Arc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
         if player_match.state.level == 1 {
             let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
@@ -255,8 +253,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn react_unsealed_match(
         &mut self,
-        player_match: Rc<PlayerMatch>,
-        commitment: Rc<ComputationCommitment>,
+        player_match: Arc<PlayerMatch>,
+        commitment: Arc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {        
         let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
             children
@@ -297,8 +295,8 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn react_running_match(
         &mut self,
-        player_match: Rc<PlayerMatch>,
-        commitment: Rc<ComputationCommitment>,
+        player_match: Arc<PlayerMatch>,
+        commitment: Arc<ComputationCommitment>,
     ) -> Result<(), Box<dyn Error>> {
         let (left_child, right_child) = if let Some(children) = commitment.chidlren(commitment.root_hash) {
             children
@@ -332,14 +330,14 @@ impl<A: Arena, M: Machine> Player<A, M> {
 
     async fn new_tournament(
         &mut self,
-        player_match: Rc<PlayerMatch>,
+        player_match: Arc<PlayerMatch>,
     ) -> Result<(), Box<dyn Error>> {
         let address = self.arena.created_tournament(
             player_match.tournament,
             player_match.event.id,
         ).await?.unwrap().new_tournament_address;
 
-        let tournament = Rc::new(PlayerTournament {
+        let tournament = Arc::new(PlayerTournament {
             address: address,
             level: player_match.state.level - 1,
             parent: Some(player_match.tournament),

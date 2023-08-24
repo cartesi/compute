@@ -8,7 +8,7 @@ use crate::{
 };
 
 #[async_trait]
-pub trait Machine {
+pub trait Machine : Send + Sync {
     async fn build_commitment(
         &self,
         log2_step: u64,
