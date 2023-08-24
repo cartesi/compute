@@ -87,16 +87,18 @@ impl MerkleBuilder {
             self.leafs.push(Leaf {
                 hash,
                 accumulated_count,
+                log2size: None
             });
         } else {
             self.leafs.push(Leaf {
                 hash,
                 accumulated_count: rep,
+                log2size: None
             });
         }
     }
 
-    pub fn build(&self) -> MerkleTree {
+    pub fn build(&self, implicit_hash: Option<Hash>) -> MerkleTree {
         let last = self.leafs.last().expect("no leafs in merkle builder");
         let count = last.accumulated_count as u64;
         let mut log2size = 64;
@@ -109,13 +111,14 @@ impl MerkleBuilder {
             log2size,
             0,
         );
-        MerkleTree::new(self.leafs.clone(), root_hash, log2size)
+        MerkleTree::new(self.leafs.clone(), root_hash, log2size, implicit_hash)
     }
 }
 #[derive(Clone, Debug)]
 pub struct Leaf {
     pub hash: Hash,
     accumulated_count: u64,
+    pub log2size: Option<u32>
 }
 
 fn merkle(leafs: &Slice, log2size: u32, stride: u64) -> Hash {
