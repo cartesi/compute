@@ -5,8 +5,8 @@ use sha3::{Digest, Keccak256};
 #[derive(Eq, Hash, PartialEq, Clone, Debug, Default)]
 pub struct Hash {
     pub digest:Vec<u8>,
-    left: Option<Box<Hash>>,
-    right: Option<Box<Hash>>,
+    left: Option<Vec<u8>>,
+    right: Option<Vec<u8>>,
 }
 
 static INTERNALIZED_HASHES: OnceCell<HashMap<Vec<u8>, Hash>> = OnceCell::new();
@@ -55,12 +55,12 @@ impl Hash {
         keccak.update(&other_hash.digest);
         let digest = keccak.finalize();
         let mut ret = Hash::from_digest(digest.to_vec());
-        ret.left = Some(Box::new(self.clone()));
-        ret.right = Some(Box::new(other_hash.clone()));
+        ret.left = Some(self.digest.clone());
+        ret.right = Some(other_hash.digest.clone());
         ret
     }
 
-    pub fn children(&self) -> (Option<Box<Hash>>, Option<Box<Hash>>) {
+    pub fn children(&self) -> (Option<Vec<u8>>, Option<Vec<u8>>) {
         match (self.left.clone(), self.right.clone()) {
             (Some(left), Some(right)) => (Some(left), Some(right)),
             _ => (None, None),
@@ -111,7 +111,7 @@ impl ToString for Hash {
 }
 
 fn zero_bytes32() -> Vec<u8> {
-    hex::decode("0x0000000000000000000000000000000000000000000000000000000000000000".to_string()).unwrap()
+    hex::decode("0000000000000000000000000000000000000000000000000000000000000000".to_string()).unwrap()
 }
 
 pub fn zero_hash() -> Hash {

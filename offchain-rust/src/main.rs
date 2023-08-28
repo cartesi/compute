@@ -1,6 +1,7 @@
 use std::process::Command;
 
 use machine::{FatMachineClient};
+use cryptography::hash::Hash;
 #[tokio::main]
 async fn main() {
     println!("Hello, world!");
@@ -60,6 +61,6 @@ pub async fn commitment_execution() {
     let path = "simple-program";
     let url = "http://127.0.0.1:50051";
     let machine = FatMachineClient::new(url, path).await;
-    let tree = machine.build_commitment(0, 0, 64).await;
+    let tree = machine.build_commitment(0, 17, 46).await;
     println!("{:?}  {:?}", hex::encode(tree.0.digest), hex::encode(tree.1.root_hash.digest));
 }

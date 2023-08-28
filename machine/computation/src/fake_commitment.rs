@@ -7,11 +7,11 @@ struct CommitmentBuilder {
 }
 
 impl CommitmentBuilder {
-    fn new(&self, initial_hash: Hash, second_state: Option<Hash>) -> CommitmentBuilder {
+    pub fn new(initial_hash: Hash, second_state: Option<Hash>) -> CommitmentBuilder {
         CommitmentBuilder { initial_hash, second_state }
     }
 
-    fn build(&self, level: usize) -> MerkleTree {
+    pub fn build(&self, level: usize) -> MerkleTree {
         let mut builder = MerkleBuilder::new();
         if constants::LOG2STEP[constants::LEVELS - level + 1] == 0 && self.second_state.is_some() {
         builder.add(self.second_state.clone().unwrap(), None);
