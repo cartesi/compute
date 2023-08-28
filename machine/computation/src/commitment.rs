@@ -148,18 +148,20 @@ impl FatMachineClient {
 
 struct CommitmentBuilder {
     machine_path: String,
-    commitments: HashMap<usize, HashMap<usize, Hash>>,
+    url: String,
+    pub commitments: HashMap<usize, HashMap<usize, Hash>>,
 }
 
 impl CommitmentBuilder {
-    fn new(machine_path: String) -> Self {
+    pub fn new(url: String, machine_path: String) -> Self {
         CommitmentBuilder {
             machine_path,
+            url,
             commitments: HashMap::new(),
         }
     }
 
-    async fn build(&mut self, base_cycle: u64, level: usize) -> Hash {
+    pub async fn build(&mut self, base_cycle: u64, level: usize) -> Hash {
         assert!(level <= constants::LEVELS);
         if !self.commitments.contains_key(&level) {
             self.commitments.insert(level, HashMap::new());
@@ -170,15 +172,12 @@ impl CommitmentBuilder {
         let l = (constants::LEVELS - level + 1) as usize;
         let log2_stride = constants::LOG2STEP[l];
         let log2_stride_count = constants::HEIGHTS[l];
-        let path = "simple-program";
-        let url = "http://127.0.0.1:50051";
-        let machine = FatMachineClient::new(url, path).await;
+        let machine = FatMachineClient::new(&self.url, &self.machine_path).await;
         let (_, commitment) = machine.build_commitment(base_cycle, log2_stride, log2_stride_count).await;
         self.commitments
             .entry(level)
             .or_insert_with(HashMap::new)
             .insert(base_cycle as usize, commitment.root_hash.clone());
-
         commitment.root_hash
     }
 }

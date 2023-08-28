@@ -32,6 +32,7 @@ impl Machine {
             .get_csr_address("mcycle".to_string())
             .await
             .unwrap();
+
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
         assert_eq!(
@@ -66,11 +67,11 @@ impl Machine {
 
     async fn get_logs(url: &str, path: &str, cycle: u64, ucycle: u64) -> String {
         let mut machine = Machine::new_from_path(path, url).await;
-        machine.run(cycle);
-        machine.run_uarch(ucycle);
+        machine.run(cycle).await;
+        machine.run_uarch(ucycle).await;
 
         if ucycle as i64 == constants::UARCH_SPAN {
-            machine.run_uarch(constants::UARCH_SPAN as u64);
+            machine.run_uarch(constants::UARCH_SPAN as u64).await;
             eprintln!("ureset, not implemented");
         }
 
@@ -96,17 +97,23 @@ impl Machine {
 
             encoded.push(hex::decode(a.proof.target_hash.clone()).unwrap());
 
-            let decoded_sibling_hashes: Result<Vec<Vec<u8>>, hex::FromHexError> = a.proof.sibling_hashes
-            .iter()
-            .map(|hex_string| hex::decode(hex_string))
-            .collect();
+            let decoded_sibling_hashes: Result<Vec<Vec<u8>>, hex::FromHexError> = a
+                .proof
+                .sibling_hashes
+                .iter()
+                .map(|hex_string| hex::decode(hex_string))
+                .collect();
 
             let mut decoded = decoded_sibling_hashes.unwrap();
             decoded.reverse();
             encoded.extend_from_slice(&decoded.clone());
 
             assert_eq!(
-                ver(hex::decode(a.proof.target_hash.clone()).unwrap(), a.address, decoded.clone()),
+                ver(
+                    hex::decode(a.proof.target_hash.clone()).unwrap(),
+                    a.address,
+                    decoded.clone()
+                ),
                 hex::decode(a.proof.root_hash.clone()).unwrap()
             );
         }
