@@ -1,7 +1,7 @@
 use std::{
     error::Error,
     collections::HashMap,
-    sync::{Arc, Mutex},
+    sync::Arc,
 };
 
 use::log::info;

@@ -1,4 +1,7 @@
-use std::time::Duration;
+use std::{
+    time::Duration,
+    sync::Arc,
+};
 
 use tonic::transport::Server;
 
@@ -26,7 +29,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             tournament_factory: String::new(),
         },
     };
-    let arena = Box::new(EthersArena::new(arena_config));
+    let arena = Arc::new(EthersArena::new(arena_config));
 
     let player_config = PlayerConfig{
         react_period: Duration::from_secs(5),
