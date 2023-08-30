@@ -17,6 +17,11 @@ pub struct ContractArtifactsConfig {
 }
 
 #[derive(Debug, Clone)]
-pub struct PlayerConfig {
-    pub react_period: Duration, 
+pub struct EngineConfig {
+    pub player_react_period: Duration, 
+}
+
+#[derive(Debug, Clone)]
+pub struct APIServerConfig {
+    pub address: String,
 }

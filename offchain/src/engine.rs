@@ -1,32 +1,21 @@
 use std::{
     error::Error,
     path::Path,
-    sync::{Arc, mpsc},
-    thread,
+    sync::Arc,
     collections::HashMap,
-    time::Duration,
 };
 
 use thiserror::Error;
 use tokio::{
     sync::Mutex,
-    task::JoinSet,
+    task,
+    time,
+    select,
 };
-use tonic::{Request, Response, Status};
+use tokio_util::sync::CancellationToken;
 
 use crate::{
-    grpc:: {
-        StartDisputeRequest,
-        StartDisputeResponse,
-        FinishDisputeRequest,
-        FinishDisputeResponse,
-        GetDisputeInfoRequest,
-        GetDisputeInfoResponse,
-        JoinDisputeRequest,
-        DisputeInfo,
-        Compute, JoinDisputeResponse
-    },
-    config::PlayerConfig,
+    config::EngineConfig,
     arena::{Arena, Hash, Address},
     machine::Machine,
     player::{Player, PlayerTournamentResult},
@@ -53,44 +42,66 @@ struct Dispute <A: Arena, M: Machine> {
 
 pub struct Engine <A: Arena, M: Machine> {
     arena: Arc<A>,
+    config: EngineConfig,
     disputes: Arc<Mutex<HashMap<Address, Dispute<A, M>>>>,
-    player_config: PlayerConfig,
+    shutdown_token: CancellationToken,
 }
 
 impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
-    pub fn new(arena: Arc<A>, player_config: PlayerConfig) -> Self {
-        let (player_exec_tx, player_exec_rx) = mpsc::sync_channel::<()>(1);
+    pub fn new(arena: Arc<A>, player_config: EngineConfig) -> Self {
         Self {
             arena: arena,
+            config: player_config,
             disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A,M>>::new())),
-            player_config: player_config,
+            shutdown_token: CancellationToken::new(),
         }
     }
 
     pub async fn run(self: Arc<Self>) -> Result<(), Box<dyn Error>> {
-        // TODO: spawn as background periodic task with channel for termination.
+        let palyer_executor = task::spawn_local(async move{
+            let shutdown = self.shutdown_token.clone();
+            let mut exec_timer = time::interval(self.config.player_react_period);
+            loop {
+                select! {
+                    _ = shutdown.cancelled() => return Ok(()),
+                    _ = exec_timer.tick() => self.clone().execute_players().await,
+                }
+            }
+        });
+        palyer_executor.await?
+    }
+
+    async fn execute_players(self: Arc<Self>) {
+        let mut player_tasks = task::JoinSet::new();
         
-        let mut player_tasks = JoinSet::new();
-        let disputes = self.disputes.clone();
-        let disputes = disputes.lock().await;
-        for (address, dispute) in disputes.iter().filter(|d| !d.1.state.finished) {
-            for (player_idx, _) in dispute.players.iter().enumerate() {
-                let address = *address;
-                player_tasks.spawn_local({
-                    let me = self.clone();
-                    me.execute_player(address, player_idx)
-                });
+        {
+            let disputes = self.disputes.clone();
+            let disputes = disputes.lock().await;
+            for (address, dispute) in disputes.iter().filter(|d| !d.1.state.finished) {
+                for (player_idx, _) in dispute.players.iter().enumerate() {
+                    let address = *address;
+                    player_tasks.spawn_local({
+                        self.clone().execute_player(address, player_idx)
+                    });
+                }
             }
         }
-
-        Ok(())
+        
+        while let Some(_) = player_tasks.join_next().await {}
     }
 
     async fn execute_player(self: Arc<Self>, dispute_tournament: Address, player_idx: usize) {
-        let player = self.player(dispute_tournament, player_idx).await;
-        match player.clone().lock().await.react().await {
+        let result: Result<(Option<PlayerTournamentResult>), Box<dyn std::error::Error>>;
+        {
+            let player = self.clone().player(dispute_tournament, player_idx).await;
+            result = player.clone().lock().await.react().await; 
+        };
+        
+        match  result {
             Ok(result) => {
-                // TODO: mark dispute as finished
+                if let Err(err) = self.clone().finish_dispute(dispute_tournament).await {
+                    // TODO log error
+                }
             }
             Err(err) => {
                 // TODO: log error
@@ -104,18 +115,22 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
         disputes.get(&dispute_tournament).unwrap().players.get(player_idx).unwrap().clone()
     }
 
-    pub async fn shutdown(&mut self) -> Result<(), Box<dyn Error>> {
+    pub async fn shutdown(self: Arc<Self>) -> Result<(), Box<dyn Error>> {
+        self.shutdown_token.cancel();
         // TODO: terminate all cartesi vm processes
-        todo!()
+        Ok(())
     }
 
     pub async fn start_dispute(
-        &mut self,
+        self: Arc<Self>,
         inital_hash: Hash,
         machine_snapshot_path: String,
     ) -> Result<Address, Box<dyn Error>> {
         let root_tournament = self.arena.clone().create_root_tournament(inital_hash).await?;  
-        let dispute = Dispute {
+        
+        let disputes = self.disputes.clone();
+        let mut disputes = disputes.lock().await;
+        disputes.insert(root_tournament, Dispute {
             state: DisputeState {
                 initial_hash: inital_hash,
                 machine_snapshot_path: machine_snapshot_path,
@@ -123,20 +138,19 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
                 finished: false,
             },
             players: Vec::<Arc<Mutex<Player::<A, M>>>>::new(),
-        };
-        self.disputes.clone().lock().await.insert(root_tournament, dispute);
+        });
 
         Ok(root_tournament)
     }
 
     pub async fn finish_dispute(
-        &mut self,
+        self: Arc<Self>,
         root_tournament: Address,
     ) -> Result<DisputeState, Box<dyn Error>> {
-        if let Some(dispute_state) = self.disupte_state(root_tournament).await {
+        if let Some(dispute_state) = self.clone().disupte_state(root_tournament).await {
             // TODO: terminate all involved cartesi vm processes            
-            let disputes = self.disputes.clone();
-            disputes.lock().await.remove(&root_tournament);
+            let disputes = self.clone().disputes.clone();
+            disputes.lock().await.get_mut(&root_tournament).unwrap().state.finished = true;
             Ok(dispute_state.clone())
         } else {
             Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
@@ -144,7 +158,7 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
     }
 
     pub async fn disupte_state(
-        &self,
+        self: Arc<Self>,
         root_tournament: Address,
     ) -> Option<DisputeState> {
         let disputes = self.disputes.clone();
@@ -157,16 +171,14 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
     }
 
     pub async fn create_player(
-        &mut self,
+        self: Arc<Self>,
         root_tournament: Address
     ) -> Result<(), Box<dyn Error>> {
-       let dispute_state = if let Some(dispute_state) = self.disupte_state(root_tournament).await {
-            dispute_state
-       } else {
+       if let None = self.clone().disupte_state(root_tournament).await {
             return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
        };
 
-       let machine = self.create_player_machine(dispute_state.machine_snapshot_path).await?;
+       let machine = self.clone().create_player_machine(root_tournament).await?;
        
        {
             let disputes = self.disputes.clone();
@@ -187,57 +199,13 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
     }
 
     async fn create_player_machine(
-        &self,
-        machine_snapshot_path: String,
+        self: Arc<Self>,
+        dispute_tournament: Address,
     ) -> Result<M, Box<dyn Error>> {
         // TODO:
         // 1. Spawn cartesi vm process.
         // 2. Setup JSON RPC client vm client.
         // 3. Restore vm from snapshot
         todo!()
-    }
-}
-
-#[tonic::async_trait]
-impl<A: Arena + 'static, M: Machine + 'static> Compute for Engine<A, M> {    
-    async fn start_dispute(
-        &self,
-        request: Request<StartDisputeRequest>,
-    ) -> Result<Response<StartDisputeResponse>, Status> {
-        
-        Ok(Response::new(StartDisputeResponse{ dispute_id: String::default() }))
-    }
-
-    async fn finish_dispute(
-        &self,
-        request: Request<FinishDisputeRequest>,
-    ) -> Result<Response<FinishDisputeResponse>, Status> {
-        Ok(Response::new(FinishDisputeResponse{ 
-            dispute_info: Some(DisputeInfo {
-                closed: false,
-            }),
-        }))
-    }
-
-    async fn get_dispute_info(
-        &self,
-        request: Request<GetDisputeInfoRequest>,
-    ) -> Result<Response<GetDisputeInfoResponse>, Status> {
-        Ok(Response::new(GetDisputeInfoResponse{
-            dispute_info: Some(DisputeInfo {
-                closed: false,
-            }),
-        }))
-    }
-
-    async fn join_dispute(
-        &self,
-        request: Request<JoinDisputeRequest>,
-    ) -> Result<Response<JoinDisputeResponse>, Status> {
-        Ok(Response::new(JoinDisputeResponse {
-            dispute_info: Some(DisputeInfo {
-                closed: false,
-            }),
-        }))
     }
 }

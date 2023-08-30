@@ -1,48 +1,100 @@
-use std::{
-    time::Duration,
-    sync::Arc,
+use std::sync::Arc;
+
+use tonic::{
+    transport::Server,
+    Request,
+    Response,
+    Status
 };
 
-use tonic::transport::Server;
-
-use cartesi_compute::{
-    config::{
-        ArenaConfig,
-        ContractArtifactsConfig,
-        PlayerConfig,
-    },
-    arena::EthersArena,
+use crate::{
+    arena::Arena,
+    machine::Machine,
     engine::Engine,
-    grpc::ComputeServer,
-}; 
+    config::APIServerConfig,
+    grpc:: {
+        StartDisputeRequest,
+        StartDisputeResponse,
+        FinishDisputeRequest,
+        FinishDisputeResponse,
+        GetDisputeInfoRequest,
+        GetDisputeInfoResponse,
+        JoinDisputeRequest,
+        JoinDisputeResponse,
+        DisputeInfo,
+        Compute, 
+        ComputeServer,
+    },
+};
 
-#[tokio::main]
-pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let arena_config = ArenaConfig{
-        web3_http_url: String::from("http://localhost:8545"),
-        private_key: String::from("dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7"),
-        contract_artifacts: ContractArtifactsConfig { 
-            single_level_factory: String::new(), 
-            top_factory: String::new(), 
-            middle_factory: String::new(), 
-            bottom_factory: String::new(), 
-            tournament_factory: String::new(),
-        },
-    };
-    let arena = Arc::new(EthersArena::new(arena_config));
+pub struct APIServer<A: Arena, M: Machine> {
+    engine: Arc<Engine<A, M>>,
+    config: APIServerConfig,
+}
 
-    let player_config = PlayerConfig{
-        react_period: Duration::from_secs(5),
-    };
-    let compute = Engine::new(arena, player_config);
+impl<A: Arena + 'static, M: Machine + 'static> APIServer<A, M> {
+    pub fn new(engine: Arc<Engine<A, M>>, config: APIServerConfig) -> Self {
+        Self {
+            engine: engine,
+            config: config,
+        }
+    }
 
-    println!("Starting gRPC Server...");
+    pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
+        // TODO: start engine and server in concurrent tasks and wait for them
+        let server_addr = self.config.address.parse()?;
+        Server::builder()
+            .add_service(ComputeServer::new(self))
+            .serve(server_addr)
+            .await?;
+        Ok(())
+    }
 
-    let server_addr = "[::1]:50051".parse()?;
-    Server::builder()
-        .add_service(ComputeServer::new(compute))
-        .serve(server_addr)
-        .await?;
+    async fn shutdown() -> Result<(), Box<dyn std::error::Error>> {
+        // TODO: stop engine and server
+        Ok(())
+    }
+}
 
-    Ok(())
+#[tonic::async_trait]
+impl<A: Arena + 'static, M: Machine + 'static> Compute for APIServer<A, M> {    
+    async fn start_dispute(
+        &self,
+        request: Request<StartDisputeRequest>,
+    ) -> Result<Response<StartDisputeResponse>, Status> {
+        Ok(Response::new(StartDisputeResponse{ dispute_id: String::default() }))
+    }
+
+    async fn finish_dispute(
+        &self,
+        request: Request<FinishDisputeRequest>,
+    ) -> Result<Response<FinishDisputeResponse>, Status> {
+        Ok(Response::new(FinishDisputeResponse{ 
+            dispute_info: Some(DisputeInfo {
+                closed: false,
+            }),
+        }))
+    }
+
+    async fn get_dispute_info(
+        &self,
+        request: Request<GetDisputeInfoRequest>,
+    ) -> Result<Response<GetDisputeInfoResponse>, Status> {
+        Ok(Response::new(GetDisputeInfoResponse{
+            dispute_info: Some(DisputeInfo {
+                closed: false,
+            }),
+        }))
+    }
+
+    async fn join_dispute(
+        &self,
+        request: Request<JoinDisputeRequest>,
+    ) -> Result<Response<JoinDisputeResponse>, Status> {
+        Ok(Response::new(JoinDisputeResponse {
+            dispute_info: Some(DisputeInfo {
+                closed: false,
+            }),
+        }))
+    }
 }

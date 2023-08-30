@@ -5,3 +5,4 @@ pub mod engine;
 pub mod arena;
 pub mod machine;
 pub mod player;
+pub mod server;
