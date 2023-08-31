@@ -61,6 +61,18 @@ pub async fn commitment_execution() {
     let path = "simple-program";
     let url = "http://127.0.0.1:50051";
     let machine = FatMachineClient::new(url, path).await;
-    let tree = machine.build_commitment(0, 17, 46).await;
-    println!("{:?}  {:?}", hex::encode(tree.0.digest), hex::encode(tree.1.root_hash.digest));
+    let tree = machine.build_commitment(0, 18, 45).await;
+    println!("{:?}  {:?}", hex::encode(tree.0.digest), hex::encode(tree.1.root_hash.digest.clone()));
+    let last = tree.1.last();
+    println!("last {:?}", hex::encode(last.0.digest));
+    let pf = tree.1.prove_leaf(7);
+    match pf.0 {
+        Some(proof) => {
+            println!("proof leaf {:?}", hex::encode(proof.digest));
+        },
+        None => {
+            println!("proof leaf = None");
+
+        }
+    }
 }

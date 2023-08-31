@@ -1,10 +1,10 @@
 use super::machine::Machine;
 use crate::constants;
+use cryptography::hash::Hash;
 use cryptography::merkle_builder::MerkleBuilder;
 use cryptography::merkle_tree::MerkleTree;
-use utils::arithmetic;
-use cryptography::hash::Hash;
 use std::collections::HashMap;
+use utils::arithmetic;
 async fn run_uarch_span(machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> MerkleTree {
     assert!(machine.lock().unwrap().ucycle == 0);
     machine.lock().unwrap().increment_uarch().await;
@@ -26,7 +26,7 @@ async fn run_uarch_span(machine: std::sync::Arc<std::sync::Mutex<Machine>>) -> M
 
     machine.lock().unwrap().ureset().await;
     builder.add(machine.lock().unwrap().state().await.root_hash, None);
-    return builder.build(None); 
+    return builder.build(None);
 }
 
 async fn build_small_machine_commitment(
@@ -87,11 +87,9 @@ async fn build_big_machine_commitment(
         .await;
     let initial_state = machine.lock().unwrap().state().await.root_hash;
     let mut builder = MerkleBuilder::new();
-    let instruction_count =
-        arithmetic::max_uint(log2_stride_count as u32);
+    let instruction_count = arithmetic::max_uint(log2_stride_count as u32);
     let mut instruction = 0;
-
-   while arithmetic::ulte(instruction as u64, instruction_count as u64) {
+    while arithmetic::ulte(instruction as u64, instruction_count as u64) {
         let cycle = (instruction + 1) << (log2_stride - constants::LOG2_UARCH_SPAN);
         std::sync::Arc::clone(&machine)
             .lock()
@@ -119,7 +117,9 @@ pub struct FatMachineClient {
 impl FatMachineClient {
     pub async fn new(url: &str, machine_path: &str) -> Self {
         FatMachineClient {
-            machine: std::sync::Arc::new(std::sync::Mutex::new(Machine::new_from_path(url, machine_path).await)),
+            machine: std::sync::Arc::new(std::sync::Mutex::new(
+                Machine::new_from_path(url, machine_path).await,
+            )),
         }
     }
 
@@ -129,21 +129,31 @@ impl FatMachineClient {
         log2_stride: u32,
         log2_stride_count: u8,
     ) -> (cryptography::hash::Hash, MerkleTree) {
-        if log2_stride >= constants::LOG2_UARCH_SPAN{
+        if log2_stride >= constants::LOG2_UARCH_SPAN {
             assert!(
-                log2_stride + log2_stride_count as u32 <=
-                constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
-            );  
-            build_big_machine_commitment(base_cycle, log2_stride, log2_stride_count, std::sync::Arc::clone(&self.machine)).await
+                log2_stride + log2_stride_count as u32
+                    <= constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
+            );
+            build_big_machine_commitment(
+                base_cycle,
+                log2_stride,
+                log2_stride_count,
+                std::sync::Arc::clone(&self.machine),
+            )
+            .await
         } else {
-            build_small_machine_commitment(base_cycle, log2_stride_count, std::sync::Arc::clone(&self.machine)).await
+            build_small_machine_commitment(
+                base_cycle,
+                log2_stride_count,
+                std::sync::Arc::clone(&self.machine),
+            )
+            .await
         }
     }
 
     pub async fn initial_hash(&self) -> Hash {
         self.machine.lock().unwrap().initial_hash.clone()
     }
-
 }
 
 struct CommitmentBuilder {
@@ -173,7 +183,9 @@ impl CommitmentBuilder {
         let log2_stride = constants::LOG2STEP[l];
         let log2_stride_count = constants::HEIGHTS[l];
         let machine = FatMachineClient::new(&self.url, &self.machine_path).await;
-        let (_, commitment) = machine.build_commitment(base_cycle, log2_stride, log2_stride_count).await;
+        let (_, commitment) = machine
+            .build_commitment(base_cycle, log2_stride, log2_stride_count)
+            .await;
         self.commitments
             .entry(level)
             .or_insert_with(HashMap::new)
