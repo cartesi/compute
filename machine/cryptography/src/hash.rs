@@ -1,38 +1,41 @@
-use std::collections::HashMap;
-use once_cell::sync::OnceCell;
+use lazy_static::lazy_static;
 use sha3::{Digest, Keccak256};
-
+use std::collections::HashMap;
+use std::sync::Arc;
+use std::sync::Mutex;
 #[derive(Eq, Hash, PartialEq, Clone, Debug, Default)]
 pub struct Hash {
-    pub digest:Vec<u8>,
-    left: Option<Vec<u8>>,
-    right: Option<Vec<u8>>,
+    pub digest: Vec<u8>,
+    left: Option<Arc<Hash>>,
+    right: Option<Arc<Hash>>,
 }
 
-static INTERNALIZED_HASHES: OnceCell<HashMap<Vec<u8>, Hash>> = OnceCell::new();
-static ITHERADETS: OnceCell<HashMap<Hash, Vec<Hash>>> = OnceCell::new();
+lazy_static! {
+    static ref ITHERADETS: Mutex<HashMap<Hash, Vec<Hash>>> = Mutex::new(HashMap::new());
+    static ref INTERNALIZED_HASHES: Mutex<HashMap<Vec<u8>, Hash>> = Mutex::new(HashMap::new());
+}
 
 impl Hash {
     pub fn from_digest(digest: Vec<u8>) -> Hash {
-        let mut extended_itheradets = ITHERADETS.get_or_init(|| HashMap::new()).clone();
-
-        let mut extended_internalized_hashes =
-        INTERNALIZED_HASHES.get_or_init(|| HashMap::new()).clone();
-
-        if let Some(x) = extended_internalized_hashes.get(&digest) {
-            return x.clone();
+        match INTERNALIZED_HASHES.lock().unwrap().get(&digest) {
+            Some(hash) => {
+                return hash.clone();
+            }
+            None => {}
         }
-
         let h = Hash {
             digest: digest.clone(),
             left: None,
             right: None,
         };
-        extended_itheradets.insert(h.clone(), vec![h.clone()]);
-        extended_internalized_hashes.insert(digest, h.clone());
-
-        ITHERADETS.set(extended_itheradets);
-        INTERNALIZED_HASHES.set(extended_internalized_hashes);
+        ITHERADETS
+            .lock()
+            .unwrap()
+            .insert(h.clone(), vec![h.clone()]);
+        INTERNALIZED_HASHES
+            .lock()
+            .unwrap()
+            .insert(digest, h.clone());
         h
     }
 
@@ -55,12 +58,12 @@ impl Hash {
         keccak.update(&other_hash.digest);
         let digest = keccak.finalize();
         let mut ret = Hash::from_digest(digest.to_vec());
-        ret.left = Some(self.digest.clone());
-        ret.right = Some(other_hash.digest.clone());
+        ret.left = Some(Arc::new(self.clone()));
+        ret.right = Some(Arc::new(other_hash.clone()));
         ret
     }
 
-    pub fn children(&self) -> (Option<Vec<u8>>, Option<Vec<u8>>) {
+    pub fn children(&self) -> (Option<Arc<Hash>>, Option<Arc<Hash>>) {
         match (self.left.clone(), self.right.clone()) {
             (Some(left), Some(right)) => (Some(left), Some(right)),
             _ => (None, None),
@@ -68,26 +71,22 @@ impl Hash {
     }
 
     pub fn iterated_merkle(&self, level: u32) -> Hash {
-        let mut iterated_hashes = ITHERADETS.get().unwrap().clone();
-        if let Some(iterated) = iterated_hashes.get(self) {
-            if let Some(hash) = iterated.get(level as usize) {
-                return hash.clone();
-            }
-        } else {
-            iterated_hashes.insert(self.clone(), Vec::new());
+        let iterated = ITHERADETS.lock().unwrap().get(self).unwrap().clone();
+        if let Some(hash) = iterated.get(level as usize).clone() {
+            return hash.clone();
         }
-
-        let mut highest_level = self.clone();
-        let mut i = iterated_hashes[&highest_level].len();
+        let mut i = iterated.len() - 1;
+        let mut highest_level = iterated.last().unwrap().clone();
         while i < level as usize {
-            highest_level = highest_level.join(&highest_level);
+            highest_level = highest_level.clone().join(&highest_level.clone());
             i += 1;
-            iterated_hashes
-                .get_mut(&self)
+            ITHERADETS
+                .lock()
+                .unwrap()
+                .get_mut(self)
                 .unwrap()
                 .push(highest_level.clone());
         }
-        ITHERADETS.set(iterated_hashes);
         highest_level
     }
 
@@ -111,7 +110,8 @@ impl ToString for Hash {
 }
 
 fn zero_bytes32() -> Vec<u8> {
-    hex::decode("0000000000000000000000000000000000000000000000000000000000000000".to_string()).unwrap()
+    hex::decode("0000000000000000000000000000000000000000000000000000000000000000".to_string())
+        .unwrap()
 }
 
 pub fn zero_hash() -> Hash {

@@ -32,7 +32,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let x_addr = jsonrpc_machine.get_x_address(3).await?;
     println!("I got x address of register 3: {}", x_addr);
 
-    let csr_addr = jsonrpc_machine.get_csr_address("mcycle".to_string()).await?;
+    let csr_addr = jsonrpc_machine.read_csr("mcycle".to_string()).await?;
     println!("I got csr address of mcycle reg: {}", csr_addr);
 
     let semantic_version = jsonrpc_machine.get_version().await?;

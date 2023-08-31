@@ -29,20 +29,19 @@ impl Machine {
         let start_cycle = machine
             .lock()
             .unwrap()
-            .get_csr_address("mcycle".to_string())
+            .read_csr("mcycle".to_string())
             .await
             .unwrap();
-
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
         assert_eq!(
             machine
                 .lock()
                 .unwrap()
-                .get_csr_address("uarch_cycle".to_string())
+                .read_csr("uarch_cycle".to_string())
                 .await
                 .unwrap(),
-            800
+            0
         );
         Machine {
             path: path.to_string(),
@@ -139,7 +138,7 @@ impl Machine {
             || machine
                 .lock()
                 .unwrap()
-                .get_csr_address("mcycle".to_string())
+                .read_csr("mcycle".to_string())
                 .await
                 .unwrap()
                 == physical_cycle)
