@@ -4,11 +4,14 @@ use tonic::{
     transport::Server,
     Request,
     Response,
-    Status
+    Status,
 };
 
 use crate::{
-    arena::Arena,
+    arena::{
+        Arena,
+        Hash,
+    },
     machine::Machine,
     engine::Engine,
     config::APIServerConfig,
@@ -62,7 +65,13 @@ impl<A: Arena + 'static, M: Machine + 'static> Compute for APIServer<A, M> {
         &self,
         request: Request<StartDisputeRequest>,
     ) -> Result<Response<StartDisputeResponse>, Status> {
-        Ok(Response::new(StartDisputeResponse{ dispute_id: String::default() }))
+        let req = request.into_inner(); 
+        match self.engine.start_dispute(Hash::from(req.initial_hash), req.snapshot_path).await {
+            Ok(dispute_tournament) => Ok(Response::new(StartDisputeResponse{
+                                            dispute_id: String::default()
+                                        })),
+            Err(err) => Err(Status::internal(err.to_string())),
+        }
     }
 
     async fn finish_dispute(
