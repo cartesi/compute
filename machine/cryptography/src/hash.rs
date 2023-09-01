@@ -5,26 +5,26 @@ use std::sync::Arc;
 use std::sync::Mutex;
 #[derive(Eq, Hash, PartialEq, Clone, Debug, Default)]
 pub struct Hash {
-    pub digest: Vec<u8>,
+    pub digest: [u8; 32],
     left: Option<Arc<Hash>>,
     right: Option<Arc<Hash>>,
 }
 
 lazy_static! {
     static ref ITHERADETS: Mutex<HashMap<Hash, Vec<Hash>>> = Mutex::new(HashMap::new());
-    static ref INTERNALIZED_HASHES: Mutex<HashMap<Vec<u8>, Hash>> = Mutex::new(HashMap::new());
+    static ref INTERNALIZED_HASHES: Mutex<HashMap<[u8; 32], Hash>> = Mutex::new(HashMap::new());
 }
 
 impl Hash {
-    pub fn from_digest(digest: Vec<u8>) -> Hash {
-        match INTERNALIZED_HASHES.lock().unwrap().get(&digest) {
+    pub fn new(data: [u8; 32]) -> Hash {
+        match INTERNALIZED_HASHES.lock().unwrap().get(&data) {
             Some(hash) => {
                 return hash.clone();
             }
             None => {}
         }
         let h = Hash {
-            digest: digest.clone(),
+            digest: data.clone(),
             left: None,
             right: None,
         };
@@ -35,29 +35,30 @@ impl Hash {
         INTERNALIZED_HASHES
             .lock()
             .unwrap()
-            .insert(digest, h.clone());
+            .insert(data, h.clone());
         h
     }
 
     pub fn from_digest_hex(digest_hex: &str) -> Hash {
         assert!(digest_hex.len() == 66);
-        let digest = hex::decode(&digest_hex).unwrap();
-        Hash::from_digest(digest)
+        let mut data = [0u8; 32];
+        hex::decode_to_slice(&digest_hex, &mut data as &mut [u8]).unwrap();
+        Hash::new(data)
     }
 
-    fn from_data(data: &[u8; 32]) -> Hash {
+    fn from_data(data:Vec<u8>) -> Hash {
         let mut keccak = Keccak256::new();
-        keccak.update(&hex::decode(&data).unwrap());
-        let digest = keccak.finalize();
-        Hash::from_digest(digest.to_vec())
+        keccak.update(&data);
+        let digest: [u8; 32] = keccak.finalize().into();
+        Hash::new(digest)
     }
 
     pub fn join(&self, other_hash: &Hash) -> Hash {
         let mut keccak = Keccak256::new();
         keccak.update(&self.digest);
         keccak.update(&other_hash.digest);
-        let digest = keccak.finalize();
-        let mut ret = Hash::from_digest(digest.to_vec());
+        let digest: [u8; 32] = keccak.finalize().into();
+        let mut ret = Hash::new(digest);
         ret.left = Some(Arc::new(self.clone()));
         ret.right = Some(Arc::new(other_hash.clone()));
         ret
@@ -109,11 +110,16 @@ impl ToString for Hash {
     }
 }
 
-fn zero_bytes32() -> Vec<u8> {
-    hex::decode("0000000000000000000000000000000000000000000000000000000000000000".to_string())
-        .unwrap()
+fn zero_bytes32() -> [u8; 32] {
+    let mut data = [0u8; 32];
+    hex::decode_to_slice(
+        "0000000000000000000000000000000000000000000000000000000000000000",
+        &mut data as &mut [u8],
+    )
+    .unwrap();
+    data
 }
 
 pub fn zero_hash() -> Hash {
-    Hash::from_digest(zero_bytes32())
+    Hash::new(zero_bytes32())
 }
