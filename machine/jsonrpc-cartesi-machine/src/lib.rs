@@ -21,7 +21,7 @@ pub use cartesi_jsonrpc_interfaces::index::*;
 
 use conversions::*;
 use serde::Deserialize;
-
+use base64::Engine;
 #[derive(Debug, Default)]
 struct JsonrpcCartesiMachineError {
     message: String,
@@ -887,14 +887,16 @@ impl JsonRpcCartesiMachineClient {
     }
 
     /// Obtains the root hash of the Merkle tree for the remote machine
-    pub async fn get_root_hash(&mut self) -> Result<Vec<u8>, Box<dyn std::error::Error>> {
+    pub async fn get_root_hash(&mut self) -> Result<[u8; 32], Box<dyn std::error::Error>> {
         let mut response = self.client.lock().await.MachineGetRootHash().await;
         match response {
             Ok(mut hash) => {
                 if hash.ends_with('\n') {
                     hash.pop();
                 }
-                Ok(base64::decode(hash).unwrap())
+                let mut root_hash = [0u8; 32];
+                base64::engine::general_purpose::STANDARD.decode_slice_unchecked(hash.clone(), &mut root_hash as &mut [u8]).unwrap();
+                Ok(root_hash)
             }
             Err(_) => Err(Box::new(JsonrpcCartesiMachineError::new(
                 "Error acquiring root hash from cartesi machine",

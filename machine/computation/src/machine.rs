@@ -49,7 +49,7 @@ impl Machine {
             cycle: 0,
             ucycle: 0,
             start_cycle,
-            initial_hash: Hash::from_digest(
+            initial_hash: Hash::new(
                 Arc::clone(&machine)
                     .lock()
                     .unwrap()
@@ -223,7 +223,7 @@ impl ComputationState {
     pub async fn from_current_machine_state(
         machine: std::sync::Arc<std::sync::Mutex<JsonRpcCartesiMachineClient>>,
     ) -> ComputationState {
-        let root_hash = Hash::from_digest(machine.lock().unwrap().get_root_hash().await.unwrap());
+        let root_hash = Hash::new(machine.lock().unwrap().get_root_hash().await.unwrap());
         let halted = machine.lock().unwrap().read_iflags_h().await.unwrap();
         let unhalted = machine
             .lock()
