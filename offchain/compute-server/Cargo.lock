@@ -505,6 +505,7 @@ dependencies = [
  "log",
  "primitive-types",
  "prost",
+ "sha3",
  "thiserror",
  "tokio",
  "tokio-util",

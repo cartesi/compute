@@ -21,7 +21,8 @@ lcov.info
 test/uarch-log
 
 # Rust build
-offchain/target
+offchain/compute-server/target
+offchain/machine-json-rpc/target
 
 offchain-rust/target
 offchain-rust/Cargo.lock

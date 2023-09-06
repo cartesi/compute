@@ -6,3 +6,6 @@ pub mod arena;
 pub mod machine;
 pub mod player;
 pub mod server;
+pub mod merkle;
+pub mod utils;
+pub mod commitment;

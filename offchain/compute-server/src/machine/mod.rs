@@ -4,5 +4,5 @@ pub use commitment::*;
 mod machine;
 pub use machine::*;
 
-mod machine_json_rpc;
-pub use machine_json_rpc::*;
+mod machine_manager;
+pub use machine_manager::*;
