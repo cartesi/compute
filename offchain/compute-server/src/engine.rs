@@ -1,6 +1,5 @@
 use std::{
     error::Error,
-    path::Path,
     sync::Arc,
     collections::HashMap,
 };

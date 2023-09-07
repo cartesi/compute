@@ -3,7 +3,7 @@ use std::{
     sync::Arc,
 };
 
-use cartesi_compute::{
+use cartesi_compute_server::{
     config::{
         ArenaConfig,
         ContractArtifactsConfig,

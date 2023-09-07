@@ -1,0 +1,260 @@
+use std::{
+    error::Error,
+    sync::Arc,
+    path::Path,
+};
+
+use sha3::{Digest, Keccak256};
+
+use tokio::sync::Mutex;
+
+use cartesi_machine_json_rpc::client::{
+    JsonRpcCartesiMachineClient,
+    MachineRuntimeConfig,
+    AccessLogType,
+    AccessType,
+};
+
+use crate::{
+    merkle::Hash,
+    commitment::constants,
+    utils::arithmetic,
+};
+
+pub struct MachineManager {
+    path: String,
+    rpc_client: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    cycle: u64,
+    ucycle: u64,
+    start_cycle: u64,
+    initial_hash: Hash,
+}
+
+impl MachineManager {
+    pub async fn new_from_path(url: &str, path: &str) -> MachineManager {
+        let machine = Arc::new(Mutex::new(
+            JsonRpcCartesiMachineClient::new(url.to_string())
+                .await
+                .unwrap(),
+        ));
+        
+        MachineManager {
+            path: path.to_string(),
+            machine: Arc::clone(&machine),
+            cycle: 0,
+            ucycle: 0,
+            start_cycle,
+            initial_hash: Hash::from_digest(
+                Arc::clone(&machine)
+                    .lock()
+                    .unwrap()
+                    .get_root_hash()
+                    .await
+                    .unwrap(),
+            ),
+        }
+    }
+
+    pub async fn load_from_path(&mut self, path: &Path) -> Result<(), Box<dyn Error>> {
+        let rpc_client_lock = self.rpc_client.clone();
+        let mut rpc_client = rpc_client_lock.lock().await;
+       
+        let path_str = path.to_str().unwrap();
+        rpc_client.load_machine(&path_str, &MachineRuntimeConfig::default()).await?;
+        self.start_cycle = rpc_client.read_csr("mcycle".to_string()).await?;
+        
+        // Machine can never be advanced on the micro arch.
+        // Validators must verify this first
+        assert_eq!(rpc_client.read_csr("uarch_cycle".to_string()).await?, 0);
+
+        Ok(())
+    }
+
+    pub async fn machine_state(&self) -> Result<MachineState, Box<dyn Error>> {
+        let rpc_client_lock = self.rpc_client.clone();
+        let mut rpc_client = rpc_client_lock.lock().await;
+
+        let root_hash = rpc_client.get_root_hash().await?;
+        let halted = rpc_client.read_iflags_h().await?;
+        let uhalted = rpc_client.read_uarch_halt_flag().await?;
+
+        Ok(MachineState{
+            root_hash: Hash::new(root_hash),
+            halted: halted,
+            uhalted: uhalted,
+        })
+    }
+
+    async fn get_logs(url: &str, path: &str, cycle: u64, ucycle: u64) -> String {
+        let mut machine = MachineManager::new_from_path(path, url).await;
+        machine.run(cycle).await;
+        machine.run_uarch(ucycle).await;
+
+        if ucycle as i64 == constants::UARCH_SPAN {
+            machine.run_uarch(constants::UARCH_SPAN as u64).await;
+            eprintln!("ureset, not implemented");
+        }
+
+        let access_log = AccessLogType {
+            annotations: true,
+            proofs: true,
+        };
+        let logs = machine
+            .rpc_client
+            .lock()
+            .unwrap()
+            .step(&access_log, false)
+            .await
+            .unwrap();
+
+        let mut encoded = Vec::new();
+
+        for a in &logs.accesses {
+            assert_eq!(a.log2_size, 3);
+            if a.r#type == AccessType::Read {
+                encoded.push(a.read_data.clone());
+            }
+
+            encoded.push(hex::decode(a.proof.target_hash.clone()).unwrap());
+
+            let decoded_sibling_hashes: Result<Vec<Vec<u8>>, hex::FromHexError> = a
+                .proof
+                .sibling_hashes
+                .iter()
+                .map(|hex_string| hex::decode(hex_string))
+                .collect();
+
+            let mut decoded = decoded_sibling_hashes.unwrap();
+            decoded.reverse();
+            encoded.extend_from_slice(&decoded.clone());
+
+            assert_eq!(
+                ver(
+                    hex::decode(a.proof.target_hash.clone()).unwrap(),
+                    a.address,
+                    decoded.clone()
+                ),
+                hex::decode(a.proof.root_hash.clone()).unwrap()
+            );
+        }
+        let data: Vec<u8> = encoded.iter().cloned().flatten().collect();
+
+        let hex_data = hex::encode(data);
+
+        format!("\"{}\"", hex_data)
+    }
+
+    pub async fn run(&mut self, cycle: u64) -> Result<(), Box<dyn Error>> {
+        assert!(arithmetic::ulte(self.cycle, cycle));
+        
+        let physical_cycle = MachineManager::add_and_clamp(self.start_cycle, cycle);
+        let rpc_client_lock = self.rpc_client.clone();
+        let mut rpc_client = rpc_client_lock.lock().await;
+        
+        loop {
+            let halted = rpc_client.read_iflags_h().await?; 
+            if halted {
+                break;
+            }
+
+            let mcycle = rpc_client.read_csr("mcycle".to_string()).await?;
+            if mcycle == physical_cycle {
+                break;
+            }
+        }
+        
+        self.cycle = cycle;
+
+        Ok(())
+    }
+
+    pub fn add_and_clamp(x: u64, y: u64) -> u64 {
+        if arithmetic::ult(x, arithmetic::max_uint(64) as u64 - y) {
+            x + y
+        } else {
+            arithmetic::max_uint(64) as u64
+        }
+    }
+
+    pub async fn run_uarch(&mut self, ucycle: u64) -> Result<(), Box<dyn Error>> {
+        assert!(
+            arithmetic::ulte(self.ucycle, ucycle),
+            "{}",
+            format!("{}, {}", self.ucycle, ucycle)
+        );
+
+        self.rpc_client
+            .clone()
+            .lock()
+            .await
+            .run_uarch(ucycle)
+            .await?;
+        
+        self.ucycle = ucycle;
+
+        Ok(())
+    }
+
+    pub async fn increment_uarch(&mut self) -> Result<(), Box<dyn Error>> {
+        self.rpc_client
+            .clone()
+            .lock()
+            .await
+            .run_uarch(self.ucycle + 1)
+            .await?;
+
+        self.ucycle = self.ucycle + 1;
+
+        Ok(())
+    }
+
+    pub async fn ureset(&mut self) -> Result<(), Box<dyn Error>> {
+        self.rpc_client
+            .clone()
+            .lock()
+            .await
+            .reset_uarch_state()
+            .await?;
+
+        self.cycle += 1;
+        self.ucycle = 0;
+
+        Ok(())
+    }
+}
+
+fn ver(mut t: Vec<u8>, p: u64, s: Vec<Vec<u8>>) -> Vec<u8> {
+    let stride = p >> 3;
+    for (k, v) in s.iter().enumerate() {
+        if (stride >> k) % 2 == 0 {
+            let mut keccak = Keccak256::new();
+            keccak.update(&t);
+            keccak.update(v);
+            t = keccak.finalize().to_vec();
+        } else {
+            let mut keccak = Keccak256::new();
+            keccak.update(v);
+            keccak.update(&t);
+            t = keccak.finalize().to_vec();
+        }
+    }
+
+    t
+}
+
+#[derive(Debug)]
+pub struct MachineState {
+    pub root_hash: Hash,
+    pub halted: bool,
+    pub uhalted: bool,
+}
+
+impl std::fmt::Display for MachineState {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(
+            f,
+            "{{root_hash = {:?}, halted = {}, uhalted = {}}}",
+            self.root_hash, self.halted, self.uhalted
+        )
+    }
+}
