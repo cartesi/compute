@@ -1,4 +1,4 @@
-pub mod machine_manager;
+pub mod remote_machine;
 
 mod commitment_builder;
 pub use commitment_builder::*;
