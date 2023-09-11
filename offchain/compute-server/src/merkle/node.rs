@@ -10,9 +10,9 @@ pub struct Hash {
 }
 
 impl Hash {
-    pub fn new(data: [u8; 32]) -> Self {
+    pub fn new(digest: [u8; 32]) -> Self {
         Hash {
-            digest: data,
+            digest: digest,
             left: None,
             right: None,
         }
