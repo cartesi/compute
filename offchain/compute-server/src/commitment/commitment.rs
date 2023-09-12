@@ -9,7 +9,8 @@ use crate::{
     merkle::{Hash, MerkleTree, MerkleBuilder},
     commitment::{
         constants,
-        remote_machine::{RemoteMachine, MachineState},
+        RemoteMachine,
+        MachineState,
     },
     utils::arithmetic,
 };

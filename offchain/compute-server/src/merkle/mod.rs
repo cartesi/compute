@@ -1,3 +1,6 @@
+mod hash;
+pub use hash::*;
+
 mod node;
 pub use node::*;
 
