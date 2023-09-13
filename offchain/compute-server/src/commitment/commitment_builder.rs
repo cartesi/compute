@@ -8,7 +8,7 @@ use tokio::sync::Mutex;
 use async_trait::async_trait;
 
 use crate::{
-    merkle::{Hash, MerkleBuilder, zero_hash},
+    merkle::{Hash, MerkleBuilder},
     commitment::{
         constants,
         RemoteMachine,
@@ -62,9 +62,9 @@ impl CommitmentBuilder for CachingCommitmentBuilder {
         self.commitments
             .entry(level)
             .or_insert_with(HashMap::new)
-            .insert(base_cycle as usize, commitment.root_hash.clone());
+            .insert(base_cycle as usize, commitment.root_hash());
         
-        Ok(commitment.root_hash)
+        Ok(commitment.root_hash())
     }
 }
 
@@ -93,18 +93,18 @@ impl CommitmentBuilder for FakeCommitmentBuilder {
         if constants::LOG2STEP[constants::LEVELS - level + 1] == 0 && self.second_state.is_some() {
             merkle_builder.add(self.second_state.clone().unwrap(), None);
             merkle_builder.add(
-                zero_hash(),
+                Hash::default(),
                 Some((1 << constants::HEIGHTS[constants::LEVELS - level + 1]) - 1),
             );
         } else {
             merkle_builder.add(
-                zero_hash(),
+                Hash::default(),
                 Some(1 << constants::HEIGHTS[constants::LEVELS - level + 1]),
             );
         }
 
-        let commitment = merkle_builder.build(Some(self.initial_hash.clone()));
+        let commitment = merkle_builder.build(self.initial_hash);
 
-        Ok(commitment.root_hash)
+        Ok(commitment.root_hash())
     }
 }

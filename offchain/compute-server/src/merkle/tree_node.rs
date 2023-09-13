@@ -4,9 +4,6 @@ use sha3::{Digest, Keccak256};
 
 use crate::merkle::Hash;
 
-// !!! TODO: review macros
-//#[derive(Clone, Eq, Hash, PartialEq, Clone, Debug, Default)]
-
 #[derive(Debug)]
 pub struct MerkleTreeNode {
     pub digest: Hash,
@@ -58,19 +55,6 @@ impl MerkleTreeNode {
             right: Some(other_node.clone()),
         })
     }
-
-    // !!! TODO: remove
-    /*
-    pub fn iterated_merkle(&self, level: u32) -> Hash {
-        let mut i = iterated.len() - 1;
-        let mut highest_level = iterated.last().unwrap().clone();
-        while i < level as usize {
-            highest_level = highest_level.clone().join(&highest_level.clone());
-            i += 1;
-        }
-        highest_level
-    }
-    */
 }
 
 impl ToString for MerkleTreeNode {

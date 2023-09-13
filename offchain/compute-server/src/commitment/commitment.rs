@@ -73,7 +73,7 @@ pub async fn build_big_machine_commitment(
     }
     Ok((
         initial_state.root_hash.clone(),
-        builder.build(Some(initial_state.root_hash)),
+        builder.build(initial_state.root_hash),
     ))
 }
 
@@ -98,7 +98,7 @@ pub async fn build_small_machine_commitment(
         }
         
         builder.add(
-            run_uarch_span(&machine).await?.root_hash,
+            run_uarch_span(&machine).await?.root_hash(),
             None,
         );
         instructions += 1;
@@ -106,7 +106,7 @@ pub async fn build_small_machine_commitment(
         let state = machine.machine_state().await?;
         if state.halted {
             builder.add(
-                run_uarch_span(&machine).await?.root_hash,
+                run_uarch_span(&machine).await?.root_hash(),
                 Some(instruction_count as u64 - instructions + 1),
             );
             break;
@@ -114,7 +114,7 @@ pub async fn build_small_machine_commitment(
     }
     Ok((
         initial_state.root_hash.clone(),
-        builder.build(Some(initial_state.root_hash)),
+        builder.build(initial_state.root_hash),
     ))
 }
 
@@ -145,6 +145,6 @@ async fn run_uarch_span<'a>(machine: &MutexGuard<'a, RemoteMachine>) -> Result<M
     state = machine.machine_state().await?;
     builder.add(state.root_hash, None);
     
-    Ok(builder.build(None))
+    Ok(builder.build(Hash::default()))
 }
 

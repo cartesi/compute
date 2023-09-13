@@ -1,10 +1,10 @@
 use std::sync::Arc;
 
-use crate::merkle::node::MerkleTreeNode;
+use crate::merkle::{Hash, MerkleTreeNode};
 
 #[derive(Debug)]
 pub struct MerkleTreeLeaf {
-    pub hash: MerkleTreeNode,
+    pub node: Arc<MerkleTreeNode>,
     pub accumulated_count: u64,
     pub log2_size: Option<u32>
 }
@@ -12,7 +12,8 @@ pub struct MerkleTreeLeaf {
 #[derive(Debug)]
 pub struct MerkleTree {
     root: Arc<MerkleTreeNode>,
-    leafs: Vec<MerkleTreeLeaf>,
+    leafs: Vec<Arc<MerkleTreeLeaf>>,
+    implicit_hash: Hash,
     // !!!
     //digest_hex: String,
     //log2_size: u32,
@@ -21,25 +22,30 @@ pub struct MerkleTree {
 impl MerkleTree {
     pub fn new(
         root: Arc<MerkleTreeNode>,
-        leafs: Vec<MerkleTreeLeaf>,
-        //log2size: u32,
-        //implicit_hash: Option<MerkleTreeNode>,
+        leafs: Vec<Arc<MerkleTreeLeaf>>,
+        implicit_hash: Hash,
     ) -> Self {
         MerkleTree {
             root: root,
             leafs: leafs,
-            // !!!
-            //digest_hex: hex::encode(&root_hash.digest.clone()),
-            //log2_size: log2size,
+            implicit_hash: implicit_hash,
         }
+    }
+
+    pub fn root_hash(&self) -> Hash {
+        self.root.digest
+    }
+
+    pub fn children(&self) -> (Option<Arc<MerkleTreeNode>>, Option<Arc<MerkleTreeNode>>) {
+        self.root.clone().children()
     }
 
     pub fn join(&self, other_hash: Arc<MerkleTreeNode>) -> Arc<MerkleTreeNode> {
         self.root.clone().join(other_hash)
     }
 
-    pub fn children(&self) -> (Option<Arc<MerkleTreeNode>>, Option<Arc<MerkleTreeNode>>) {
-        self.root.clone().children()
+    pub fn implicit_hash(&self) -> Hash {
+        self.implicit_hash
     }
 
     pub fn prove_leaf(
@@ -116,13 +122,6 @@ impl MerkleTree {
 
         (old_right, proof)
     }
-
-    // !!!
-    /*
-    pub fn hex_string(&self) -> String {
-        hex::encode(self.root_hash.hex_string())
-    }
-    */
 }
 
 #[derive(Debug)]
