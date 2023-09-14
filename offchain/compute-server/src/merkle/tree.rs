@@ -9,6 +9,11 @@ pub struct MerkleTreeLeaf {
     pub log2_size: Option<u32>
 }
 
+pub struct MerkleTreeProof {
+    pub leaf: Hash,
+    pub data: Vec<Hash>,
+}
+
 #[derive(Debug)]
 pub struct MerkleTree {
     root: Arc<MerkleTreeNode>,
@@ -39,7 +44,7 @@ impl MerkleTree {
         &self,
         log2_size: u32,
         index: u64
-    ) -> (Option<Arc<MerkleTreeNode>> , Vec<Arc<MerkleTreeNode>>) {
+    ) -> MerkleTreeProof {
         let mut height = log2_size;
         if let Some(leaf) = self.leafs.get(0) {
             if let Some(log2size) = leaf.log2_size {
@@ -48,24 +53,24 @@ impl MerkleTree {
         }
         assert!((index >> height) == 0);
 
-        let mut proof = ProofAccumulator {
-            leaf: None,
+        let mut proof = MerkleTreeProof {
+            leaf: Hash::default(),
             data: Vec::new(),
         };
         self.generate_proof(&mut proof, self.root, height, index);
 
-        (proof.leaf, proof.data)
+        proof
     }
 
     fn generate_proof(
         &self, 
-        proof: &mut ProofAccumulator,
+        proof: &mut MerkleTreeProof,
         root: Arc<MerkleTreeNode>,
         height: u32,
         include_index: u64
     ) {    
         if height == 0 {
-            proof.leaf = Some(root);
+            proof.leaf = root.digest;
             return;
         }
 
@@ -81,7 +86,7 @@ impl MerkleTree {
                 new_height,
                 include_index,
             );
-            proof.data.push(left);
+            proof.data.push(left.digest);
         } else {
             let right = right.unwrap();
             self.generate_proof(
@@ -90,29 +95,26 @@ impl MerkleTree {
                 new_height,
                 include_index,
             );
-            proof.data.push(right);
+            proof.data.push(right.digest);
         }
     }
 
-    pub fn last(&self) -> (Arc<MerkleTreeNode>, Vec<Arc<MerkleTreeNode>>) {
+    pub fn last(&self) -> MerkleTreeProof {
         let mut proof = Vec::new();
         let (mut left, mut right) = self.root.children();
-        let mut old_right = self.root.clone();
+        let mut old_right = self.root.digest;
         
         while left.is_some() && right.is_some() {
-            proof.push(left.unwrap().clone());
-            old_right = right.unwrap().clone();
+            proof.push(left.unwrap().digest);
+            old_right = right.unwrap().digest;
             (left, right) = right.unwrap().children();
         }
 
         proof.reverse();
 
-        (old_right, proof)
+        MerkleTreeProof{
+            leaf: old_right,
+            data: proof,
+        }
     }
-}
-
-#[derive(Debug)]
-struct ProofAccumulator {
-    pub leaf: Option<Arc<MerkleTreeNode>>,
-    pub data: Vec<Arc<MerkleTreeNode>>,
 }

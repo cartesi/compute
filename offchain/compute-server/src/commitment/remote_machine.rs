@@ -39,6 +39,8 @@ impl std::fmt::Display for MachineState {
     }
 }
 
+type MachineProof = Vec<u8>;
+
 pub struct RemoteMachine {
     rpc_client: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     root_hash: [u8; 32],
@@ -48,7 +50,10 @@ pub struct RemoteMachine {
 }
 
 impl RemoteMachine {
-    pub async fn new(json_rpc_url: &str, snapshot_path: &Path) -> Result<RemoteMachine, Box<dyn Error>> {
+    pub async fn new(
+        json_rpc_url: &str,
+        snapshot_path: &Path
+    ) -> Result<Self, Box<dyn Error>> {
         let mut rpc_client = JsonRpcCartesiMachineClient::new(json_rpc_url.to_string()).await?;
         
         let snapshot_path = snapshot_path.to_str().unwrap();
@@ -70,7 +75,11 @@ impl RemoteMachine {
         })
     }
 
-    pub async fn get_logs(&mut self, cycle: u64, ucycle: u64) -> Result<Vec<u8>, Box<dyn Error>> {
+    pub async fn generate_proof(
+        &mut self,
+        cycle: u64,
+        ucycle: u64
+    ) -> Result<MachineProof, Box<dyn Error>> {
         let rpc_client_lock = self.rpc_client.clone();
         let mut rpc_client = rpc_client_lock.lock().await;
         
