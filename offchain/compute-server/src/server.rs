@@ -8,13 +8,6 @@ use tonic::{
 };
 
 use crate::{
-    arena::{
-        Arena,
-        Hash,
-    },
-    machine::Machine,
-    engine::Engine,
-    config::APIServerConfig,
     grpc:: {
         StartDisputeRequest,
         StartDisputeResponse,
@@ -28,15 +21,19 @@ use crate::{
         Compute, 
         ComputeServer,
     },
+    merkle::Hash,
+    arena::Arena,
+    engine::Engine,
+    config::APIServerConfig,
 };
 
-pub struct APIServer<A: Arena, M: Machine> {
-    engine: Arc<Engine<A, M>>,
+pub struct APIServer<A: Arena> {
+    engine: Arc<Engine<A>>,
     config: APIServerConfig,
 }
 
-impl<A: Arena + 'static, M: Machine + 'static> APIServer<A, M> {
-    pub fn new(engine: Arc<Engine<A, M>>, config: APIServerConfig) -> Self {
+impl<A: Arena + 'static> APIServer<A> {
+    pub fn new(engine: Arc<Engine<A>>, config: APIServerConfig) -> Self {
         Self {
             engine: engine,
             config: config,
@@ -60,13 +57,13 @@ impl<A: Arena + 'static, M: Machine + 'static> APIServer<A, M> {
 }
 
 #[tonic::async_trait]
-impl<A: Arena + 'static, M: Machine + 'static> Compute for APIServer<A, M> {    
+impl<A: Arena + 'static> Compute for APIServer<A> {    
     async fn start_dispute(
         &self,
         request: Request<StartDisputeRequest>,
     ) -> Result<Response<StartDisputeResponse>, Status> {
         let req = request.into_inner(); 
-        match self.engine.start_dispute(Hash::from(req.initial_hash), req.snapshot_path).await {
+        match self.engine.start_dispute(Hash::from_data(req.initial_hash), req.snapshot_path).await {
             Ok(dispute_tournament) => Ok(Response::new(StartDisputeResponse{
                                             dispute_id: String::default()
                                         })),

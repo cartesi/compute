@@ -1,11 +1,10 @@
 pub mod grpc;
 pub mod contract;
+pub mod merkle;
+pub mod machine;
+pub mod utils;
+pub mod arena;
 pub mod config;
 pub mod engine;
-pub mod arena;
-pub mod machine;
 pub mod player;
 pub mod server;
-pub mod merkle;
-pub mod utils;
-pub mod commitment;

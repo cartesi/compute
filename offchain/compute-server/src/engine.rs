@@ -14,10 +14,11 @@ use tokio::{
 use tokio_util::sync::CancellationToken;
 
 use crate::{
-    config::EngineConfig,
-    arena::{Arena, Hash, Address},
-    machine::Machine,
+    merkle::Hash,
+    machine::{MachineRpc, CachingMachineCommitmentBuilder},
+    arena::{Arena, Address},
     player::{Player, PlayerTournamentResult},
+    config::EngineConfig,
 };
 
 #[derive(Error, Debug)]
@@ -34,24 +35,24 @@ pub struct DisputeState {
     finished: bool,
 }
 
-struct Dispute <A: Arena, M: Machine> {
+struct Dispute <A: Arena,> {
     state: DisputeState,
-    players: Vec<Arc<Mutex<Player<A, M>>>>,
+    players: Vec<Arc<Mutex<Player<A>>>>,
 }
 
-pub struct Engine <A: Arena, M: Machine> {
+pub struct Engine <A: Arena> {
     arena: Arc<A>,
     config: EngineConfig,
-    disputes: Arc<Mutex<HashMap<Address, Dispute<A, M>>>>,
+    disputes: Arc<Mutex<HashMap<Address, Dispute<A>>>>,
     shutdown_token: CancellationToken,
 }
 
-impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
+impl<A: Arena + 'static> Engine<A> {
     pub fn new(arena: Arc<A>, player_config: EngineConfig) -> Self {
         Self {
             arena: arena,
             config: player_config,
-            disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A,M>>::new())),
+            disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A>>::new())),
             shutdown_token: CancellationToken::new(),
         }
     }
@@ -108,7 +109,7 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
         }
     }
 
-    async fn player(self: Arc<Self>, dispute_tournament: Address, player_idx: usize) -> Arc<Mutex<Player<A,M>>> {
+    async fn player(self: Arc<Self>, dispute_tournament: Address, player_idx: usize) -> Arc<Mutex<Player<A>>> {
         let disputes = self.disputes.clone();
         let disputes = disputes.lock().await;
         disputes.get(&dispute_tournament).unwrap().players.get(player_idx).unwrap().clone()
@@ -136,7 +137,7 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
                 root_tournament: root_tournament,
                 finished: false,
             },
-            players: Vec::<Arc<Mutex<Player::<A, M>>>>::new(),
+            players: Vec::<Arc<Mutex<Player::<A>>>>::new(),
         });
 
         Ok(root_tournament)
@@ -178,6 +179,7 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
        };
 
        let machine = self.clone().create_player_machine(root_tournament).await?;
+       let commitment_builder = CachingMachineCommitmentBuilder::new(machine.clone());
        
        {
             let disputes = self.disputes.clone();
@@ -185,7 +187,8 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
             if let Some(dispute) = disputes.get_mut(&root_tournament) {
                 let player = Player::new(
                     self.arena.clone(),
-                    Arc::new(machine),
+                    machine,
+                    commitment_builder,
                     root_tournament,
                 );
                 dispute.players.push(Arc::new(Mutex::new(player)));
@@ -200,7 +203,7 @@ impl<A: Arena + 'static, M: Machine + 'static> Engine<A, M> {
     async fn create_player_machine(
         self: Arc<Self>,
         dispute_tournament: Address,
-    ) -> Result<M, Box<dyn Error>> {
+    ) -> Result<Arc<MachineRpc>, Box<dyn Error>> {
         // TODO:
         // 1. Spawn cartesi vm process.
         // 2. Setup JSON RPC client vm client.

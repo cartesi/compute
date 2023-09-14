@@ -18,18 +18,22 @@ use ethers::{
     middleware::SignerMiddleware,
 };
 
-use crate::contract::{
-    factory::TournamentFactory,
-    tournament::{
-        non_root_tournament,
-        root_tournament,
-        non_leaf_tournament,
-        leaf_tournament,
-        tournament,
-    }
+use crate::{
+    contract::{
+        factory::TournamentFactory,
+        tournament::{
+            non_root_tournament,
+            root_tournament,
+            non_leaf_tournament,
+            leaf_tournament,
+            tournament,
+        },
+    },
+    arena::*,
+    merkle::{Hash, MerkleProof},
+    machine::MachineProof,
+    config::ArenaConfig,
 };
-use crate::arena::*;
-use crate::config::ArenaConfig;
 
 pub struct EthersArena {
     config: ArenaConfig,
@@ -98,7 +102,10 @@ impl EthersArena {
 
 #[async_trait]
 impl Arena for EthersArena {
-    async fn create_root_tournament(&self, initial_hash: Hash) -> Result<Address, Box<dyn Error>> {
+    async fn create_root_tournament(
+        &self,
+        initial_hash: Hash
+    ) -> Result<Address, Box<dyn Error>> {
         let factory = TournamentFactory::new(self.tournament_factory, self.client.clone());
         let tournament_address = factory.instantiate_top(initial_hash.into()).await?;
         Ok(tournament_address)
@@ -108,7 +115,7 @@ impl Arena for EthersArena {
         &self,
         tournament: Address, 
         final_state: Hash,
-        proof: CommitmentProof,
+        proof: MerkleProof,
         left_child: Hash,
         right_child: Hash
     ) -> Result<(), Box<dyn Error>> {
@@ -154,7 +161,7 @@ impl Arena for EthersArena {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: CommitmentProof
+        initial_hash_proof: MerkleProof
     ) -> Result<(), Box<dyn Error>> {
         let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
         let match_id = non_leaf_tournament::Id {
@@ -196,7 +203,7 @@ impl Arena for EthersArena {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: CommitmentProof,
+        initial_hash_proof: MerkleProof,
     ) -> Result<(), Box<dyn Error>> {
         let tournament = leaf_tournament::LeafTournament::new(tournament, self.client.clone());
         let match_id = leaf_tournament::Id {

@@ -11,8 +11,8 @@ use crate::{
 #[derive(Debug)]
 pub struct MerkleBuilder {
     leafs: Vec<Arc<MerkleTreeLeaf>>,
+    nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
     iterateds: HashMap<Hash, Vec<Arc<MerkleTreeNode>>>,
-    interned_nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
 }
 
 impl MerkleBuilder {
@@ -20,7 +20,7 @@ impl MerkleBuilder {
         MerkleBuilder { 
             leafs: Vec::new(),
             iterateds: HashMap::new(),
-            interned_nodes: HashMap::new(),
+            nodes: HashMap::new(),
         }
     }
 
@@ -51,14 +51,14 @@ impl MerkleBuilder {
         }
     }
 
-    pub fn create_node(&mut self, digest: Hash) -> Arc<MerkleTreeNode> {
-        if let Some(node) = self.interned_nodes.get(&digest) {
+    fn create_node(&mut self, digest: Hash) -> Arc<MerkleTreeNode> {
+        if let Some(node) = self.nodes.get(&digest) {
             return node.clone()
         }
 
         let node = Arc::new(MerkleTreeNode::new(digest));
+        self.nodes.insert(node.digest, node.clone());
         self.iterateds.insert(node.digest, vec![node.clone()]);
-        self.interned_nodes.insert(node.digest, node.clone());
 
         node
     }
@@ -72,7 +72,7 @@ impl MerkleBuilder {
             log2size = arithmetic::ctz(count)
         };
         let root = self.build_merkle(self.leafs.as_slice(), log2size, 0);
-        MerkleTree::new(root.0, self.leafs)
+        MerkleTree::new(log2size, root.0, self.leafs, self.nodes)
     }
 
     fn build_merkle(
@@ -120,6 +120,14 @@ impl MerkleBuilder {
             i += 1;
         }
         highest_level
+    }
+
+    pub fn node(&self, node_digest: Hash) -> Option<Arc<MerkleTreeNode>> {
+        if let Some(node) = self.nodes.get(&node_digest) {
+            Some(node.clone())
+        } else {
+            None
+        }
     }
 }
 

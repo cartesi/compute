@@ -9,16 +9,16 @@ use async_trait::async_trait;
 
 use crate::{
     merkle::{Hash, MerkleBuilder},
-    commitment::{
+    machine::{
         constants,
-        RemoteMachine,
+        MachineRpc,
         MachineCommitment,
-        build_commitment,
+        build_machine_commitment,
     }
 };
 
 #[async_trait]
-pub trait CommitmentBuilder {
+pub trait MachineCommitmentBuilder {
     async fn build_commitment(
         &mut self,
         base_cycle: u64,
@@ -26,14 +26,14 @@ pub trait CommitmentBuilder {
     ) -> Result<MachineCommitment, Box<dyn Error>>;
 }
 
-pub struct CachingCommitmentBuilder {
-    machine: Arc<Mutex<RemoteMachine>>,
+pub struct CachingMachineCommitmentBuilder {
+    machine: Arc<Mutex<MachineRpc>>,
     commitments: HashMap<usize, HashMap<usize, MachineCommitment>>,
 }
 
-impl CachingCommitmentBuilder {
-    pub fn new(machine: Arc<Mutex<RemoteMachine>>) -> Self {
-        CachingCommitmentBuilder { 
+impl CachingMachineCommitmentBuilder {
+    pub fn new(machine: Arc<Mutex<MachineRpc>>) -> Self {
+        CachingMachineCommitmentBuilder { 
             machine: machine,
             commitments: HashMap::new(),
         }
@@ -41,7 +41,7 @@ impl CachingCommitmentBuilder {
 }
 
 #[async_trait]
-impl CommitmentBuilder for CachingCommitmentBuilder {
+impl MachineCommitmentBuilder for CachingMachineCommitmentBuilder {
     async fn build_commitment(
         &mut self,
         base_cycle: u64,
@@ -56,9 +56,9 @@ impl CommitmentBuilder for CachingCommitmentBuilder {
         }
 
         let l = (constants::LEVELS - level + 1) as usize;
-        let log2_stride = constants::LOG2STEP[l];
+        let log2_stride = constants::LOG2_STEP[l];
         let log2_stride_count = constants::HEIGHTS[l];        
-        let commitment = build_commitment(self.machine, base_cycle, log2_stride, log2_stride_count).await?;
+        let commitment = build_machine_commitment(self.machine, base_cycle, log2_stride, log2_stride_count).await?;
         
         self.commitments
             .entry(level)
@@ -69,14 +69,14 @@ impl CommitmentBuilder for CachingCommitmentBuilder {
     }
 }
 
-pub struct FakeCommitmentBuilder {
+pub struct FakeMachineCommitmentBuilder {
     initial_hash: Hash,
     second_state: Option<Hash>,
 }
 
-impl FakeCommitmentBuilder {
+impl FakeMachineCommitmentBuilder {
     pub fn new(initial_hash: Hash, second_state: Option<Hash>) -> Self {
-        FakeCommitmentBuilder {
+        FakeMachineCommitmentBuilder {
             initial_hash,
             second_state,
         }
@@ -84,14 +84,14 @@ impl FakeCommitmentBuilder {
 }
 
 #[async_trait]
-impl CommitmentBuilder for FakeCommitmentBuilder {
+impl MachineCommitmentBuilder for FakeMachineCommitmentBuilder {
     async fn build_commitment(
         &mut self,
         base_cycle: u64,
         level: usize,
     ) -> Result<MachineCommitment, Box<dyn Error>> {
         let mut merkle_builder = MerkleBuilder::new();
-        if constants::LOG2STEP[constants::LEVELS - level + 1] == 0 && self.second_state.is_some() {
+        if constants::LOG2_STEP[constants::LEVELS - level + 1] == 0 && self.second_state.is_some() {
             merkle_builder.add(self.second_state.clone().unwrap(), None);
             merkle_builder.add(
                 Hash::default(),
@@ -107,7 +107,7 @@ impl CommitmentBuilder for FakeCommitmentBuilder {
         let merkle = merkle_builder.build();
 
         Ok(MachineCommitment{
-            initial_hash: self.initial_hash,
+            implicit_hash: self.initial_hash,
             merkle: Arc::new(merkle),
         })
     }

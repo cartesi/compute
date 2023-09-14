@@ -34,25 +34,19 @@ impl MerkleTreeNode {
         MerkleTreeNode::new(Hash::from(data))
     }
 
-    pub fn children(self: Arc<Self>) -> (Option<Arc<MerkleTreeNode>>, Option<Arc<MerkleTreeNode>>) {
-        match (self.left, self.right) {
-            (Some(left), Some(right)) => (Some(left.clone()), Some(right.clone())),
-            _ => (None, None),
+    pub fn children(&self) -> Option<(Arc<MerkleTreeNode>, Arc<MerkleTreeNode>)> {
+        if self.left.is_some() && self.right.is_some() {
+            Some((self.left.unwrap().clone(), self.right.unwrap().clone()))
+        } else {
+            None
         }
     }
 
-    pub fn join(self: Arc<Self>, other_node: Arc<MerkleTreeNode>) -> Arc<MerkleTreeNode> {
-        let mut keccak = Keccak256::new();
-        let digest: [u8; 32] = self.digest.into();
-        keccak.update(digest);
-        let other_digest: [u8; 32] = other_node.digest.into();
-        keccak.update(other_digest);
-        
-        let new_digest: [u8; 32] = keccak.finalize().into();
+    pub fn join(self: Arc<Self>, other: Arc<MerkleTreeNode>) -> Arc<MerkleTreeNode> {
         Arc::new(MerkleTreeNode {
-            digest: Hash::from(new_digest),
+            digest: join_merkle_tree_node_digests(self.digest, other.digest),
             left: Some(self.clone()),
-            right: Some(other_node.clone()),
+            right: Some(other.clone()),
         })
     }
 }
@@ -61,6 +55,19 @@ impl ToString for MerkleTreeNode {
     fn to_string(&self) -> String {
         self.digest.to_hex()
     }
+}
+
+pub fn join_merkle_tree_node_digests(digest_1: Hash, digest_2: Hash) -> Hash {
+    let mut keccak = Keccak256::new();
+    
+    let digest_1: [u8; 32] = digest_1.into();
+    keccak.update(digest_1);
+    
+    let digest_2: [u8; 32] = digest_2.into();
+    keccak.update(digest_2);
+
+    let digest: [u8; 32] = keccak.finalize().into();
+    Hash::from(digest)
 }
 
 fn zero_bytes32() -> [u8; 32] {

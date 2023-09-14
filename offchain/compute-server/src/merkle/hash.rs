@@ -1,6 +1,6 @@
 use hex;
 
-#[derive(Eq, Hash, PartialEq, Clone, Debug)]
+#[derive(Eq, Hash, PartialEq, Clone, Copy, Debug)]
 pub struct Hash {
     data: [u8; 32],
 }

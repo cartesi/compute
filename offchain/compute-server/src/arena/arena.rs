@@ -1,11 +1,14 @@
-use std::{
-    error::Error,
-    fmt,
-    hash,
-};
+use std::error::Error;
 
 use async_trait::async_trait;
 use primitive_types::H160;
+
+use crate::{
+    merkle::{Hash, MerkleProof, join_merkle_tree_node_digests},
+    machine::MachineProof,
+};
+
+pub type Address = H160;
 
 #[async_trait]
 pub trait Arena : Send + Sync {
@@ -18,7 +21,7 @@ pub trait Arena : Send + Sync {
         &self,
         tournament: Address, 
         final_state: Hash,
-        proof: CommitmentProof,
+        proof: MerkleProof,
         left_child: Hash,
         right_child: Hash
     ) -> Result<(), Box<dyn Error>>;
@@ -40,7 +43,7 @@ pub trait Arena : Send + Sync {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: CommitmentProof
+        initial_hash_proof: MerkleProof,
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_inner_match(
@@ -58,7 +61,7 @@ pub trait Arena : Send + Sync {
         left_leaf: Hash,
         right_leaf: Hash,
         initial_hash: Hash,
-        initial_hash_proof: CommitmentProof,
+        initial_hash_proof: MerkleProof,
     ) -> Result<(), Box<dyn Error>>;
     
     async fn win_leaf_match(
@@ -132,7 +135,7 @@ pub struct MatchID {
 
 impl MatchID {
     pub fn hash(&self) -> Hash {
-        self.commitment_one.join(&self.commitment_two)
+        join_merkle_tree_node_digests(self.commitment_one, self.commitment_two)
     }
 }
 
@@ -152,8 +155,8 @@ pub struct MatchState {
     pub level: u64,
 }
 
-pub type Address = H160;
-
+// !!!
+/*
 // TODO: use Hash type from machine cryptography crate.
 #[derive(Default)]
 pub struct Hash {
@@ -209,7 +212,8 @@ impl hash::Hash for Hash {
 }
 
 // TODO: must be in crtypography crate
-pub type CommitmentProof = Vec<Hash>;
+pub type Vec<Hash> = Vec<Hash>;
 
 // TODO: must be in machine crate
 pub type MachineProof = Vec<u8>;
+*/

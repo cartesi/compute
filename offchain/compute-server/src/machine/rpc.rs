@@ -18,7 +18,7 @@ use cartesi_machine_json_rpc::client::{
 
 use crate::{
     merkle::Hash,
-    commitment::constants,
+    machine::constants,
     utils::arithmetic,
 };
 
@@ -39,9 +39,9 @@ impl std::fmt::Display for MachineState {
     }
 }
 
-type MachineProof = Vec<u8>;
+pub type MachineProof = Vec<u8>;
 
-pub struct RemoteMachine {
+pub struct MachineRpc {
     rpc_client: Arc<Mutex<JsonRpcCartesiMachineClient>>,
     root_hash: [u8; 32],
     start_cycle: u64,
@@ -49,7 +49,7 @@ pub struct RemoteMachine {
     ucycle: u64,
 }
 
-impl RemoteMachine {
+impl MachineRpc {
     pub async fn new(
         json_rpc_url: &str,
         snapshot_path: &Path
@@ -66,7 +66,7 @@ impl RemoteMachine {
         // Validators must verify this first
         assert_eq!(rpc_client.read_csr("uarch_cycle".to_string()).await?, 0);
         
-        Ok(RemoteMachine {
+        Ok(MachineRpc {
             rpc_client: Arc::new(Mutex::new(rpc_client)),
             start_cycle: start_cycle,
             root_hash: root_hash,
@@ -184,6 +184,10 @@ impl RemoteMachine {
             halted: halted,
             uhalted: uhalted,
         })
+    }
+
+    pub fn position(&self) -> (u64, u64) {
+        (self.cycle, self.ucycle)
     }
 }
 
