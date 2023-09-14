@@ -63,7 +63,7 @@ impl MerkleBuilder {
         node
     }
 
-    pub fn build(&mut self, implicit_hash: Hash) -> MerkleTree {
+    pub fn build(&mut self) -> MerkleTree {
         let last = self.leafs.last().expect("no leafs in merkle builder");
         let count = last.accumulated_count as u64;
         let mut log2size = 64;
@@ -72,7 +72,7 @@ impl MerkleBuilder {
             log2size = arithmetic::ctz(count)
         };
         let root = self.build_merkle(self.leafs.as_slice(), log2size, 0);
-        MerkleTree::new(root.0, self.leafs, implicit_hash)
+        MerkleTree::new(root.0, self.leafs)
     }
 
     fn build_merkle(

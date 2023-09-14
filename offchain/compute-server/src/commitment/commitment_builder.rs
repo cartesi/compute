@@ -12,6 +12,7 @@ use crate::{
     commitment::{
         constants,
         RemoteMachine,
+        MachineCommitment,
         build_commitment,
     }
 };
@@ -22,12 +23,12 @@ pub trait CommitmentBuilder {
         &mut self,
         base_cycle: u64,
         level: usize,
-    ) -> Result<Hash, Box<dyn Error>>;
+    ) -> Result<MachineCommitment, Box<dyn Error>>;
 }
 
 pub struct CachingCommitmentBuilder {
     machine: Arc<Mutex<RemoteMachine>>,
-    commitments: HashMap<usize, HashMap<usize, Hash>>,
+    commitments: HashMap<usize, HashMap<usize, MachineCommitment>>,
 }
 
 impl CachingCommitmentBuilder {
@@ -45,26 +46,26 @@ impl CommitmentBuilder for CachingCommitmentBuilder {
         &mut self,
         base_cycle: u64,
         level: usize,
-    ) -> Result<Hash, Box<dyn Error>> {
+    ) -> Result<MachineCommitment, Box<dyn Error>> {
         assert!(level <= constants::LEVELS);
         
         if !self.commitments.contains_key(&level) {
             self.commitments.insert(level, HashMap::new());
         } else if self.commitments[&level].contains_key(&(base_cycle as usize)) {
-            return Ok(self.commitments[&level][&(base_cycle as usize)].clone());
+            return Ok(self.commitments[&level][&(base_cycle as usize)]);
         }
 
         let l = (constants::LEVELS - level + 1) as usize;
         let log2_stride = constants::LOG2STEP[l];
         let log2_stride_count = constants::HEIGHTS[l];        
-        let (_, commitment) = build_commitment(self.machine, base_cycle, log2_stride, log2_stride_count).await?;
+        let commitment = build_commitment(self.machine, base_cycle, log2_stride, log2_stride_count).await?;
         
         self.commitments
             .entry(level)
             .or_insert_with(HashMap::new)
-            .insert(base_cycle as usize, commitment.root_hash());
+            .insert(base_cycle as usize, commitment);
         
-        Ok(commitment.root_hash())
+        Ok(commitment)
     }
 }
 
@@ -88,7 +89,7 @@ impl CommitmentBuilder for FakeCommitmentBuilder {
         &mut self,
         base_cycle: u64,
         level: usize,
-    ) -> Result<Hash, Box<dyn Error>> {
+    ) -> Result<MachineCommitment, Box<dyn Error>> {
         let mut merkle_builder = MerkleBuilder::new();
         if constants::LOG2STEP[constants::LEVELS - level + 1] == 0 && self.second_state.is_some() {
             merkle_builder.add(self.second_state.clone().unwrap(), None);
@@ -103,8 +104,11 @@ impl CommitmentBuilder for FakeCommitmentBuilder {
             );
         }
 
-        let commitment = merkle_builder.build(self.initial_hash);
+        let merkle = merkle_builder.build();
 
-        Ok(commitment.root_hash())
+        Ok(MachineCommitment{
+            initial_hash: self.initial_hash,
+            merkle: Arc::new(merkle),
+        })
     }
 }

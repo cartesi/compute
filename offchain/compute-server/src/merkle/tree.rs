@@ -13,22 +13,13 @@ pub struct MerkleTreeLeaf {
 pub struct MerkleTree {
     root: Arc<MerkleTreeNode>,
     leafs: Vec<Arc<MerkleTreeLeaf>>,
-    implicit_hash: Hash,
-    // !!!
-    //digest_hex: String,
-    //log2_size: u32,
 }
 
 impl MerkleTree {
-    pub fn new(
-        root: Arc<MerkleTreeNode>,
-        leafs: Vec<Arc<MerkleTreeLeaf>>,
-        implicit_hash: Hash,
-    ) -> Self {
+    pub fn new(root: Arc<MerkleTreeNode>, leafs: Vec<Arc<MerkleTreeLeaf>>) -> Self {
         MerkleTree {
             root: root,
             leafs: leafs,
-            implicit_hash: implicit_hash,
         }
     }
 
@@ -42,10 +33,6 @@ impl MerkleTree {
 
     pub fn join(&self, other_hash: Arc<MerkleTreeNode>) -> Arc<MerkleTreeNode> {
         self.root.clone().join(other_hash)
-    }
-
-    pub fn implicit_hash(&self) -> Hash {
-        self.implicit_hash
     }
 
     pub fn prove_leaf(

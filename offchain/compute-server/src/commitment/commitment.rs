@@ -15,12 +15,17 @@ use crate::{
     utils::arithmetic,
 };
 
+pub struct MachineCommitment {
+    pub initial_hash: Hash,
+    pub merkle: Arc<MerkleTree>,
+}
+
 pub async fn build_commitment(
     machine: Arc<Mutex<RemoteMachine>>,
     base_cycle: u64,
     log2_stride: u32,
     log2_stride_count: u8,
-) -> Result<(Hash, MerkleTree), Box<dyn Error>> {
+) -> Result<MachineCommitment, Box<dyn Error>> {
     if log2_stride >= constants::LOG2_UARCH_SPAN {
         assert!(
             log2_stride + log2_stride_count as u32
@@ -46,7 +51,7 @@ pub async fn build_big_machine_commitment(
     base_cycle: u64,
     log2_stride: u32,
     log2_stride_count: u8,
-) -> Result<(Hash, MerkleTree), Box<dyn Error>> {
+) -> Result<MachineCommitment, Box<dyn Error>> {
     let machine_lock = machine.clone();
     let mut machine  = machine_lock.lock().await; 
     
@@ -71,17 +76,19 @@ pub async fn build_big_machine_commitment(
             break;
         }
     }
-    Ok((
-        initial_state.root_hash.clone(),
-        builder.build(initial_state.root_hash),
-    ))
+    let merkle = builder.build();
+
+    Ok(MachineCommitment{
+        initial_hash: initial_state.root_hash,
+        merkle: Arc::new(merkle),
+    })
 }
 
 pub async fn build_small_machine_commitment(
     machine: Arc<Mutex<RemoteMachine>>,
     base_cycle: u64,
     log2_stride_count: u8,
-) -> Result<(Hash, MerkleTree), Box<dyn Error>> {
+) -> Result<MachineCommitment, Box<dyn Error>> {
     let machine_lock = machine.clone();
     let mut machine  = machine_lock.lock().await; 
     
@@ -112,10 +119,12 @@ pub async fn build_small_machine_commitment(
             break;
         }
     }
-    Ok((
-        initial_state.root_hash.clone(),
-        builder.build(initial_state.root_hash),
-    ))
+    let merkle = builder.build();
+
+    Ok(MachineCommitment{
+        initial_hash: initial_state.root_hash,
+        merkle: Arc::new(merkle),
+    })
 }
 
 async fn run_uarch_span<'a>(machine: &MutexGuard<'a, RemoteMachine>) -> Result<MerkleTree, Box<dyn Error>> {
@@ -138,13 +147,12 @@ async fn run_uarch_span<'a>(machine: &MutexGuard<'a, RemoteMachine>) -> Result<M
             break;
         }
     }
-
     builder.add(state.root_hash, Some((constants::UARCH_SPAN - i) as u64));
 
     machine.ureset().await?;
     state = machine.machine_state().await?;
     builder.add(state.root_hash, None);
-    
-    Ok(builder.build(Hash::default()))
+
+    Ok(builder.build())
 }
 
