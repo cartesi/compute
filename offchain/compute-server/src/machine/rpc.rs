@@ -86,8 +86,8 @@ impl MachineRpc {
         rpc_client.run(cycle).await?;
         rpc_client.run_uarch(ucycle).await?;
 
-        if ucycle as i64 == constants::UARCH_SPAN {
-            rpc_client.run_uarch(constants::UARCH_SPAN as u64).await?;
+        if ucycle == constants::UARCH_SPAN {
+            rpc_client.run_uarch(constants::UARCH_SPAN).await?;
             // TODO: log warn/error or retrn error.
             eprintln!("ureset, not implemented");
         }
@@ -192,10 +192,10 @@ impl MachineRpc {
 }
 
 fn add_and_clamp(x: u64, y: u64) -> u64 {
-    if arithmetic::ult(x, arithmetic::max_uint(64) as u64 - y) {
+    if arithmetic::ult(x, arithmetic::max_uint(64) - y) {
         x + y
     } else {
-        arithmetic::max_uint(64) as u64
+        arithmetic::max_uint(64)
     }
 }
 

@@ -150,70 +150,7 @@ pub struct MatchState {
     pub other_parent: Hash,
     pub left_node: Hash,
     pub right_node: Hash,
-    pub running_leaf_position: u128,
+    pub running_leaf_position: u64,
     pub current_height: u64,
     pub level: u64,
 }
-
-// !!!
-/*
-// TODO: use Hash type from machine cryptography crate.
-#[derive(Default)]
-pub struct Hash {
-}
-
-impl Hash {
-    pub fn join(&self, other_hash: &Hash) -> Hash {
-       Hash{}
-    }
-
-    pub fn is_zero(&self) -> bool {
-        false
-    }
-}
-
-impl Copy for Hash {}
-
-impl Clone for Hash {
-    fn clone(&self) -> Self {
-        *self
-    }
-}
-
-impl PartialEq for Hash {
-    fn eq(&self, other: &Self) -> bool {
-        false
-    }
-}
-
-impl From<[u8; 32]> for Hash {
-    fn from(bytes: [u8; 32]) -> Self {
-        Hash{}
-    }
-}
-
-impl From<Hash> for [u8; 32] {
-    fn from (hash: Hash) -> Self {
-        let bytes: [u8; 32] = todo!();
-    }
-}
-
-impl fmt::Display for Hash {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "hash")
-    }
-}
-
-impl Eq for Hash {}
-
-impl hash::Hash for Hash {
-    fn hash<H: hash::Hasher>(&self, state: &mut H) {
-    }
-}
-
-// TODO: must be in crtypography crate
-pub type Vec<Hash> = Vec<Hash>;
-
-// TODO: must be in machine crate
-pub type MachineProof = Vec<u8>;
-*/

@@ -311,7 +311,7 @@ impl Arena for EthersArena {
                 other_parent: match_state.other_parent.into(),
                 left_node: match_state.left_node.into(), 
                 right_node: match_state.right_node.into(), 
-                running_leaf_position: match_state.running_leaf_position.as_u128(), 
+                running_leaf_position: match_state.running_leaf_position.as_u64(), 
                 current_height: match_state.current_height, 
                 level: match_state.level,
             }))

@@ -1,11 +1,6 @@
-pub const fn max_uint(k: u32) -> i64 {
+pub const fn max_uint(k: u64) -> u64 {
     assert!(k <= 64);
-    let shifting = (1 as u64).checked_shl(k);
-    let result: i64 = match shifting {
-        Some(sh) => (sh - 1) as i64,
-        None => -1,
-    };
-    result
+    (1 << k) - 1
 }
 
 pub fn ulte(x: u64, y: u64) -> bool {
@@ -20,7 +15,8 @@ pub fn is_pow2(x: u64) -> bool {
     (x & (x - 1)) == 0
 }
 
-pub fn clz(mut x: u64) -> u32 {
+// Returns number of leading zeroes of x
+pub fn clz(mut x: u64) -> u64 {
     if x == 0 {
         return 64;
     }
@@ -51,7 +47,8 @@ pub fn clz(mut x: u64) -> u32 {
     n
 }
 
-pub fn ctz(mut x: u64) -> u32 {
+// Returns number of trailing zeroes of x
+pub fn ctz(mut x: u64) -> u64 {
     x &= !x + 1;
     63 - clz(x)
 }

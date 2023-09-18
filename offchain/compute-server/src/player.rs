@@ -14,15 +14,6 @@ use crate::{
     machine::{constants, MachineRpc, MachineCommitment, MachineCommitmentBuilder},
 };
 
-// !!!
-/*
-static LEVELS: u64 = 4;
-static LOG2_STEP: [u64; 4] = [24, 14, 7, 0];
-static LOG2_UARCH_SPAN: u64 = 16;
-static UARCH_SPAN: u128 =  (1 << LOG2_UARCH_SPAN) - 1;
-static HEIGHTS: [u64; 4] = [39, 10, 7, 7];
-*/
-
 pub enum PlayerTournamentResult {
     TournamentWon,
     TournamentLost,
@@ -32,15 +23,15 @@ struct PlayerTournament {
     address: Address,
     level: u64,
     parent: Option<Address>,
-    base_big_cycle: u128,
+    base_big_cycle: u64,
 }
 
 struct PlayerMatch {
     state: MatchState,
     event: MatchCreatedEvent,
     tournament: Address,
-    leaf_cycle: u128,
-    base_big_cycle: u128,
+    leaf_cycle: u64,
+    base_big_cycle: u64,
 }
 
 // TODO: use tempaltes, not box
@@ -248,7 +239,7 @@ impl<A: Arena> Player<A> {
 
             let cycle = player_match.state.running_leaf_position >> constants::LOG2_UARCH_SPAN;
             let ucycle = player_match.state.running_leaf_position & constants::UARCH_SPAN;
-            let proof = self.machine.generate_proof(cycle as u64, ucycle as u64).await?;
+            let proof = self.machine.generate_proof(cycle, ucycle).await?;
             
             self.arena.win_leaf_match(
                 player_match.tournament,

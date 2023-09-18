@@ -6,7 +6,7 @@ use crate::merkle::{Hash, MerkleTreeNode};
 pub struct MerkleTreeLeaf {
     pub node: Arc<MerkleTreeNode>,
     pub accumulated_count: u64,
-    pub log2_size: Option<u32>
+    pub log2_size: Option<u64>
 }
 
 pub type MerkleProof = Vec<Hash>;
@@ -18,7 +18,7 @@ struct ProofAccumulator {
 
 #[derive(Debug)]
 pub struct MerkleTree {
-    log2_size: u32,
+    log2_size: u64,
     root: Arc<MerkleTreeNode>,
     leafs: Vec<Arc<MerkleTreeLeaf>>,
     nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
@@ -26,7 +26,7 @@ pub struct MerkleTree {
 
 impl MerkleTree {
     pub fn new(
-        log2_size: u32,
+        log2_size: u64,
         root: Arc<MerkleTreeNode>,
         leafs: Vec<Arc<MerkleTreeLeaf>>,
         nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
@@ -59,10 +59,10 @@ impl MerkleTree {
         &self,
         index: u64
     ) -> (Hash, MerkleProof) {
-        let mut height = 0u32;
+        let mut height = 0u64;
         if let Some(leaf) = self.leafs.get(0) {
-            if let Some(log2size) = leaf.log2_size {
-                height = log2size + self.log2_size;
+            if let Some(log2_size) = leaf.log2_size {
+                height = log2_size + self.log2_size;
             }
         }
         assert!((index >> height) == 0);
@@ -80,7 +80,7 @@ impl MerkleTree {
         &self, 
         proof_acc: &mut ProofAccumulator,
         root: Arc<MerkleTreeNode>,
-        height: u32,
+        height: u64,
         include_index: u64
     ) {    
         if height == 0 {

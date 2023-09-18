@@ -23,12 +23,12 @@ pub struct MachineCommitment {
 pub async fn build_machine_commitment(
     machine: Arc<Mutex<MachineRpc>>,
     base_cycle: u64,
-    log2_stride: u32,
-    log2_stride_count: u8,
+    log2_stride: u64,
+    log2_stride_count: u64,
 ) -> Result<MachineCommitment, Box<dyn Error>> {
     if log2_stride >= constants::LOG2_UARCH_SPAN {
         assert!(
-            log2_stride + log2_stride_count as u32
+            log2_stride + log2_stride_count
                 <= constants::LOG2_EMULATOR_SPAN + constants::LOG2_UARCH_SPAN
         );
         build_big_machine_commitment(
@@ -49,8 +49,8 @@ pub async fn build_machine_commitment(
 pub async fn build_big_machine_commitment(
     machine: Arc<Mutex<MachineRpc>>,
     base_cycle: u64,
-    log2_stride: u32,
-    log2_stride_count: u8,
+    log2_stride: u64,
+    log2_stride_count: u64,
 ) -> Result<MachineCommitment, Box<dyn Error>> {
     let machine_lock = machine.clone();
     let mut machine  = machine_lock.lock().await; 
@@ -59,9 +59,9 @@ pub async fn build_big_machine_commitment(
     let initial_state = machine.machine_state().await?;
     
     let mut builder = MerkleBuilder::new();
-    let instruction_count = arithmetic::max_uint(log2_stride_count as u32);
+    let instruction_count = arithmetic::max_uint(log2_stride_count);
     let mut instruction = 0;
-    while arithmetic::ulte(instruction as u64, instruction_count as u64) {
+    while arithmetic::ulte(instruction, instruction_count) {
         let cycle = (instruction + 1) << (log2_stride - constants::LOG2_UARCH_SPAN);
         machine.run(base_cycle + cycle).await?;
         let state = machine.machine_state().await?;
@@ -71,7 +71,7 @@ pub async fn build_big_machine_commitment(
         } else {
             builder.add(
                 state.root_hash,
-                Some(instruction_count as u64 - instruction + 1),
+                Some(instruction_count - instruction + 1),
             );
             break;
         }
@@ -87,7 +87,7 @@ pub async fn build_big_machine_commitment(
 pub async fn build_small_machine_commitment(
     machine: Arc<Mutex<MachineRpc>>,
     base_cycle: u64,
-    log2_stride_count: u8,
+    log2_stride_count: u64,
 ) -> Result<MachineCommitment, Box<dyn Error>> {
     let machine_lock = machine.clone();
     let mut machine  = machine_lock.lock().await; 
@@ -97,10 +97,10 @@ pub async fn build_small_machine_commitment(
 
     let mut builder = MerkleBuilder::new();
     let instruction_count =
-        arithmetic::max_uint(log2_stride_count as u32 - constants::LOG2_UARCH_SPAN);
+        arithmetic::max_uint(log2_stride_count - constants::LOG2_UARCH_SPAN);
     let mut instructions = 0;
     loop {
-        if !arithmetic::ulte(instructions as u64, instruction_count as u64) {
+        if !arithmetic::ulte(instructions, instruction_count) {
             break;
         }
         
@@ -114,7 +114,7 @@ pub async fn build_small_machine_commitment(
         if state.halted {
             builder.add(
                 run_uarch_span(&mut machine).await?.root_hash(),
-                Some(instruction_count as u64 - instructions + 1),
+                Some(instruction_count - instructions + 1),
             );
             break;
         }
@@ -148,7 +148,7 @@ async fn run_uarch_span<'a>(machine: &mut MutexGuard<'a, MachineRpc>) -> Result<
             break;
         }
     }
-    builder.add(state.root_hash, Some((constants::UARCH_SPAN - i) as u64));
+    builder.add(state.root_hash, Some(constants::UARCH_SPAN - i));
 
     machine.ureset().await?;
     state = machine.machine_state().await?;
