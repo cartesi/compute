@@ -1,8 +1,8 @@
 mod hash;
 pub use hash::*;
 
-mod tree_node;
-pub use tree_node::*;
+mod node;
+pub use node::*;
 
 mod tree;
 pub use tree::*;

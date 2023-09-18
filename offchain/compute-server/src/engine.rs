@@ -15,7 +15,7 @@ use tokio_util::sync::CancellationToken;
 
 use crate::{
     merkle::Hash,
-    machine::{MachineRpc, CachingMachineCommitmentBuilder},
+    machine::{MachineRpc, MachineCommitmentBuilder, CachingMachineCommitmentBuilder},
     arena::{Arena, Address},
     player::{Player, PlayerTournamentResult},
     config::EngineConfig,
@@ -178,9 +178,7 @@ impl<A: Arena + 'static> Engine<A> {
             return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
        };
 
-       let machine = self.clone().create_player_machine(root_tournament).await?;
-       let commitment_builder = CachingMachineCommitmentBuilder::new(machine.clone());
-       
+       let (machine, commitment_builder) = self.clone().create_player_machine(root_tournament).await?;
        {
             let disputes = self.disputes.clone();
             let mut disputes = disputes.lock().await;
@@ -203,7 +201,7 @@ impl<A: Arena + 'static> Engine<A> {
     async fn create_player_machine(
         self: Arc<Self>,
         dispute_tournament: Address,
-    ) -> Result<Arc<MachineRpc>, Box<dyn Error>> {
+    ) -> Result<(Arc<MachineRpc>, Arc<Mutex<dyn MachineCommitmentBuilder + Send>>), Box<dyn Error>> {
         // TODO:
         // 1. Spawn cartesi vm process.
         // 2. Setup JSON RPC client vm client.
