@@ -12,8 +12,12 @@ impl Hash {
         }
     }
 
-    pub fn from_hex(digest_hex: &str) -> Hash {
-        assert!(digest_hex.len() == 66);
+    pub fn from_digest_data(digest_data: Vec<u8>) -> Hash {
+        let data: [u8; 32] = digest_data.try_into().unwrap();
+        Hash::new(data)
+    }
+
+    pub fn from_digest_hex(digest_hex: &str) -> Hash {
         let mut data = [0u8; 32];
         hex::decode_to_slice(&digest_hex, &mut data as &mut [u8]).unwrap();
         Hash::new(data)

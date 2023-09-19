@@ -29,10 +29,10 @@ pub enum EngineError {
 
 #[derive(Clone)]
 pub struct DisputeState {
-    initial_hash: Hash,
-    machine_snapshot_path: String,
-    root_tournament: Address,
-    finished: bool,
+    pub initial_hash: Hash,
+    pub machine_snapshot_path: String,
+    pub root_tournament: Address,
+    pub finished: bool,
 }
 
 struct Dispute <A: Arena,> {
