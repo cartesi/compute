@@ -1,3 +1,5 @@
+use std::fmt;
+
 use hex;
 
 #[derive(Eq, Hash, PartialEq, Clone, Copy, Debug)]
@@ -38,11 +40,13 @@ impl Default for Hash {
     }
 }
 
+/*
 impl ToString for Hash {
     fn to_string(&self) -> String {
         self.to_hex()
     }
 }
+*/
 
 impl From<[u8; 32]> for Hash {
     fn from(data: [u8; 32]) -> Self {
@@ -53,6 +57,12 @@ impl From<[u8; 32]> for Hash {
 impl From<Hash> for [u8; 32] {
     fn from (hash: Hash) -> Self {
         hash.data
+    }
+}
+
+impl fmt::Display for Hash {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_hex())
     }
 }
 

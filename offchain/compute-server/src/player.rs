@@ -6,7 +6,7 @@ use std::{
 
 use::tokio::sync::Mutex;
 
-use::log::info;
+use::log::{info, debug};
 
 use crate::{
     arena::{Arena, Address, MatchState, MatchCreatedEvent},
@@ -37,7 +37,7 @@ struct PlayerMatch {
 // TODO: use tempaltes, not box
 pub struct Player<A: Arena> {
     arena: Arc<A>,
-    machine: Arc<MachineRpc>,
+    machine: Arc<Mutex<MachineRpc>>,
     commitment_builder: Arc<Mutex<dyn MachineCommitmentBuilder + Send>>,
     tournaments: Vec<Arc<PlayerTournament>>,
     matches: Vec<Arc<PlayerMatch>>,
@@ -48,7 +48,7 @@ pub struct Player<A: Arena> {
 impl<A: Arena> Player<A> {
     pub fn new(
         arena: Arc<A>,
-        machine: Arc<MachineRpc>,
+        machine: Arc<Mutex<MachineRpc>>,
         commitment_builder: Arc<Mutex<dyn MachineCommitmentBuilder + Send>>,
         root_tournamet: Address
     ) -> Self {
@@ -91,8 +91,13 @@ impl<A: Arena> Player<A> {
         };
 
         if tournament.parent.is_none() {
-            if let Some((winner_commitment, _)) = self.arena.root_tournament_winner(tournament.address).await? {
-                info!("tournament {} finished, winner is {}", tournament.address, winner_commitment);
+            if let Some((winner_commitment, winner_state)) = self.arena.root_tournament_winner(tournament.address).await? {
+                info!(
+                    "tournament {} finished - winner is {}, winner state hash is {}", 
+                    tournament.address,
+                    winner_commitment,
+                    winner_state,
+                );
                 if commitment.merkle.root_hash() == winner_commitment {
                     return Ok(Some(PlayerTournamentResult::TournamentWon));
                 } else {
@@ -105,22 +110,33 @@ impl<A: Arena> Player<A> {
             if let Some(winner) = self.arena.tournament_winner(tournament.address).await? {
                 let old_commitment = self.commitments.get(&tournament.parent.unwrap()).unwrap();
                 if winner != old_commitment.merkle.root_hash() {
+                    info!("player lost tournament {}", tournament.address);
                     return Ok(Some(PlayerTournamentResult::TournamentLost));
                 }
-            }
 
-            if self.called_win.contains_key(&tournament.address) {
-                return Ok(None);
-            } else {
-                self.called_win.insert(tournament.address, true);
+                if self.called_win.contains_key(&tournament.address) {
+                    info!("player already called winInnerMatch for tournament {}", tournament.address);
+                    return Ok(None);
+                } else {
+                    self.called_win.insert(tournament.address, true);
+                }
+    
+                info!(
+                    "win tournament {} of level {} for commitment {}",
+                    tournament.address,
+                    tournament.level,
+                    commitment.merkle.root_hash(),
+                );
+                let (left, right) = old_commitment
+                    .merkle.root_children().
+                    expect("root does not have children");
+                self.arena.win_inner_match(
+                    tournament.parent.unwrap(), 
+                    tournament.address, 
+                    left.digest,
+                    right.digest
+                ).await?
             }
-
-            info!(
-                "player won tournament {} of level {} for commitment {}",
-                tournament.address,
-                tournament.level,
-                commitment.merkle.root_hash(),
-            );
         }
 
         match self.latest_match(tournament.address, commitment.clone()).await? {
@@ -187,6 +203,12 @@ impl<A: Arena> Player<A> {
         let (left, right) = commitment.merkle.root_children().expect("root does not have children");
         let (last, proof) = commitment.merkle.last();
 
+        info!(
+            "join tournament {} of level {} with commitment {}",
+            tournament.address,
+            tournament.level,
+            commitment.merkle.root_hash(),
+        );
         self.arena.join_tournament(
             tournament.address,
             last,
@@ -215,15 +237,21 @@ impl<A: Arena> Player<A> {
         player_match: Arc<PlayerMatch>,
         commitment: Arc<MachineCommitment>,
     ) -> Result<(), Box<dyn Error>> {
+        info!(
+            "height for match {} is {}", 
+            player_match.event.id.hash(),
+            player_match.state.current_height
+        );
+
         if player_match.state.level == 1 {
             let (left, right) = commitment.merkle.root_children().expect("root does not have chidlren");
             
-            // Probably, player_match.state.other_parentca be used here.
+            // Probably, player_match.state.other_parent can be used here.
             let match_state = self.arena
                 .match_state(player_match.tournament, player_match.event.id)
                 .await?
                 .expect("match not found");
-            let finished = player_match.state.other_parent.is_zero();
+            let finished = match_state.other_parent.is_zero();
             if finished {
                 return Ok(())
             }
@@ -239,8 +267,19 @@ impl<A: Arena> Player<A> {
 
             let cycle = player_match.state.running_leaf_position >> constants::LOG2_UARCH_SPAN;
             let ucycle = player_match.state.running_leaf_position & constants::UARCH_SPAN;
-            let proof = self.machine.generate_proof(cycle, ucycle).await?;
+            let proof = self.machine
+                .clone()
+                .lock()
+                .await
+                .generate_proof(cycle, ucycle)
+                .await?;
             
+            info!(
+                "win leaf match in tournament {} of level {} for commitment {}",
+                player_match.tournament,
+                self.tournament(player_match.tournament).level,
+                commitment.merkle.root_hash(),
+            );
             self.arena.win_leaf_match(
                 player_match.tournament,
                 player_match.event.id,
@@ -275,8 +314,14 @@ impl<A: Arena> Player<A> {
             commitment.merkle.prove_leaf(player_match.state.running_leaf_position)
         };
 
-        let tournament = self.tournaments.iter().find(|t| t.address == player_match.tournament).unwrap();
+        let tournament = self.tournament(player_match.tournament);
         if tournament.level == 1 {
+            info!(
+                "seal leaf match in tournament {} of level {} for commitment {}",
+                player_match.tournament,
+                tournament.level,
+                commitment.merkle.root_hash(),
+            );
             self.arena.seal_leaf_match(
                 tournament.address,
                 player_match.event.id,
@@ -286,7 +331,13 @@ impl<A: Arena> Player<A> {
                 initial_hash_proof
             ).await?;
         } else {
-            self.arena.seal_leaf_match(
+            info!(
+                "seal inner match in tournament {} of level {} for commitment {}",
+                player_match.tournament,
+                tournament.level,
+                commitment.merkle.root_hash(),
+            );
+            self.arena.seal_inner_match(
                 tournament.address,
                 player_match.event.id,
                 left.digest,
@@ -320,6 +371,13 @@ impl<A: Arena> Player<A> {
             right.children().expect("right node does not have children")
         };
 
+        info!(
+            "advance match with current height {} in tournament {} of level {} for commitment {}",
+            player_match.state.current_height,
+            player_match.tournament,
+            self.tournament(player_match.tournament).level,
+            commitment.merkle.root_hash(),
+        );
         self.arena.advance_match(
             player_match.tournament,
             player_match.event.id,
@@ -350,5 +408,12 @@ impl<A: Arena> Player<A> {
         self.tournaments.push(tournament);
 
         Ok(())
+    }
+
+    fn tournament(&self, address: Address) -> Arc<PlayerTournament> {
+        self.tournaments.iter()
+            .find(|t| t.address == address)
+            .expect("tournament not found")
+            .clone()
     }
 }

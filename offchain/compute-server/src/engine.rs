@@ -201,7 +201,7 @@ impl<A: Arena + 'static> Engine<A> {
     async fn create_player_machine(
         self: Arc<Self>,
         dispute_tournament: Address,
-    ) -> Result<(Arc<MachineRpc>, Arc<Mutex<dyn MachineCommitmentBuilder + Send>>), Box<dyn Error>> {
+    ) -> Result<(Arc<Mutex<MachineRpc>>, Arc<Mutex<dyn MachineCommitmentBuilder + Send>>), Box<dyn Error>> {
         // TODO:
         // 1. Spawn cartesi vm process.
         // 2. Setup JSON RPC client vm client.
