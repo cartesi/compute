@@ -202,7 +202,7 @@ fn add_and_clamp(x: u64, y: u64) -> u64 {
 fn encode_access_log(log: &AccessLog) -> Vec<u8> {
     let mut encoded = Vec::new();
     
-    for a in log.accesses {
+    for a in log.accesses.iter() {
         assert_eq!(a.log2_size, 3);
         if a.r#type == AccessType::Read {
             encoded.push(a.read_data.clone());

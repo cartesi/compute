@@ -65,12 +65,12 @@ impl<A: Arena + 'static> Compute for APIServer<A> {
     ) -> Result<Response<StartDisputeResponse>, Status> {
         let req = request.into_inner(); 
         
-        if !is_valid_digest_data(req.initial_hash) {
+        if !is_valid_digest_data(&req.initial_hash) {
             return Err(Status::invalid_argument("invalid initial hash digest"))
         }
-        let initial_hash = Hash::from_digest_data(req.initial_hash);
+        let initial_hash = Hash::from_data(req.initial_hash);
         
-        match self.engine.start_dispute(initial_hash, req.snapshot_path).await {
+        match self.engine.clone().start_dispute(initial_hash, req.snapshot_path).await {
             Ok(dispute_tournament) => Ok(
                 Response::new(StartDisputeResponse{
                     dispute_id: dispute_tournament.encode_hex(),
@@ -92,7 +92,7 @@ impl<A: Arena + 'static> Compute for APIServer<A> {
             return Err(Status::invalid_argument("invalid dispute tournament address"))
         };
         
-        match self.engine.finish_dispute(root_tournament).await {
+        match self.engine.clone().finish_dispute(root_tournament).await {
             Ok(dispute_state) => Ok(
                 Response::new(FinishDisputeResponse{
                     dispute_info: Some(DisputeInfo{
@@ -116,10 +116,10 @@ impl<A: Arena + 'static> Compute for APIServer<A> {
             return Err(Status::invalid_argument("invalid dispute tournament address"))
         };
 
-        match self.engine.disupte_state(root_tournament).await {
+        match self.engine.clone().disupte_state(root_tournament).await {
             Some(state) => Ok(Response::new(GetDisputeInfoResponse{
                 dispute_info: Some(DisputeInfo {
-                    closed: false,
+                    closed: state.finished,
                 }),
             })),
             None => Err(Status::internal("dispute not found")),
@@ -138,7 +138,7 @@ impl<A: Arena + 'static> Compute for APIServer<A> {
             return Err(Status::invalid_argument("invalid dispute tournament address"))
         };
 
-        match self.engine.create_player(root_tournament).await {
+        match self.engine.clone().create_player(root_tournament).await {
             Ok(_) => Ok(Response::new(JoinDisputeResponse{
                 dispute_info: Some(DisputeInfo {
                     closed: false,
@@ -149,6 +149,6 @@ impl<A: Arena + 'static> Compute for APIServer<A> {
     }
 }
 
-fn is_valid_digest_data(digest_data: Vec<u8>) -> bool {
+fn is_valid_digest_data(digest_data: &Vec<u8>) -> bool {
     digest_data.len() == 32
 }

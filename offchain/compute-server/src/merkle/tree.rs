@@ -1,10 +1,10 @@
-use std::{sync::Arc, collections::HashMap};
+use std::collections::HashMap;
 
 use crate::merkle::{Hash, MerkleTreeNode};
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct MerkleTreeLeaf {
-    pub node: Arc<MerkleTreeNode>,
+    pub node: Hash,
     pub accumulated_count: u64,
     pub log2_size: Option<u64>
 }
@@ -19,17 +19,17 @@ struct ProofAccumulator {
 #[derive(Debug)]
 pub struct MerkleTree {
     log2_size: u64,
-    root: Arc<MerkleTreeNode>,
-    leafs: Vec<Arc<MerkleTreeLeaf>>,
-    nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
+    root: Hash,
+    leafs: Vec<MerkleTreeLeaf>,
+    nodes: HashMap<Hash, MerkleTreeNode>,
 }
 
 impl MerkleTree {
     pub fn new(
         log2_size: u64,
-        root: Arc<MerkleTreeNode>,
-        leafs: Vec<Arc<MerkleTreeLeaf>>,
-        nodes: HashMap<Hash, Arc<MerkleTreeNode>>,
+        root: Hash,
+        leafs: Vec<MerkleTreeLeaf>,
+        nodes: HashMap<Hash, MerkleTreeNode>,
     ) -> Self {
         MerkleTree {
             log2_size: log2_size,
@@ -39,20 +39,17 @@ impl MerkleTree {
         }
     }
 
-    pub fn node(&self, digest: Hash) -> Option<Arc<MerkleTreeNode>> {
-        if let Some(node) = self.nodes.get(&digest) {
-            Some(node.clone())
-        } else {
-            None
-        }
-    }
-
     pub fn root_hash(&self) -> Hash {
-        self.root.digest
+        self.root
     }
 
-    pub fn root_children(&self) -> Option<(Arc<MerkleTreeNode>, Arc<MerkleTreeNode>)> {
-        self.root.children()
+    pub fn root_children(&self) -> (Hash, Hash) {
+        self.node_children(self.root).expect("root does not have children")
+    }
+
+    pub fn node_children(&self, digest: Hash) -> Option<(Hash, Hash)> {
+        let node = self.nodes.get(&digest).expect("node does not exist");
+        node.children()
     }
 
     pub fn prove_leaf(
@@ -71,7 +68,12 @@ impl MerkleTree {
             leaf: Hash::default(),
             proof: Vec::new(),
         };
-        self.generate_proof(&mut proof_acc, self.root, height, index);
+        self.generate_proof(
+            &mut proof_acc,
+            self.nodes.get(&self.root).expect("root does not exist"),
+            height,
+            index
+        );
 
         (proof_acc.leaf, proof_acc.proof)
     }
@@ -79,10 +81,10 @@ impl MerkleTree {
     fn generate_proof(
         &self, 
         proof_acc: &mut ProofAccumulator,
-        root: Arc<MerkleTreeNode>,
+        root: &MerkleTreeNode,
         height: u64,
         include_index: u64
-    ) {    
+    ) {
         if height == 0 {
             proof_acc.leaf = root.digest;
             return;
@@ -90,6 +92,8 @@ impl MerkleTree {
 
         let new_height = height - 1;
         let (left, right) = root.children().expect("root does not have children");
+        let left = self.nodes.get(&left).expect("left child does not exist");
+        let right = self.nodes.get(&right).expect("right child does not exist");
 
         if (include_index >> new_height) & 1 == 0 {
             let left = left;
@@ -114,13 +118,13 @@ impl MerkleTree {
 
     pub fn last(&self) -> (Hash, MerkleProof) {
         let mut proof = Vec::new();
-        let mut children = self.root.children();
-        let mut old_right = self.root.digest;
+        let mut children: Option<(Hash, Hash)> = Some(self.root_children());
+        let mut old_right = self.root;
         
         while let Some((left, right)) = children {
-            proof.push(left.digest);
-            old_right = right.digest;
-            children = right.children();
+            proof.push(left);
+            old_right = right;
+            children = self.node_children(right);
         }
 
         proof.reverse();

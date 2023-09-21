@@ -12,7 +12,6 @@ use cartesi_compute_server::{
     },
     arena::EthersArena,
     engine::Engine,
-    machine::MachineJsonRpcClient,
     server::APIServer,
 }; 
 
@@ -38,7 +37,7 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let engine_config = EngineConfig{
         player_react_period: Duration::from_secs(5),
     };
-    let engine = Arc::new(Engine::<EthersArena, MachineJsonRpcClient>::new(arena, engine_config));
+    let engine = Arc::new(Engine::<EthersArena>::new(arena, engine_config));
 
     // Create and run API server.
     let server_config = APIServerConfig {

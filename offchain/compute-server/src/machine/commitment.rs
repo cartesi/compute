@@ -15,6 +15,7 @@ use crate::{
     utils::arithmetic,
 };
 
+#[derive(Clone, Debug)]
 pub struct MachineCommitment {
     pub implicit_hash: Hash,
     pub merkle: Arc<MerkleTree>,

@@ -127,14 +127,12 @@ impl<A: Arena> Player<A> {
                     tournament.level,
                     commitment.merkle.root_hash(),
                 );
-                let (left, right) = old_commitment
-                    .merkle.root_children().
-                    expect("root does not have children");
+                let (left, right) = old_commitment.merkle.root_children();
                 self.arena.win_inner_match(
                     tournament.parent.unwrap(), 
                     tournament.address, 
-                    left.digest,
-                    right.digest
+                    left,
+                    right,
                 ).await?
             }
         }
@@ -200,7 +198,7 @@ impl<A: Arena> Player<A> {
             return Ok(())
         }
 
-        let (left, right) = commitment.merkle.root_children().expect("root does not have children");
+        let (left, right) = commitment.merkle.root_children();
         let (last, proof) = commitment.merkle.last();
 
         info!(
@@ -213,8 +211,8 @@ impl<A: Arena> Player<A> {
             tournament.address,
             last,
             proof,
-            left.digest,
-            right.digest,
+            left,
+            right,
         ).await
     } 
 
@@ -244,7 +242,7 @@ impl<A: Arena> Player<A> {
         );
 
         if player_match.state.level == 1 {
-            let (left, right) = commitment.merkle.root_children().expect("root does not have chidlren");
+            let (left, right) = commitment.merkle.root_children();
             
             // Probably, player_match.state.other_parent can be used here.
             let match_state = self.arena
@@ -283,8 +281,8 @@ impl<A: Arena> Player<A> {
             self.arena.win_leaf_match(
                 player_match.tournament,
                 player_match.event.id,
-                left.digest,
-                right.digest,
+                left,
+                right,
                 proof,
             ).await?;
         } else {
@@ -299,10 +297,7 @@ impl<A: Arena> Player<A> {
         player_match: Arc<PlayerMatch>,
         commitment: Arc<MachineCommitment>,
     ) -> Result<(), Box<dyn Error>> {        
-        let current_other_parent = commitment.merkle
-            .node(player_match.state.other_parent)
-            .expect("failed to find merkle tree node");
-        let (left, right) = if let Some(children) = current_other_parent.children() {
+        let (left, right) = if let Some(children) = commitment.merkle.node_children(player_match.state.other_parent) {
             children
         } else {
             return Ok(())
@@ -325,8 +320,8 @@ impl<A: Arena> Player<A> {
             self.arena.seal_leaf_match(
                 tournament.address,
                 player_match.event.id,
-                left.digest,
-                right.digest,
+                left,
+                right,
                 initial_hash,
                 initial_hash_proof
             ).await?;
@@ -340,8 +335,8 @@ impl<A: Arena> Player<A> {
             self.arena.seal_inner_match(
                 tournament.address,
                 player_match.event.id,
-                left.digest,
-                right.digest,
+                left,
+                right,
                 initial_hash,
                 initial_hash_proof
             ).await?;
@@ -356,19 +351,16 @@ impl<A: Arena> Player<A> {
         player_match: Arc<PlayerMatch>,
         commitment: Arc<MachineCommitment>,
     ) -> Result<(), Box<dyn Error>> {
-        let current_other_parent = commitment.merkle
-            .node(player_match.state.other_parent)
-            .expect("failed to find merkle tree node");
-        let (left, right) = if let Some(children) = current_other_parent.children() {
+        let (left, right) = if let Some(children) = commitment.merkle.node_children(player_match.state.other_parent) {
             children
         } else {
             return Ok(())
         };
 
-        let (new_left, new_right) = if left.digest != player_match.state.left_node {
-            left.children().expect("let node does not have children")
+        let (new_left, new_right) = if left != player_match.state.left_node {
+            commitment.merkle.node_children(left).expect("left node does not have children")
         } else {
-            right.children().expect("right node does not have children")
+            commitment.merkle.node_children(right).expect("right node does not have children")
         };
 
         info!(
@@ -381,10 +373,10 @@ impl<A: Arena> Player<A> {
         self.arena.advance_match(
             player_match.tournament,
             player_match.event.id,
-            left.digest,
-            right.digest,
-            new_left.digest,
-            new_right.digest,
+            left,
+            right,
+            new_left,
+            new_right,
         ).await?;
 
         Ok(())
