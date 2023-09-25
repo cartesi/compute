@@ -3,6 +3,8 @@ use std::{
     sync::Arc,
 };
 
+use tokio::sync::Mutex;
+
 use cartesi_compute_server::{
     config::{
         ArenaConfig,
@@ -11,6 +13,7 @@ use cartesi_compute_server::{
         APIServerConfig,
     },
     arena::EthersArena,
+    machine::MachineFactory,
     engine::Engine,
     server::APIServer,
 }; 
@@ -33,11 +36,15 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     arena.init().await?;
     let arena = Arc::new(arena);
 
+    // Create and initialize machine factory.
+    let machine_factory = MachineFactory::new(9545).await?;
+    let machine_factory = Arc::new(Mutex::new(machine_factory));
+
     // Create and initialize engine.
     let engine_config = EngineConfig{
         player_react_period: Duration::from_secs(5),
     };
-    let engine = Arc::new(Engine::<EthersArena>::new(arena, engine_config));
+    let engine = Arc::new(Engine::<EthersArena>::new(arena, machine_factory, engine_config));
 
     // Create and run API server.
     let server_config = APIServerConfig {

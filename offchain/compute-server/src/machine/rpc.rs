@@ -2,11 +2,15 @@ use std::{
     error::Error,
     sync::Arc,
     path::Path,
+    collections::HashMap,
 };
 
 use sha3::{Digest, Keccak256};
 
-use tokio::sync::Mutex;
+use tokio::{
+    sync::Mutex,
+    process::Command,
+};
 
 use cartesi_machine_json_rpc::client::{
     JsonRpcCartesiMachineClient,
@@ -42,7 +46,7 @@ impl std::fmt::Display for MachineState {
 pub type MachineProof = Vec<u8>;
 
 pub struct MachineRpc {
-    rpc_client: Arc<Mutex<JsonRpcCartesiMachineClient>>,
+    rpc_client: JsonRpcCartesiMachineClient,
     root_hash: [u8; 32],
     start_cycle: u64,
     cycle: u64,
@@ -65,9 +69,9 @@ impl MachineRpc {
         // Machine can never be advanced on the micro arch.
         // Validators must verify this first
         assert_eq!(rpc_client.read_csr("uarch_cycle".to_string()).await?, 0);
-        
+
         Ok(MachineRpc {
-            rpc_client: Arc::new(Mutex::new(rpc_client)),
+            rpc_client: rpc_client,
             start_cycle: start_cycle,
             root_hash: root_hash,
             cycle: 0,
@@ -79,15 +83,12 @@ impl MachineRpc {
         &mut self,
         cycle: u64,
         ucycle: u64
-    ) -> Result<MachineProof, Box<dyn Error>> {
-        let rpc_client_lock = self.rpc_client.clone();
-        let mut rpc_client = rpc_client_lock.lock().await;
-        
-        rpc_client.run(cycle).await?;
-        rpc_client.run_uarch(ucycle).await?;
+    ) -> Result<MachineProof, Box<dyn Error>> {        
+        self.rpc_client.run(cycle).await?;
+        self.rpc_client.run_uarch(ucycle).await?;
 
         if ucycle == constants::UARCH_SPAN {
-            rpc_client.run_uarch(constants::UARCH_SPAN).await?;
+            self.rpc_client.run_uarch(constants::UARCH_SPAN).await?;
             // TODO: log warn/error or retrn error.
             eprintln!("ureset, not implemented");
         }
@@ -96,7 +97,7 @@ impl MachineRpc {
             annotations: true,
             proofs: true,
         };
-        let log = rpc_client.step(&log_type, false).await?;
+        let log = self.rpc_client.step(&log_type, false).await?;
 
         Ok(encode_access_log(&log))
     }
@@ -105,16 +106,14 @@ impl MachineRpc {
         assert!(arithmetic::ulte(self.cycle, cycle));
         
         let physical_cycle = add_and_clamp(self.start_cycle, cycle);
-        let rpc_client_lock = self.rpc_client.clone();
-        let mut rpc_client = rpc_client_lock.lock().await;
-        
+    
         loop {
-            let halted = rpc_client.read_iflags_h().await?; 
+            let halted = self.rpc_client.read_iflags_h().await?; 
             if halted {
                 break;
             }
 
-            let mcycle = rpc_client.read_csr("mcycle".to_string()).await?;
+            let mcycle = self.rpc_client.read_csr("mcycle".to_string()).await?;
             if mcycle == physical_cycle {
                 break;
             }
@@ -132,52 +131,29 @@ impl MachineRpc {
             format!("{}, {}", self.ucycle, ucycle)
         );
 
-        self.rpc_client
-            .clone()
-            .lock()
-            .await
-            .run_uarch(ucycle)
-            .await?;
-        
+        self.rpc_client.run_uarch(ucycle).await?;
         self.ucycle = ucycle;
 
         Ok(())
     }
 
     pub async fn increment_uarch(&mut self) -> Result<(), Box<dyn Error>> {
-        self.rpc_client
-            .clone()
-            .lock()
-            .await
-            .run_uarch(self.ucycle + 1)
-            .await?;
-
+        self.rpc_client.run(self.ucycle + 1).await?;
         self.ucycle = self.ucycle + 1;
-
         Ok(())
     }
 
     pub async fn ureset(&mut self) -> Result<(), Box<dyn Error>> {
-        self.rpc_client
-            .clone()
-            .lock()
-            .await
-            .reset_uarch_state()
-            .await?;
-
+        self.rpc_client.reset_uarch_state().await?;
         self.cycle += 1;
         self.ucycle = 0;
-
         Ok(())
     }
 
-    pub async fn machine_state(&self) -> Result<MachineState, Box<dyn Error>> {
-        let rpc_client_lock = self.rpc_client.clone();
-        let mut rpc_client = rpc_client_lock.lock().await;
-
-        let root_hash = rpc_client.get_root_hash().await?;
-        let halted = rpc_client.read_iflags_h().await?;
-        let uhalted = rpc_client.read_uarch_halt_flag().await?;
+    pub async fn machine_state(&mut self) -> Result<MachineState, Box<dyn Error>> {
+        let root_hash = self.rpc_client.get_root_hash().await?;
+        let halted = self.rpc_client.read_iflags_h().await?;
+        let uhalted = self.rpc_client.read_uarch_halt_flag().await?;
 
         Ok(MachineState{
             root_hash: Hash::new(root_hash),
@@ -250,5 +226,52 @@ fn ver(mut t: Vec<u8>, p: u64, s: Vec<Vec<u8>>) -> Vec<u8> {
         }
     }
     t
+}
+
+pub struct MachineFactory {
+    rpc_client: JsonRpcCartesiMachineClient,
+    machines: HashMap<String, Arc<Mutex<MachineRpc>>>,
+}
+
+impl MachineFactory {
+    pub async fn new(port: u32) -> Result<Self, Box<dyn Error>> {
+        let server_address = format!("127.0.0.1:{}", port);
+    
+        let mut machine_process = Command::new("/usr/bin/jsonrpc-remote-cartesi-machine")
+            .arg(format!("--server-address={}", server_address))
+            .spawn()
+            .expect("failed to run /usr/bin/jsonrpc-remote-cartesi-machine");
+        machine_process.wait().await?;
+
+        let rpc_url = format!("http://{}", server_address);
+        let rpc_client = JsonRpcCartesiMachineClient::new(rpc_url).await?;
+        
+        Ok(Self {
+            rpc_client: rpc_client,
+            machines: HashMap::new(),
+        })
+    }
+
+    pub async fn create_machine(&mut self, snapshot_path: &Path) -> Result<Arc<Mutex<MachineRpc>>, Box<dyn Error>> {
+        let json_rpc_url = self.rpc_client.fork().await?;
+        let machine_rpc = MachineRpc::new(json_rpc_url.as_str(), snapshot_path).await?;
+        Ok(Arc::new(Mutex::new(machine_rpc)))
+    }
+
+    pub async fn destroy_machine(&mut self, url: String) -> Result<(), Box<dyn Error>> {
+        let machine_lock = if let Some(machine) = self.machines.get_mut(&url) {
+            machine.clone()
+        } else {
+            return Ok(())
+        };
+
+        let mut machine = machine_lock.lock().await;
+        // TODO: handle result here
+        machine.rpc_client.shutdown().await;
+
+        self.machines.remove(&url);
+
+        Ok(())
+    }
 }
 

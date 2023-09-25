@@ -1,5 +1,6 @@
 use std::{
     error::Error,
+    path::Path,
     sync::Arc,
     collections::HashMap,
 };
@@ -15,7 +16,13 @@ use tokio_util::sync::CancellationToken;
 
 use crate::{
     merkle::Hash,
-    machine::{MachineRpc, MachineCommitmentBuilder, CachingMachineCommitmentBuilder},
+    machine::{
+        MachineRpc,
+        MachineFactory,
+        MachineCommitmentBuilder,
+        CachingMachineCommitmentBuilder,
+        FakeMachineCommitmentBuilder,
+    },
     arena::{Arena, Address},
     player::{Player, PlayerTournamentResult},
     config::EngineConfig,
@@ -42,16 +49,21 @@ struct Dispute <A: Arena,> {
 
 pub struct Engine <A: Arena> {
     arena: Arc<A>,
+    machine_factory: Arc<Mutex<MachineFactory>>,
     config: EngineConfig,
     disputes: Arc<Mutex<HashMap<Address, Dispute<A>>>>,
     shutdown_token: CancellationToken,
 }
 
 impl<A: Arena + 'static> Engine<A> {
-    pub fn new(arena: Arc<A>, player_config: EngineConfig) -> Self {
+    pub fn new(
+        arena: Arc<A>,
+        machine_facotry: Arc<Mutex<MachineFactory>>,
+        config: EngineConfig) -> Self {
         Self {
             arena: arena,
-            config: player_config,
+            machine_factory: machine_facotry,
+            config,
             disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A>>::new())),
             shutdown_token: CancellationToken::new(),
         }
@@ -174,11 +186,15 @@ impl<A: Arena + 'static> Engine<A> {
         self: Arc<Self>,
         root_tournament: Address
     ) -> Result<(), Box<dyn Error>> {
-       if let None = self.clone().disupte_state(root_tournament).await {
-            return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
+       let dispute = if let Some(dispute) = self.clone().disupte_state(root_tournament).await {
+        dispute    
+       } else {
+        return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
        };
 
-       let (machine, commitment_builder) = self.clone().create_player_machine(root_tournament).await?;
+       let (machine, commitment_builder) = self.clone()
+        .create_player_machine(&dispute.machine_snapshot_path, false).await?;
+       
        {
             let disputes = self.disputes.clone();
             let mut disputes = disputes.lock().await;
@@ -200,12 +216,21 @@ impl<A: Arena + 'static> Engine<A> {
 
     async fn create_player_machine(
         self: Arc<Self>,
-        dispute_tournament: Address,
+        snapshot_path: &String,
+        fake: bool,
     ) -> Result<(Arc<Mutex<MachineRpc>>, Arc<Mutex<dyn MachineCommitmentBuilder + Send>>), Box<dyn Error>> {
-        // TODO:
-        // 1. Spawn cartesi vm process.
-        // 2. Setup JSON RPC client vm client.
-        // 3. Restore vm from snapshot
-        todo!()
+        let factory_lock = self.machine_factory.clone();
+        let mut factory = factory_lock.lock().await;
+        let snapshot_path = Path::new(snapshot_path);
+        let machine = factory.create_machine(snapshot_path).await?;
+
+        let commitment_builder: Arc<Mutex<dyn MachineCommitmentBuilder + Send>> = if fake {
+            // TODO: pass parameters here or add them to config
+            Arc::new(Mutex::new(FakeMachineCommitmentBuilder::new(Hash::default(), Some(Hash::default()))))
+        } else {
+            Arc::new(Mutex::new(CachingMachineCommitmentBuilder::new(machine.clone())))
+        };
+
+        Ok((machine, commitment_builder))
     }
 }
