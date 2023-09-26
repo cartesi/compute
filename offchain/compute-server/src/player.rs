@@ -34,7 +34,6 @@ struct PlayerMatch {
     base_big_cycle: u64,
 }
 
-// TODO: use tempaltes, not box
 pub struct Player<A: Arena> {
     arena: Arc<A>,
     machine: Arc<Mutex<MachineRpc>>,

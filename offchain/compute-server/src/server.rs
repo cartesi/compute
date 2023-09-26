@@ -1,12 +1,18 @@
 use std::sync::Arc;
 
-use ethers::abi::AbiEncode;
+use log::error;
+
+use tokio::{
+    task,
+    signal,
+};
 use tonic::{
     transport::Server,
     Request,
     Response,
     Status,
 };
+use ethers::abi::AbiEncode;
 
 use crate::{
     grpc:: {
@@ -42,17 +48,33 @@ impl<A: Arena + 'static> APIServer<A> {
     }
 
     pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
-        // TODO: start engine and server in concurrent tasks and wait for them
-        let server_addr = self.config.address.parse()?;
-        Server::builder()
-            .add_service(ComputeServer::new(self))
-            .serve(server_addr)
-            .await?;
-        Ok(())
-    }
+        let engine = self.engine.clone(); 
+        let engine_task = task::spawn_local(async {
+            if let Err(err) = engine.run().await {
+                error!("failed to start engine - {}", err)
+            }
+        });
+        
+        let engine = self.engine.clone();
+        let server_task = task::spawn(async {
+            let server_addr = self.config.address.parse().unwrap();
+            let server = Server::builder().add_service(ComputeServer::new(self));
+                
+            if let Err(err) = server.serve_with_shutdown(server_addr, async {
+                if let Err(err) = signal::ctrl_c().await {
+                    error!("failed to catch ctrl-c signal - {}", err)
+                }
+                if let Err(err) = engine.shutdown().await {
+                    error!("failed to shutdown engine - {}", err);
+                }
+            }).await {
+                error!("failed to run grpc server - {}", err);
+            }
+        });
 
-    async fn shutdown() -> Result<(), Box<dyn std::error::Error>> {
-        // TODO: stop engine and server
+        engine_task.await?;
+        server_task.await?;
+
         Ok(())
     }
 }
