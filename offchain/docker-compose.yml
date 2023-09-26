@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+
+  anvil:
+    container_name: cartesi-compute-anvil
+    image: ghcr.io/foundry-rs/foundry:nightly
+    ports:
+      - "8545:8545"
+    entrypoint: 'anvil --host 0.0.0.0 --no-cors'
+
+  machine:
+    container_name: cartesi-compute-machine
+    image: cartesi/machine-emulator:latest
+    ports:
+      - "5002:5002"
+    entrypoint: '/usr/bin/remote-cartesi-machine --server-address=0.0.0.0:5002'
