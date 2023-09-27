@@ -1,6 +1,11 @@
 use std::{
     time::Duration,
     sync::Arc,
+    env,
+};
+
+use ethers::{
+    utils::Anvil,
 };
 
 use tokio::sync::Mutex;
@@ -20,19 +25,18 @@ use cartesi_compute_server::{
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // Create and initialize arena.
     let arena_config = ArenaConfig{
         web3_http_url: String::from("http://localhost:8545"),
         private_key: String::from("dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7"),
         contract_artifacts: ContractArtifactsConfig { 
-            single_level_factory: String::new(), 
-            top_factory: String::new(), 
-            middle_factory: String::new(), 
-            bottom_factory: String::new(), 
-            tournament_factory: String::new(),
+            single_level_factory: String::from("compute-server/artifacts/SingleLevelTournamentFactory.json"), 
+            top_factory: String::from("compute-server/artifacts/TopTournamentFactory.json"), 
+            middle_factory: String::from("compute-server/artifacts/MiddleTournamentFactory.json"), 
+            bottom_factory: String::from("compute-server/artifacts/BottomTournamentFactory.json"), 
+            tournament_factory: String::from("compute-server/artifacts/TournamentFactory.json"),
         },
     };
-    let mut arena = EthersArena::new(arena_config);
+    let mut arena = EthersArena::new(arena_config)?;
     arena.init().await?;
     let arena = Arc::new(arena);
 

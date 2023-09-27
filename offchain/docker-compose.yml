@@ -2,12 +2,13 @@ version: '3'
 
 services:
 
-  anvil:
-    container_name: cartesi-compute-anvil
-    image: ghcr.io/foundry-rs/foundry:nightly
-    ports:
-      - "8545:8545"
-    entrypoint: 'anvil --host 0.0.0.0 --no-cors'
+  # Anvil is started by comptue currently.
+  #anvil:
+  #  container_name: cartesi-compute-anvil
+  #  image: ghcr.io/foundry-rs/foundry:nightly
+  #  ports:
+  #    - "8545:8545"
+  #  entrypoint: 'anvil --host 0.0.0.0 --no-cors'
 
   machine:
     container_name: cartesi-compute-machine

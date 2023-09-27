@@ -2,6 +2,7 @@ use std::{
     error::Error,
     sync::Arc,
     path::Path,
+    time::Duration,
 };
 
 use async_trait::async_trait;
@@ -14,8 +15,9 @@ use ethers::{
     },
     contract::ContractFactory,
     providers::{Provider, Http},
-    signers::LocalWallet,
+    signers::{LocalWallet, Signer},
     middleware::SignerMiddleware,
+    utils::{Anvil, AnvilInstance},
 };
 
 use crate::{
@@ -36,24 +38,27 @@ use crate::{
 };
 
 pub struct EthersArena {
+    // Start anvil for testing.
+    anvil: AnvilInstance,
     config: ArenaConfig,
     client: Arc<SignerMiddleware<Provider<Http>, LocalWallet>>,
     tournament_factory: EthersAddress,
 }
 
 impl EthersArena {
-    pub fn new(config: ArenaConfig) -> Self {
-        let wallet = config.private_key.parse::<LocalWallet>()
-            .expect("failed to create local wallet");
-        let provider = Provider::<Http>::try_from(config.web3_http_url.clone())
-            .expect("failed to create http provider"); 
-        let client = Arc::new(SignerMiddleware::new(provider.clone(), wallet));
+    pub fn new(config: ArenaConfig) -> Result<Self, Box<dyn Error>> {
+        let anvil = Anvil::new().spawn();
+        let wallet: LocalWallet = anvil.keys()[0].clone().into();
+        let provider = Provider::<Http>::try_from(anvil.endpoint())?
+            .interval(Duration::from_millis(10u64));
+        let client = Arc::new(SignerMiddleware::new(provider, wallet.with_chain_id(anvil.chain_id())));
         
-        EthersArena {
+        Ok(EthersArena {
+            anvil: anvil,
             config,
             client,
             tournament_factory: EthersAddress::default(),
-        }
+        })
     }
 
     pub async fn init(&mut self) -> Result<(), Box<dyn Error>> {
@@ -88,8 +93,7 @@ impl EthersArena {
         artifact_path: &Path, 
         constuctor_args: T
     ) -> Result<EthersAddress, Box<dyn Error>> {
-        let abi = Abi::default();
-        let bytecode = Bytes::default();
+        let (abi, bytecode) = parse_artifact(artifact_path)?;
         let deployer = ContractFactory::new(abi, bytecode, self.client.clone());
         let contract = deployer
             .deploy(constuctor_args)?
