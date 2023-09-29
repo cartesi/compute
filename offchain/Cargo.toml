@@ -1,0 +1,7 @@
+[workspace]
+
+members = [
+    "compute-server",
+    "machine-json-rpc",
+    "simulator",
+]
