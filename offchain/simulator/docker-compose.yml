@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  # Anvil is started by comptue currently.
+  # Anvil is started by comptue-server currently.
   #anvil:
   #  container_name: cartesi-compute-anvil
   #  image: ghcr.io/foundry-rs/foundry:nightly
@@ -15,4 +15,6 @@ services:
     image: cartesi/machine-emulator:latest
     ports:
       - "5002:5002"
+    volumes:
+      - ./data:/data
     entrypoint: '/usr/bin/remote-cartesi-machine --server-address=0.0.0.0:5002'
