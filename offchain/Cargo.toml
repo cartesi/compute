@@ -2,6 +2,6 @@
 
 members = [
     "compute-server",
+    "compute-simulator",
     "machine-json-rpc",
-    "simulator",
 ]
