@@ -13,7 +13,10 @@ pub use compute::{
     MachineSetup,
 };
 
-pub use compute::compute_server::{ 
-    Compute, 
-    ComputeServer,
+pub use compute::{
+    compute_server::{ 
+        Compute, 
+        ComputeServer,
+    },
+    compute_client::ComputeClient,
 };

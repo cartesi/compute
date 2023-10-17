@@ -234,18 +234,8 @@ pub struct MachineFactory {
 }
 
 impl MachineFactory {
-    pub async fn new(port: u32) -> Result<Self, Box<dyn Error>> {
-        let server_address = format!("127.0.0.1:{}", port);
-    
-        let mut machine_process = Command::new("/usr/bin/jsonrpc-remote-cartesi-machine")
-            .arg(format!("--server-address={}", server_address))
-            .spawn()
-            .expect("failed to run /usr/bin/jsonrpc-remote-cartesi-machine");
-        machine_process.wait().await?;
-
-        let rpc_url = format!("http://{}", server_address);
+    pub async fn new(rpc_url: String) -> Result<Self, Box<dyn Error>> {
         let rpc_client = JsonRpcCartesiMachineClient::new(rpc_url).await?;
-        
         Ok(Self {
             rpc_client: rpc_client,
             machines: HashMap::new(),

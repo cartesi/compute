@@ -48,8 +48,10 @@ impl<A: Arena + 'static> APIServer<A> {
     }
 
     pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
-        let engine = self.engine.clone(); 
-        let engine_task = task::spawn_local(async {
+        
+        let engine = self.engine.clone();
+        let local = task::LocalSet::new();
+        let engine_task = local.spawn_local(async {
             if let Err(err) = engine.run().await {
                 error!("failed to start engine - {}", err)
             }
