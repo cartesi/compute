@@ -1,0 +1,45 @@
+version: '3'
+
+services:
+
+  # Anvil is started by comptue-server currently.
+  #anvil:
+  #  container_name: cartesi-compute-anvil
+  #  image: ghcr.io/foundry-rs/foundry:nightly
+  #  ports:
+  #    - "8545:8545"
+  #  entrypoint: 'anvil --host 0.0.0.0 --no-cors'
+
+  machine:
+    container_name: cartesi-compute-machine
+    image: cartesi/machine-emulator:0.15.2
+    ports:
+      - "5002:5002"
+    volumes:
+      - ./compute-simulator/data:/data
+    entrypoint: "/usr/bin/jsonrpc-remote-cartesi-machine --server-address=0.0.0.0:5002"
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - "50500:50500"
+    links:
+      - machine
+    volumes:
+      - ./:/source
+      - ./compute-simulator/data:/data
+    entrypoint: "tail -F /dev/null"
+
+  simulator:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./:/source
+      - ./compute-simulator/data:/data
+    links:
+      - machine
+      - server
+    entrypoint: "tail -F /dev/null"
