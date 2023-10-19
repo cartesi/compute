@@ -1,0 +1,37 @@
+syntax = "proto3";
+package coordinator;
+
+message StartDisputeRequest {
+  bytes initial_hash = 1;
+  string snapshot_path = 2;
+}
+
+message StartDisputeResponse {
+  string dispute_id = 1; // hex address of root tournament
+}
+
+message FinishDisputeRequest {
+  string dispute_id = 1; // hex address of root tournament
+}
+
+message DisputeInfo {
+  bool closed = 1;
+}
+
+message FinishDisputeResponse {
+  DisputeInfo dispute_info = 1;
+}
+
+message GetDisputeInfoRequest {
+  string dispute_id = 1; // hex address of root tournament
+}
+
+message GetDisputeInfoResponse {
+  DisputeInfo dispute_info = 1;
+}
+
+service Coordinator {
+  rpc StartDispute (StartDisputeRequest) returns (StartDisputeResponse);
+  rpc FinishDispute (FinishDisputeRequest) returns (FinishDisputeResponse);
+  rpc GetDisputeInfo(GetDisputeInfoRequest) returns (GetDisputeInfoResponse);
+}

@@ -1,0 +1,21 @@
+[package]
+name = "cartesi-compute-coordinator"
+version = "0.1.0"
+edition = "2021"
+build = "build.rs"
+
+[[bin]]
+name = "cartesi-compute-coordinator"
+path = "src/main.rs"
+
+[dependencies]
+log = "0.4"
+tonic = "0.9.2"
+prost = "0.11.9"
+ethers = "2.0.8"
+tokio = { version = "1.29.1", features = ["full"] }
+async-trait = "0.1.72"
+cartesi-compute-core = { path = "../core" }
+
+[build-dependencies]
+tonic-build = "0.9.2"
