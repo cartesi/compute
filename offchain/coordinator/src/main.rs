@@ -6,13 +6,15 @@ use cartesi_compute_coordinator::server::{APIServer, APIServerConfig};
 
 #[tokio::main]
 pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let web3_rpc_url = "http://anvil:8545";
+    let web3_chain_id = 31337;
+    let web3_private_key = "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
     let api_address = "0.0.0.0:50500";
-    let web3_sec_key = "dcf2cbdd171a21c480aa7f53d77f31bb102282b3ff099c78e3118b37348c72f7";
-    let web3_rpc_url = "http://localhost:8545";
     
     let arena_config = ArenaConfig{
-        web3_http_url: String::from(web3_rpc_url),
-        private_key: String::from(web3_sec_key),
+        web3_rpc_url: String::from(web3_rpc_url),
+        web3_chain_id: web3_chain_id,
+        web3_private_key: String::from(web3_private_key),
         contract_artifacts: ContractArtifactsConfig { 
             single_level_factory: String::from("core/artifacts/SingleLevelTournamentFactory.json"), 
             top_factory: String::from("core/artifacts/TopTournamentFactory.json"), 

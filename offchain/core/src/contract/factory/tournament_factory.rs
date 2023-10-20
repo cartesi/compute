@@ -646,26 +646,24 @@ pub mod tournament_factory {
             data: impl AsRef<[u8]>,
         ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
             let data = data.as_ref();
-            if let Ok(decoded)
-                = <InstantiateBottomCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <InstantiateBottomCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::InstantiateBottom(decoded));
             }
-            if let Ok(decoded)
-                = <InstantiateMiddleCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <InstantiateMiddleCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::InstantiateMiddle(decoded));
             }
-            if let Ok(decoded)
-                = <InstantiateSingleLevelCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <InstantiateSingleLevelCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::InstantiateSingleLevel(decoded));
             }
-            if let Ok(decoded)
-                = <InstantiateTopCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <InstantiateTopCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::InstantiateTop(decoded));
             }
             Err(::ethers::core::abi::Error::InvalidData.into())

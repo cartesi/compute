@@ -2,13 +2,13 @@ use std::{
     error::Error,
     sync::Arc,
     path::Path,
-    time::Duration,
+    time::Duration, str::FromStr,
 };
 
 use async_trait::async_trait;
 
 use ethers::{
-    core::abi::{Abi, Tokenize},
+    core::abi::Tokenize,
     types::{
         Address as EthersAddress,
         Bytes,
@@ -17,7 +17,6 @@ use ethers::{
     providers::{Provider, Http},
     signers::{LocalWallet, Signer},
     middleware::SignerMiddleware,
-    utils::{Anvil, AnvilInstance},
 };
 
 use crate::{
@@ -38,7 +37,6 @@ use crate::{
 
 pub struct EthersArena {
     // Start anvil for testing.
-    anvil: AnvilInstance,
     config: ArenaConfig,
     client: Arc<SignerMiddleware<Provider<Http>, LocalWallet>>,
     tournament_factory: EthersAddress,
@@ -46,14 +44,12 @@ pub struct EthersArena {
 
 impl EthersArena {
     pub fn new(config: ArenaConfig) -> Result<Self, Box<dyn Error>> {
-        let anvil = Anvil::new().spawn();
-        let wallet: LocalWallet = anvil.keys()[0].clone().into();
-        let provider = Provider::<Http>::try_from(anvil.endpoint())?
+        let provider = Provider::<Http>::try_from(config.web3_rpc_url.clone())?
             .interval(Duration::from_millis(10u64));
-        let client = Arc::new(SignerMiddleware::new(provider, wallet.with_chain_id(anvil.chain_id())));
+        let wallet = LocalWallet::from_str(config.web3_private_key.as_str())?;
+        let client = Arc::new(SignerMiddleware::new(provider, wallet.with_chain_id(config.web3_chain_id)));
         
         Ok(EthersArena {
-            anvil: anvil,
             config,
             client,
             tournament_factory: EthersAddress::default(),

@@ -47,7 +47,7 @@ pub type MachineProof = Vec<u8>;
 
 pub struct MachineRpc {
     rpc_client: JsonRpcCartesiMachineClient,
-    root_hash: [u8; 32],
+    root_hash: Hash,
     start_cycle: u64,
     cycle: u64,
     ucycle: u64,
@@ -73,10 +73,14 @@ impl MachineRpc {
         Ok(MachineRpc {
             rpc_client: rpc_client,
             start_cycle: start_cycle,
-            root_hash: root_hash,
+            root_hash: Hash::from(root_hash),
             cycle: 0,
             ucycle: 0,
         })
+    }
+
+    pub fn root_hash(&self) -> Hash {
+        self.root_hash
     }
 
     pub async fn generate_proof(

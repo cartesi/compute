@@ -25,8 +25,8 @@ use cartesi_compute_core::{
         CachingMachineCommitmentBuilder,
         FakeMachineCommitmentBuilder,
     },
-    arena::{Arena, Address},
-    player::{Player, PlayerTournamentResult}, contract::tournament::root_tournament,
+    arena::{Address, Arena},
+    player::{Player, PlayerTournamentResult},
 };
 
 use cartesi_compute_coordinator::grpc::StartDisputeRequest;
@@ -58,7 +58,6 @@ pub struct EngineConfig {
 
 pub struct Engine <A: Arena> {
     coordinator: Arc<Mutex<CoordinatorClient>>,
-    arena: Arc<A>,
     machine_factory: Arc<Mutex<MachineFactory>>,
     config: EngineConfig,
     disputes: Arc<Mutex<HashMap<Address, Dispute<A>>>>,
@@ -68,12 +67,10 @@ pub struct Engine <A: Arena> {
 impl<A: Arena + 'static> Engine<A> {
     pub fn new(
         coordinator: Arc<Mutex<CoordinatorClient>>,
-        arena: Arc<A>,
         machine_facotry: Arc<Mutex<MachineFactory>>,
         config: EngineConfig) -> Self {
         Self {
             coordinator: coordinator,
-            arena: arena,
             machine_factory: machine_facotry,
             config,
             disputes: Arc::new(Mutex::new(HashMap::<Address, Dispute<A>>::new())),
@@ -148,7 +145,7 @@ impl<A: Arena + 'static> Engine<A> {
     pub async fn start_dispute(
         self: Arc<Self>,
         initial_hash_data: [u8; 32],
-        machine_snapshot_path: String,
+        machine_snapshot_path: &String,
     ) -> Result<Address, Box<dyn Error>> {
         let coordinator = self.coordinator.clone();
         let mut coordinator = coordinator.lock().await;
@@ -164,7 +161,7 @@ impl<A: Arena + 'static> Engine<A> {
         disputes.insert(root_tournament, Dispute {
             state: DisputeState {
                 initial_hash: Hash::new(initial_hash_data),
-                machine_snapshot_path: machine_snapshot_path,
+                machine_snapshot_path: machine_snapshot_path.clone(),
                 root_tournament: root_tournament,
                 finished: false,
             },
@@ -203,23 +200,23 @@ impl<A: Arena + 'static> Engine<A> {
 
     pub async fn create_player(
         self: Arc<Self>,
-        root_tournament: Address
+        arena: Arc<A>,
+        adversary: bool,
+        root_tournament: Address,
     ) -> Result<(), Box<dyn Error>> {
        let dispute = if let Some(dispute) = self.clone().disupte_state(root_tournament).await {
-        dispute    
+            dispute    
        } else {
-        return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
+            return Err(Box::new(EngineError::DsiputeNotFound(root_tournament.to_string())))
        };
-
-       let (machine, commitment_builder) = self.clone()
-        .create_player_machine(&dispute.machine_snapshot_path, false).await?;
        
+       let (machine, commitment_builder) = self.clone().create_player_machine(&dispute.machine_snapshot_path, adversary).await?;
        {
             let disputes = self.disputes.clone();
             let mut disputes = disputes.lock().await;
             if let Some(dispute) = disputes.get_mut(&root_tournament) {
                 let player = Player::new(
-                    self.arena.clone(),
+                    arena,
                     machine,
                     commitment_builder,
                     root_tournament,

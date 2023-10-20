@@ -923,54 +923,54 @@ pub mod non_root_tournament {
             data: impl AsRef<[u8]>,
         ) -> ::core::result::Result<Self, ::ethers::core::abi::AbiError> {
             let data = data.as_ref();
-            if let Ok(decoded)
-                = <AdvanceMatchCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <AdvanceMatchCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::AdvanceMatch(decoded));
             }
-            if let Ok(decoded)
-                = <CanWinMatchByTimeoutCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <CanWinMatchByTimeoutCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::CanWinMatchByTimeout(decoded));
             }
-            if let Ok(decoded)
-                = <GetCommitmentCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <GetCommitmentCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::GetCommitment(decoded));
             }
-            if let Ok(decoded)
-                = <GetMatchCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <GetMatchCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::GetMatch(decoded));
             }
-            if let Ok(decoded)
-                = <GetMatchCycleCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <GetMatchCycleCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::GetMatchCycle(decoded));
             }
-            if let Ok(decoded)
-                = <InnerTournamentWinnerCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <InnerTournamentWinnerCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::InnerTournamentWinner(decoded));
             }
-            if let Ok(decoded)
-                = <JoinTournamentCall as ::ethers::core::abi::AbiDecode>::decode(data) {
+            if let Ok(decoded) = <JoinTournamentCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::JoinTournament(decoded));
             }
-            if let Ok(decoded)
-                = <MaximumEnforceableDelayCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <MaximumEnforceableDelayCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::MaximumEnforceableDelay(decoded));
             }
-            if let Ok(decoded)
-                = <TournamentLevelConstantsCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <TournamentLevelConstantsCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::TournamentLevelConstants(decoded));
             }
-            if let Ok(decoded)
-                = <WinMatchByTimeoutCall as ::ethers::core::abi::AbiDecode>::decode(
-                    data,
-                ) {
+            if let Ok(decoded) = <WinMatchByTimeoutCall as ::ethers::core::abi::AbiDecode>::decode(
+                data,
+            ) {
                 return Ok(Self::WinMatchByTimeout(decoded));
             }
             Err(::ethers::core::abi::Error::InvalidData.into())
