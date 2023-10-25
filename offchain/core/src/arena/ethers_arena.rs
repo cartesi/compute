@@ -106,8 +106,16 @@ impl Arena for EthersArena {
         initial_hash: Hash
     ) -> Result<Address, Box<dyn Error>> {
         let factory = TournamentFactory::new(self.tournament_factory, self.client.clone());
-        let tournament_address = factory.instantiate_top(initial_hash.into()).await?;
-        Ok(tournament_address)
+        let receipt = factory.instantiate_single_level(initial_hash.into())
+            .send()
+            .await?
+            .await?;
+        println!("{}", receipt.unwrap().logs.len());
+
+        let events = factory.root_created_filter().query().await.unwrap();
+        let tournament_address = events.first().unwrap();
+
+        Ok(tournament_address.0)
     }
     
     async fn join_tournament(
@@ -123,6 +131,7 @@ impl Arena for EthersArena {
         tournament
             .join_tournament(final_state.into(), proof, left_child.into(), right_child.into())
             .send()
+            .await?
             .await?;
         Ok(())
     }
@@ -149,6 +158,7 @@ impl Arena for EthersArena {
                 new_left_node.into(),
                 new_right_node.into())
             .send()
+            .await?
             .await?;
         Ok(())
     }
@@ -177,6 +187,7 @@ impl Arena for EthersArena {
                 initial_hash_proof
             )
             .send()
+            .await?
             .await?;
         Ok(())
     }
@@ -191,6 +202,7 @@ impl Arena for EthersArena {
         let tournament = non_leaf_tournament::NonLeafTournament::new(tournament, self.client.clone());
         tournament.win_inner_match(child_tournament, left_node.into(), right_node.into())
             .send()
+            .await?
             .await?;
         Ok(())
     }
@@ -219,6 +231,7 @@ impl Arena for EthersArena {
                 initial_hash_proof
             )
             .send()
+            .await?
             .await?;
         Ok(())
     }
@@ -244,6 +257,7 @@ impl Arena for EthersArena {
                 Bytes::from(proofs),
             )
             .send()
+            .await?
             .await?;
         Ok(())
     }

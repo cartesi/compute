@@ -31,7 +31,7 @@ services:
     volumes:
       - ./:/source
       - ./simulator/data:/data
-    entrypoint: "tail -F /dev/null"
+    entrypoint: "target/debug/cartesi-compute-coordinator"
 
   simulator:
     container_name: cartesi-compute-simulator

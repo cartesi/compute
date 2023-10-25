@@ -8,7 +8,7 @@ use tokio::sync::Mutex;
 
 use cartesi_compute_core::{
     merkle::Hash,
-    arena::{ArenaConfig, ContractArtifactsConfig, EthersArena},
+    arena::{ArenaConfig, ContractArtifactsConfig, EthersArena, Arena},
     machine::MachineFactory,
 }; 
 use cartesi_compute_coordinator::grpc::CoordinatorClient;
@@ -43,6 +43,13 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
     ));
 
     let dispute_root_hash = dispute_root_hash(machine_factory.clone(), &simple_linux_program).await?; 
+    
+    // !!!
+    let arena = create_player_arena(String::from("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"))?;
+    let tournament = arena.create_root_tournament(dispute_root_hash).await?; 
+
+    // !!!
+    /*
     let root_tournament = engine.clone().start_dispute(
         dispute_root_hash.into(),
         &simple_linux_program,
@@ -60,7 +67,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
         create_player_arena(String::from("0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"))?, 
         true,
         root_tournament
-    ).await?; 
+    ).await?;
+    */ 
 
     Ok(())
 }
@@ -77,7 +85,7 @@ async fn dispute_root_hash(
 }
 
 fn create_player_arena(web3_private_key: String) -> Result<Arc<EthersArena>, Box<dyn std::error::Error>>  {
-    let web3_rpc_url = "http://coordinator:8545";
+    let web3_rpc_url = "http://anvil:8545";
     let web3_chain_id = 31337;
 
     let arena_config = ArenaConfig{
