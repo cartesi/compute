@@ -10,11 +10,12 @@ use async_trait::async_trait;
 use ethers::{
     core::abi::Tokenize,
     types::{
+        Filter,
         Address as EthersAddress,
         Bytes,
     },
     contract::ContractFactory,
-    providers::{Provider, Http},
+    providers::{Provider, Http, Middleware},
     signers::{LocalWallet, Signer},
     middleware::SignerMiddleware,
 };
@@ -106,16 +107,19 @@ impl Arena for EthersArena {
         initial_hash: Hash
     ) -> Result<Address, Box<dyn Error>> {
         let factory = TournamentFactory::new(self.tournament_factory, self.client.clone());
-        let receipt = factory.instantiate_single_level(initial_hash.into())
+        factory.instantiate_top(initial_hash.into())
             .send()
             .await?
             .await?;
-        println!("{}", receipt.unwrap().logs.len());
+     
+        let filter = Filter::new()
+            .from_block(0);
+        let logs = self.client.get_logs(&filter).await?;
 
-        let events = factory.root_created_filter().query().await.unwrap();
-        let tournament_address = events.first().unwrap();
+        // !!!
+        println!("{}", logs.len());
 
-        Ok(tournament_address.0)
+        Ok(Address::default())
     }
     
     async fn join_tournament(
