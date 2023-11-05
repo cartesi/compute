@@ -148,7 +148,7 @@
 //       implied, including, without limitation, any warranties or conditions
 //       of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
 //       PARTICULAR PURPOSE. You are solely responsible for determining the
-//       appropriateness of using or redistributing the Work and assume any
+//       appropriateness of using or redistributing the Work and assuming any
 //       risks associated with Your exercise of permissions under this License.
 
 //    8. Limitation of Liability. In no event and under no legal theory,
@@ -222,6 +222,7 @@ contract CartesiCompute is
         uint256 finalTime; // max number of machine cycle to run
         uint64 outputPosition; // memory position of machine output
         uint8 outputLog2Size; // log2 size of the output drive in the unit of bytes
+	bool noChallengeDrive; // if data is available and content cannot be challenged
         uint256 roundDuration; // time interval to interact with this contract
         uint256 timeOfLastMove; // last time someone made a move with deadline
         uint256 vgInstance;
@@ -240,7 +241,6 @@ contract CartesiCompute is
         uint256[] providerDrives; // indices of the provider drives
         bytes32[] driveHash; // root hash of the drives
         Drive[] inputDrives;
-        bool noChallengeDrive; // if data is available and content cannot be challenged
     }
 
     mapping(uint256 => CartesiComputeCtx) internal instance;
@@ -330,7 +330,7 @@ contract CartesiCompute is
         require(_roundDuration >= 50, "round duration must be 50+ seconds");
         CartesiComputeCtx storage i = instance[currentIndex];
 
-        for (uint64 j = 0; j < parties.length; j++) {
+        for (uint64 j; j < parties.length; ++j) {
             require(
                 i.parties[parties[j]].isParty == false,
                 "Party addresses must be unique"
@@ -340,12 +340,12 @@ contract CartesiCompute is
             i.partiesArray.push(parties[j]);
         }
 
-        bool needsProviderPhase = false;
+        bool needsProviderPhase;
         uint256 drivesLength = _inputDrives.length;
         i.driveHash = new bytes32[](drivesLength);
         i.noChallengeDrive = _noChallengeDrive;
 
-        for (uint256 j = 0; j < drivesLength; j++) {
+        for (uint256 j; j < drivesLength; ++j) {
             Drive memory drive = _inputDrives[j];
 
             if (!drive.needsLogger) {
@@ -564,7 +564,7 @@ contract CartesiCompute is
         );
         require(
             _output.length == 2**i.outputLog2Size,
-            "Output length doesn't match output log2 size"
+            "Output length doesnt match output log2 size"
         );
 
         bytes32[] memory data = getWordHashesFromBytes(_output);
@@ -579,7 +579,7 @@ contract CartesiCompute is
         );
 
         uint256 drivesLength = i.inputDrives.length;
-        for (uint256 j = 0; j < drivesLength; j++) {
+        for (uint256 j; j < drivesLength; ++j) {
             bytes32[] memory driveSiblings = _drivesSiblings[j];
             require(
                 Merkle.getRootWithDrive(
@@ -808,7 +808,7 @@ contract CartesiCompute is
             "Input bytes length exceeds claimed log2 size"
         );
 
-        // pad zero to the directValue if it's not exact power of 2
+        // pad zero to the directValue if it is not exact power of 2
         bytes memory paddedDirectValue = _value;
         if (_value.length < 2**drive.driveLog2Size) {
             paddedDirectValue = abi.encodePacked(
@@ -915,7 +915,7 @@ contract CartesiCompute is
             i.parties[i.partiesArray[i.claimer]].hasCheated = true;
             // all parties have confirmed cheated claimer should be reset
             // this is a protection to avoid claimer losing dispute on purpose
-            for (uint256 p = 0; p < i.confirmedParties.length; p++) {
+            for (uint256 p; p < i.confirmedParties.length; ++p) {
                 i.parties[i.confirmedParties[p]].hasVoted = false;
             }
             i.votesCounter -= uint64(i.confirmedParties.length);
@@ -1078,7 +1078,7 @@ contract CartesiCompute is
         returns (bytes32[] memory)
     {
         bytes32[] memory data = new bytes32[](4);
-        for (uint256 i = 0; i < 4; i++) {
+        for (uint256 i; i < 4; ++i) {
             bytes8 dataBytes8 = bytes8(
                 (_value << (i * 64)) &
                     0xffffffffffffffff000000000000000000000000000000000000000000000000
@@ -1096,9 +1096,9 @@ contract CartesiCompute is
     {
         uint256 hashesLength = _value.length / 8;
         bytes32[] memory data = new bytes32[](hashesLength);
-        for (uint256 i = 0; i < hashesLength; i++) {
+        for (uint256 i; i < hashesLength; ++i) {
             bytes8 dataBytes8;
-            for (uint256 j = 0; j < 8; j++) {
+            for (uint256 j; j < 8; ++j) {
                 bytes8 tempBytes8 = _value[i * 8 + j];
                 tempBytes8 = tempBytes8 >> (j * 8);
                 dataBytes8 = dataBytes8 | tempBytes8;
@@ -1116,7 +1116,7 @@ contract CartesiCompute is
     {
         // TODO: make sure maxDuration calculations are reasonable
         uint256 partitionSize = 1;
-        uint256 picoSecondsToRunInsn = 500; // 500 pico seconds to run a instruction
+        uint256 picoSecondsToRunInsn = 500; // 500 pico seconds to run an instruction
         uint256 timeToStartMachine = 40; // 40 seconds to start the machine for the first time
 
         if (instance[_index].currentState == State.WaitingProviders) {
@@ -1196,7 +1196,7 @@ contract CartesiCompute is
         Drive memory drive = i.inputDrives[driveIndex];
         require(
             i.driveHash[driveIndex] == bytes32(0),
-            "Drive hash shouldn't be filled"
+            "Drive hash shouldnt be filled"
         );
         require(drive.waitsProvider, "waitProvider should be true");
         require(drive.provider == msg.sender, "Sender != provider");
