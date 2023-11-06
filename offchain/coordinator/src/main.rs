@@ -23,8 +23,8 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
             tournament_factory: String::from("core/artifacts/TournamentFactory.json"),
         },
     };
-    let mut arena = EthersArena::new(arena_config)?;
-    arena.init().await?;
+
+    let arena = EthersArena::deploy(&arena_config).await?;
     let arena = Arc::new(arena);
     
     let server_config = APIServerConfig {

@@ -1,14 +1,17 @@
 use std::{
     sync::Arc,
     time::Duration,
-    path::Path,
+    path::Path, result,
 };
 
-use tokio::sync::Mutex;
+use tokio::{
+    sync::Mutex,
+    time,
+};
 
 use cartesi_compute_core::{
     merkle::Hash,
-    arena::{ArenaConfig, ContractArtifactsConfig, EthersArena, Arena},
+    arena::{ArenaConfig, ContractArtifactsConfig, EthersArena, Address},
     machine::MachineFactory,
 }; 
 use cartesi_compute_coordinator::grpc::CoordinatorClient;
@@ -44,31 +47,31 @@ pub async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let dispute_root_hash = dispute_root_hash(machine_factory.clone(), &simple_linux_program).await?; 
     
-    // !!!
-    let arena = create_player_arena(String::from("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"))?;
-    let tournament = arena.create_root_tournament(dispute_root_hash).await?; 
-
-    // !!!
-    /*
-    let root_tournament = engine.clone().start_dispute(
+    let tournament = engine.clone().start_dispute(
+        create_arena(String::from("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"))?,
         dispute_root_hash.into(),
         &simple_linux_program,
     ).await?;
 
     // Honest verifier.
     engine.clone().create_player(
-        create_player_arena(String::from("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"))?,
+        create_arena(String::from("0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"))?,
         false,
-        root_tournament
+        tournament
     ).await?;
 
     // Malicious verifier.
     engine.clone().create_player(
-        create_player_arena(String::from("0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"))?, 
+        create_arena(String::from("0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a"))?, 
         true,
-        root_tournament
+        tournament
     ).await?;
-    */ 
+
+    loop {
+        engine.clone().execute_player(tournament, 0).await;
+        engine.clone().execute_player(tournament, 1).await;
+        time::sleep(Duration::from_secs(5)).await;
+    }
 
     Ok(())
 }
@@ -84,9 +87,10 @@ async fn dispute_root_hash(
     Ok(machine.root_hash())
 }
 
-fn create_player_arena(web3_private_key: String) -> Result<Arc<EthersArena>, Box<dyn std::error::Error>>  {
+fn create_arena(web3_private_key: String) -> Result<Arc<EthersArena>, Box<dyn std::error::Error>>  {
     let web3_rpc_url = "http://anvil:8545";
     let web3_chain_id = 31337;
+    let tournament_factory_address: Address = "0xdc64a140aa3e981100a9beca4e685f962f0cf6c9".parse()?;
 
     let arena_config = ArenaConfig{
         web3_rpc_url: String::from(web3_rpc_url),
@@ -100,6 +104,6 @@ fn create_player_arena(web3_private_key: String) -> Result<Arc<EthersArena>, Box
             tournament_factory: String::from("core/artifacts/TournamentFactory.json"),
         },
     };
-    let arena = EthersArena::new(arena_config)?;
+    let arena = EthersArena::new(&arena_config, tournament_factory_address)?;
     Ok(Arc::new(arena))
 }

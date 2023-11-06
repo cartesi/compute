@@ -90,7 +90,7 @@ impl MerkleBuilder {
 
         let left = self.build_merkle(first_cell, last_cell + 1, log2_size - 1, stride << 1);
         let right = self.build_merkle(first_cell, last_cell + 1, log2_size - 1, (stride << 1) + 1);
-        
+
         let result = self.join_nodes(left.0, right.0);
         (result, first_time, last_time)
     }
@@ -149,7 +149,8 @@ pub fn join_merkle_tree_node_digests(digest_1: Hash, digest_2: Hash) -> Hash {
 }
 
 fn find_cell_containing(leafs: &[MerkleTreeLeaf], elem: u64) -> u64 {
-    let mut l = 1;
+    // TODO: Lua uses 1-based indexes. Need to changed uppper bound too?
+    let mut l = 0;
     let mut r = leafs.len() as u64;
 
     while arithmetic::ult(l, r) {
@@ -160,6 +161,6 @@ fn find_cell_containing(leafs: &[MerkleTreeLeaf], elem: u64) -> u64 {
             r = m;
         }
     }
-
+    
     l
 }

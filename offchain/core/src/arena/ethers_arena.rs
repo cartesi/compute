@@ -36,61 +36,72 @@ use crate::{
     machine::MachineProof,
 };
 
+type Client = SignerMiddleware<Provider<Http>, LocalWallet>;
+
 pub struct EthersArena {
-    // Start anvil for testing.
     config: ArenaConfig,
-    client: Arc<SignerMiddleware<Provider<Http>, LocalWallet>>,
+    client: Arc<Client>,
     tournament_factory: EthersAddress,
 }
 
 impl EthersArena {
-    pub fn new(config: ArenaConfig) -> Result<Self, Box<dyn Error>> {
+    pub fn new(config: &ArenaConfig, tournament_factory: Address) -> Result<Self, Box<dyn Error>> {
+        Ok(EthersArena {
+            config: config.clone(),
+            client: Self::create_client(config)?,
+            tournament_factory: tournament_factory,
+        })
+    }
+
+    pub async fn deploy(config: &ArenaConfig) -> Result<Self, Box<dyn Error>> {
+        let client = Self::create_client(config)?;
+        
+        // Deploy single level factory.
+        let sl_factory_artifact = Path::new(config.contract_artifacts.single_level_factory.as_str());
+        let sl_factory_address = Self::deploy_contract_from_artifact(client.clone(), sl_factory_artifact, ()).await?;
+
+        // Deploy top factory.
+        let top_factory_artifact = Path::new(config.contract_artifacts.top_factory.as_str());
+        let top_factory_address = Self::deploy_contract_from_artifact(client.clone(), top_factory_artifact, ()).await?;
+
+        // Deploy middle factory.
+        let middle_factory_artifact = Path::new(config.contract_artifacts.middle_factory.as_str());
+        let middle_factory_address = Self::deploy_contract_from_artifact(client.clone(), middle_factory_artifact, ()).await?;
+
+        // Deploy bottom factory.
+        let bottom_factory_artifact = Path::new(config.contract_artifacts.bottom_factory.as_str());
+        let bottom_factory_address = Self::deploy_contract_from_artifact(client.clone(), bottom_factory_artifact, ()).await?;
+
+        // Deploy tournament factory.
+        let tournament_factory_artifact = Path::new(config.contract_artifacts.tournament_factory.as_str());
+        let tournament_factory = Self::deploy_contract_from_artifact(
+            client.clone(),
+            tournament_factory_artifact, 
+            (sl_factory_address, top_factory_address, middle_factory_address, bottom_factory_address),
+        ).await?;
+
+        Ok(EthersArena {
+            config: config.clone(),
+            client: client.clone(),
+            tournament_factory: tournament_factory,
+        })
+    }
+
+    fn create_client(config: &ArenaConfig) -> Result<Arc<Client>, Box<dyn Error>> {
         let provider = Provider::<Http>::try_from(config.web3_rpc_url.clone())?
             .interval(Duration::from_millis(10u64));
         let wallet = LocalWallet::from_str(config.web3_private_key.as_str())?;
         let client = Arc::new(SignerMiddleware::new(provider, wallet.with_chain_id(config.web3_chain_id)));
-        
-        Ok(EthersArena {
-            config,
-            client,
-            tournament_factory: EthersAddress::default(),
-        })
-    }
-
-    pub async fn init(&mut self) -> Result<(), Box<dyn Error>> {
-        // Deploy single level factory.
-        let sl_factory_artifact = Path::new(self.config.contract_artifacts.single_level_factory.as_str());
-        let sl_factory_address = self.deploy_contract_from_artifact(sl_factory_artifact, ()).await?;
-
-        // Deploy top factory.
-        let top_factory_artifact = Path::new(self.config.contract_artifacts.top_factory.as_str());
-        let top_factory_address = self.deploy_contract_from_artifact(top_factory_artifact, ()).await?;
-
-        // Deploy middle factory.
-        let middle_factory_artifact = Path::new(self.config.contract_artifacts.middle_factory.as_str());
-        let middle_factory_address = self.deploy_contract_from_artifact(middle_factory_artifact, ()).await?;
-
-        // Deploy bottom factory.
-        let bottom_factory_artifact = Path::new(self.config.contract_artifacts.bottom_factory.as_str());
-        let bottom_factory_address = self.deploy_contract_from_artifact(bottom_factory_artifact, ()).await?;
-
-        // Deploy tournament factory.
-        let tournament_factory_artifact = Path::new(self.config.contract_artifacts.tournament_factory.as_str());
-        self.tournament_factory = self.deploy_contract_from_artifact(
-            tournament_factory_artifact, 
-            (sl_factory_address, top_factory_address, middle_factory_address, bottom_factory_address),
-        ).await?;
-        
-        return Ok(());
+        Ok(client)
     }
 
     async fn deploy_contract_from_artifact<T: Tokenize>(
-        &self, 
+        client: Arc<Client>,
         artifact_path: &Path, 
         constuctor_args: T
     ) -> Result<EthersAddress, Box<dyn Error>> {
         let (abi, bytecode) = parse_artifact(artifact_path)?;
-        let deployer = ContractFactory::new(abi, bytecode, self.client.clone());
+        let deployer = ContractFactory::new(abi, bytecode, client.clone());
         let contract = deployer
             .deploy(constuctor_args)?
             .confirmations(0usize)
@@ -111,15 +122,12 @@ impl Arena for EthersArena {
             .send()
             .await?
             .await?;
-     
-        let filter = Filter::new()
-            .from_block(0);
-        let logs = self.client.get_logs(&filter).await?;
 
-        // !!!
-        println!("{}", logs.len());
+        let created_roots = factory.root_created_filter().query().await.unwrap();
+        // TODO: find created root by transactoin hash.
+        let tournament_address = created_roots.first().unwrap();
 
-        Ok(Address::default())
+        Ok(tournament_address.0)
     }
     
     async fn join_tournament(

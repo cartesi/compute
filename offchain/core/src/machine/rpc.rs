@@ -110,17 +110,18 @@ impl MachineRpc {
         assert!(arithmetic::ulte(self.cycle, cycle));
         
         let physical_cycle = add_and_clamp(self.start_cycle, cycle);
-    
+
         loop {
             let halted = self.rpc_client.read_iflags_h().await?; 
             if halted {
                 break;
             }
-
             let mcycle = self.rpc_client.read_csr("mcycle".to_string()).await?;
             if mcycle == physical_cycle {
                 break;
             }
+
+            self.rpc_client.run(physical_cycle).await?;
         }
         
         self.cycle = cycle;

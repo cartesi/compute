@@ -1,6 +1,9 @@
 pub const fn max_uint(k: u64) -> u64 {
-    assert!(k <= 64);
-    (1 << k) - 1
+    if k == 64 {
+        u64::MAX
+    } else {
+        (1 << k) - 1
+    }
 }
 
 pub fn ulte(x: u64, y: u64) -> bool {
